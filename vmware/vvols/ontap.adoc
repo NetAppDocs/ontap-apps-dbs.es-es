@@ -96,7 +96,7 @@ image:vvols-image6.png["Panel de herramientas de ONTAP vVols, 400"]
 
 == Mejores prácticas
 
-Esta sección recopila prácticas recomendadas conocidas para usar vVols con ONTAP junto con otra información.
+El uso de vVols de ONTAP con vSphere es sencillo y sigue los métodos de vSphere publicados (consulte Trabajar con volúmenes virtuales en la documentación de vSphere Storage en VMware para su versión de ESXi). A continuación, se muestran algunas prácticas adicionales que se deben tener en cuenta junto con ONTAP.
 
 *Límites*
 
@@ -132,37 +132,21 @@ En general, ONTAP admite los límites de vVols definidos por VMware (consulte la
 
 
 
-*Mejores prácticas*
+*Utilice las herramientas de ONTAP para las extensiones de interfaz de usuario de VMware vSphere o API REST para aprovisionar almacenes de datos vVols* *y puntos finales de protocolo.*
 
-El uso de vVols de ONTAP con vSphere es sencillo y sigue los métodos de vSphere publicados (consulte Trabajar con volúmenes virtuales en la documentación de vSphere Storage en VMware para su versión de ESXi). A continuación, se muestran algunas prácticas adicionales que se deben tener en cuenta junto con ONTAP.
+Si bien es posible crear almacenes de datos vVols con la interfaz general de vSphere, mediante las herramientas de ONTAP se crearán automáticamente extremos de protocolo según sea necesario y se crearán volúmenes FlexVol mediante prácticas recomendadas de ONTAP y cumpliendo los perfiles de capacidad de almacenamiento definidos. Solo tiene que hacer clic con el botón derecho en host/clúster/centro de datos y, a continuación, seleccionar _ONTAP TOOLS_ y _PROVISION datastore_. A partir de ahí, simplemente elija las opciones de vVols deseadas en el asistente.
 
-Prácticas recomendadas para usar vVols con ONTAP.
+*Nunca almacene el dispositivo de herramientas ONTAP o el dispositivo vCenter Server (VCSA) en un almacén de datos vVols que estén administrando.*
 
-|===
+Esto puede resultar en una “situación de pollo y huevo” si necesita reiniciar los aparatos porque no podrán volver a ensamblar sus propios vVols mientras se reinician. Puede almacenarlos en un almacén de datos de vVols que se gestiona con otras herramientas de ONTAP y en una puesta en marcha de vCenter.
 
+*Evite las operaciones vVols a través de diferentes versiones de ONTAP.*
 
-| *Utilice las herramientas de ONTAP para las extensiones de interfaz de usuario de VMware vSphere o API REST para aprovisionar almacenes de datos vVols* *y puntos finales de protocolo.* 
+Las funcionalidades de almacenamiento compatibles como calidad de servicio, personalidad y otras han cambiado en varias versiones del proveedor VASA; algunas dependen de la versión de ONTAP. El uso de diferentes versiones de un clúster de ONTAP o el movimiento de vVols entre clústeres con diferentes versiones puede provocar un comportamiento inesperado o alarmas de cumplimiento de normativas.
 
+*Zone su estructura Fibre Channel antes de usar NVMe/FC o FCP para vVols.*
 
-| Si bien es posible crear almacenes de datos vVols con la interfaz general de vSphere, mediante las herramientas de ONTAP se crearán automáticamente extremos de protocolo según sea necesario y se crearán volúmenes FlexVol mediante prácticas recomendadas de ONTAP y cumpliendo los perfiles de capacidad de almacenamiento definidos. Solo tiene que hacer clic con el botón derecho en host/clúster/centro de datos y, a continuación, seleccionar _ONTAP TOOLS_ y _PROVISION datastore_. A partir de ahí, simplemente elija las opciones de vVols deseadas en el asistente. 
-
-
-| *Nunca almacene el dispositivo de herramientas ONTAP o el dispositivo vCenter Server (VCSA) en un almacén de datos vVols que estén administrando.* 
-
-
-| Esto puede resultar en una “situación de pollo y huevo” si necesita reiniciar los aparatos porque no podrán volver a ensamblar sus propios vVols mientras se reinician. Puede almacenarlos en un almacén de datos de vVols que se gestiona con otras herramientas de ONTAP y en una puesta en marcha de vCenter. 
-
-
-| *Evite las operaciones vVols a través de diferentes versiones de ONTAP.* 
-
-
-| Las funcionalidades de almacenamiento compatibles como calidad de servicio, personalidad y otras han cambiado en varias versiones del proveedor VASA; algunas dependen de la versión de ONTAP. El uso de diferentes versiones de un clúster de ONTAP o el movimiento de vVols entre clústeres con diferentes versiones puede provocar un comportamiento inesperado o alarmas de cumplimiento de normativas. 
-
-
-| *Zone su estructura Fibre Channel antes de usar NVMe/FC o FCP para vVols.* 
-
-
-| El proveedor de VASA de herramientas de ONTAP se encarga de gestionar iGroups FCP e iSCSI, así como subsistemas NVMe en ONTAP basado en iniciadores detectados de hosts ESXi gestionados. Sin embargo, no se integra con switches Fibre Channel para gestionar la división en zonas. La división en zonas debe realizarse siguiendo las mejores prácticas antes de realizar ningún aprovisionamiento. A continuación se muestra un ejemplo de división en zonas de un solo iniciador en cuatro sistemas ONTAP:
+El proveedor de VASA de herramientas de ONTAP se encarga de gestionar iGroups FCP e iSCSI, así como subsistemas NVMe en ONTAP basado en iniciadores detectados de hosts ESXi gestionados. Sin embargo, no se integra con switches Fibre Channel para gestionar la división en zonas. La división en zonas debe realizarse siguiendo las mejores prácticas antes de realizar ningún aprovisionamiento. A continuación se muestra un ejemplo de división en zonas de un solo iniciador en cuatro sistemas ONTAP:
 
 División en zonas de un solo iniciador:
 
@@ -172,43 +156,31 @@ Consulte los siguientes documentos para obtener más prácticas recomendadas:
 
 https://www.netapp.com/media/10680-tr4080.pdf["_TR-4080 Mejores prácticas para ONTAP SAN moderno 9_"^]
 
-https://www.netapp.com/pdf.html?item=/media/10681-tr4684.pdf["_TR-4684 Implementación y configuración de SAN modernas con NVMe-oF_"^] 
+https://www.netapp.com/pdf.html?item=/media/10681-tr4684.pdf["_TR-4684 Implementación y configuración de SAN modernas con NVMe-oF_"^]
 
+*Planifica tu soporte FlexVols de acuerdo a tus necesidades.*
 
-| *Planifica tu soporte FlexVols de acuerdo a tus necesidades.* 
+Puede resultar conveniente añadir distintos volúmenes de backup al almacén de datos vVols para distribuir la carga de trabajo en el clúster de ONTAP, admitir distintas opciones de normativas o aumentar el número de LUN o archivos permitidos. Sin embargo, si se requiere una eficiencia del almacenamiento máxima, coloque todos los volúmenes de backup en un único agregado. O, si es necesario un rendimiento de clonación máximo, considere la posibilidad de usar un único volumen de FlexVol y mantener sus plantillas o biblioteca de contenido en el mismo volumen. El proveedor VASA libera muchas operaciones de almacenamiento de vVols en ONTAP, incluidas la migración, el clonado y las copias Snapshot. Cuando esta operación se realiza en un único volumen FlexVol, se usan clones de archivos con gestión eficiente del espacio y están disponibles casi al instante. Cuando esto se realiza en volúmenes de FlexVol, las copias se encuentran disponibles rápidamente y utilizan deduplicación y compresión en línea, pero es posible que no se recupere la máxima eficiencia del almacenamiento hasta que se ejecuten trabajos en segundo plano en volúmenes con deduplicación y compresión en segundo plano. En función del origen y el destino, se puede degradar cierta eficiencia.
 
+* Mantenga los perfiles de capacidad de almacenamiento (SCPs) simples.*
 
-| Puede resultar conveniente añadir distintos volúmenes de backup al almacén de datos vVols para distribuir la carga de trabajo en el clúster de ONTAP, admitir distintas opciones de normativas o aumentar el número de LUN o archivos permitidos. Sin embargo, si se requiere una eficiencia del almacenamiento máxima, coloque todos los volúmenes de backup en un único agregado. O, si es necesario un rendimiento de clonación máximo, considere la posibilidad de usar un único volumen de FlexVol y mantener sus plantillas o biblioteca de contenido en el mismo volumen. El proveedor VASA libera muchas operaciones de almacenamiento de vVols en ONTAP, incluidas la migración, el clonado y las copias Snapshot. Cuando esta operación se realiza en un único volumen FlexVol, se usan clones de archivos con gestión eficiente del espacio y están disponibles casi al instante. Cuando esto se realiza en volúmenes de FlexVol, las copias se encuentran disponibles rápidamente y utilizan deduplicación y compresión en línea, pero es posible que no se recupere la máxima eficiencia del almacenamiento hasta que se ejecuten trabajos en segundo plano en volúmenes con deduplicación y compresión en segundo plano. En función del origen y el destino, se puede degradar cierta eficiencia. 
+Evite especificar capacidades que no sean necesarias si las establece en ninguna. Esto minimizará los problemas al seleccionar o crear volúmenes de FlexVol. Por ejemplo, con el Proveedor VASA 7,1 y versiones anteriores, si la compresión se deja en el valor predeterminado de SCP de No, intentará deshabilitar la compresión, incluso en un sistema AFF.
 
+*Utilice los SCPs predeterminados como plantillas de ejemplo para crear su propio.*
 
-| * Mantenga los perfiles de capacidad de almacenamiento (SCPs) simples.* 
+Los SCPs incluidos son adecuados para la mayoría de usos generales, pero sus requisitos pueden ser diferentes.
 
+*Considera usar Max IOPS para controlar VMs desconocidas o de prueba.*
 
-| Evite especificar capacidades que no sean necesarias si las establece en ninguna. Esto minimizará los problemas al seleccionar o crear volúmenes de FlexVol. Por ejemplo, con el Proveedor VASA 7,1 y versiones anteriores, si la compresión se deja en el valor predeterminado de SCP de No, intentará deshabilitar la compresión, incluso en un sistema AFF. 
+Por primera vez, disponible en VASA Provider 7,1, Max IOPS puede usarse para limitar las IOPS a un VVol específico para una carga de trabajo desconocida y así evitar el impacto en otras cargas de trabajo más críticas. Consulte la Tabla 4 para obtener más información sobre gestión del rendimiento.
 
+*Asegúrese de tener suficientes LIF de datos.*
+Cree al menos dos LIF por nodo por par de alta disponibilidad. Se puede requerir más en función de su carga de trabajo.
 
-| *Utilice los SCPs predeterminados como plantillas de ejemplo para crear su propio.* 
+*Siga todas las mejores prácticas del protocolo.*
 
+Consulte las otras guías de prácticas recomendadas de NetApp y VMware específicas del protocolo que ha seleccionado. En general, no hay ningún cambio aparte de los ya mencionados.
 
-| Los SCPs incluidos son adecuados para la mayoría de usos generales, pero sus requisitos pueden ser diferentes.
+*Ejemplo de configuración de red usando vVols sobre NFS v3*
 
-*Considera usar Max IOPS para controlar VMs desconocidas o de prueba.* 
-
-
-| Por primera vez, disponible en VASA Provider 7,1, Max IOPS puede usarse para limitar las IOPS a un VVol específico para una carga de trabajo desconocida y así evitar el impacto en otras cargas de trabajo más críticas. Consulte la Tabla 4 para obtener más información sobre gestión del rendimiento.
-
-*Asegúrese de tener suficientes LIF de datos.* 
-
-
-| Cree al menos dos LIF por nodo por par de alta disponibilidad. Se puede requerir más en función de su carga de trabajo. 
-
-
-| *Siga todas las mejores prácticas del protocolo.* 
-
-
-| Consulte las otras guías de prácticas recomendadas de NetApp y VMware específicas del protocolo que ha seleccionado. En general, no hay ningún cambio aparte de los ya mencionados.
-[[Figura_6]]
-Ejemplo de configuración de red mediante vVols con NFS v3:
-
-image:vvols-image18.png["Configuración de red mediante vVols mediante NFS v3.500"] 
-|===
+image:vvols-image18.png["Configuración de red mediante vVols mediante NFS v3.500"]
