@@ -1,0 +1,18 @@
+---
+sidebar: sidebar 
+permalink: mysql/innodb_log_file_size.html 
+keywords: MySQL,MariaDB,innodb_log_file_size 
+summary: MySQL en ONTAP 
+---
+= innodb_log_file_size
+:allow-uri-read: 
+
+
+[role="lead"]
+Seleccionar el tamaño correcto para el tamaño del archivo de registro InnoDB es importante para las operaciones de escritura y para tener un tiempo de recuperación decente después de un fallo del servidor.
+
+Dado que hay tantas transacciones registradas en el archivo, el tamaño del archivo de registro es importante para las operaciones de escritura. Cuando se modifican los registros, el cambio no se vuelve a escribir inmediatamente en el tablespace. En su lugar, el cambio se registra al final del archivo de registro y la página se marca como sucia. InnoDB utiliza su registro para convertir las operaciones de I/O aleatorias en operaciones de I/O secuenciales
+
+Cuando el log está lleno, la página sucia se escribe en el tablespace en secuencia para liberar espacio en el archivo log. Por ejemplo, supongamos que un servidor se bloquea en medio de una transacción y que las operaciones de escritura solo se registran en el archivo de registro. Antes de que el servidor pueda volver a activarse, debe pasar por una fase de recuperación en la que se reproduzcan los cambios registrados en el archivo de registro. Cuantas más entradas haya en el archivo de registro, más tiempo tardará el servidor en recuperarse.
+
+En este ejemplo, el tamaño del archivo log afecta tanto al tiempo de recuperación como al rendimiento de escritura. Al elegir el número correcto para el tamaño del archivo log, equilibre el tiempo de recuperación con respecto al rendimiento de escritura. Normalmente, cualquier cosa entre 128M y 512M es una buena relación calidad-precio.

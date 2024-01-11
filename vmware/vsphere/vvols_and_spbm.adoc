@@ -1,0 +1,27 @@
+---
+sidebar: sidebar 
+permalink: vmware/vsphere/vvols_and_spbm.html 
+keywords: vSphere, vVols, virtual volumes, SPBM, storage police based management, ONTAP 
+summary: Esta página describe las prácticas recomendadas para implementar una solución de almacenamiento ONTAP de NetApp en un entorno de VMware vSphere. 
+---
+= Volúmenes virtuales (vVols) y gestión basada en políticas de almacenamiento (SPBM)
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./../media/
+
+
+
+
+== Acerca de vVols y SPBM
+
+NetApp fue un partner de diseño inicial de VMware en el desarrollo de vSphere Virtual Volumes (vVols), que ofrecía información sobre la arquitectura y compatibilidad temprana con vVols y VMware vSphere APIs for Storage Awareness (VASA). Este enfoque no solo llevó la gestión de almacenamiento granular de la máquina virtual a VMFS, sino que también admitió la automatización del aprovisionamiento de almacenamiento a través de la gestión basada en políticas de almacenamiento (SPBM).
+
+La SPBM proporciona un marco que funciona como capa de abstracción entre los servicios de almacenamiento disponibles para su entorno de virtualización y los elementos de almacenamiento aprovisionados mediante políticas. Este enfoque permite a los arquitectos de almacenamiento diseñar pools de almacenamiento con distintas funcionalidades que pueden consumir fácilmente los administradores de máquinas virtuales. A continuación, los administradores pueden igualar los requisitos de carga de trabajo de las máquinas virtuales con los pools de almacenamiento aprovisionados, lo que permite controlar de forma granular diversos ajustes a nivel de máquinas virtuales o discos virtuales.
+
+ONTAP es líder en el sector del almacenamiento a escala de vVols, ya que admite cientos de miles de vVols en un único cluster, mientras que las cabinas empresariales y los proveedores de cabinas flash más pequeños admiten hasta varios miles de vVols por cabina. NetApp también impulsa la evolución de la gestión granular de máquinas virtuales con próximas funcionalidades para admitir vVols 3.0.
+
+
+NOTE: Para obtener más información sobre VMware vSphere Virtual Volumes, SPBM y ONTAP, consulte https://www.netapp.com/pdf.html?item=/media/13555-tr4400.pdf["TR-4400: VMware vSphere Virtual Volumes con ONTAP"^].

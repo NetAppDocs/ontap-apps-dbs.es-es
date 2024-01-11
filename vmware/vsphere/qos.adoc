@@ -1,0 +1,186 @@
+---
+sidebar: sidebar 
+permalink: vmware/vsphere/qos.html 
+keywords: Data protection, Space reclamation, VM and datastore cloning, Storage efficiency, thin provisioning, QoS, SIOC, Storage Distributed Resource Scheduler, DRS, Active IQ Unified Manager, Encryption 
+summary: SnapCenter permite crear políticas de backup que se pueden aplicar a varias tareas. Estas políticas pueden definir programaciones, retención, replicación y otras funcionalidades. Continúan permitiendo la selección opcional de snapshots consistentes con las máquinas virtuales, lo que aprovecha la capacidad del hipervisor para desactivar la I/O antes de tomar una snapshot de VMware. 
+---
+= Calidad de servicio (QoS)
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./../media/
+
+
+[role="lead"]
+Los sistemas que ejecutan el software ONTAP pueden utilizar la función de calidad de servicio del almacenamiento ONTAP para limitar el rendimiento en Mbps y/o I/o por segundo (IOPS) de diferentes objetos de almacenamiento como archivos, LUN, volúmenes o SVM completas.
+
+Los límites de rendimiento son útiles para controlar las cargas de trabajo desconocidas o de prueba antes de la implementación para asegurarse de que no afecten a otras cargas de trabajo. También se pueden utilizar para limitar una carga de trabajo abusivas una vez que se identifica. También admite niveles mínimos de servicio basados en IOPS para proporcionar un rendimiento constante para los objetos SAN en ONTAP 9.2 y para los objetos NAS en ONTAP 9.3.
+
+Con un almacén de datos NFS, se puede aplicar una política de calidad de servicio a todo el volumen FlexVol o a archivos VMDK individuales en el mismo. Con almacenes de datos VMFS que utilizan LUN de ONTAP, las políticas de calidad de servicio se pueden aplicar al volumen de FlexVol que contiene los LUN o LUN individuales, pero no archivos VMDK individuales porque ONTAP no reconoce el sistema de archivos VMFS. Al utilizar vVols, se puede establecer una calidad de servicio mínima o máxima en equipos virtuales individuales usando el perfil de capacidad de almacenamiento y la política de almacenamiento de equipos virtuales.
+
+El límite máximo de rendimiento de calidad de servicio en un objeto se puede establecer en Mbps o IOPS. Si se utilizan ambos, ONTAP aplica el primer límite alcanzado. Una carga de trabajo puede contener varios objetos y una política de calidad de servicio se puede aplicar a una o más cargas de trabajo. Cuando se aplica una política a varias cargas de trabajo, las cargas de trabajo comparten el límite total de la política. No se admiten los objetos anidados (por ejemplo, los archivos de un volumen no pueden tener cada uno su propia política). Los valores mínimos de calidad de servicio solo se pueden establecer en IOPS.
+
+Las siguientes herramientas están disponibles en este momento para gestionar las políticas de calidad de servicio de ONTAP y aplicarlas a los objetos:
+
+* CLI de ONTAP
+* System Manager de ONTAP
+* OnCommand Workflow Automation
+* Active IQ Unified Manager
+* Kit de herramientas NetApp PowerShell para ONTAP
+* Herramientas de ONTAP para VASA Provider de VMware vSphere
+
+
+Para asignar una política de calidad de servicio a un VMDK en NFS, tenga en cuenta las siguientes directrices:
+
+* La política debe aplicarse a la `vmname- flat.vmdk` que contiene la imagen del disco virtual real, no la `vmname.vmdk` (archivo de descriptor de disco virtual) o. `vmname.vmx` (Archivo descriptor de máquina virtual).
+* No aplique políticas a otros archivos del equipo virtual, como archivos de intercambio virtual (`vmname.vswp`).
+* Cuando utilice el cliente web de vSphere para buscar rutas de archivos (Datastore > Files), tenga en cuenta que combina la información del `- flat.vmdk` y.. `. vmdk` y simplemente muestra un archivo con el nombre del `. vmdk` pero el tamaño del `- flat.vmdk`. Agregar `-flat` en el nombre del archivo para obtener la ruta correcta.
+
+
+Para asignar una normativa de calidad de servicio a un LUN, incluidos VMFS y RDM, la SVM de ONTAP (mostrada como Vserver), la ruta de LUN y el número de serie pueden obtenerse en el menú sistemas de almacenamiento de la página de inicio de ONTAP Tools para VMware vSphere. Seleccione el sistema de almacenamiento (SVM) y, a continuación, Related Objects > SAN.  Use este enfoque cuando especifique la calidad de servicio mediante una de las herramientas de ONTAP.
+
+La calidad de servicio máxima y mínima se puede asignar fácilmente a una máquina virtual basada en VVol con las herramientas de ONTAP para VMware vSphere o Virtual Storage Console 7.1 y versiones posteriores. Al crear el perfil de funcionalidad de almacenamiento para el contenedor de VVol, especifique un valor de IOPS máximo y/o mínimo con la funcionalidad de rendimiento y, a continuación, haga referencia a este SCP con la política de almacenamiento de la máquina virtual. Use esta política cuando cree la máquina virtual o aplique la política a una máquina virtual existente.
+
+Los almacenes de datos de FlexGroup ofrecen funcionalidades de calidad de servicio mejoradas al usar las herramientas de ONTAP para VMware vSphere 9.8 y versiones posteriores. Puede establecer fácilmente la calidad de servicio en todas las máquinas virtuales de un almacén de datos o en máquinas virtuales específicas. Consulte la sección FlexGroup de este informe para obtener más información.
+
+
+
+=== ONTAP QoS y VMware SIOC
+
+QoS de ONTAP y VMware vSphere Storage I/o Control (SIOC) son tecnologías complementarias que los administradores de vSphere y almacenamiento pueden utilizar juntos para gestionar el rendimiento de máquinas virtuales vSphere alojadas en sistemas que ejecutan el software ONTAP. Cada herramienta tiene sus propias fuerzas, como se muestra en la siguiente tabla. Debido a los distintos ámbitos de VMware vCenter y ONTAP, algunos objetos pueden verse y gestionarse mediante un sistema, no el otro.
+
+|===
+| Propiedad | Calidad de servicio de ONTAP | VMware SIOC 
+
+
+| Cuando está activo | La directiva está siempre activa | Activo cuando existe una contención (latencia por encima del umbral de los almacenes de datos) 
+
+
+| Tipo de unidades | IOPS, Mbps | IOPS, recursos compartidos 
+
+
+| Alcance de vCenter o aplicaciones | Varios entornos de vCenter, otros hipervisores y aplicaciones | Un único servidor vCenter 
+
+
+| ¿Establecer QoS en la máquina virtual? | VMDK solo en NFS | VMDK en NFS o VMFS 
+
+
+| ¿Establecer QoS en el LUN (RDM)? | Sí | No 
+
+
+| ¿Configurar QoS en LUN (VMFS)? | Sí | No 
+
+
+| ¿Configurar calidad de servicio en el volumen (almacén de datos NFS)? | Sí | No 
+
+
+| ¿Configurar la calidad de servicio en SVM (inquilino)? | Sí | No 
+
+
+| ¿Enfoque basado en políticas? | Sí, pueden compartirse todas las cargas de trabajo de la política o aplicarse por completo a cada carga de trabajo de la política. | Sí, con vSphere 6.5 y posterior. 
+
+
+| Se requiere licencia | Incluido con ONTAP | Enterprise Plus 
+|===
+
+
+== Planificador de recursos distribuidos de almacenamiento de VMware
+
+El planificador de recursos distribuidos de almacenamiento (SDRS) de VMware es una función de vSphere que coloca los equipos virtuales en el almacenamiento en función de la latencia de I/o actual y el uso del espacio. A continuación, mueve la máquina virtual o los VMDK de forma no disruptiva entre los almacenes de datos de un clúster de almacenes de datos (también conocido como "pod"), seleccionando el mejor almacén de datos en el que colocar la máquina virtual o los VMDK en el clúster de almacenes de datos. Un clúster de almacenes de datos es una colección de almacenes de datos similares que se agregan en una única unidad de consumo desde la perspectiva del administrador de vSphere.
+
+Cuando se usan SDRS con las herramientas de ONTAP de NetApp para VMware vSphere, primero es necesario crear un almacén de datos con el plugin, utilizar vCenter para crear el clúster de almacenes de datos y, a continuación, añadir el almacén de datos. Una vez creado el clúster de almacenes de datos, es posible añadir almacenes de datos adicionales al clúster de almacenes de datos directamente desde el asistente de aprovisionamiento de la página Details.
+
+Otras prácticas recomendadas de ONTAP para SDRS incluyen lo siguiente:
+
+* Todos los almacenes de datos del clúster deben usar el mismo tipo de almacenamiento (como SAS, SATA o SSD), ser todos los almacenes de datos VMFS o NFS y tener la misma configuración de replicación y protección.
+* Considere el uso de SDR en modo predeterminado (manual). Este enfoque permite revisar las recomendaciones y decidir si se aplican o no. Tenga en cuenta los siguientes efectos de las migraciones de VMDK:
++
+** Cuando SDRS mueve VMDK entre almacenes de datos, se pierde cualquier ahorro de espacio con la clonado o deduplicación de ONTAP. Puede volver a ejecutar la deduplicación para recuperar este ahorro.
+** Después de que SDRS mueva los VMDK, NetApp recomienda volver a crear las snapshots en el almacén de datos de origen porque el espacio se bloqueará por la máquina virtual que se movió.
+** Mover VMDK entre almacenes de datos en el mismo agregado tiene pocas ventajas y LOS SDRS no tienen visibilidad en otras cargas de trabajo que puedan compartir el agregado.
+
+
+
+
+
+
+=== Gestión basada en políticas de almacenamiento y vVols
+
+Las API de VMware vSphere para la conciencia de almacenamiento (VASA) facilitan que el administrador de almacenamiento pueda configurar almacenes de datos con funcionalidades bien definidas y permiten que el administrador de equipos virtuales las utilice siempre que lo necesite para aprovisionar equipos virtuales sin tener que interactuar entre sí. Merece la pena echar un vistazo a este enfoque para ver cómo puede optimizar sus operaciones de almacenamiento de virtualización y evitar un gran trabajo trivial.
+
+Antes de VASA, los administradores de máquinas virtuales podían definir políticas de almacenamiento de máquinas virtuales, pero tenían que trabajar con el administrador de almacenamiento para identificar los almacenes de datos adecuados, a menudo utilizando documentación o convenciones de nomenclatura. Con VASA, el administrador de almacenamiento puede definir una serie de capacidades de almacenamiento, como el rendimiento, la clasificación por niveles, el cifrado y la replicación. Un conjunto de funcionalidades para un volumen o un conjunto de volúmenes se denomina perfil de capacidad de almacenamiento (SCP).
+
+El SCP admite QoS mínimo y/o máximo para los vVols de datos de una VM. La calidad de servicio mínima solo se admite en los sistemas AFF. Las herramientas de ONTAP para VMware vSphere incluyen una consola donde se muestra el rendimiento granular de máquinas virtuales y la capacidad lógica para vVols en sistemas ONTAP.
+
+La siguiente figura muestra las herramientas de ONTAP para el panel de vVols de VMware vSphere 9.8.
+
+image:vsphere_ontap_image7.png["Error: Falta la imagen gráfica"]
+
+Una vez definido el perfil de funcionalidad de almacenamiento, puede utilizarse para aprovisionar equipos virtuales mediante la normativa de almacenamiento que identifique sus requisitos. La asignación entre la política de almacenamiento de máquinas virtuales y el perfil de capacidad de almacenamiento de almacenes de datos permite que vCenter muestre una lista de almacenes de datos compatibles que podrá seleccionar. Este enfoque se conoce como gestión basada en políticas de almacenamiento.
+
+VASA proporciona la tecnología para consultar el almacenamiento y devolver un conjunto de funcionalidades de almacenamiento a vCenter. Los proveedores de VASA proporcionan la traducción entre las API y construcciones del sistema de almacenamiento y las API de VMware que comprende vCenter. VASA Provider de NetApp para ONTAP se ofrece como parte de las herramientas de ONTAP para VM del dispositivo VMware vSphere. El complemento de vCenter proporciona la interfaz para aprovisionar y gestionar almacenes de datos VVOL, así como la capacidad para definir perfiles de capacidades de almacenamiento (SCPs).
+
+ONTAP admite almacenes de datos de VVol tanto VMFS como NFS. El uso de vVols con almacenes DE datos SAN aporta algunas de las ventajas de NFS, como la granularidad a nivel de equipo virtual. Aquí encontrará algunas prácticas recomendadas para tener en cuenta y información adicional en http://www.netapp.com/us/media/tr-4400.pdf["CONSULTE TR-4400"^]:
+
+* Un almacén de datos de VVol puede consistir en varios volúmenes de FlexVol en varios nodos de clúster. El método más sencillo es un único almacén de datos, incluso cuando los volúmenes tienen diferentes funcionalidades. SPBM garantiza que se utiliza un volumen compatible para la máquina virtual. Sin embargo, todos los volúmenes deben formar parte de una única SVM de ONTAP y se debe acceder a ellos mediante un único protocolo. Un LIF por nodo para cada protocolo es suficiente. Evite el uso de varias versiones de ONTAP en un único almacén de datos de VVol, ya que las funcionalidades de almacenamiento pueden variar entre las versiones.
+* Utilice las herramientas de ONTAP para el plugin de VMware vSphere para crear y gestionar almacenes de datos de VVol. Además de gestionar el almacén de datos y su perfil, crea automáticamente un extremo de protocolo para acceder a vVols, si es necesario. Si se utilizan LUN, tenga en cuenta que los extremos de protocolo de LUN se asignan mediante los ID de LUN 300 y posteriores. Compruebe que la opción de configuración del sistema avanzado del host ESXi `Disk.MaxLUN` Permite un número de ID de LUN que sea mayor que 300 (el valor predeterminado es 1,024). Para realizar este paso, seleccione el host ESXi en vCenter, después la pestaña Configure y busque `Disk.MaxLUN` En la lista Advanced System Settings.
+* No instale ni migre VASA Provider, vCenter Server (basado en dispositivos o Windows) ni las herramientas de ONTAP para VMware vSphere en un almacén de datos vVols, ya que estos dependen mutuamente, lo cual limita la capacidad de gestionarlos en caso de una interrupción del suministro eléctrico u otra interrupción del centro de datos.
+* Realice un backup regular de la máquina virtual del proveedor de VASA. Como mínimo, cree copias Snapshot por hora del almacén de datos tradicional que contenga VASA Provider. Para obtener más información sobre la protección y recuperación del proveedor de VASA, consulte este tema https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/Virtual_Storage_Console_for_VMware_vSphere/Virtual_volumes%3A_Protecting_and_Recovering_the_NetApp_VASA_Provider["Artículo de base de conocimientos"^].
+
+
+La siguiente figura muestra los componentes de vVols.
+
+image:vsphere_ontap_image8.png["Error: Falta la imagen gráfica"]
+
+
+
+== Migración al cloud y backup
+
+Otra ventaja de ONTAP es la amplia compatibilidad con el cloud híbrido, al fusionar sistemas en el cloud privado local con funcionalidades de cloud público. Estas son algunas de las soluciones cloud de NetApp que se pueden usar junto con vSphere:
+
+* * Cloud Volumes.* NetApp Cloud Volumes Service para Amazon Web Services o Google Cloud Platform y Azure NetApp Files para ANF proporcionan servicios de almacenamiento gestionados multiprotocolo y de alto rendimiento en los principales entornos de cloud público. Los pueden utilizar directamente los invitados de VMware Cloud VM.
+* *Cloud Volumes ONTAP.* el software para la gestión de datos Cloud Volumes ONTAP de NetApp proporciona control, protección, flexibilidad y eficiencia para sus datos en el cloud que elija. Cloud Volumes ONTAP es un software de gestión de datos nativo en el cloud e integrado en el software de almacenamiento ONTAP de NetApp. Utilícelo con Cloud Manager para poner en marcha y gestionar instancias de Cloud Volumes ONTAP junto con sus sistemas ONTAP locales. Aproveche las funcionalidades avanzadas de NAS e iSCSI SAN junto con la gestión de datos unificada, incluidas copias Snapshot y replicación de SnapMirror.
+* *Servicios en la nube.* Utilice Cloud Backup Service o SnapMirror Cloud para proteger los datos de sistemas en las instalaciones mediante almacenamiento en cloud público. Cloud Sync le ayuda a migrar y mantener sus datos sincronizados a través de NAS, almacenes de objetos y almacenamiento Cloud Volumes Service.
+* *FabricPool.* FabricPool ofrece una organización en niveles rápida y fácil para los datos de ONTAP. Los bloques inactivos se pueden migrar a un almacén de objetos en clouds públicos o en un almacén de objetos de StorageGRID privado y se recuerdan automáticamente cuando se vuelve a acceder a los datos de ONTAP. También puede usar el nivel de objeto como un tercer nivel de protección para los datos que ya está gestionado por SnapVault. Este enfoque le permite https://www.linkedin.com/pulse/rethink-vmware-backup-again-keith-aasen/["Almacenar más snapshots de sus máquinas virtuales"^] En sistemas de almacenamiento ONTAP principales o secundarios
+* *ONTAP Select.* Utilice el almacenamiento definido por software de NetApp para ampliar su cloud privado a través de Internet a instalaciones y oficinas remotas, donde puede utilizar ONTAP Select para ofrecer compatibilidad con servicios de bloques y archivos, así como las mismas funcionalidades de gestión de datos vSphere que tiene en su centro de datos empresarial.
+
+
+A la hora de diseñar sus aplicaciones basadas en máquinas virtuales, tenga en cuenta la movilidad del cloud futura. Por ejemplo, en lugar de colocar los archivos de datos y aplicaciones en conjunto, utilizan una exportación de NFS o LUN independiente para los datos. Esto permite migrar la máquina virtual y los datos por separado a los servicios de cloud.
+
+
+
+== Cifrado para datos de vSphere
+
+Hoy en día, hay cada vez más demandas de protección de los datos en reposo mediante el cifrado. Aunque el foco inicial era la información financiera y de atención sanitaria, existe un creciente interés en proteger toda la información, ya sea en archivos, bases de datos u otros tipos de datos.
+
+Los sistemas que ejecutan el software ONTAP facilitan la protección de cualquier dato con el cifrado en reposo. El cifrado de almacenamiento de NetApp (NSE) utiliza unidades de disco de cifrado automático con ONTAP para proteger datos SAN y NAS. NetApp también ofrece el cifrado de volúmenes de NetApp y el cifrado de agregados de NetApp como un método sencillo basado en software para cifrar volúmenes en cualquier unidad de disco. Este cifrado de software no requiere unidades de disco especiales ni gestores de claves externos y está disponible para los clientes de ONTAP sin coste adicional. Puede realizar una actualización y empezar a utilizarla sin interrupciones en los clientes o las aplicaciones, y ha sido validada según el estándar de nivel 1 de FIPS 140-2-2, incluido el gestor de claves incorporado.
+
+Existen varios métodos para proteger los datos de las aplicaciones virtualizadas que se ejecutan en VMware vSphere. Uno de los métodos consiste en proteger los datos con software dentro de los equipos virtuales a nivel de SO «guest». Los hipervisores más recientes, como vSphere 6.5, ahora admiten el cifrado a nivel de equipo virtual como otra alternativa. Sin embargo, el cifrado del software de NetApp es simple y fácil y tiene estas ventajas:
+
+* *Sin efecto sobre la CPU del servidor virtual.* algunos entornos de servidor virtual necesitan todos los ciclos de CPU disponibles para sus aplicaciones, aunque las pruebas han demostrado que se necesitan hasta 5 veces los recursos de CPU con cifrado a nivel de hipervisor. Incluso si el software de cifrado admite el conjunto de instrucciones AES-NI de Intel para descargar la carga de trabajo de cifrado (como lo hace el cifrado de software NetApp), este enfoque podría no ser factible debido a la necesidad de nuevas CPU que no son compatibles con servidores antiguos.
+* *Incluye el gestor de claves incorporado.* el cifrado de software de NetApp incluye un gestor de claves incorporado sin coste adicional, lo que facilita su introducción sin servidores de gestión de claves de alta disponibilidad complejos de adquirir y usar.
+* *No afecta a la eficiencia del almacenamiento.* las técnicas de eficiencia del almacenamiento como la deduplicación y la compresión se utilizan ampliamente hoy en día y son clave para utilizar medios de disco flash de forma rentable. Sin embargo, por lo general, los datos cifrados no se pueden deduplicar o comprimir. El cifrado de almacenamiento y hardware de NetApp funciona a un nivel inferior y permite el uso completo de funciones de eficiencia del almacenamiento de NetApp, líderes del sector, a diferencia de otros métodos.
+* *Cifrado granular sencillo del almacén de datos.* con el cifrado de volúmenes de NetApp, cada volumen obtiene su propia clave AES de 256 bits. Si necesita cambiarlo, puede hacerlo con un solo comando. Este método es genial si tiene varios clientes o necesita probar el cifrado independiente para diferentes departamentos o aplicaciones. Este cifrado se gestiona a nivel de almacén de datos, lo cual es mucho más fácil que gestionar equipos virtuales individuales.
+
+
+Es fácil empezar a utilizar el cifrado de software. Después de instalar la licencia, solo tiene que configurar el gestor de claves incorporado especificando una frase de acceso y luego crear un volumen nuevo o mover un volumen en el almacenamiento para habilitar el cifrado. NetApp está trabajando para añadir compatibilidad más integrada con funcionalidades de cifrado en futuros lanzamientos de sus herramientas de VMware.
+
+
+
+== Active IQ Unified Manager
+
+Active IQ Unified Manager proporciona visibilidad de los VM en su infraestructura virtual y permite supervisar y solucionar los problemas de almacenamiento y rendimiento en su entorno virtual.
+
+Una infraestructura virtual típica puesta en marcha en ONTAP tiene diversos componentes que se distribuyen en las capas informática, de red y de almacenamiento. Cualquier retraso en el rendimiento de una aplicación de equipo virtual puede producirse debido a una combinación de latencias que deben afrontar los distintos componentes de las capas respectivas.
+
+La siguiente captura de pantalla muestra la vista Máquinas virtuales de Active IQ Unified Manager.
+
+image:vsphere_ontap_image9.png["Error: Falta la imagen gráfica"]
+
+Unified Manager presenta el subsistema subyacente de un entorno virtual en una vista topológica para determinar si se ha producido un problema de latencia en el nodo de computación, la red o el almacenamiento. La vista también destaca el objeto específico que provoca el desfase en el rendimiento a la hora de dar pasos correctivas y solucionar el problema subyacente.
+
+La siguiente captura de pantalla muestra la topología ampliada de AIUM.
+
+image:vsphere_ontap_image10.png["Error: Falta la imagen gráfica"]

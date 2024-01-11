@@ -1,0 +1,103 @@
+---
+sidebar: sidebar 
+permalink: oracle/dp/planning.html 
+keywords: data protection, DR, snapshots, CG 
+summary: Estrategias de protección de datos de ONTAP 
+---
+= Planificación de la protección de datos
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+La arquitectura de protección de datos empresariales adecuada depende de los requisitos empresariales relacionados con la retención de datos, la capacidad de recuperación y la tolerancia a interrupciones durante diversos eventos.
+
+Por ejemplo, piense en el número de aplicaciones, bases de datos y conjuntos de datos importantes. Crear una estrategia de backup para un único conjunto de datos que garantice el cumplimiento de los acuerdos de nivel de servicio típicos es bastante sencillo, ya que no hay muchos objetos que gestionar. A medida que aumenta el número de conjuntos de datos, la supervisión se hace más complicada y los administradores pueden verse forzados a invertir cada vez más tiempo en solucionar los fallos de backup. A medida que un entorno llega al cloud y escala el proveedor de servicios, se necesita un enfoque totalmente diferente.
+
+El tamaño del conjunto de datos también afecta a la estrategia. Por ejemplo, existen muchas opciones para backup y recuperación con una base de datos 100GB porque el conjunto de datos es tan pequeño. La simple copia de los datos de los medios de backup con herramientas tradicionales suele proporcionar un objetivo de tiempo de recuperación suficiente para la recuperación. Una base de datos de 100TB suele necesitar una estrategia completamente diferente a menos que el objetivo de tiempo de recuperación permita una interrupción de varios días, en cuyo caso puede ser aceptable un procedimiento tradicional de backup y recuperación basado en copia.
+
+Por último, existen factores fuera del propio proceso de backup y recuperación. Por ejemplo, ¿existen bases de datos que respalden actividades de producción críticas, lo que convierte la recuperación en un evento raro que solo realizan los administradores de bases de datos cualificados? Alternativamente, ¿las bases de datos forman parte de un entorno de desarrollo de gran tamaño en el que la recuperación es una ocurrencia frecuente y gestionada por un EQUIPO de TECNOLOGÍA generalista?
+
+
+
+== ¿Una snapshot es un backup?
+
+Una objeción habitual al uso de copias Snapshot como estrategia de protección de datos es el hecho de que los datos «reales» y los de copias Snapshot se encuentran en las mismas unidades. La pérdida de esas unidades provocaría la pérdida de los datos primarios y el backup.
+
+Este es un problema válido. Los snapshots locales se usan para necesidades de backup y recuperación diarias y, en ese sentido, la snapshot es un backup. Cerca del 99 % de todos los escenarios de recuperación en entornos NetApp utilizan copias Snapshot para satisfacer incluso los requisitos de objetivo de tiempo de recuperación más agresivos.
+
+Sin embargo, las copias Snapshot locales nunca deberían ser la única estrategia de backup, por lo que NetApp ofrece tecnología como la replicación de SnapMirror para replicar de forma rápida y eficiente snapshots en un conjunto de unidades independiente. En una solución correctamente diseñada con copias Snapshot y replicación Snapshot, el uso de la cinta puede minimizarse tal vez a un archivo trimestral o eliminarse totalmente.
+
+
+
+== Backups de grupos de consistencia
+
+Un backup de grupo de consistencia implica capturar el estado de un conjunto de datos (o varios conjuntos de datos) en un único momento específico atómico. Como ejemplo de base de datos, incluye todos los componentes de la base de datos, como archivos de datos, archivos log y otros archivos directamente asociados a la base de datos. Esto funciona con casi todos los productos de bases de datos relacionales, incluidos Oracle RDBMS, Microsoft SQL Server, SAP HANA, PostgreSQL, MySQL y MariaDB. Proteger una configuración de VMware con un backup de grupo de consistencia sería similar: Capturar todos los almacenes de datos y, potencialmente, las LUN de arranque ESX en un único punto atómico del tiempo.
+
+La creación de una snapshot de grupo de coherencia de este tipo simula esencialmente un bloqueo, por el cual estos backups se denominan backups consistentes con los fallos. A veces hay preocupaciones con el soporte para escenarios de recuperación, pero es importante entender que no se requiere ningún procedimiento de recuperación. Cuando la aplicación se inicia después de restaurar un backup de grupo de consistencia, ejecuta los procesos de recuperación de registros habituales, las reproducciones de diarios del sistema de archivos y otras tareas para reproducir cualquier I/O que estuviera en curso en el punto del backup. La aplicación entonces comienza como de costumbre.
+
+Básicamente, cualquier aplicación que pueda resistir un fallo de alimentación o un fallo del servidor sin corrupción de datos puede protegerse de esta manera. El hecho de que esto funcione también se puede demostrar por el enorme número de aplicaciones protegidas con productos de mirroring síncrono y asíncrono de muchos proveedores diferentes. Si un desastre golpea repentinamente el sitio principal, entonces el sitio de réplica contiene una imagen consistente del entorno original en el momento en que ocurrió el desastre. Una vez más, no se requiere ningún procedimiento de recuperación especial.
+
+El RPO de este método suele limitarse al punto del backup. Como regla general, el objetivo de punto de recuperación mínimo para copias Snapshot de volumen único es de una hora. Por ejemplo, es razonable realizar 48 instantáneas por hora y otros 30 días de instantáneas por noche y no requerirían la retención de un número excesivo de instantáneas. Se hace más difícil conseguir un objetivo de punto de recuperación inferior a una hora, algo que no se recomienda sin consultar primero los servicios profesionales de NetApp para comprender los requisitos de entorno, escala y protección de datos.
+
+El RTO suele medirse en segundos. Una aplicación se apaga, se restauran los volúmenes y se reinicia la aplicación.
+
+El enfoque más simple es colocar todos los archivos o LUN en un único grupo de consistencia de volúmenes, lo que permite programar una creación de copias Snapshot directamente en ONTAP. Donde un conjunto de datos debe abarcar volúmenes, se requiere una snapshot de grupo de coherencia (cg-snapshot). Esto puede configurarse mediante llamadas a la API RESTful o System Manager y, además, SnapCenter puede crear una snapshot de grupo de coherencia sencilla en una lista de volúmenes definida.
+
+
+
+== Arquitectura de replicación y recuperación ante desastres
+
+En esta sección se aborda la protección de datos remota, para la que los datos se replican en un sitio remoto con el fin de almacenar en una ubicación externa segura y la recuperación ante desastres. Es preciso tener en cuenta que estas tablas no abordan la protección de datos de mirroring síncrono. Para este requisito, consulte la documentación de NetApp MetroCluster, que incluye link:../metrocluster/overview.html["MetroCluster"] y.. link:../smbc/overview.html["Continuidad del negocio de SnapMirror"]
+
+El objetivo de punto de recuperación de desastres está limitado por el ancho de banda de red disponible y el tamaño total de los datos que se protegen. Una vez creada la transferencia básica, las actualizaciones solo se basan en los datos modificados, que normalmente son un bajo porcentaje de la huella de datos total, aunque existen excepciones.
+
+Por ejemplo, una base de datos de 10TB GB con una tasa de cambio semanal del 10% tiene un promedio de aproximadamente 6GB dólares por hora de cambios totales. Con 10Gb de conectividad, esta base de datos requiere aproximadamente seis minutos para transferirse. La tasa de cambio varía con la fluctuación en la tasa de cambios de la base de datos, pero en general un intervalo de actualización de 15 minutos y, por lo tanto, un objetivo de punto de recuperación de 15 minutos debería ser alcanzable. Si hay 100 bases de datos de este tipo, se necesitan 600 minutos para transferir los datos. Por lo tanto, no es posible un objetivo de punto de recuperación de una hora. Del mismo modo, una réplica de una única base de datos de 100TB GB de tamaño con una tasa de cambio semanal del 10% no se puede actualizar de forma fiable en una hora.
+
+Otros factores pueden afectar a la replicación, como la sobrecarga de la replicación y las limitaciones en el número de operaciones de replicación simultáneas. Sin embargo, la planificación general para una estrategia de replicación de un único volumen puede basarse en el ancho de banda disponible y, por lo general, es posible lograr un RPO de replicación de una hora. Un objetivo de punto de recuperación inferior a una hora se complica y solo debe llevarse a cabo tras consultar los Servicios profesionales de NetApp. En algunos casos, 15 minutos es factible con muy buena conectividad de red sitio a sitio. Sin embargo, en general, cuando se necesita un objetivo de punto de recuperación inferior a una hora, la arquitectura de repetición de registros de varios volúmenes ofrece mejores resultados.
+
+El objetivo de tiempo de recuperación con replicación de grupos de consistencia en un escenario de recuperación ante desastres es excelente, normalmente se mide en segundos desde el punto de vista del almacenamiento. El enfoque más sencillo es simplemente romper la duplicación, y la base de datos está lista para iniciarse. El tiempo de inicio de la base de datos suele ser de unos 10 segundos, pero las bases de datos muy grandes con muchas transacciones registradas pueden tardar unos minutos.
+
+El factor más importante para determinar el objetivo de tiempo de recuperación no es el sistema de almacenamiento, sino más bien la aplicación y el sistema operativo del host en el que se ejecuta. Por ejemplo, los datos replicados pueden estar disponibles en un segundo o dos, pero esto solo representa los datos. También debe haber un sistema operativo configurado correctamente con binarios de aplicación que estén disponibles para utilizar los datos.
+
+En algunos casos, los clientes han preparado instancias de recuperación ante desastres por adelantado con el almacenamiento detectado previamente en los sistemas operativos. En estos casos, activar el escenario de recuperación ante desastres no puede requerir más que interrumpir el reflejo e iniciar la aplicación. En otros casos, el SO y las aplicaciones asociadas pueden reflejarse junto con la base de datos como un disco de máquina virtual ESX (VMDK). En estos casos, el RPO se determina según la cantidad que ha invertido un cliente en automatización para arrancar rápidamente el VMDK de modo que las aplicaciones puedan iniciarse.
+
+El tiempo de retención se controla en parte por el límite de instantáneas. Por ejemplo, los volúmenes de ONTAP tienen un límite de 1024 Snapshot. En algunos casos, los clientes tienen replicación multiplexada para aumentar el límite. Por ejemplo, si se necesitan 2000 días de backups, un origen se puede replicar en dos volúmenes con actualizaciones en días alternativos. Esto requiere un aumento en el espacio inicial requerido, pero sigue representando un método mucho más eficaz que un sistema de backup tradicional, que implica varios backups completos.
+
+
+
+=== Grupo de consistencia de volumen único
+
+El enfoque más simple es colocar todos los archivos o LUN en un único grupo de consistencia de volúmenes, lo que permite programar las actualizaciones de SnapMirror y SnapVault directamente en el sistema de almacenamiento. No se requiere ningún software externo.
+
+
+
+=== Grupo de coherencia de varios volúmenes
+
+Cuando una base de datos debe abarcar volúmenes, se necesita una snapshot de grupo de coherencia (cg-snapshot). Como se mencionó anteriormente, puede configurarse mediante llamadas a la API RESTful o System Manager y, además, SnapCenter puede crear una snapshot de grupo de coherencia sencilla en una lista de volúmenes definida.
+
+También existe una consideración adicional sobre el uso de snapshots consistentes y múltiples volúmenes para la recuperación ante desastres. Al realizar una actualización de varios volúmenes, es posible que se produzca un desastre mientras una transferencia aún está en curso. El resultado sería un conjunto de volúmenes que no son coherentes entre sí. Si esto sucedió, algunos de los volúmenes deben restaurarse a un estado de snapshot anterior para ofrecer una imagen de base de datos coherente con los fallos y lista para su uso.
+
+
+
+== Recuperación ante desastres: Activación
+
+
+
+=== NFS
+
+El proceso de activación de la copia de recuperación ante desastres depende del tipo de almacenamiento. Con NFS, los sistemas de archivos pueden premontarse en el servidor de recuperación ante desastres. Se encuentran en un estado de sólo lectura y pasan a ser de lectura y escritura cuando se rompe el espejo. Esto ofrece un objetivo de punto de recuperación extremadamente bajo y el proceso general de recuperación ante desastres es más fiable, ya que existen menos partes que gestionar.
+
+
+
+=== SAN
+
+La activación de configuraciones SAN en caso de recuperación ante desastres es cada vez más complicada. La opción más sencilla es, por lo general, romper temporalmente las réplicas y montar los recursos SAN, incluidos pasos como detectar la configuración de LVM (incluidas las funciones específicas de la aplicación como Oracle Automatic Storage Management [ASM]) y agregar entradas a /etc/fstab.
+
+El resultado es que las rutas del dispositivo LUN, los nombres de los grupos de volúmenes y otras rutas de dispositivos se dan a conocer al servidor de destino. A continuación, estos recursos pueden apagarse y, después, se pueden restaurar los duplicados. El resultado es un servidor que se encuentra en un estado que puede conectar rápidamente la aplicación en línea. Los pasos para activar grupos de volúmenes, montar sistemas de archivos o iniciar bases de datos y aplicaciones están fácilmente automatizados.
+
+Es necesario tener cuidado para asegurarse de que el entorno de recuperación ante desastres está actualizado. Por ejemplo, es probable que se añadan nuevas LUN al servidor de origen, lo que significa que se deben detectar previamente las nuevas LUN en el destino para asegurarse de que el plan de recuperación ante desastres funciona como se espera.

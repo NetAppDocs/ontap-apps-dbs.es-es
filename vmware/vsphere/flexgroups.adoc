@@ -1,0 +1,36 @@
+---
+sidebar: sidebar 
+permalink: vmware/vsphere/flexgroups.html 
+keywords: vSphere, datastore, VMFS, FC, FCoE, NVMe/FC, iSCSI, NFS, vVols 
+summary: Esta página describe las prácticas recomendadas para implementar una solución de almacenamiento ONTAP de NetApp en un entorno de VMware vSphere. 
+---
+= Grupos flexibles
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./../media/
+
+
+[role="lead"]
+ONTAP 9.8 añade compatibilidad para almacenes de datos de FlexGroup en vSphere, junto con las herramientas de ONTAP para la versión de VMware vSphere 9.8.
+
+FlexGroup simplifica la creación de grandes almacenes de datos y crea automáticamente una serie de volúmenes constituyentes para obtener el máximo rendimiento de un sistema ONTAP. Utilice FlexGroup con vSphere para un único almacén de datos vSphere escalable con la potencia de un clúster ONTAP completo.
+
+Además de las pruebas exhaustivas del sistema con las cargas de trabajo de vSphere, ONTAP 9.8 también añade un nuevo mecanismo de descarga de copias para los almacenes de datos de FlexGroup. Esto utiliza un motor de copia mejorado para copiar archivos entre componentes en segundo plano y permitir el acceso tanto en el origen como en el destino. Las múltiples copias utilizan clones de archivos disponibles al instante y con gestión eficiente del espacio dentro de un componente cuando es necesario, según la escala.
+
+ONTAP 9.8 también añade nuevas métricas de rendimiento basadas en archivos (IOPS, rendimiento y latencia) para archivos FlexGroup. Estas métricas pueden verse en las herramientas de ONTAP para la consola de VMware vSphere e informes de VM. Las herramientas de ONTAP para el complemento VMware vSphere también le permiten establecer reglas de calidad de servicio (QoS) con una combinación de IOPS máximo o mínimo. Estos conjuntos se pueden establecer en todas las máquinas virtuales de un almacén de datos o individualmente para máquinas virtuales específicas.
+
+A continuación figuran algunas de las mejores prácticas que ha desarrollado NetApp:
+
+* Use los valores predeterminados de aprovisionamiento de FlexGroup. Aunque se recomiendan las herramientas de ONTAP para VMware vSphere porque crea y monta FlexGroup en vSphere, ONTAP System Manager o la línea de comandos puede utilizarse para necesidades especiales. Incluso entonces, utilice valores predeterminados como el número de miembros constituyentes por nodo porque esto es lo que se ha probado con vSphere.
+* Al ajustar el tamaño a un almacén de datos FlexGroup, tenga en cuenta que FlexGroup consta de varios volúmenes FlexVol más pequeños que crean un espacio de nombres mayor. Por lo tanto, el tamaño del almacén de datos para que sea al menos 8 veces el tamaño de la máquina virtual más grande. Por ejemplo, si tiene una máquina virtual de 6 TB en el entorno, ajuste el tamaño del almacén de datos FlexGroup no menor que 48 TB.
+* Permita que FlexGroup gestione el espacio en almacenes de datos. AutoSize y Elastic Sizing se han probado con almacenes de datos vSphere. Si el almacén de datos se aproximara a la capacidad completa, use las herramientas de ONTAP para VMware vSphere u otra herramienta para ajustar el tamaño del volumen de FlexGroup. FlexGroup mantiene la capacidad y la inodos equilibrados a través de los componentes, dando prioridad a los archivos de una carpeta (VM) al mismo componente si la capacidad lo permite.
+* VMware y NetApp no admiten actualmente un enfoque de red multivía común. Para NFSv4.1, NetApp admite pNFS, mientras que VMware admite la conexión de enlaces de sesiones. NFSv3 no admite varias rutas físicas a un volumen. En el caso de FlexGroup con ONTAP 9.8, nuestra mejor práctica recomendada es que las herramientas de ONTAP para VMware vSphere puedan realizar el montaje único, ya que el efecto del acceso indirecto suele ser mínimo (microsegundos). Es posible usar el DNS round-robin para distribuir hosts ESXi a través de LIF en diferentes nodos del FlexGroup, pero para ello sería necesario crear y montar la FlexGroup sin las herramientas de ONTAP para VMware vSphere. Por lo tanto, las funciones de gestión del rendimiento no estarán disponibles.
+* Se ha probado la compatibilidad con almacenes de datos FlexGroup vSphere de hasta 1500 equipos virtuales con la versión 9.8.
+* Use el plugin de NFS para VAAI de VMware para la descarga de copias. Tenga en cuenta que, aunque la clonación se mejora en un almacén de datos FlexGroup, ONTAP no ofrece ventajas significativas en cuanto a rendimiento frente a la copia de host ESXi al copiar equipos virtuales entre volúmenes de FlexVol o FlexGroup.
+* Utilice las herramientas de ONTAP para VMware vSphere 9.8 para supervisar el rendimiento de las máquinas virtuales de FlexGroup mediante métricas de ONTAP (panel e informes de máquinas virtuales) y para gestionar la calidad de servicio en máquinas virtuales individuales. Estas métricas no están disponibles a través de los comandos o las API de ONTAP.
+* Puede establecerse calidad de servicio (IOPS máx./mín.) en máquinas virtuales individuales o en todas las máquinas virtuales de un almacén de datos en ese momento. La configuración de la calidad de servicio en todas las máquinas virtuales sustituye cualquier configuración independiente por cada máquina virtual. Los ajustes no amplían en el futuro a máquinas virtuales nuevas o migradas; establezca la calidad de servicio en las nuevas máquinas virtuales o vuelva a aplicar la calidad de servicio a todas las máquinas virtuales del almacén de datos.
+* El plugin de SnapCenter para VMware vSphere versión 4.4 admite el backup y la recuperación de máquinas virtuales en un almacén de datos de FlexGroup en el sistema de almacenamiento principal. Si bien puede utilizarse SnapMirror manualmente para replicar un FlexGroup en un sistema secundario, SCV 4.4 no gestiona las copias secundarias.
+

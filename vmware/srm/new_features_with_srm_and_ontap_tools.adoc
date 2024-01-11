@@ -1,0 +1,89 @@
+---
+sidebar: sidebar 
+permalink: vmware/srm/new_features_with_srm_and_ontap_tools.html 
+keywords: vmware, site, recovery manager, vsrm, vsphere, ipv6, support, rest, api, replication, ccols, spbm, srm, appliance based 
+summary: Con la transición del dispositivo virtual anterior, las herramientas de ONTAP incorporan una gran cantidad de nuevas funciones, límites más altos y nueva compatibilidad con vVols. 
+---
+= Nuevas funcionalidades con SRM y las herramientas de ONTAP
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./../media/
+
+
+[role="lead"]
+Con la transición del dispositivo virtual anterior, las herramientas de ONTAP incorporan una gran cantidad de nuevas funciones, límites más altos y nueva compatibilidad con vVols.
+
+
+
+== Versiones más recientes de vSphere y Site Recovery Manager
+
+Gracias al lanzamiento de SRM 8,7 y versiones posteriores, así como a las versiones 9,12 y posteriores de las herramientas de ONTAP, ahora puede proteger equipos virtuales que se ejecuten en la actualización 1 de VMware vSphere 8.
+
+NetApp ha compartido una estrecha colaboración con VMware durante casi dos décadas y se esfuerza por ofrecer soporte para las últimas versiones de Lo antes posible.. Consulte siempre la herramienta de matriz de interoperabilidad (IMT) de NetApp para ver las combinaciones de software más recientes cualificadas.
+
+Puede encontrar el NetApp IMT en link:https://mysupport.netapp.com/matrix["https://mysupport.netapp.com/matrix"^].
+
+
+
+== Compatibilidad con vVols (y por qué es importante la gestión basada en políticas de almacenamiento (SPBM), incluso con SRM)
+
+A partir de la versión 8,3, SRM ahora admite la gestión basada en políticas de almacenamiento (SPBM) de replicación que aprovecha vVols y la replicación basada en cabinas para almacenes de datos que usan iSCSI, FCP y NFS v3. Para ello, el servidor SRM se actualizó para incluir un nuevo servicio de proveedor vVols de SRM, que se comunica con el servicio SMS del servidor vCenter para tareas relacionadas con VASA.
+
+Una ventaja de esta arquitectura es que el SRA ya no es necesario porque todo se gestiona con VASA.
+
+La SPBM es una potente herramienta en el cuadro de herramientas de vSphere que permite servicios de almacenamiento simplificados, predecibles y constantes para el consumo mediante marcos de automatización en entornos de cloud privado e híbrido. Básicamente, SPBM permite definir clases de servicio que satisfacen las necesidades de su diversa base de clientes. SRM ahora le permite exponer capacidades de replicación a sus clientes para cargas de trabajo críticas que requieren una orquestación y automatización sólidas para la recuperación ante desastres estándares del sector.
+
+Ejemplo de arquitectura de vVols con FCP o iSCSI:
+
+image:vsrm-ontap9_image1.png["Error: Falta la imagen gráfica"]
+
+
+
+== Soporte para servidores SRM basados en dispositivos
+
+Ahora, los servidores de SRM basados en el SO fotones son compatibles, además de las plataformas basadas en Windows heredadas.
+
+Ahora puede instalar adaptadores SRA independientemente del tipo de servidor SRM preferido.
+
+
+
+== Compatibilidad con IPv6
+
+IPv6 ahora es compatible con las siguientes limitaciones:
+
+* VCenter 6.7 o posterior
+* No es compatible con SRM 8.2 (8.1, 8.3 y 8. 4 son compatibles)
+* Compruebe la https://mysupport.netapp.com/matrix/imt.jsp?components=84943;&solution=1777&isHWU&src=IMT["Herramienta de matriz de interoperabilidad"^] para las versiones cualificadas más recientes.
+
+
+
+
+== Mejor rendimiento
+
+El rendimiento operativo es un requisito clave para la ejecución de tareas del SRM. Para satisfacer los requisitos de los objetivos de tiempo de recuperación y de punto de recuperación modernos, el SRA con las herramientas de ONTAP ha añadido tres nuevas mejoras.
+
+* *Soporte para operaciones de reprotección simultáneas.* primero introducido en SRA 9.7.1, habilitar esta función permite ejecutar reprotección en dos o más planes de recuperación simultáneamente, reduciendo así el tiempo necesario para volver a proteger los almacenes de datos después de una migración por error y permanecer dentro de los parámetros RTO y RPO.
+* *Herramientas de ONTAP 9.8 agrega un nuevo modo optimizado sólo para NAS.* cuando utiliza cuentas y conexiones de ámbito SVM a clústeres de ONTAP con sólo almacenes de datos basados en NFS, puede habilitar el modo optimizado sólo para NAS para obtener el máximo rendimiento en entornos compatibles.
+* *Herramientas de ONTAP 9,12 añadió soporte para la función de resincronización rápida de SnapMirror de ONTAP*. Esto permite volver a sincronizar los duplicados con la vista de tener que volver a calcular el ahorro de eficiencia del almacenamiento después del proceso. Esta función no se utiliza de forma predeterminada, pero puede habilitarse en entornos a gran escala en los que la resincronización tradicional demora demasiado tiempo o se agota el tiempo de espera.
+
+
+
+
+== Mayor escala
+
+Las herramientas de ONTAP SRA ahora pueden admitir hasta 500 grupos de protección (PGS) cuando se usa con SRM 8.3 y versiones posteriores.
+
+
+
+== Replicación síncrona
+
+Una nueva función que se espera tanto y que se prevé que será SnapMirror Synchronous (SM-S) con ONTAP 9.5 y posterior, que ofrece una solución de replicación de datos de RPO cero para sus aplicaciones críticas. SM-S requiere las herramientas ONTAP 9.8 o posterior.
+
+
+
+== Soporte para API de REST
+
+La configuración del servidor SRA ahora puede gestionarse mediante API DE REST. Se ha añadido una interfaz de usuario de Swagger para ayudar a crear sus flujos de trabajo de automatización y se puede encontrar en el dispositivo de herramientas de ONTAP en `https://<appliance>:8143/api/rest/swagger-ui.html#/`.

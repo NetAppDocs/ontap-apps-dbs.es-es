@@ -1,0 +1,49 @@
+---
+indexpage:
+  lead: ONTAP es la base para la gestión y la protección de datos de numerosas tecnologías
+    de aplicaciones y bases de datos empresariales. En las siguientes páginas se ofrece
+    información sobre las mejores prácticas y los procedimientos de implementación
+    para ONTAP y las aplicaciones empresariales e infraestructuras.
+  tiles:
+  - title: Microsoft SQL Server
+    links:
+    - title: Microsoft SQL Server en ONTAP
+      url: "/mssql/overview.html"
+    - title: Consideraciones sobre almacenamiento de Microsoft SQL Server
+      url: "/mssql/Storage-considerations.html"
+    - title: Protección de datos de Microsoft SQL Server
+      url: "/mssql/Data-protection.html"
+    - title: Recuperación ante desastres de Microsoft SQL Server
+      url: "/mssql/SQL-disaster-recovery.html"
+  - title: Bases de datos de código abierto
+    links:
+    - title: MariaDB y MySQL en ONTAP
+      url: "/mysql/overview.html"
+    - title: PostgreSQL en ONTAP
+      url: "/postgres/overview.html"
+  - title: Base de datos Oracle
+    links:
+    - title: Oracle en ONTAP
+      url: "/oracle/overview.html"
+    - title: Protección de datos de Oracle
+      url: "/oracle/dp/oracle-data-protection-introduction.html"
+    - title: Recuperación ante desastres de Oracle
+      url: "/oracle/dr/oracle-dr-overview.html"
+    - title: Migración de Oracle
+      url: "/oracle/migration/oracle-migration-overview.html"
+  - title: SAP HANA
+    links:
+    - title: Soluciones SAP
+      url: https://docs.netapp.com/us-en/netapp-solutions-sap/index.html
+    - title: SAP HANA con AFF y FC
+      url: https://docs.netapp.com/us-en/netapp-solutions-sap/bp/saphana_aff_fc_introduction.html
+    - title: SAP HANA con AFF y NFS
+      url: https://docs.netapp.com/us-en/netapp-solutions-sap/bp/saphana_aff_nfs_introduction.html
+  - title: VMware
+    links:
+    - title: VMware vSphere con ONTAP
+      url: "/vmware/vsphere/overview.html"
+    - title: Virtual Volumes (vVols) con ONTAP
+      url: "/vmware/vvols/overview.html"
+    - title: VMware Site Recovery Manager con ONTAP
+      url: "/vmware/srm/overview.html"

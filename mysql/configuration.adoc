@@ -1,0 +1,47 @@
+---
+sidebar: sidebar 
+permalink: mysql/configuration.html 
+keywords: MySQL,MariaDB 
+summary: Configuración de MySQL 
+---
+= Información general de configuración
+:allow-uri-read: 
+
+
+[role="lead"]
+NetApp recomienda varios parámetros de configuración de MySQL importantes (enumerados en la tabla 1) para obtener un rendimiento óptimo.
+
+[cols="1,1"]
+|===
+
+
+| Parámetros | Valores 
+
+
+| innodb_log_file_size | 256M 
+
+
+| innodb_flush_log_at_trx_commit | 2 
+
+
+| innodb_doublewrite | 0 
+
+
+| innodb_flush_method | fsync 
+
+
+| innodb_buffer_pool_size | 11G 
+
+
+| innodb_io_capacity | 8192 
+
+
+| innodb_buffer_pool_instances | 8 
+
+
+| innodb_lru_scan_profund | 8192 
+
+
+| open_file_limit | 65535 
+|===
+Para establecer los parámetros descritos en esta sección, debe cambiarlos en el archivo de configuración de MySQL (my.cnf). Las mejores prácticas de NetApp se deben a las pruebas que se realizan internamente.

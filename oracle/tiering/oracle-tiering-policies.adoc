@@ -1,0 +1,51 @@
+---
+sidebar: sidebar 
+permalink: oracle/tiering/oracle-tiering-policies.html 
+keywords: tiering, fabricpool 
+summary: Políticas de organización en niveles de Oracle 
+---
+= Políticas de segmentación de bases de datos de Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP tiene disponibles cuatro políticas que controlan cómo los datos de Oracle en el nivel de rendimiento se convierten en candidatos para reubicar al nivel de capacidad.
+
+
+
+== Solo Snapshot
+
+La `snapshot-only` `tiering-policy` se aplica sólo a los bloques que no se comparten con el sistema de archivos activo. Básicamente, provoca la organización en niveles de los backups de las bases de datos. Los bloques se convierten en candidatos para organizar por niveles después de que se crea una copia Snapshot y se sobrescribe el bloque, lo que genera un bloque que solo existe dentro de la copia Snapshot. El retraso antes de a. `snapshot-only` el bloque se considera frío y está controlado por el `tiering-minimum-cooling-days` configuración para el volumen. El intervalo a partir de ONTAP 9,8 es de 2 a 183 días.
+
+Muchos conjuntos de datos tienen tasas de cambio bajas, lo que resulta en un ahorro mínimo de esta política. Por ejemplo, una base de datos típica observada en ONTAP tiene una tasa de cambio inferior al 5% a la semana. Los archive logs de la base de datos pueden ocupar mucho espacio, pero normalmente continúan existiendo en el sistema de archivos activo y, por lo tanto, no serían candidatos para la organización en niveles bajo esta política.
+
+
+
+== Automático
+
+La `auto` la política de organización en niveles amplía la clasificación por niveles tanto a bloques específicos de snapshots como a bloques del sistema de archivos activo. El retardo antes de que un bloque se considere frío es controlado por el `tiering-minimum-cooling-days` configuración para el volumen. El intervalo a partir de ONTAP 9,8 es de 2 a 183 días.
+
+Este método permite opciones de organización en niveles que no están disponibles con el `snapshot-only` política. Por ejemplo, una política de protección de datos puede requerir 90 días de ciertos archivos de registro para ser retenidos. Si se establece un período de enfriamiento de 3 días, los archivos de registro anteriores a 3 días se almacenarán en niveles desde la capa de rendimiento. Esta acción libera espacio considerable en el nivel de rendimiento a la vez que le permite ver y gestionar los 90 días completos de datos.
+
+
+
+== Ninguno
+
+La `none` la política de organización en niveles evita que cualquier bloque adicional se organice en niveles desde la capa de almacenamiento, pero todos los datos que permanezcan en el nivel de capacidad permanecen en el nivel de capacidad hasta que se leen. Si a continuación se lee el bloque, se retira y se coloca en el nivel de rendimiento.
+
+El motivo principal para utilizar el `none` la política de organización en niveles es para evitar que los bloques se organicen en niveles, pero podría resultar útil cambiar las políticas con el tiempo. Por ejemplo, pongamos por caso que un conjunto de datos concreto se organiza ampliamente en niveles en la capa de capacidad, pero surge una necesidad inesperada de funcionalidades de rendimiento completas. La política se puede cambiar para evitar cualquier organización en niveles adicional y para confirmar que los bloques que se lean a medida que los aumentos de I/O permanecen en el nivel de rendimiento.
+
+
+
+== Todo
+
+La `all` la política de organización en niveles reemplaza el `backup` Normativa a partir de ONTAP 9,6. La `backup` Política aplicada solo a los volúmenes de protección de datos, lo que significa un destino de SnapMirror o NetApp SnapVault. La `all` la política funciona de la misma manera, pero no se limita a los volúmenes de protección de datos.
+
+Con esta política, los bloques se consideran inmediatamente inactivos y elegibles para organizarse en niveles en la capa de capacidad de inmediato.
+
+Esta política resulta especialmente adecuada para backups a largo plazo. También se puede utilizar como una forma de gestión de almacenamiento jerárquico (HSM). Anteriormente, se utilizaba HSM para organizar en niveles los bloques de datos de un archivo en cinta y, al mismo tiempo, mantener el propio archivo visible en el sistema de archivos. Un volumen FabricPool con el `all` la política le permite almacenar archivos en un nivel visible y gestionable pero consume prácticamente ningún espacio en el nivel de almacenamiento local.

@@ -1,0 +1,53 @@
+---
+sidebar: sidebar 
+permalink: oracle/dr/smbc/oracle-smbc-architecture.html 
+keywords: smbc, sm-bc, oracle 
+summary: 'Continuidad de negocio de Oracle con SnapMirror (SM-BC)' 
+---
+= Continuidad empresarial para Oracle y SnapMirror
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../../../media/
+
+
+[role="lead"]
+SM-BC permite un mirroring síncrono selectivo RPO=0 para bases de datos de Oracle y entornos de aplicaciones individuales.
+
+SnapMirror Business Continuity (SM-BC) es esencialmente una funcionalidad mejorada de SnapMirror para SAN que permite a los hosts acceder a un LUN tanto desde el sistema donde se aloja el LUN como desde el sistema donde se aloja su réplica.
+
+SM-BC y SnapMirror Sync (SM-S) comparten un motor de replicación; sin embargo, SM-BC incluye funciones adicionales como conmutación al respaldo de aplicaciones y conmutación de retorno tras recuperación transparente para aplicaciones empresariales.
+
+En la práctica, es similar a una versión granular de MetroCluster porque permite una replicación síncrona selectiva y granular RPO=0 para cargas de trabajo individuales. El comportamiento de la ruta de bajo nivel es muy diferente del MetroCluster, pero el resultado final desde el punto de vista del host es similar.
+
+
+
+== Acceso a la ruta
+
+SM-BC hace que los dispositivos de almacenamiento sean visibles para los sistemas operativos host desde las cabinas de almacenamiento principal y remota. Las rutas se gestionan a través del acceso asimétrico de unidad lógica (ALUA), que es un protocolo estándar del sector para identificar rutas optimizadas entre un sistema de almacenamiento y un host.
+
+La ruta de dispositivo que es la más corta para acceder a I/O se considera como rutas activas/optimizadas y el resto de las rutas se consideran rutas activas/no optimizadas.
+
+La relación de SM-BC se da entre una pareja de SVM ubicadas en diferentes clústeres. Ambas SVM pueden servir datos, pero ALUA utilizará preferentemente la SVM que actualmente tiene la propiedad de las unidades donde residen los LUN. El I/O a la SVM remota se proxy a través de la interconexión de SM-BC.
+
+image:smbc-failover-1.png["Error: Falta la imagen gráfica"]
+
+
+
+== Replicación síncrona
+
+En condiciones de funcionamiento normal, la copia remota es una réplica síncrona RPO=0 en todo momento, con una excepción. Si los datos no se pueden replicar, SM-BC liberará el requisito para replicar los datos y reanudar el servicio de I/O. Los clientes que consideran la pérdida del enlace de replicación casi al desastre o que no desean que las operaciones empresariales se detengan cuando los datos no se pueden replicar prefieren esta opción.
+
+
+
+== Hardware de almacenamiento
+
+A diferencia de otras soluciones de recuperación ante desastres de almacenamiento, SM-BC ofrece flexibilidad de plataforma asimétrica. No es necesario que el hardware de cada sitio sea idéntico. Esta funcionalidad permite ajustar el tamaño adecuado del hardware que se utiliza para admitir SM-BC. El sistema de almacenamiento remoto puede ser idéntico al sitio principal si necesita soportar una carga de trabajo de producción completa, pero si un desastre provoca una reducción de I/O, es posible que un sistema más pequeño en el sitio remoto sea más rentable.
+
+
+
+== Mediador ONTAP
+
+El Mediador ONTAP es una aplicación de software que se descarga del soporte técnico de NetApp. Mediator automatiza las operaciones de recuperación tras fallos tanto para el clúster de almacenamiento del sitio principal como para el remoto. Puede ponerse en marcha en una pequeña máquina virtual (VM) alojada en las instalaciones o en el cloud. Una vez configurado, actúa como tercer sitio en el que se supervisan las situaciones de conmutación por error en ambos sitios.

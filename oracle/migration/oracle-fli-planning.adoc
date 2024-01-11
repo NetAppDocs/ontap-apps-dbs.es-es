@@ -1,0 +1,255 @@
+---
+sidebar: sidebar 
+permalink: oracle/migration/oracle-fli-planning.html 
+keywords: migration, oracle, fli 
+summary: Preparación de ONTAP para la migración FLI 
+---
+= Planificación de FLI - Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Los procedimientos para migrar recursos SAN con FLI se documentan en NetApp http://www.netapp.com/us/media/tr-4380.pdf["TR-4380: Migración de SAN mediante la importación de LUN externos"^].
+
+Desde un punto de vista de base de datos y host, no se requieren pasos especiales. Después de actualizar las zonas de FC y de que los LUN estén disponibles en ONTAP, LVM debería poder leer los metadatos de LVM de los LUN. Además, los grupos de volúmenes están listos para usarse sin más pasos de configuración. En raras ocasiones, los entornos pueden incluir archivos de configuración que se codificaron de forma fija con referencias a la cabina de almacenamiento anterior. Por ejemplo, un sistema Linux que incluyó `/etc/multipath.conf` Las reglas que hacen referencia a un WWN de un dispositivo determinado se deben actualizar para reflejar los cambios introducidos por FLI.
+
+
+NOTE: Consulte la Matriz de compatibilidad de NetApp para obtener información sobre las configuraciones admitidas. Si su entorno no está incluido, póngase en contacto con su representante de NetApp para obtener ayuda.
+
+Este ejemplo muestra la migración de LUN de ASM y LVM alojadas en un servidor Linux. FLI es compatible con otros sistemas operativos y, aunque los comandos del lado del host pueden ser diferentes, los principios son los mismos y los procedimientos de ONTAP son idénticos.
+
+
+
+== Identifique las LUN de LVM
+
+El primer paso de preparación es identificar las LUN que se van a migrar. En el ejemplo que se muestra aquí, hay dos sistemas de archivos basados en SAN montados en `/orabin` y.. `/backups`.
+
+....
+[root@host1 ~]# df -k
+Filesystem                       1K-blocks      Used Available Use% Mounted on
+/dev/mapper/rhel-root             52403200   8811464  43591736  17% /
+devtmpfs                          65882776         0  65882776   0% /dev
+...
+fas8060-nfs-public:/install      199229440 119368128  79861312  60% /install
+/dev/mapper/sanvg-lvorabin        20961280  12348476   8612804  59% /orabin
+/dev/mapper/sanvg-lvbackups       73364480  62947536  10416944  86% /backups
+....
+El nombre del grupo de volúmenes se puede extraer del nombre del dispositivo, que utiliza el formato (nombre del grupo de volúmenes)-(nombre del volumen lógico). En este caso, se denomina al grupo de volúmenes `sanvg`.
+
+La `pvdisplay` El comando se puede utilizar de la siguiente manera para identificar las LUN que admiten este grupo de volúmenes. En este caso, hay 10 LUN que componen el `sanvg` grupo de volúmenes.
+
+....
+[root@host1 ~]# pvdisplay -C -o pv_name,pv_size,pv_fmt,vg_name
+  PV                                            PSize   VG
+  /dev/mapper/3600a0980383030445424487556574266  10.00g sanvg
+  /dev/mapper/3600a0980383030445424487556574267  10.00g sanvg
+  /dev/mapper/3600a0980383030445424487556574268  10.00g sanvg
+  /dev/mapper/3600a0980383030445424487556574269  10.00g sanvg
+  /dev/mapper/3600a098038303044542448755657426a  10.00g sanvg
+  /dev/mapper/3600a098038303044542448755657426b  10.00g sanvg
+  /dev/mapper/3600a098038303044542448755657426c  10.00g sanvg
+  /dev/mapper/3600a098038303044542448755657426d  10.00g sanvg
+  /dev/mapper/3600a098038303044542448755657426e  10.00g sanvg
+  /dev/mapper/3600a098038303044542448755657426f  10.00g sanvg
+  /dev/sda2                                     278.38g rhel
+....
+
+
+== Identificar LUN de ASM
+
+Las LUN de ASM también se deben migrar. Para obtener el número de rutas de LUN y LUN desde sqlplus como usuario sysasm, ejecute el siguiente comando:
+
+....
+SQL> select path||' '||os_mb from v$asm_disk;
+PATH||''||OS_MB
+--------------------------------------------------------------------------------
+/dev/oracleasm/disks/ASM0 10240
+/dev/oracleasm/disks/ASM9 10240
+/dev/oracleasm/disks/ASM8 10240
+/dev/oracleasm/disks/ASM7 10240
+/dev/oracleasm/disks/ASM6 10240
+/dev/oracleasm/disks/ASM5 10240
+/dev/oracleasm/disks/ASM4 10240
+/dev/oracleasm/disks/ASM1 10240
+/dev/oracleasm/disks/ASM3 10240
+/dev/oracleasm/disks/ASM2 10240
+10 rows selected.
+SQL>
+....
+
+
+== Cambios de red FC
+
+El entorno actual contiene 20 LUN que se van a migrar. Actualice la SAN actual para que ONTAP pueda acceder a los LUN actuales. Los datos aún no se han migrado, pero ONTAP debe leer la información de configuración de las LUN actuales para crear el nuevo directorio raíz de los datos.
+
+Como mínimo, se debe configurar al menos un puerto HBA en el sistema AFF/FAS como puerto iniciador. Además, deben actualizarse las zonas de FC para que ONTAP pueda acceder a los LUN en la cabina de almacenamiento externa. Algunas cabinas de almacenamiento tienen configurado el enmascaramiento de LUN, lo que limita los nombres WWN que pueden acceder a una LUN determinada. En tales casos, el enmascaramiento de LUN también debe actualizarse para conceder acceso a los WWN de ONTAP.
+
+Cuando se completa este paso, ONTAP debe poder ver la cabina de almacenamiento externa con el `storage array show` comando. El campo clave que devuelve es el prefijo que se utiliza para identificar la LUN externa en el sistema. En el siguiente ejemplo, las LUN de la cabina externa `FOREIGN_1` Aparece en ONTAP con el prefijo de `FOR-1`.
+
+
+
+== Identifique la cabina externa
+
+....
+Cluster01::> storage array show -fields name,prefix
+name          prefix
+------------- ------
+FOREIGN_1     FOR-1
+Cluster01::>
+....
+
+
+== Identificar LUN externas
+
+Las LUN se pueden enumerar pasando el `array-name` para la `storage disk show` comando. Se hace referencia a los datos devueltos varias veces durante el procedimiento de migración.
+
+....
+Cluster01::> storage disk show -array-name FOREIGN_1 -fields disk,serial
+disk     serial-number
+-------- -------------
+FOR-1.1  800DT$HuVWBX
+FOR-1.2  800DT$HuVWBZ
+FOR-1.3  800DT$HuVWBW
+FOR-1.4  800DT$HuVWBY
+FOR-1.5  800DT$HuVWB/
+FOR-1.6  800DT$HuVWBa
+FOR-1.7  800DT$HuVWBd
+FOR-1.8  800DT$HuVWBb
+FOR-1.9  800DT$HuVWBc
+FOR-1.10 800DT$HuVWBe
+FOR-1.11 800DT$HuVWBf
+FOR-1.12 800DT$HuVWBg
+FOR-1.13 800DT$HuVWBi
+FOR-1.14 800DT$HuVWBh
+FOR-1.15 800DT$HuVWBj
+FOR-1.16 800DT$HuVWBk
+FOR-1.17 800DT$HuVWBm
+FOR-1.18 800DT$HuVWBl
+FOR-1.19 800DT$HuVWBo
+FOR-1.20 800DT$HuVWBn
+20 entries were displayed.
+Cluster01::>
+....
+
+
+== Registre LUN de cabina externa como candidatos para importar
+
+Las LUN externas inicialmente se clasifican como cualquier tipo de LUN específico. Antes de poder importar los datos, las LUN deben etiquetarse como externas y, por lo tanto, candidatas para el proceso de importación. Este paso se completa pasando el número de serie al `storage disk modify` command, tal y como se muestra en el siguiente ejemplo. Tenga en cuenta que este proceso solo etiqueta la LUN como externa en ONTAP. No se escriben datos en la propia LUN externa.
+
+....
+Cluster01::*> storage disk modify {-serial-number 800DT$HuVWBW} -is-foreign true
+Cluster01::*> storage disk modify {-serial-number 800DT$HuVWBX} -is-foreign true
+...
+Cluster01::*> storage disk modify {-serial-number 800DT$HuVWBn} -is-foreign true
+Cluster01::*> storage disk modify {-serial-number 800DT$HuVWBo} -is-foreign true
+Cluster01::*>
+....
+
+
+== Crear volúmenes para alojar LUN migradas
+
+Se necesita un volumen para alojar los LUN migrados. La configuración exacta de volúmenes depende del plan general para aprovechar las funciones de ONTAP. En este ejemplo, las LUN de ASM se colocan en un volumen y las LUN de LVM se colocan en un segundo volumen. Esto le permite gestionar las LUN como grupos independientes para fines como organización en niveles, creación de snapshots o configuración de controles de calidad de servicio.
+
+Ajuste la `snapshot-policy `to `none`. El proceso de migración puede incluir un alto volumen de cambios de datos. Por lo tanto, es posible que se produzca un gran aumento en el consumo de espacio si las instantáneas se crean por accidente porque se capturan datos no deseados en las copias Snapshot.
+
+....
+Cluster01::> volume create -volume new_asm -aggregate data_02 -size 120G -snapshot-policy none
+[Job 1152] Job succeeded: Successful
+Cluster01::> volume create -volume new_lvm -aggregate data_02 -size 120G -snapshot-policy none
+[Job 1153] Job succeeded: Successful
+Cluster01::>
+....
+
+
+== Crear LUN de ONTAP
+
+Después de crear los volúmenes, es necesario crear las nuevas LUN. Normalmente, la creación de una LUN requiere que el usuario especifique dicha información como el tamaño de LUN, pero en este caso el argumento de disco externo se pasa al comando. Como resultado, ONTAP replica los datos de configuración de LUN actuales del número de serie especificado. También utiliza la geometría de la LUN y los datos de la tabla de particiones para ajustar la alineación de la LUN y establecer un rendimiento óptimo.
+
+En este paso, se deben hacer referencias cruzadas de los números de serie a la cabina externa para asegurarse de que la LUN externa correcta coincida con la nueva LUN correcta.
+
+....
+Cluster01::*> lun create -vserver vserver1 -path /vol/new_asm/LUN0 -ostype linux -foreign-disk 800DT$HuVWBW
+Created a LUN of size 10g (10737418240)
+Cluster01::*> lun create -vserver vserver1 -path /vol/new_asm/LUN1 -ostype linux -foreign-disk 800DT$HuVWBX
+Created a LUN of size 10g (10737418240)
+...
+Created a LUN of size 10g (10737418240)
+Cluster01::*> lun create -vserver vserver1 -path /vol/new_lvm/LUN8 -ostype linux -foreign-disk 800DT$HuVWBn
+Created a LUN of size 10g (10737418240)
+Cluster01::*> lun create -vserver vserver1 -path /vol/new_lvm/LUN9 -ostype linux -foreign-disk 800DT$HuVWBo
+Created a LUN of size 10g (10737418240)
+....
+
+
+== Crear relaciones de importación
+
+Las LUN ahora se han creado, pero no se configuran como destino de replicación. Antes de poder realizar este paso, las LUN deben colocarse primero sin conexión. Este paso adicional está diseñado para proteger los datos de los errores de los usuarios. Si ONTAP permitiera realizar una migración a una LUN online, supondría el riesgo de que un error tipográfico pudiera provocar la sobrescritura de los datos activos. El paso adicional de obligar al usuario a desconectar primero una LUN ayuda a verificar que se utiliza la LUN de destino correcta como destino de migración.
+
+....
+Cluster01::*> lun offline -vserver vserver1 -path /vol/new_asm/LUN0
+Warning: This command will take LUN "/vol/new_asm/LUN0" in Vserver
+         "vserver1" offline.
+Do you want to continue? {y|n}: y
+Cluster01::*> lun offline -vserver vserver1 -path /vol/new_asm/LUN1
+Warning: This command will take LUN "/vol/new_asm/LUN1" in Vserver
+         "vserver1" offline.
+Do you want to continue? {y|n}: y
+...
+Warning: This command will take LUN "/vol/new_lvm/LUN8" in Vserver
+         "vserver1" offline.
+Do you want to continue? {y|n}: y
+Cluster01::*> lun offline -vserver vserver1 -path /vol/new_lvm/LUN9
+Warning: This command will take LUN "/vol/new_lvm/LUN9" in Vserver
+         "vserver1" offline.
+Do you want to continue? {y|n}: y
+....
+Después de que las LUN estén sin conexión, puede establecer la relación de importación pasando el número de serie de la LUN externa al `lun import create` comando.
+
+....
+Cluster01::*> lun import create -vserver vserver1 -path /vol/new_asm/LUN0 -foreign-disk 800DT$HuVWBW
+Cluster01::*> lun import create -vserver vserver1 -path /vol/new_asm/LUN1 -foreign-disk 800DT$HuVWBX
+...
+Cluster01::*> lun import create -vserver vserver1 -path /vol/new_lvm/LUN8 -foreign-disk 800DT$HuVWBn
+Cluster01::*> lun import create -vserver vserver1 -path /vol/new_lvm/LUN9 -foreign-disk 800DT$HuVWBo
+Cluster01::*>
+....
+Una vez establecidas todas las relaciones de importación, las LUN pueden volver a colocarse en línea.
+
+....
+Cluster01::*> lun online -vserver vserver1 -path /vol/new_asm/LUN0
+Cluster01::*> lun online -vserver vserver1 -path /vol/new_asm/LUN1
+...
+Cluster01::*> lun online -vserver vserver1 -path /vol/new_lvm/LUN8
+Cluster01::*> lun online -vserver vserver1 -path /vol/new_lvm/LUN9
+Cluster01::*>
+....
+
+
+== Cree el iGroup
+
+Un igroup forma parte de la arquitectura de enmascaramiento LUN de ONTAP. No es posible acceder a un LUN recién creado a menos que se conceda acceso en primer lugar a un host. Para ello, cree un igroup que enumere los nombres de iniciadores iSCSI o WWN de FC a los que se debe otorgar acceso. Cuando se escribió este informe, FLI solo se admitía para los LUN FC. Sin embargo, la conversión a iSCSI posterior a la migración es una tarea sencilla, como se muestra en la link:oracle-protocol-conversion.html["Conversión de protocolos"].
+
+En este ejemplo, se crea un igroup que contiene dos WWN que corresponden a los dos puertos disponibles en el HBA del host.
+
+....
+Cluster01::*> igroup create linuxhost -protocol fcp -ostype linux -initiator 21:00:00:0e:1e:16:63:50 21:00:00:0e:1e:16:63:51
+....
+
+
+== Asignar nuevas LUN al host
+
+Después de la creación del igroup, las LUN se asignan al igroup definido. Estos LUN solo están disponibles para los WWN incluidos en este igroup. NetApp asume que en esta etapa del proceso de migración no se ha zonificado el host en ONTAP. Esto es importante porque si se divide en zonas el host simultáneamente en la cabina externa y el nuevo sistema ONTAP, existe el riesgo de que LUN con el mismo número de serie se puedan detectar en cada cabina. Esta situación podría provocar fallos de funcionamiento de varias rutas o daños en los datos.
+
+....
+Cluster01::*> lun map -vserver vserver1 -path /vol/new_asm/LUN0 -igroup linuxhost
+Cluster01::*> lun map -vserver vserver1 -path /vol/new_asm/LUN1 -igroup linuxhost
+...
+Cluster01::*> lun map -vserver vserver1 -path /vol/new_lvm/LUN8 -igroup linuxhost
+Cluster01::*> lun map -vserver vserver1 -path /vol/new_lvm/LUN9 -igroup linuxhost
+Cluster01::*>
+....

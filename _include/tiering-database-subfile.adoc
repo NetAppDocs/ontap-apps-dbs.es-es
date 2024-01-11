@@ -1,0 +1,20 @@
+= Normativas
+:allow-uri-read: 
+
+
+Esto es común con las bases de datos. Las bases de datos que se sabe que contienen bloques inactivos también son candidatas para la organización en niveles de FabricPool. Por ejemplo, una base de datos de gestión de cadena de suministro puede contener información histórica que debe estar disponible si es necesario, pero que no se puede acceder durante las operaciones normales. FabricPool se puede utilizar para reubicar selectivamente los bloques inactivos.
+
+Por ejemplo, los archivos de datos que se ejecutan en un volumen FabricPool con a. `tiering-minimum-cooling-days` periodo de 90 días: conserva los bloques a los que se ha accedido en los 90 días anteriores en el nivel de rendimiento. Sin embargo, todo lo que no se acceda durante 90 días se reubica al nivel de capacidad. En otros casos, la actividad normal de la aplicación conserva los bloques correctos en el nivel correcto. Por ejemplo, si una base de datos se utiliza normalmente para procesar los 60 días anteriores de datos de forma regular, es mucho menor `tiering-minimum-cooling-days` el período se puede establecer porque la actividad natural de la aplicación garantiza que los bloques no se reubiquen antes de tiempo.
+
+La `auto` la política debe utilizarse con cuidado con las bases de datos. Muchas bases de datos tienen actividades periódicas como el proceso de final del trimestre o las operaciones de reindexación. Si el período de estas operaciones es mayor que el `tiering-minimum-cooling-days` se pueden producir problemas de rendimiento. Por ejemplo, si el procesamiento a final de trimestre requiere 1TB TB de datos que de otro modo no se han modificado, esos datos podrían estar presentes ahora en el nivel de capacidad. Las lecturas del nivel de capacidad a menudo son extremadamente rápidas y pueden no causar problemas de rendimiento, pero los resultados exactos dependerán de la configuración del almacén de objetos.
+
+
+
+== Normativas
+
+La `tiering-minimum-cooling-days` la política debe establecerse lo suficientemente alta para conservar los archivos que pueden ser necesarios en el nivel de rendimiento. Por ejemplo, una base de datos en la que los 60 días de datos más recientes podrían ser necesarios con un rendimiento óptimo justificaría establecer el `tiering-minimum-cooling-days` periodo hasta 60 días. También se podrían lograr resultados similares en función de los patrones de acceso de los archivos. Por ejemplo, si se requieren los 90 días de datos más recientes y la aplicación accede a ese intervalo de 90 días de datos, los datos permanecerán en el nivel de rendimiento. Ajuste de `tiering-minimum-cooling-days` un periodo de hasta 2 días clasificaría los datos en niveles inmediatamente después de que los datos se vuelvan menos activos.
+
+La `auto` se requiere una política para impulsar la organización en niveles de estos bloques porque solo el `auto` la política afecta a los bloques que están en el sistema de archivos activo.
+
+
+NOTE: Cualquier tipo de acceso a los datos restablece los datos del mapa de calor. Por lo tanto, las exploraciones de tablas completas de la base de datos e incluso la actividad de copia de seguridad que lee los archivos de origen impiden la organización en niveles porque es necesario `tiering-minimum-cooling-days` nunca se ha alcanzado el umbral.

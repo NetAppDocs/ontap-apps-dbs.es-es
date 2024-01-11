@@ -1,0 +1,532 @@
+---
+sidebar: sidebar 
+permalink: oracle/migration/oracle-migration-sample-scripts.html 
+keywords: oracle, Scripts 
+summary: Scripts de ejemplo para automatizar las operaciones de migración de Oracle 
+---
+= Scripts de ejemplo
+:allow-uri-read: 
+
+
+[role="lead"]
+Los scripts presentados se proporcionan como ejemplos de cómo realizar scripts de varias tareas del sistema operativo y de la base de datos. Se suministran tal cual. Si se necesita soporte para un procedimiento concreto, póngase en contacto con NetApp o con un distribuidor de NetApp.
+
+
+
+== Cierre de la base de datos
+
+El siguiente script Perl toma un argumento único del SID de Oracle y cierra una base de datos. Se puede ejecutar como usuario oracle o como raíz.
+
+....
+#! /usr/bin/perl
+use strict;
+use warnings;
+my $oraclesid=$ARGV[0];
+my $oracleuser='oracle';
+my @out;
+my $uid=$<;
+if ($uid == 0) {
+@out=`su - $oracleuser -c '. oraenv << EOF1
+77 Migration of Oracle Databases to NetApp Storage Systems © 2021 NetApp, Inc. All rights reserved
+$oraclesid
+EOF1
+sqlplus / as sysdba << EOF2
+shutdown immediate;
+EOF2
+'
+`;}
+else {
+@out=`. oraenv << EOF1
+$oraclesid
+EOF4
+sqlplus / as sysdba << EOF2
+shutdown immediate;
+EOF2
+`;};
+print @out;
+if ("@out" =~ /ORACLE instance shut down/) {
+print "$oraclesid shut down\n";
+exit 0;}
+elsif ("@out" =~ /Connected to an idle instance/) {
+print "$oraclesid already shut down\n";
+exit 0;}
+else {
+print "$oraclesid failed to shut down\n";
+exit 1;}
+....
+
+
+== Inicio de la base de datos
+
+El siguiente script Perl toma un argumento único del SID de Oracle y cierra una base de datos. Se puede ejecutar como usuario oracle o como raíz.
+
+....
+#! /usr/bin/perl
+use strict;
+use warnings;
+my $oraclesid=$ARGV[0];
+my $oracleuser='oracle';
+my @out;
+my $uid=$<;
+if ($uid == 0) {
+@out=`su - $oracleuser -c '. oraenv << EOF1
+$oraclesid
+EOF1
+sqlplus / as sysdba << EOF2
+startup;
+EOF2
+'
+`;}
+else {
+@out=`. oraenv << EOF3
+$oraclesid
+EOF1
+sqlplus / as sysdba << EOF2
+startup;
+EOF2
+`;};
+print @out;
+if ("@out" =~ /Database opened/) {
+print "$oraclesid started\n";
+exit 0;}
+elsif ("@out" =~ /cannot start already-running ORACLE/) {
+print "$oraclesid already started\n";
+exit 1;}
+else {
+78 Migration of Oracle Databases to NetApp Storage Systems © 2021 NetApp, Inc. All rights reserved
+print "$oraclesid failed to start\n";
+exit 1;}
+....
+
+
+== Convertir el sistema de archivos a sólo lectura
+
+El siguiente script toma un argumento del sistema de archivos e intenta desmontarlo y volver a montarlo como de solo lectura. Esto resulta útil durante los procesos de migración en los que un sistema de ficheros debe estar disponible para replicar los datos y, sin embargo, debe protegerse frente a daños accidentales.
+
+....
+#! /usr/bin/perl
+use strict;
+#use warnings;
+my $filesystem=$ARGV[0];
+my @out=`umount '$filesystem'`;
+if ($? == 0) {
+ print "$filesystem unmounted\n";
+ @out = `mount -o ro '$filesystem'`;
+ if ($? == 0) {
+ print "$filesystem mounted read-only\n";
+ exit 0;}}
+else {
+ print "Unable to unmount $filesystem\n";
+ exit 1;}
+print @out;
+....
+
+
+== Sustituya el sistema de archivos
+
+El siguiente ejemplo de script se utiliza para reemplazar un sistema de archivos por otro. Debido a que edita el archivo `/etc/fstab `, debe ejecutarse como root. Acepta un único argumento delimitado por comas de los sistemas de archivos antiguos y nuevos.
+
+. Para sustituir el sistema de archivos, ejecute el siguiente script:
++
+....
+#! /usr/bin/perl
+use strict;
+#use warnings;
+my $oldfs;
+my $newfs;
+my @oldfstab;
+my @newfstab;
+my $source;
+my $mountpoint;
+my $leftover;
+my $oldfstabentry='';
+my $newfstabentry='';
+my $migratedfstabentry='';
+($oldfs, $newfs) = split (',',$ARGV[0]);
+open(my $filehandle, '<', '/etc/fstab') or die "Could not open /etc/fstab\n";
+while (my $line = <$filehandle>) {
+ chomp $line;
+ ($source, $mountpoint, $leftover) = split(/[ , ]/,$line, 3);
+ if ($mountpoint eq $oldfs) {
+ $oldfstabentry = "#Removed by swap script $source $oldfs $leftover";}
+ elsif ($mountpoint eq $newfs) {
+ $newfstabentry = "#Removed by swap script $source $newfs $leftover";
+ $migratedfstabentry = "$source $oldfs $leftover";}
+ else {
+ push (@newfstab, "$line\n")}}
+79 Migration of Oracle Databases to NetApp Storage Systems © 2021 NetApp, Inc. All rights reserved
+push (@newfstab, "$oldfstabentry\n");
+push (@newfstab, "$newfstabentry\n");
+push (@newfstab, "$migratedfstabentry\n");
+close($filehandle);
+if ($oldfstabentry eq ''){
+ die "Could not find $oldfs in /etc/fstab\n";}
+if ($newfstabentry eq ''){
+ die "Could not find $newfs in /etc/fstab\n";}
+my @out=`umount '$newfs'`;
+if ($? == 0) {
+ print "$newfs unmounted\n";}
+else {
+ print "Unable to unmount $newfs\n";
+ exit 1;}
+@out=`umount '$oldfs'`;
+if ($? == 0) {
+ print "$oldfs unmounted\n";}
+else {
+ print "Unable to unmount $oldfs\n";
+ exit 1;}
+system("cp /etc/fstab /etc/fstab.bak");
+open ($filehandle, ">", '/etc/fstab') or die "Could not open /etc/fstab for writing\n";
+for my $line (@newfstab) {
+ print $filehandle $line;}
+close($filehandle);
+@out=`mount '$oldfs'`;
+if ($? == 0) {
+ print "Mounted updated $oldfs\n";
+ exit 0;}
+else{
+ print "Unable to mount updated $oldfs\n";
+ exit 1;}
+exit 0;
+....
++
+Como ejemplo del uso de este script, supongamos que los datos de `/oradata` se ha migrado a. `/neworadata` y.. `/logs` se ha migrado a. `/newlogs`. Uno de los métodos más simples para realizar esta tarea es mediante una simple operación de copia de archivos para reubicar el nuevo dispositivo en el punto de montaje original.
+
+. Suponga que los sistemas de archivos antiguos y nuevos están presentes en la `/etc/fstab` el archivo es el siguiente:
++
+....
+cluster01:/vol_oradata /oradata nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+cluster01:/vol_logs /logs nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+cluster01:/vol_neworadata /neworadata nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+cluster01:/vol_newlogs /newlogs nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+....
+. Cuando se ejecuta, este script desmonta el sistema de archivos actual y lo reemplaza por el nuevo:
++
+....
+[root@jfsc3 scripts]# ./swap.fs.pl /oradata,/neworadata
+/neworadata unmounted
+/oradata unmounted
+Mounted updated /oradata
+[root@jfsc3 scripts]# ./swap.fs.pl /logs,/newlogs
+/newlogs unmounted
+/logs unmounted
+Mounted updated /logs
+....
+. El script también actualiza el `/etc/fstab` archivar según corresponda. En el ejemplo que se muestra aquí, incluye los siguientes cambios:
++
+....
+#Removed by swap script cluster01:/vol_oradata /oradata nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+#Removed by swap script cluster01:/vol_neworadata /neworadata nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+cluster01:/vol_neworadata /oradata nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+#Removed by swap script cluster01:/vol_logs /logs nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+#Removed by swap script cluster01:/vol_newlogs /newlogs nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+cluster01:/vol_newlogs /logs nfs rw,bg,vers=3,rsize=65536,wsize=65536 0 0
+....
+
+
+
+
+== Migración de bases de datos automatizada
+
+Este ejemplo muestra el uso de scripts de apagado, inicio y reemplazo del sistema de archivos para automatizar completamente una migración.
+
+....
+#! /usr/bin/perl
+use strict;
+#use warnings;
+my $oraclesid=$ARGV[0];
+my @oldfs;
+my @newfs;
+my $x=1;
+while ($x < scalar(@ARGV)) {
+   ($oldfs[$x-1], $newfs[$x-1]) = split (',',$ARGV[$x]);
+   $x+=1;}
+my @out=`./dbshut.pl '$oraclesid'`;
+print @out;
+if ($? ne 0) {
+   print "Failed to shut down database\n";
+   exit 0;}
+$x=0;
+while ($x < scalar(@oldfs)) {
+   my @out=`./mk.fs.readonly.pl '$oldfs[$x]'`;
+   if ($? ne 0) {
+      print "Failed to make filesystem $oldfs[$x] readonly\n";
+      exit 0;}
+   $x+=1;}
+$x=0;
+while ($x < scalar(@oldfs)) {
+   my @out=`rsync -rlpogt --stats --progress --exclude='.snapshot' '$oldfs[$x]/' '/$newfs[$x]/'`;
+   print @out;
+   if ($? ne 0) {
+      print "Failed to copy filesystem $oldfs[$x] to $newfs[$x]\n";
+      exit 0;}
+   else {
+      print "Succesfully replicated filesystem $oldfs[$x] to $newfs[$x]\n";}
+   $x+=1;}
+$x=0;
+while ($x < scalar(@oldfs)) {
+   print "swap $x $oldfs[$x] $newfs[$x]\n";
+   my @out=`./swap.fs.pl '$oldfs[$x],$newfs[$x]'`;
+   print @out;
+   if ($? ne 0) {
+      print "Failed to swap filesystem $oldfs[$x] for $newfs[$x]\n";
+      exit 1;}
+   else {
+      print "Swapped filesystem $oldfs[$x] for $newfs[$x]\n";}
+   $x+=1;}
+my @out=`./dbstart.pl '$oraclesid'`;
+print @out;
+....
+
+
+== Mostrar ubicaciones de archivos
+
+Este script recopila una serie de parámetros críticos de la base de datos e imprime en un formato fácil de leer. Este script puede ser útil al revisar diseños de datos. Además, el script se puede modificar para otros usos.
+
+....
+#! /usr/bin/perl
+#use strict;
+#use warnings;
+my $oraclesid=$ARGV[0];
+my $oracleuser='oracle';
+my @out;
+sub dosql{
+        my $command = @_[0];
+        my @lines;
+        my $uid=$<;
+        if ($uid == 0) {
+        @lines=`su - $oracleuser -c "export ORAENV_ASK=NO;export ORACLE_SID=$oraclesid;. oraenv -s << EOF1
+EOF1
+sqlplus -S / as sysdba << EOF2
+set heading off
+$command
+EOF2
+"
+        `;}
+        else {
+        $command=~s/\\\\\\/\\/g;
+        @lines=`export ORAENV_ASK=NO;export ORACLE_SID=$oraclesid;. oraenv -s << EOF1
+EOF1
+sqlplus -S / as sysdba << EOF2
+set heading off
+$command
+EOF2
+        `;};
+return @lines}
+print "\n";
+@out=dosql('select name from v\\\\\$datafile;');
+print "$oraclesid datafiles:\n";
+for $line (@out) {
+        chomp($line);
+        if (length($line)>0) {print "$line\n";}}
+print "\n";
+@out=dosql('select member from v\\\\\$logfile;');
+print "$oraclesid redo logs:\n";
+for $line (@out) {
+        chomp($line);
+        if (length($line)>0) {print "$line\n";}}
+print "\n";
+@out=dosql('select name from v\\\\\$tempfile;');
+print "$oraclesid temp datafiles:\n";
+for $line (@out) {
+        chomp($line);
+        if (length($line)>0) {print "$line\n";}}
+print "\n";
+@out=dosql('show parameter spfile;');
+print "$oraclesid spfile\n";
+for $line (@out) {
+        chomp($line);
+        if (length($line)>0) {print "$line\n";}}
+print "\n";
+@out=dosql('select name||\' \'||value from v\\\\\$parameter where isdefault=\'FALSE\';');
+print "$oraclesid key parameters\n";
+for $line (@out) {
+        chomp($line);
+        if ($line =~ /control_files/) {print "$line\n";}
+        if ($line =~ /db_create/) {print "$line\n";}
+        if ($line =~ /db_file_name_convert/) {print "$line\n";}
+        if ($line =~ /log_archive_dest/) {print "$line\n";}}
+        if ($line =~ /log_file_name_convert/) {print "$line\n";}
+        if ($line =~ /pdb_file_name_convert/) {print "$line\n";}
+        if ($line =~ /spfile/) {print "$line\n";}
+print "\n";
+....
+
+
+== Limpieza de migración de ASM
+
+....
+#! /usr/bin/perl
+#use strict;
+#use warnings;
+my $oraclesid=$ARGV[0];
+my $oracleuser='oracle';
+my @out;
+sub dosql{
+        my $command = @_[0];
+        my @lines;
+        my $uid=$<;
+        if ($uid == 0) {
+        @lines=`su - $oracleuser -c "export ORAENV_ASK=NO;export ORACLE_SID=$oraclesid;. oraenv -s << EOF1
+EOF1
+sqlplus -S / as sysdba << EOF2
+set heading off
+$command
+EOF2
+"
+        `;}
+        else {
+        $command=~s/\\\\\\/\\/g;
+        @lines=`export ORAENV_ASK=NO;export ORACLE_SID=$oraclesid;. oraenv -s << EOF1
+EOF1
+sqlplus -S / as sysdba << EOF2
+set heading off
+$command
+EOF2
+        `;}
+return @lines}
+print "\n";
+@out=dosql('select name from v\\\\\$datafile;');
+print @out;
+print "shutdown immediate;\n";
+print "startup mount;\n";
+print "\n";
+for $line (@out) {
+        if (length($line) > 1) {
+                chomp($line);
+                ($first, $second,$third,$fourth)=split('_',$line);
+                $fourth =~ s/^TS-//;
+                $newname=lc("$fourth.dbf");
+                $path2file=$line;
+                $path2file=~ /(^.*.\/)/;
+                print "host mv $line $1$newname\n";}}
+print "\n";
+for $line (@out) {
+        if (length($line) > 1) {
+                chomp($line);
+                ($first, $second,$third,$fourth)=split('_',$line);
+                $fourth =~ s/^TS-//;
+                $newname=lc("$fourth.dbf");
+                $path2file=$line;
+                $path2file=~ /(^.*.\/)/;
+                print "alter database rename file '$line' to '$1$newname';\n";}}
+print "alter database open;\n";
+print "\n";
+....
+
+
+== Conversión de ASM al nombre del sistema de archivos
+
+....
+set serveroutput on;
+set wrap off;
+declare
+    cursor df is select file#, name from v$datafile;
+    cursor tf is select file#, name from v$tempfile;
+    cursor lf is select member from v$logfile;
+    firstline boolean := true;
+begin
+    dbms_output.put_line(CHR(13));
+    dbms_output.put_line('Parameters for log file conversion:');
+    dbms_output.put_line(CHR(13));
+    dbms_output.put('*.log_file_name_convert = ');
+    for lfrec in lf loop
+        if (firstline = true) then
+            dbms_output.put('''' || lfrec.member || ''', ');
+            dbms_output.put('''/NEW_PATH/' || regexp_replace(lfrec.member,'^.*./','') || '''');
+        else
+            dbms_output.put(',''' || lfrec.member || ''', ');
+            dbms_output.put('''/NEW_PATH/' || regexp_replace(lfrec.member,'^.*./','') || '''');
+        end if;
+        firstline:=false;
+    end loop;
+    dbms_output.put_line(CHR(13));
+    dbms_output.put_line(CHR(13));
+    dbms_output.put_line('rman duplication script:');
+    dbms_output.put_line(CHR(13));
+    dbms_output.put_line('run');
+    dbms_output.put_line('{');
+    for dfrec in df loop
+        dbms_output.put_line('set newname for datafile ' ||
+            dfrec.file# || ' to ''' || dfrec.name ||''';');
+    end loop;
+    for tfrec in tf loop
+        dbms_output.put_line('set newname for tempfile ' ||
+            tfrec.file# || ' to ''' || tfrec.name ||''';');
+    end loop;
+    dbms_output.put_line('duplicate target database for standby backup location INSERT_PATH_HERE;');
+    dbms_output.put_line('}');
+end;
+/
+....
+
+
+== Reproduzca los logs en la base de datos
+
+Este archivo de comandos acepta un argumento único de un SID de Oracle para una base de datos que está en modo de montaje e intenta reproducir todos los archive logs disponibles actualmente.
+
+....
+#! /usr/bin/perl
+use strict;
+my $oraclesid=$ARGV[0];
+my $oracleuser='oracle';
+84 Migration of Oracle Databases to NetApp Storage Systems © 2021 NetApp, Inc. All rights reserved
+my $uid = $<;
+my @out;
+if ($uid == 0) {
+@out=`su - $oracleuser -c '. oraenv << EOF1
+$oraclesid
+EOF1
+sqlplus / as sysdba << EOF2
+recover database until cancel;
+auto
+EOF2
+'
+`;}
+else {
+@out=`. oraenv << EOF1
+$oraclesid
+EOF1
+sqlplus / as sysdba << EOF2
+recover database until cancel;
+auto
+EOF2
+`;
+}
+print @out;
+....
+
+
+== Logs de Reproducción en Base de Datos en Espera
+
+Este script es idéntico al anterior, excepto que está diseñado para una base de datos en espera.
+
+....
+#! /usr/bin/perl
+use strict;
+my $oraclesid=$ARGV[0];
+my $oracleuser='oracle';
+my $uid = $<;
+my @out;
+if ($uid == 0) {
+@out=`su - $oracleuser -c '. oraenv << EOF1
+$oraclesid
+EOF1
+sqlplus / as sysdba << EOF2
+recover standby database until cancel;
+auto
+EOF2
+'
+`;}
+else {
+@out=`. oraenv << EOF1
+$oraclesid
+EOF1
+sqlplus / as sysdba << EOF2
+recover standby database until cancel;
+auto
+EOF2
+`;
+}
+print @out;
+....

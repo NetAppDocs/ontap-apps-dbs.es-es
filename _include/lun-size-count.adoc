@@ -1,0 +1,30 @@
+= Número de LUN
+:allow-uri-read: 
+
+
+Una LUN es un objeto virtualizado en ONTAP que existe en todas las unidades del agregado host. Como resultado, el rendimiento de la LUN no se ve afectado por su tamaño porque la LUN aprovecha todo el potencial de rendimiento del agregado sin importar el tamaño que se haya elegido.
+
+Para comodidad, es posible que los clientes deseen usar una LUN de un tamaño determinado. Por ejemplo, si una base de datos se crea en un LVM u un grupo de discos de ASM de Oracle compuesto por dos LUN de 1TB GB cada uno, dicho grupo de discos debe aumentar en incrementos de 1TB TB. Es preferible crear el grupo de discos a partir de ocho LUN de 500GB cada uno para que el grupo de discos se pueda aumentar en incrementos menores.
+
+Se desaconseja la práctica de establecer un tamaño de LUN estándar universal porque, al hacerlo, se puede complicar la capacidad de gestión. Por ejemplo, un tamaño de LUN estándar de 100GB TB puede funcionar bien cuando una base de datos o un almacén de datos está entre 1TB y 2TB TB, pero el tamaño de una base de datos o un almacén de datos de 20TB TB requeriría 200 LUN. Esto significa que los tiempos de reinicio del servidor son más largos, hay más objetos que gestionar en las distintas interfaces de usuario y productos como SnapCenter deben realizar la detección de muchos objetos. Si se usa menos LUN, de mayor tamaño se evitan estos problemas.
+
+* El número de LUN es más importante que el tamaño de la LUN.
+* El tamaño de LUN está controlado principalmente por requisitos del número de LUN.
+* Evite crear más LUN de las necesarias.
+
+
+
+
+== Número de LUN
+
+A diferencia del tamaño de LUN, el número de LUN afecta al rendimiento. El rendimiento de la aplicación depende a menudo de la capacidad para realizar I/O paralelas mediante la capa SCSI. Como resultado, dos LUN ofrecen mejor rendimiento que una única LUN. El uso de LVM como Veritas VxVM, Linux LVM2 u Oracle ASM es el método más sencillo para aumentar el paralelismo.
+
+Los clientes de NetApp suelen experimentar un beneficio mínimo gracias al aumento del número de LUN por encima de dieciséis, aunque, en pruebas de entornos 100% con unidades de estado sólido con I/O aleatorias muy pesadas, se ha demostrado una mejora adicional de hasta 64 000 LUN.
+
+[TIP]
+====
+*NetApp recomienda* lo siguiente:
+
+En general, entre cuatro y dieciséis LUN son suficientes para admitir las necesidades de I/O de cualquier carga de trabajo de bases de datos en concreto. Menos de cuatro LUN puede crear limitaciones de rendimiento debido a las limitaciones de las implementaciones SCSI del host.
+
+====

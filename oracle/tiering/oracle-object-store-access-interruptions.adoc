@@ -1,0 +1,23 @@
+---
+sidebar: sidebar 
+permalink: oracle/tiering/oracle-object-store-access-interruptions.html 
+keywords: tiering, fabricpool, interruption 
+summary: Acceso a la base de datos durante las interrupciones del acceso al almacén de objetos 
+---
+= Interrupciones de acceso al almacén de objetos
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+La organización en niveles de un conjunto de datos con FabricPool provoca una dependencia entre la cabina de almacenamiento principal y el nivel de almacén de objetos. Hay muchas opciones de almacenamiento de objetos que ofrecen distintos niveles de disponibilidad. Es importante comprender el impacto de una posible pérdida de conectividad entre la cabina de almacenamiento primaria y el nivel de almacenamiento de objetos.
+
+Si una I/O emitida a ONTAP requiere datos del nivel de capacidad y ONTAP no puede alcanzar el nivel de capacidad para recuperar los bloques, se agotará el tiempo de espera de las I/O finalmente. El efecto de este tiempo de espera depende del protocolo utilizado. En un entorno NFS, ONTAP responde con una respuesta EJUKEBOX o EDELAY, dependiendo del protocolo. Algunos sistemas operativos anteriores pueden interpretarlo como un error, pero los sistemas operativos actuales y los niveles de parches actuales del cliente Oracle Direct NFS lo tratan como un error recuperable y siguen esperando a que se complete la E/S.
+
+Un tiempo de espera menor se aplica a los entornos SAN. Si se requiere un bloque en el entorno de almacén de objetos y permanece inaccesible durante dos minutos, se devuelve un error de lectura al host. El volumen ONTAP y los LUN permanecen en línea, pero el SO del host puede marcar el sistema de archivos como está en estado de error.
+
+Problemas de conectividad del almacenamiento de objetos `snapshot-only` la política es menos problemática, ya que únicamente los datos de backup están organizados en niveles. Los problemas de comunicación ralentizarían la recuperación de datos, pero de otro modo no afectarían a los datos que se están utilizando activamente. La `auto` y.. `all` Las políticas permiten la clasificación por niveles de los datos inactivos de la LUN activa, lo que significa que un error durante la recuperación de datos del almacén de objetos puede afectar a la disponibilidad de la base de datos. Una implementación de SAN con estas políticas solo debe utilizarse con almacenamiento de objetos de clase empresarial y conexiones de red diseñadas para obtener una alta disponibilidad. NetApp StorageGRID es la opción superior.

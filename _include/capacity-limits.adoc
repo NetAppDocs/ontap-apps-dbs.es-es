@@ -1,0 +1,23 @@
+= Agregados SSD, incluidos los sistemas AFF
+:allow-uri-read: 
+
+
+El espacio libre se define como el espacio que no se usa para datos reales e incluye espacio sin asignar en el propio agregado y el espacio no utilizado dentro de los volúmenes constituyentes. También se debe tener en cuenta el thin provisioning. Por ejemplo, un volumen puede contener 1TB 000 LUN de las cuales solo el 50% es utilizado por datos reales. En un entorno con thin provisioning, parece que esto consume 500GB TB de espacio de manera correcta. Sin embargo, en un entorno totalmente aprovisionado, parece que toda la capacidad de 1TB está en uso. Los 500GB GB de espacio no asignado están ocultos. Los datos reales no utilizan este espacio y, por lo tanto, debe incluirse en el cálculo del espacio libre total.
+
+Las recomendaciones de NetApp para los sistemas de almacenamiento que se utilizan para aplicaciones empresariales son las siguientes:
+
+
+
+== Agregados SSD, incluidos los sistemas AFF
+
+
+TIP: *NetApp recomienda* un mínimo de 10% de espacio libre. Esto incluye todo el espacio no utilizado, incluido el espacio libre dentro del agregado o un volumen y cualquier espacio libre que se asigne debido al uso de aprovisionamiento completo, pero que los datos reales no usan. El espacio lógico no es importante, la pregunta es cuánto espacio físico libre real está disponible para el almacenamiento de datos.
+
+La recomendación de un 10% de espacio libre es muy conservadora. Los agregados SSD pueden admitir cargas de trabajo con niveles de utilización aún mayores sin afectar en absoluto al rendimiento. No obstante, a medida que aumenta el uso del agregado, también aumenta el riesgo de quedarse sin espacio si no se supervisa el uso de forma cuidadosa. Además, aunque ejecutar un sistema a un 99 % de capacidad puede que no afecte al rendimiento, probablemente se traduciría en un esfuerzo de gestión al intentar evitar que se llene completamente mientras se solicita hardware adicional. Además, la adquisición e instalación de unidades adicionales puede demorar algún tiempo.
+
+
+
+== Agregados de HDD, incluidos los agregados de Flash Pool
+
+
+TIP: *NetApp recomienda* un mínimo de 15% de espacio libre cuando se utilizan unidades giratorias. Esto incluye todo el espacio no utilizado, incluido el espacio libre dentro del agregado o un volumen y cualquier espacio libre que se asigne debido al uso de aprovisionamiento completo, pero que los datos reales no usan. El rendimiento se verá afectado en los enfoques de libertad de expresión al 10%.

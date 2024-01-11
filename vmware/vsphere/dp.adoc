@@ -1,0 +1,31 @@
+---
+sidebar: sidebar 
+permalink: vmware/vsphere/dp.html 
+keywords: Data protection, Space reclamation, VM and datastore cloning, Storage efficiency, thin provisioning, QoS, SIOC, Storage Distributed Resource Scheduler, DRS, Active IQ Unified Manager, Encryption 
+summary: SnapCenter permite crear políticas de backup que se pueden aplicar a varias tareas. Estas políticas pueden definir programaciones, retención, replicación y otras funcionalidades. Continúan permitiendo la selección opcional de snapshots consistentes con las máquinas virtuales, lo que aprovecha la capacidad del hipervisor para desactivar la I/O antes de tomar una snapshot de VMware. 
+---
+= Protección de datos
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./../media/
+
+
+[role="lead"]
+Realizar backups de sus máquinas virtuales y recuperarlos rápidamente se encuentran entre los grandes puntos fuertes de ONTAP para vSphere, y es fácil gestionar esta capacidad dentro de vCenter con el plugin de SnapCenter para VMware vSphere.
+
+Use copias Snapshot para realizar copias rápidas de sus máquinas virtuales o almacenes de datos sin afectar al rendimiento y, a continuación, envíelas a un sistema secundario usando SnapMirror para la protección de datos fuera del sitio a largo plazo. Este método minimiza el espacio de almacenamiento y el ancho de banda de red porque solo almacena la información modificada.
+
+SnapCenter permite crear políticas de backup que se pueden aplicar a varias tareas. Estas políticas pueden definir programaciones, retención, replicación y otras funcionalidades. Continúan permitiendo la selección opcional de snapshots consistentes con las máquinas virtuales, lo que aprovecha la capacidad del hipervisor para desactivar la I/O antes de tomar una snapshot de VMware. Sin embargo, debido al efecto sobre el rendimiento de las snapshots de VMware, generalmente no se recomiendan a menos que necesite que el sistema de archivos invitados se coloque en modo inactivo. En su lugar, utilice los snapshots para protección general y use herramientas de aplicaciones como los complementos de SnapCenter para proteger los datos transaccionales, como SQL Server u Oracle. Estas copias Snapshot son diferentes de las copias snapshot de VMware (consistencia) y son adecuadas para la protección a largo plazo.  Las copias Snapshot de VMware son solo http://pubs.vmware.com/vsphere-65/index.jsp?topic=%2Fcom.vmware.vsphere.vm_admin.doc%2FGUID-53F65726-A23B-4CF0-A7D5-48E584B88613.html["recomendado"^] para uso a corto plazo debido al rendimiento y otros efectos.
+
+Estos complementos ofrecen funcionalidades ampliadas para proteger las bases de datos tanto en entornos físicos como virtuales. Con vSphere, puede usarlos para proteger bases de datos de SQL Server o Oracle donde los datos se almacenan en LUN de RDM, LUN iSCSI conectados directamente al sistema operativo invitado o archivos VMDK en almacenes de datos VMFS o NFS. Los plugins permiten especificar diferentes tipos de backups de bases de datos, admiten backup en línea o sin conexión y protegen los archivos de base de datos junto con los archivos de registros. Además del backup y recuperación, los plugins también admiten la clonado de bases de datos para fines de desarrollo o pruebas.
+
+En la siguiente figura se muestra un ejemplo de la instalación de SnapCenter.
+
+image:vsphere_ontap_image4.png["Error: Falta la imagen gráfica"]
+
+Para obtener mejores funcionalidades de recuperación ante desastres, considere el uso del SRA de NetApp para ONTAP con el administrador de recuperación del sitio de VMware. Además de admitir la replicación de almacenes de datos en un sitio de recuperación ante desastres, también permite realizar pruebas no disruptivas en el entorno de recuperación ante desastres mediante la clonación de los almacenes de datos replicados. La recuperación de un desastre y la reprotección de la producción después de resolver la interrupción del servicio también son fáciles mediante la automatización incorporada en el SRA.
+
+Finalmente, para obtener el máximo nivel de protección de datos, considere una configuración de VMware vSphere Metro Storage Cluster (VMSC) con MetroCluster de NetApp. VMSC es una solución certificada por VMware que combina la replicación síncrona con la agrupación en clusters basada en arreglos, con los mismos beneficios de un cluster de alta disponibilidad que la distribución en sitios independientes para proteger contra los desastres del sitio. MetroCluster de NetApp ofrece configuraciones rentables para la replicación síncrona con recuperación transparente de fallos de cualquier componente de almacenamiento, así como recuperación con un único comando en caso de desastre en el sitio. El VMSC se describe con mayor detalle en la http://www.netapp.com/us/media/tr-4128.pdf["CONSULTE TR-4128"^].

@@ -1,0 +1,42 @@
+---
+sidebar: sidebar 
+permalink: oracle/dr/metrocluster/mc-mcc-nvfail.html 
+keywords: oracle, metrocluster, extended rac, rac, nvfail, switchover 
+summary: Oracle en MetroCluster - NVFAIL 
+---
+= MetroCluster y NVFAIL
+:allow-uri-read: 
+
+
+[role="lead"]
+NVFAIL es una función general de integridad de datos en ONTAP que es especialmente crucial para las cargas de trabajo de bases de datos, y se trata con detalle en link:../ontap-configuration/oracle_and_nvfail.html["NVFAIL"]. Además, existen consideraciones específicas de MetroCluster para NVFAIL.
+
+
+
+== RAC ampliado con NVFAIL forzado manualmente
+
+La opción más segura para forzar un switchover con un cluster RAC extendido es especificando `-force-nvfail-all` en la línea de comandos. Esta opción está disponible como medida de emergencia para garantizar que todos los datos almacenados en caché están vaciados. Si un host utiliza recursos de almacenamiento ubicados originalmente en el sitio afectado por desastres, recibirá errores de I/O o un identificador de archivos obsoleto (`ESTALE`) error. Las bases de datos de Oracle se bloquean y los sistemas de archivos se desconectan por completo o cambian al modo de solo lectura.
+
+Una vez finalizada la operación de switchover, el `in-nvfailed-state` La marca debe borrarse y las LUN deben colocarse en línea. Una vez finalizada esta actividad, se puede reiniciar la base de datos. Estas tareas se pueden automatizar para reducir el RTO.
+
+
+
+== RAC ampliado con dr-force-nvfail
+
+La configuración más segura es establecer el `dr-force-nvfail` marca en todos los volúmenes a los que se pueda acceder desde un sitio remoto. Como resultado, los volúmenes no estarán disponibles cuando entren `in-nvfailed-state` durante una conmutación de sitios. Una vez finalizada la operación de switchover, el `in-nvfailed-state` La marca debe borrarse y las LUN deben colocarse en línea. Una vez finalizadas estas actividades, se puede reiniciar la base de datos. Estas tareas se pueden automatizar para reducir el RTO.
+
+El resultado es similar al uso del `-force-nvfail-all` bandera. Sin embargo, la cantidad de volúmenes afectados puede limitarse a solo los volúmenes que deben protegerse de aplicaciones o sistemas operativos que tienen caché anticuada.
+
+
+
+== RAC ampliado sin dr-force-nvfail
+
+Hay dos requisitos críticos para un entorno que no utiliza `dr-force-nvfail` en volúmenes de base de datos:
+
+* Una conmutación de sitios forzada no debe ocurrir más de 30 segundos después de la pérdida del sitio principal.
+* Una conmutación de sitios no debe ocurrir durante las tareas de mantenimiento o cualquier otra condición en la que los plexes de SyncMirror o la replicación de NVRAM no estén sincronizados. El primer requisito se puede cumplir con el software tiebreaker configurado para realizar una conmutación de sitios en un plazo de 30 segundos tras un fallo del sitio. Este requisito no significa que el cambio deba realizarse dentro de los 30 segundos posteriores a la detección de un fallo del centro. Esto significa que ya no es seguro forzar un cambio si han transcurrido 30 segundos desde que se confirmó que un sitio está operativo.
+
+
+El segundo requisito se puede cumplir parcialmente deshabilitando todas las funcionalidades de conmutación automática de sitios cuando se sabe que la configuración de MetroCluster está fuera de sincronización. Mejor opción sería tener una solución tiebreaker que pueda supervisar el estado de la replicación de NVRAM y los plexes de SyncMirror. Si el clúster no está completamente sincronizado, tiebreaker no debería activar una conmutación de sitios.
+
+El software NetApp MCTB no puede supervisar el estado de sincronización, por lo que debe desactivarse cuando MetroCluster no está sincronizado por cualquier motivo. ClusterLion incluye funcionalidades de supervisión de NVRAM y supervisión plex, y se puede configurar para no activar la conmutación de sitios a menos que se haya confirmado que el sistema MetroCluster está totalmente sincronizado.

@@ -1,0 +1,9 @@
+= 
+:allow-uri-read: 
+
+
+El registro de rehacer/transacciones de bases de datos normalmente genera I/O no alineadas que pueden provocar advertencias engañosas acerca de las LUN mal alineadas en ONTAP.
+
+El registro realiza una escritura secuencial del archivo log con escrituras de tamaño variable. Una operación de escritura de registro que no se alinea con los límites de 4KB no provoca problemas de rendimiento normalmente, ya que la próxima operación de escritura de registro completa el bloque. El resultado es que ONTAP es capaz de procesar casi todas las escrituras de bloques de 4KB KB completos, aunque los datos de algunos bloques de 4KB KB se hayan escrito en dos operaciones independientes.
+
+Verifique la alineación mediante el uso de utilidades como `sio` o. `dd` Que puede generar I/O en un tamaño de bloque definido. Las estadísticas de alineación de I/O del sistema de almacenamiento se pueden ver con `stats` comando. Consulte link:../notes/wafl_alignment_verification.html["Verificación de la alineación de WAFL"] si quiere más información.

@@ -1,0 +1,357 @@
+---
+sidebar: sidebar 
+permalink: oracle/dr/snapmirror/disaster_recovery_with_log_replay.html 
+keywords: oracle, ontap, disaster recovery, log reply, log shipping 
+summary: Procedimiento de recuperación ante desastres de Oracle en ONTAP con envío de logs 
+---
+= Recuperación ante desastres con repetición de registro
+:allow-uri-read: 
+
+
+[role="lead"]
+Los procedimientos de replicación para una base de datos Oracle son esencialmente los mismos que los procedimientos de copia de seguridad. El requisito principal es que las copias Snapshot que constituyen un backup recuperable se deban replicar en el sistema de almacenamiento remoto.
+
+Como ya se ha explicado anteriormente en la documentación sobre protección de datos local, es posible crear un backup recuperable con el proceso de backup dinámico o aprovechando los backups optimizados en instantáneas.
+
+El requisito más importante es el aislamiento de los archivos de datos en uno o más volúmenes dedicados. No deben estar contaminados por ningún otro tipo de archivo. La razón es asegurarse de que la replicación de archivos de datos sea totalmente independiente de la replicación de otros tipos de datos, como archive logs. Para obtener más información sobre los diseños de archivos y para obtener detalles importantes sobre cómo garantizar que el diseño de almacenamiento es compatible con instantáneas, consulte  link:../../dp/oracle-online-backup.html#data-layout["Distribución de datos"].
+
+Suponiendo que los archivos de datos están encapsulados en volúmenes dedicados, la siguiente pregunta es cómo gestionar los redo logs, archive logs y controlfiles. El método más simple es colocar todos esos tipos de datos en un único volumen. La ventaja de esto es que los redo logs replicados, archive logs y controlfiles están perfectamente sincronizados. No hay ningún requisito para la recuperación incompleta o el uso de un archivo de control de copia de seguridad, aunque podría ser deseable también crear scripts de creación de archivos de control de copia de seguridad para otros escenarios de recuperación potenciales.
+
+
+
+== Distribución de dos volúmenes
+
+El diseño más simple se muestra en la siguiente figura.
+
+Este es el enfoque más común. Desde el punto de vista del DBA, puede parecer inusual colocar todas las copias de los redo logs y archive logs en el mismo volumen. Sin embargo, la separación no ofrece mucha protección adicional cuando los archivos y las LUN aún se encuentran en el mismo conjunto de unidades subyacente.
+
+
+
+== Distribución de tres volúmenes
+
+En ocasiones, es necesario separar los redo logs debido a problemas de protección de datos o a la necesidad de distribuir E/S de redo log entre las controladoras. Si es así, la distribución de tres volúmenes que se muestra en la siguiente figura se utilizará para la replicación sin dejar de tener que realizar recuperaciones incompletas o depender de los archivos de control de backup.
+
+Esto permite la segmentación de los redo logs y los archivos de control en conjuntos independientes de discos y controladores en el origen. Sin embargo, los archive logs y un juego de archivos de control y redo logs se pueden replicar en un estado sincronizado con los archive logs.
+
+En este modelo, el volumen Redo Log B no se replica.
+
+
+
+== Procedimiento de recuperación ante desastres: Backups activos
+
+Para realizar la recuperación ante desastres mediante backups activos, utilice el siguiente procedimiento básico:
+
+
+
+=== Requisitos previos
+
+. Los binarios de Oracle se instalan en el servidor de recuperación ante desastres.
+. Las instancias de base de datos se muestran en `/etc/oratab`.
+. La `passwd` y.. `pfile` o. `spfile` para la instancia debe estar en la `$ORACLE_HOME/dbs` directorio. .
+
+
+
+
+=== Recuperación tras siniestros
+
+. Rompa los reflejos de los archivos de datos y del volumen de registro común.
+. Restaure los volúmenes de archivos de datos en la snapshot de backup en caliente más reciente de los archivos de datos.
+. Si se utiliza SAN, activar grupos de volúmenes y/o montar sistemas de archivos.
+. Reproduzca los archive logs en el punto deseado.
+. Reproduzca los redo logs actuales si desea una recuperación completa.
+
+
+El uso de NFS simplifica el procedimiento drásticamente, ya que los sistemas de archivos NFS para los archivos de datos y los archivos de registro se pueden montar en el servidor de recuperación ante desastres en cualquier momento. Se hace lectura/escritura cuando los espejos están rotos.
+
+
+
+== Procedimiento de recuperación ante desastres: Backups optimizados para Snapshot
+
+La recuperación desde backups optimizados para snapshots es prácticamente idéntica al procedimiento de recuperación de backup en caliente con los siguientes cambios:
+
+. Rompa los reflejos de los archivos de datos y del volumen de registro común.
+. Restaure los volúmenes de archivos de datos en una copia de Snapshot creada antes de la réplica actual del volumen de registro.
+. Si se utiliza SAN, activar grupos de volúmenes y/o montar sistemas de archivos.
+. Reproduzca los archive logs en el punto deseado.
+. Reproduzca los redo logs actuales si desea una recuperación completa.
+
+
+Estas diferencias simplifican el procedimiento de recuperación general, ya que no hay ningún requisito para asegurarse de que se creó correctamente una copia Snapshot en el origen mientras la base de datos estaba en modo de backup dinámico. El procedimiento de recuperación ante desastres se basa en las marcas de tiempo de los snapshots del sitio de recuperación ante desastres. El estado de la base de datos cuando se crearon las instantáneas no es importante.
+
+
+
+== Recuperación ante desastres con copias Snapshot de backup activas
+
+Este es un ejemplo de estrategia de recuperación ante desastres basada en la replicación de snapshots de backup en caliente. También sirve como ejemplo de estrategia de backup local sencilla y escalable.
+
+La base de datos de ejemplo se encuentra en una arquitectura de dos volúmenes básica. `/oradata` contiene archivos de datos y. `/oralogs` se utiliza para la combinación de redo logs, archive logs y archivos de control.
+
+....
+[root@host1 ~]# ls /ora*
+/oradata:
+dbf
+/oralogs:
+arch  ctrl  redo
+....
+Se requieren dos programaciones, una para los backups de archivos de datos nocturnos y otra para los backups de archivos de registro. Estos se llaman medianoche y 15minutes, respectivamente.
+
+....
+Cluster01::> job schedule cron show -name midnight|15minutes
+Name                Description
+----------------    -----------------------------------------------------
+15minutes           @:00,:15,:30,:45
+midnight            @0:00
+2 entries were displayed.
+....
+Estas programaciones se utilizan dentro de las políticas de snapshot `NTAP-datafile-backups` y.. `NTAP-log-backups`, como se muestra a continuación:
+
+....
+Cluster01::> snapshot policy show -vserver vserver1 -policy NTAP-* -fields schedules,counts
+vserver   policy                schedules                    counts
+--------- --------------------- ---------------------------- ------
+vserver1  NTAP-datafile-backups midnight                     60
+vserver1  NTAP-log-backups      15minutes                    72
+2 entries were displayed.
+....
+Por último, estas políticas de snapshots se aplican a los volúmenes.
+
+....
+Cluster01::> volume show -vserver vserver1 -volume vol_oracle* -fields snapshot-policy
+vserver   volume                 snapshot-policy
+--------- ---------------------- ---------------------
+vserver1  vol_oracle_datafiles   NTAP-datafile-backups
+vserver1  vol_oracle_logs        NTAP-log-backups
+....
+Esto define la programación de backup de los volúmenes. Las instantáneas de archivos de datos se crean a medianoche y se conservan durante 60 días. El volumen de registro contiene 72 copias de Snapshot creadas a intervalos de 15 minutos, lo que suma 18 horas de cobertura.
+
+A continuación, asegúrese de que la base de datos esté en modo de backup dinámico cuando se cree una snapshot de archivo de datos. Esto se hace con un pequeño script que acepta algunos argumentos básicos que inician y paran el modo de copia de seguridad en el SID especificado.
+
+....
+58 * * * * /snapomatic/current/smatic.db.ctrl --sid NTAP --startbackup
+02 * * * * /snapomatic/current/smatic.db.ctrl --sid NTAP --stopbackup
+....
+En este paso se garantiza que la base de datos esté en modo backup dinámico durante una ventana de cuatro minutos que rodea la instantánea de medianoche.
+
+La replicación en el sitio de recuperación de desastres se configura de la siguiente manera:
+
+....
+Cluster01::> snapmirror show -destination-path drvserver1:dr_oracle* -fields source-path,destination-path,schedule
+source-path                      destination-path                   schedule
+-------------------------------- ---------------------------------- --------
+vserver1:vol_oracle_datafiles    drvserver1:dr_oracle_datafiles     6hours
+vserver1:vol_oracle_logs         drvserver1:dr_oracle_logs          15minutes
+2 entries were displayed.
+....
+El destino del volumen de registro se actualiza cada 15 minutos. Esto proporciona un objetivo de punto de recuperación de aproximadamente 15 minutos. El intervalo de actualización preciso varía un poco dependiendo del volumen total de datos que se deben transferir durante la actualización.
+
+El destino del volumen del archivo de datos se actualiza cada seis horas. Esto no afecta al objetivo de punto de recuperación ni al objetivo de tiempo de recuperación. Si se requiere recuperación ante desastres, uno de los primeros pasos es restaurar el volumen del archivo de datos en una instantánea de backup en caliente. La finalidad del intervalo de actualización más frecuente es suavizar la tasa de transferencia de este volumen. Si la actualización está programada para una vez al día, todos los cambios acumulados durante el día deben transferirse a la vez. Con actualizaciones más frecuentes, los cambios se replican más gradualmente a lo largo del día.
+
+Si se produce un desastre, el primer paso es interrumpir los reflejos de ambos volúmenes:
+
+....
+Cluster01::> snapmirror break -destination-path drvserver1:dr_oracle_datafiles -force
+Operation succeeded: snapmirror break for destination "drvserver1:dr_oracle_datafiles".
+Cluster01::> snapmirror break -destination-path drvserver1:dr_oracle_logs -force
+Operation succeeded: snapmirror break for destination "drvserver1:dr_oracle_logs".
+Cluster01::>
+....
+Ahora las réplicas son de lectura y escritura. El siguiente paso es verificar la marca de tiempo del volumen de registro.
+
+....
+Cluster01::> snapmirror show -destination-path drvserver1:dr_oracle_logs -field newest-snapshot-timestamp
+source-path                destination-path             newest-snapshot-timestamp
+-------------------------- ---------------------------- -------------------------
+vserver1:vol_oracle_logs   drvserver1:dr_oracle_logs    03/14 13:30:00
+....
+La copia más reciente del volumen de registro es el 14th de marzo a las 13:30:00.
+
+A continuación, identifique la snapshot de backup activo creada inmediatamente antes del estado del volumen de registro. Esto es necesario porque el proceso de reproducción de log requiere que todos los archive logs se creen durante el modo de copia de seguridad activa. Por lo tanto, la réplica del volumen de registro debe ser más antigua que las imágenes de backup activo o no contener los registros requeridos.
+
+....
+Cluster01::> snapshot list -vserver drvserver1 -volume dr_oracle_datafiles -fields create-time -snapshot midnight*
+vserver   volume                    snapshot                   create-time
+--------- ------------------------  -------------------------- ------------------------
+drvserver1 dr_oracle_datafiles      midnight.2017-01-14_0000   Sat Jan 14 00:00:00 2017
+drvserver1 dr_oracle_datafiles      midnight.2017-01-15_0000   Sun Jan 15 00:00:00 2017
+...
+
+drvserver1 dr_oracle_datafiles      midnight.2017-03-12_0000   Sun Mar 12 00:00:00 2017
+drvserver1 dr_oracle_datafiles      midnight.2017-03-13_0000   Mon Mar 13 00:00:00 2017
+drvserver1 dr_oracle_datafiles      midnight.2017-03-14_0000   Tue Mar 14 00:00:00 2017
+60 entries were displayed.
+Cluster01::>
+....
+La instancia de Snapshot creada más recientemente es `midnight.2017-03-14_0000`. Esta es la imagen de backup en caliente más reciente de los archivos de datos y se restaura de la siguiente manera:
+
+....
+Cluster01::> snapshot restore -vserver drvserver1 -volume dr_oracle_datafiles -snapshot midnight.2017-03-14_0000
+Cluster01::>
+....
+En esta etapa, la base de datos está ahora lista para ser recuperada. Si se trataba de un entorno SAN, el siguiente paso incluiría activar grupos de volúmenes y montar sistemas de archivos, un proceso fácilmente automatizado. Como este ejemplo utiliza NFS, los sistemas de archivos ya están montados y se han convertido en de lectura y escritura sin necesidad de montar o activar más el momento en el que se rompieron los reflejos.
+
+La base de datos se puede recuperar ahora al punto deseado en el tiempo o se puede recuperar completamente con respecto a la copia de los redo logs que se han replicado. En este ejemplo se ilustra el valor del archive log combinado, el archivo de control y el volumen redo log. El proceso de recuperación es significativamente más sencillo, ya que no hay necesidad de depender de los archivos de control de copia de seguridad ni de restablecer los archivos de registro.
+
+....
+[oracle@drhost1 ~]$ sqlplus / as sysdba
+Connected to an idle instance.
+SQL> startup mount;
+ORACLE instance started.
+Total System Global Area 1610612736 bytes
+Fixed Size                  2924928 bytes
+Variable Size            1090522752 bytes
+Database Buffers          503316480 bytes
+Redo Buffers               13848576 bytes
+Database mounted.
+SQL> recover database until cancel;
+ORA-00279: change 1291884 generated at 03/14/2017 12:58:01 needed for thread 1
+ORA-00289: suggestion : /oralogs_nfs/arch/1_34_938169986.dbf
+ORA-00280: change 1291884 for thread 1 is in sequence #34
+Specify log: {<RET>=suggested | filename | AUTO | CANCEL}
+auto
+ORA-00279: change 1296077 generated at 03/14/2017 15:00:44 needed for thread 1
+ORA-00289: suggestion : /oralogs_nfs/arch/1_35_938169986.dbf
+ORA-00280: change 1296077 for thread 1 is in sequence #35
+ORA-00278: log file '/oralogs_nfs/arch/1_34_938169986.dbf' no longer needed for
+this recovery
+...
+ORA-00279: change 1301407 generated at 03/14/2017 15:01:04 needed for thread 1
+ORA-00289: suggestion : /oralogs_nfs/arch/1_40_938169986.dbf
+ORA-00280: change 1301407 for thread 1 is in sequence #40
+ORA-00278: log file '/oralogs_nfs/arch/1_39_938169986.dbf' no longer needed for
+this recovery
+ORA-00279: change 1301418 generated at 03/14/2017 15:01:19 needed for thread 1
+ORA-00289: suggestion : /oralogs_nfs/arch/1_41_938169986.dbf
+ORA-00280: change 1301418 for thread 1 is in sequence #41
+ORA-00278: log file '/oralogs_nfs/arch/1_40_938169986.dbf' no longer needed for
+this recovery
+ORA-00308: cannot open archived log '/oralogs_nfs/arch/1_41_938169986.dbf'
+ORA-17503: ksfdopn:4 Failed to open file /oralogs_nfs/arch/1_41_938169986.dbf
+ORA-17500: ODM err:File does not exist
+SQL> recover database;
+Media recovery complete.
+SQL> alter database open;
+Database altered.
+SQL>
+....
+
+
+== Recuperación ante desastres con backups optimizados para Snapshot
+
+El procedimiento de recuperación ante desastres mediante backups optimizados para Snapshot es prácticamente idéntico al procedimiento de recuperación ante desastres del backup activo. Al igual que con el procedimiento de copias Snapshot de backup en caliente, también es esencialmente una extensión de una arquitectura de backup local en la que los backups se replican para su uso en la recuperación ante desastres. En el siguiente ejemplo, se muestra el procedimiento detallado de configuración y recuperación. Este ejemplo también destaca las diferencias clave entre los backups activos y los backups optimizados para Snapshot.
+
+La base de datos de ejemplo se encuentra en una arquitectura de dos volúmenes básica. `/oradata` contiene archivos de datos y. `/oralogs` se utiliza para la combinación de redo logs, archive logs y archivos de control.
+
+....
+ [root@host2 ~]# ls /ora*
+/oradata:
+dbf
+/oralogs:
+arch  ctrl  redo
+....
+Se requieren dos programaciones: Una para los backups de archivos de datos nocturnos y otra para los backups de archivos de registro. Estos se llaman medianoche y 15minutes, respectivamente.
+
+....
+Cluster01::> job schedule cron show -name midnight|15minutes
+Name                Description
+----------------    -----------------------------------------------------
+15minutes           @:00,:15,:30,:45
+midnight            @0:00
+2 entries were displayed.
+....
+Estas programaciones se utilizan dentro de las políticas de snapshot `NTAP-datafile-backups` y.. `NTAP-log-backups`, como se muestra a continuación:
+
+....
+Cluster01::> snapshot policy show -vserver vserver2  -policy NTAP-* -fields schedules,counts
+vserver   policy                schedules                    counts
+--------- --------------------- ---------------------------- ------
+vserver2  NTAP-datafile-backups midnight                     60
+vserver2  NTAP-log-backups      15minutes                    72
+2 entries were displayed.
+....
+Por último, estas políticas de snapshots se aplican a los volúmenes.
+
+....
+Cluster01::> volume show -vserver vserver2  -volume vol_oracle* -fields snapshot-policy
+vserver   volume                 snapshot-policy
+--------- ---------------------- ---------------------
+vserver2  vol_oracle_datafiles   NTAP-datafile-backups
+vserver2  vol_oracle_logs        NTAP-log-backups
+....
+De este modo se controla la programación de backup definitiva de los volúmenes. Las copias Snapshot se crean a medianoche y se conservan durante 60 días. El volumen de registro contiene 72 copias de Snapshot creadas a intervalos de 15 minutos, lo que suma 18 horas de cobertura.
+
+La replicación en el sitio de recuperación de desastres se configura de la siguiente manera:
+
+....
+Cluster01::> snapmirror show -destination-path drvserver2:dr_oracle* -fields source-path,destination-path,schedule
+source-path                      destination-path                   schedule
+-------------------------------- ---------------------------------- --------
+vserver2:vol_oracle_datafiles    drvserver2:dr_oracle_datafiles     6hours
+vserver2:vol_oracle_logs         drvserver2:dr_oracle_logs          15minutes
+2 entries were displayed.
+....
+El destino del volumen de registro se actualiza cada 15 minutos. Esto proporciona un objetivo de punto de recuperación de aproximadamente 15 minutos, y el intervalo preciso de actualización varía ligeramente, en función del volumen total de datos que se deben transferir durante la actualización.
+
+El destino del volumen de archivos de datos se actualiza cada 6 horas. Esto no afecta al objetivo de punto de recuperación ni al objetivo de tiempo de recuperación. Si se requiere recuperación ante desastres, primero debe restaurar el volumen del archivo de datos en una instantánea de backup activo. La finalidad del intervalo de actualización más frecuente es suavizar la tasa de transferencia de este volumen. Si la actualización se programó una vez al día, todos los cambios acumulados durante el día deben transferirse a la vez. Con actualizaciones más frecuentes, los cambios se replican más gradualmente a lo largo del día.
+
+Si se produce un desastre, el primer paso es interrumpir los reflejos en todos los volúmenes:
+
+....
+Cluster01::> snapmirror break -destination-path drvserver2:dr_oracle_datafiles -force
+Operation succeeded: snapmirror break for destination "drvserver2:dr_oracle_datafiles".
+Cluster01::> snapmirror break -destination-path drvserver2:dr_oracle_logs -force
+Operation succeeded: snapmirror break for destination "drvserver2:dr_oracle_logs".
+Cluster01::>
+....
+Ahora las réplicas son de lectura y escritura. El siguiente paso es verificar la marca de tiempo del volumen de registro.
+
+....
+Cluster01::> snapmirror show -destination-path drvserver2:dr_oracle_logs -field newest-snapshot-timestamp
+source-path                destination-path             newest-snapshot-timestamp
+-------------------------- ---------------------------- -------------------------
+vserver2:vol_oracle_logs   drvserver2:dr_oracle_logs    03/14 13:30:00
+....
+La copia más reciente del volumen de registro es el 14th de marzo a las 13:30. A continuación, identifique la snapshot de archivo de datos creada inmediatamente antes del estado del volumen de registro. Esto es necesario porque el proceso de reproducción de log necesita todos los archive logs desde justo antes de la instantánea hasta el punto de recuperación deseado.
+
+....
+Cluster01::> snapshot list -vserver drvserver2 -volume dr_oracle_datafiles -fields create-time -snapshot midnight*
+vserver   volume                    snapshot                   create-time
+--------- ------------------------  -------------------------- ------------------------
+drvserver2 dr_oracle_datafiles      midnight.2017-01-14_0000   Sat Jan 14 00:00:00 2017
+drvserver2 dr_oracle_datafiles      midnight.2017-01-15_0000   Sun Jan 15 00:00:00 2017
+...
+
+drvserver2 dr_oracle_datafiles      midnight.2017-03-12_0000   Sun Mar 12 00:00:00 2017
+drvserver2 dr_oracle_datafiles      midnight.2017-03-13_0000   Mon Mar 13 00:00:00 2017
+drvserver2 dr_oracle_datafiles      midnight.2017-03-14_0000   Tue Mar 14 00:00:00 2017
+60 entries were displayed.
+Cluster01::>
+....
+La instancia de Snapshot creada más recientemente es `midnight.2017-03-14_0000`. Restaurar esta instantánea.
+
+....
+Cluster01::> snapshot restore -vserver drvserver2 -volume dr_oracle_datafiles -snapshot midnight.2017-03-14_0000
+Cluster01::>
+....
+La base de datos está ahora lista para ser recuperada. Si se trataba de un entorno SAN, activaría los grupos de volúmenes y montaría sistemas de archivos, un proceso fácilmente automatizado. Sin embargo, este ejemplo utiliza NFS, por lo que los sistemas de archivos ya están montados y se han convertido en de lectura y escritura sin necesidad de montaje o activación en el momento en que se rompieron los reflejos.
+
+La base de datos se puede recuperar ahora al punto deseado en el tiempo o se puede recuperar completamente con respecto a la copia de los redo logs que se han replicado. En este ejemplo se ilustra el valor del archive log combinado, el archivo de control y el volumen redo log. El proceso de recuperación es significativamente más sencillo, ya que no hay necesidad de confiar en los archivos de control de copia de seguridad ni restablecer los archivos de registro.
+
+....
+[oracle@drhost2 ~]$ sqlplus / as sysdba
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Mar 15 12:26:51 2017
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+Connected to an idle instance.
+SQL> startup mount;
+ORACLE instance started.
+Total System Global Area 1610612736 bytes
+Fixed Size                  2924928 bytes
+Variable Size            1073745536 bytes
+Database Buffers          520093696 bytes
+Redo Buffers               13848576 bytes
+Database mounted.
+SQL> recover automatic;
+Media recovery complete.
+SQL> alter database open;
+Database altered.
+SQL>
+....

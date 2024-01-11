@@ -1,0 +1,410 @@
+---
+sidebar: sidebar 
+permalink: vmware/vsphere/datastores.html 
+keywords: vSphere, datastore, VMFS, FC, FCoE, NVMe/FC, iSCSI, NFS, vVols 
+summary: Esta página describe las prácticas recomendadas para implementar una solución de almacenamiento ONTAP de NetApp en un entorno de VMware vSphere. 
+---
+= Almacenes de datos y protocolos
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./../media/
+
+
+
+
+== Funciones de almacén de datos y protocolo de vSphere
+
+Se utilizan siete protocolos para conectar VMware vSphere a almacenes de datos en un sistema que ejecuta el software ONTAP:
+
+* FCP
+* FCoE
+* NVMe/FC
+* NVMe/TCP
+* ISCSI
+* NFS v3
+* NFS v4,1
+
+
+FCP, FCoE, NVMe/FC, NVMe/TCP e iSCSI son protocolos de bloque que usan el sistema de archivos de máquina virtual de vSphere (VMFS) para almacenar máquinas virtuales en LUN de ONTAP o espacios de nombres NVMe que se encuentran en un volumen ONTAP FlexVol. Tenga en cuenta que, a partir de vSphere 7.0, VMware ya no es compatible con el software FCoE en entornos de producción. NFS es un protocolo de archivos que coloca equipos virtuales en almacenes de datos (que son simplemente volúmenes de ONTAP) sin necesidad de VMFS. SMB (CIFS), iSCSI, NVMe/TCP o NFS también se puede utilizar directamente de un sistema operativo invitado a ONTAP.
+
+Las siguientes tablas presentan funciones de almacén de datos tradicionales compatibles con vSphere con ONTAP. Esta información no se aplica a almacenes de datos vVols, pero, generalmente, se aplica a vSphere 6.x y versiones posteriores mediante versiones ONTAP compatibles. También puede consultar https://www.vmware.com/support/pubs/["Máximos de configuración de VMware"^] En versiones específicas de vSphere para confirmar límites específicos.
+
+|===
+| Característica/función | FC/FCoE | ISCSI | NVMe-of | NFS 
+
+
+| Formato | Asignación de dispositivo sin formato (RDM) o VMFS | VMFS o RDM | VMFS | N.A. 
+
+
+| Número máximo de almacenes de datos o LUN | 1024 LUN por host | 1024 LUN por servidor | 256 nombres por servidor | 256 montajes
+NFS predeterminado. MaxVolumes tiene 8 años. Utilice las herramientas de ONTAP para VMware vSphere para aumentar a 256. 
+
+
+| Tamaño máximo de almacén de datos | 64 TB | 64 TB | 64 TB | 100 TB de volumen FlexVol o superior con volumen FlexGroup 
+
+
+| Tamaño máximo de archivo del almacén de datos | 62 TB | 62 TB | 62 TB | 62TB con ONTAP 9.12.1P2 y posterior 
+
+
+| Profundidad de cola óptima por LUN o sistema de archivos | 64-256 | 64-256 | Autonegociar | Consulte NFS.MaxQueueDepth en https://docs.netapp.com/us-en/netapp-solutions/virtualization/vsphere_ontap_recommended_esxi_host_and_other_ontap_settings.html["Host ESXi recomendado y otra configuración de ONTAP"^]. 
+|===
+En la siguiente tabla se enumeran las funcionalidades relacionadas con el almacenamiento de VMware admitidas.
+
+|===
+| Capacidad/función | FC/FCoE | ISCSI | NVMe-of | NFS 
+
+
+| VMotion | Sí | Sí | Sí | Sí 
+
+
+| VMotion de almacenamiento | Sí | Sí | Sí | Sí 
+
+
+| Ha de VMware | Sí | Sí | Sí | Sí 
+
+
+| Planificador de recursos distribuidos de almacenamiento (SDRS) | Sí | Sí | Sí | Sí 
+
+
+| Software de backup compatible con VMware vStorage APIs for Data Protection (VADP) | Sí | Sí | Sí | Sí 
+
+
+| Microsoft Cluster Service (MSCS) o clustering de recuperación tras fallos en un equipo virtual | Sí | Sí* | Sí* | No admitido 
+
+
+| Tolerancia a fallos | Sí | Sí | Sí | Sí 
+
+
+| Gestor de recuperación de sitios | Sí | Sí | No** | Sólo v3** 
+
+
+| Equipos virtuales con thin provisioning (discos virtuales) | Sí | Sí | Sí | Sí
+Esta configuración es la predeterminada para todas las máquinas virtuales de NFS cuando no se utiliza VAAI. 
+
+
+| Accesos múltiples nativos de VMware | Sí | Sí | Sí, utilizando el nuevo complemento de alto rendimiento (HPP) | N.A. 
+|===
+En la siguiente tabla se enumeran las funciones de gestión de almacenamiento de ONTAP admitidas.
+
+|===
+| Característica/función | FC/FCoE | ISCSI | NVMe-of | NFS 
+
+
+| Deduplicación de datos | Ahorro en la cabina | Ahorro en la cabina | Ahorro en la cabina | De ahorro en el almacén de datos 
+
+
+| Aprovisionamiento ligero | Almacén de datos o RDM | Almacén de datos o RDM | Almacén de datos | Almacén de datos 
+
+
+| Redimensión de almacén de datos | Crezca solo | Crezca solo | Crezca solo | Crecer, crecimiento automático y reducción 
+
+
+| Complementos de SnapCenter para aplicaciones Windows y Linux (en invitado) | Sí | Sí | No | Sí 
+
+
+| Supervisión y configuración del host mediante herramientas de ONTAP para VMware vSphere | Sí | Sí | No | Sí 
+
+
+| Aprovisionar mediante las herramientas de ONTAP para VMware vSphere | Sí | Sí | No | Sí 
+|===
+En la siguiente tabla se enumeran las funciones de backup admitidas.
+
+|===
+| Característica/función | FC/FCoE | ISCSI | NVMe-of | NFS 
+
+
+| Snapshots de ONTAP | Sí | Sí | Sí | Sí 
+
+
+| SRM compatible con backups replicados | Sí | Sí | No** | Sólo v3** 
+
+
+| SnapMirror para volúmenes | Sí | Sí | Sí | Sí 
+
+
+| Acceso a imagen VMDK | Software de backup compatible con VADP | Software de backup compatible con VADP | Software de backup compatible con VADP | Explorador del software de backup habilitado para VADP, vSphere Client y almacén de datos de vSphere Web Client 
+
+
+| Acceso de nivel de ficheros VMDK | Software de backup compatible con VADP, solo Windows | Software de backup compatible con VADP, solo Windows | Software de backup compatible con VADP, solo Windows | Software de backup compatible con VADP y aplicaciones de terceros 
+
+
+| Granularidad de NDMP | Almacén de datos | Almacén de datos | Almacén de datos | Almacén de datos o máquina virtual 
+|===
+*NetApp recomienda utilizar iSCSI en sistemas invitados para clústeres de Microsoft en lugar de VMDK habilitados para varios escritores en un almacén de datos VMFS. Este enfoque es totalmente compatible con Microsoft y VMware, ofrece una gran flexibilidad con ONTAP (sistemas de SnapMirror a ONTAP en las instalaciones o en el cloud), es fácil de configurar y automatizar y puede protegerse con SnapCenter. VSphere 7 añade una nueva opción de VMDK en clúster. Esto es diferente de los VMDK habilitados para varias ediciones, que requieren un almacén de datos presentado a través del protocolo FC que tiene habilitada la compatibilidad con VMDK en cluster. Se aplican otras restricciones. Consulte la lista de VMware https://docs.vmware.com/en/VMware-vSphere/7.0/vsphere-esxi-vcenter-server-70-setup-wsfc.pdf["Configuración de clústeres de conmutación por error de Windows Server"^] documentación para directrices de configuración.
+
+**Los almacenes de datos que usan NVMe-of y NFS v4.1 requieren la replicación de vSphere. SRM no admite la replicación basada en cabinas.
+
+
+
+== Seleccionar un protocolo de almacenamiento
+
+Los sistemas que ejecutan el software ONTAP admiten todos los protocolos de almacenamiento más importantes, por lo que los clientes pueden elegir cuál es la mejor opción para su entorno, en función de la infraestructura de red y la capacidad del personal actuales y planificadas. Por lo general, las pruebas de NetApp han mostrado poca diferencia entre protocolos que se ejecutan a velocidades de línea similares, por lo que es mejor centrarse en su infraestructura de red y en las capacidades del personal sobre el rendimiento del protocolo bruto.
+
+Los siguientes factores pueden ser útiles a la hora de considerar una opción de protocolo:
+
+* *Entorno actual del cliente.* aunque los equipos DE TI generalmente tienen experiencia en la gestión de la infraestructura IP Ethernet, no todos son expertos en la administración de una estructura SAN FC. Sin embargo, es posible que el uso de una red IP de uso general que no está diseñada para el tráfico de almacenamiento no funcione bien. Considere la infraestructura de red de que dispone, las mejoras planificadas y las capacidades y la disponibilidad del personal para gestionarlos.
+* *Facilidad de configuración.* más allá de la configuración inicial de la estructura FC (conmutadores y cableado adicionales, zonificación y verificación de interoperabilidad de HBA y firmware), los protocolos de bloque también requieren la creación y asignación de LUN y descubrimiento y formato por parte del SO invitado. Una vez creados y exportados los volúmenes de NFS, el host ESXi los monta y está listo para usarse. NFS no tiene ninguna cualificación de hardware o firmware especial que gestionar.
+* *Facilidad de administración.* con los protocolos SAN, si se necesita más espacio, se necesitan varios pasos, incluyendo el crecimiento de una LUN, el reexamen para descubrir el nuevo tamaño, y luego el crecimiento del sistema de archivos). A pesar de que es posible aumentar una LUN, reducir el tamaño de una LUN no es así, y recuperar el espacio no utilizado puede requerir esfuerzo adicional. NFS permite ajustar fácilmente el tamaño, y el sistema de almacenamiento puede automatizar este ajuste de tamaño. SAN ofrece una reclamación de espacio mediante comandos TRIM/UNMAP del sistema operativo invitado, lo que permite que el espacio de los archivos eliminados se devuelva a la matriz. Este tipo de recuperación de espacio es más difícil con los almacenes de datos NFS.
+* *Transparencia del espacio de almacenamiento.* la utilización del almacenamiento suele ser más fácil de ver en entornos NFS, ya que Thin Provisioning devuelve ahorros inmediatamente. Del mismo modo, los ahorros en deduplicación y clonado están disponibles inmediatamente para otras máquinas virtuales en el mismo almacén de datos o para otros volúmenes del sistema de almacenamiento. La densidad de las máquinas virtuales también es superior en un almacén de datos NFS, que puede mejorar el ahorro de la deduplicación y reducir los costes de gestión al tener menos almacenes de datos que gestionar.
+
+
+
+
+== Distribución de almacenes de datos
+
+Los sistemas de almacenamiento ONTAP ofrecen una gran flexibilidad a la hora de crear almacenes de datos para equipos virtuales y discos virtuales. Aunque se aplican muchas prácticas recomendadas de ONTAP al usar VSC para aprovisionar almacenes de datos para vSphere (que se enumeran en la sección link:settings.html["Host ESXi recomendado y otra configuración de ONTAP"]), aquí hay algunas directrices adicionales a considerar:
+
+* La puesta en marcha de vSphere con almacenes de datos NFS de ONTAP da como resultado una implementación de alto rendimiento y fácil de gestionar que proporciona ratios de máquina virtual a almacén de datos que no pueden obtenerse con protocolos de almacenamiento basados en bloques. Esta arquitectura puede provocar un aumento diez veces en la densidad de los almacenes de datos con una reducción correlacionada en el número de almacenes de datos. Aunque un almacén de datos de mayor tamaño puede beneficiar la eficiencia de almacenamiento y proporcionar beneficios operativos, considere el uso de al menos cuatro almacenes de datos (volúmenes de FlexVol) para almacenar las máquinas virtuales en una sola controladora de ONTAP a fin de obtener el máximo rendimiento de los recursos de hardware. Este enfoque también permite establecer almacenes de datos con diferentes políticas de recuperación. Algunas se pueden hacer backups o replicarse con una frecuencia mayor que otras en función de las necesidades de las empresas. No se necesitan varios almacenes de datos en los volúmenes de FlexGroup para mejorar el rendimiento, ya que se escalan por diseño.
+* NetApp recomienda el uso de volúmenes de FlexVol para la mayoría de almacenes de datos NFS. A partir de la versión ONTAP 9,8, se admiten los volúmenes FlexGroup también para su uso como almacenes de datos y, por lo general, se recomienda en determinados casos de uso. No se recomiendan normalmente otros contenedores de almacenamiento de ONTAP, como qtrees, porque actualmente no son compatibles con las herramientas de ONTAP para VMware vSphere o con el complemento de NetApp SnapCenter para VMware vSphere. Dicho esto, la puesta en marcha de almacenes de datos como varios qtrees en un único volumen puede ser útil para entornos muy automatizados que pueden beneficiarse de cuotas a nivel de almacenes de datos o clones de archivos de máquinas virtuales.
+* Un buen tamaño para un almacén de datos con volúmenes FlexVol es de entre 4 y 8 TB. Este tamaño es un buen punto de equilibrio entre rendimiento, facilidad de gestión y protección de datos. Empiece con poco (digamos, 4 TB) y crezca el almacén de datos según sea necesario (hasta el máximo de 100 TB). Los almacenes de datos más pequeños son más rápidos de recuperar desde un backup o después de un desastre y se pueden mover rápidamente en el clúster. Considere la posibilidad de utilizar el ajuste de tamaño automático de ONTAP para aumentar y reducir automáticamente el volumen a medida que se modifique el espacio utilizado. Las herramientas de ONTAP para el Asistente de aprovisionamiento de almacenes de datos de VMware vSphere utilizan autosize de forma predeterminada para los nuevos almacenes de datos. System Manager o la línea de comandos pueden personalizarse los umbrales de crecimiento y reducción, y el tamaño máximo y mínimo.
+* De forma alternativa, los almacenes de datos VMFS se pueden configurar con LUN a las que se accede mediante FC, iSCSI o FCoE. VMFS permite que cada servidor ESX acceda a las LUN tradicionales de forma simultánea en un clúster. Los almacenes de datos VMFS pueden tener un tamaño de hasta 64 TB y constan de hasta 32 LUN de 2 TB (VMFS 3) o una única LUN de 64 TB (VMFS 5). El tamaño máximo de LUN de ONTAP es de 16 TB en la mayoría de los sistemas y de 128 TB en los sistemas de cabinas All-SAN. Por lo tanto, es posible crear un almacén de datos VMFS 5 de tamaño máximo en la mayoría de los sistemas ONTAP utilizando cuatro LUN de 16 TB. Aunque es posible obtener un beneficio en el rendimiento de las cargas de trabajo con un gran volumen de I/o con varias LUN (con sistemas FAS o AFF de gama alta), esta ventaja se ve compensada por la mayor complejidad de gestión para crear, gestionar y proteger las LUN de almacenes de datos y un mayor riesgo para la disponibilidad. NetApp suele recomendar el uso de una única LUN de gran tamaño para cada almacén de datos y únicamente span si hay una necesidad especial de ir más allá de un almacén de datos de 16 TB. Como sucede con NFS, considere el uso de varios almacenes de datos (volúmenes) para maximizar el rendimiento en una única controladora de ONTAP.
+* Los sistemas operativos invitados (SO) antiguos necesitaban alineación con el sistema de almacenamiento para obtener el mejor rendimiento y eficiencia del almacenamiento. Sin embargo, los sistemas operativos modernos admitidos por el proveedor de distribuidores de Microsoft y Linux como Red Hat ya no requieren ajustes para alinear la partición del sistema de archivos con los bloques del sistema de almacenamiento subyacente en un entorno virtual. Si utiliza un sistema operativo antiguo que puede requerir alineación, busque artículos en la base de conocimientos de soporte de NetApp usando "alineación de máquinas virtuales" o solicite una copia de TR-3747 a través de un contacto de partners o de ventas de NetApp.
+* Evite el uso de utilidades de desfragmentación en el sistema operativo invitado, ya que no ofrece beneficios de rendimiento y afecta a la eficiencia del almacenamiento y al uso del espacio de instantáneas. Considere también desactivar la indización de búsquedas en el sistema operativo invitado para escritorios virtuales.
+* ONTAP ha dirigido el sector mediante funciones innovadoras de eficiencia del almacenamiento, que le permiten sacar el máximo partido a su espacio en disco utilizable. Los sistemas AFF llevan esta eficiencia aún más allá gracias a la compresión y la deduplicación inline predeterminadas. Los datos se deduplican en todos los volúmenes de un agregado, por lo que ya no necesita agrupar sistemas operativos similares y aplicaciones similares en un único almacén de datos para optimizar el ahorro.
+* En algunos casos, es posible que ni siquiera se necesite un almacén de datos. Para obtener el mejor rendimiento y la mejor capacidad de gestión, evite usar un almacén de datos para aplicaciones con un alto volumen de I/o como bases de datos y algunas aplicaciones. En su lugar, piense en sistemas de archivos que son propiedad del invitado, como sistemas de archivos NFS o iSCSI gestionados por el invitado o con RDM. Para obtener orientación específica sobre las aplicaciones, consulte los informes técnicos de NetApp para su aplicación. Por ejemplo: link:/oracle/overview.html["Bases de datos de Oracle en ONTAP"] dispone de una sección sobre la virtualización con detalles útiles.
+* Los discos de primera clase (o discos virtuales mejorados) permiten discos gestionados por vCenter independientemente de una máquina virtual con vSphere 6.5 y versiones posteriores. Aunque son gestionados principalmente por la API, pueden ser útiles con vVols, sobre todo cuando las herramientas de OpenStack o Kubernetes las gestionan. Son compatibles tanto con ONTAP como con herramientas de ONTAP para VMware vSphere.
+
+
+
+
+== Migración de almacenes de datos y máquinas virtuales
+
+Al migrar las máquinas virtuales desde un almacén de datos existente en otro sistema de almacenamiento a ONTAP, estas son algunas prácticas que deben tenerse en cuenta:
+
+* Use Storage vMotion para mover la mayoría de los equipos virtuales a ONTAP. Este método no solo no es disruptivo para la ejecución de equipos virtuales, sino que también permite funciones de eficiencia del almacenamiento de ONTAP como deduplicación y compresión inline para procesar los datos a medida que migran. Considere usar funcionalidades de vCenter para seleccionar varias máquinas virtuales de la lista de inventario y programar la migración (utilice la tecla Ctrl mientras hace clic en acciones) en un momento adecuado.
+* Aunque podría planificar con cuidado la migración a los almacenes de datos de destino adecuados, a menudo es más sencillo migrar de forma masiva y luego organizarse más tarde, según sea necesario. Puede que desee utilizar este enfoque para guiar la migración a diferentes almacenes de datos si tiene necesidades específicas de protección de datos, como distintas programaciones de Snapshot.
+* La mayoría de los equipos virtuales y su almacenamiento pueden migrarse mientras se están ejecutando (en caliente), pero es posible que la migración de almacenamiento conectado (no en el almacén de datos), como ISO, LUN o volúmenes NFS desde otro sistema de almacenamiento requiera una migración de datos fría.
+* Los equipos virtuales que necesitan una migración más cuidadosa incluyen las bases de datos y las aplicaciones que utilizan almacenamiento conectado. En general, considere el uso de las herramientas de la aplicación para gestionar la migración. Para Oracle, considere la posibilidad de utilizar herramientas de Oracle como RMAN o ASM para migrar los archivos de base de datos. Consulte https://www.netapp.com/us/media/tr-4534.pdf["CONSULTE TR-4534"^] si quiere más información. Del mismo modo, para SQL Server, plantéese utilizar SQL Server Management Studio o herramientas de NetApp, como SnapManager para SQL Server o SnapCenter.
+
+
+
+
+== Herramientas de ONTAP para VMware vSphere
+
+Las mejores prácticas más importantes cuando se usa vSphere con sistemas que ejecutan el software ONTAP son instalar y utilizar las herramientas de ONTAP para el complemento VMware vSphere (antes llamado Virtual Storage Console). Este complemento de vCenter simplifica la gestión del almacenamiento, mejora la disponibilidad y reduce los costes de almacenamiento y la sobrecarga operativa, ya sea mediante SAN o NAS. Utiliza prácticas recomendadas para el aprovisionamiento de almacenes de datos y optimiza la configuración del host ESXi para los tiempos de espera de multivía y HBA (que se describen en el apéndice B). Dado que es un complemento de vCenter, está disponible para todos los clientes web de vSphere que se conectan al servidor vCenter.
+
+El plugin también le ayuda a utilizar otras herramientas ONTAP en entornos de vSphere. Le permite instalar el complemento de NFS para VMware VAAI, que permite realizar copias de datos descargados en ONTAP para las operaciones de clonado de equipos virtuales, reservar espacio para archivos de disco virtual gruesos y descargar la copia Snapshot de ONTAP.
+
+El plugin también es la interfaz de gestión de muchas funciones de VASA Provider for ONTAP, compatible con la gestión basada en políticas de almacenamiento con vVols. Una vez registradas las herramientas de ONTAP para VMware vSphere, utilícelo para crear perfiles de funcionalidad de almacenamiento, asignarlas al almacenamiento y garantizar el cumplimiento de los perfiles por parte del almacén de datos con el tiempo. El proveedor de VASA también proporciona una interfaz para crear y gestionar almacenes de datos de VVol.
+
+En general, NetApp recomienda el uso de las herramientas de ONTAP para la interfaz de VMware vSphere en vCenter con el fin de aprovisionar almacenes de datos tradicionales y vVols, para garantizar que se sigan las prácticas recomendadas.
+
+
+
+== Redes generales
+
+La configuración de ajustes de red cuando se usa vSphere con sistemas que ejecutan el software ONTAP es sencilla y similar a la de otra configuración de red. Estas son algunas cosas a tener en cuenta:
+
+* Hay que separar el tráfico de la red de almacenamiento de otras redes. Se puede lograr una red independiente a través de una VLAN dedicada o switches independientes para el almacenamiento. Si la red de almacenamiento comparte rutas físicas como los enlaces ascendentes, puede que necesite calidad de servicio o puertos adicionales para garantizar el ancho de banda suficiente. No conecte los hosts directamente al almacenamiento; utilice switches para que tengan rutas redundantes y permita que VMware HA funcione sin intervención alguna.
+* Las tramas gigantes se pueden utilizar si se desean y admiten en la red, especialmente si se utiliza iSCSI. Si se usan, asegúrese de que estén configurados de la misma forma en todos los dispositivos de red, VLAN, etc., en la ruta entre el almacenamiento y el host ESXi. De lo contrario, puede que observe problemas de rendimiento o conexión. La MTU también debe establecerse de forma idéntica en el switch virtual ESXi, el puerto de VMkernel y, además, en los puertos físicos o los grupos de interfaces de cada nodo ONTAP.
+* NetApp solo recomienda deshabilitar el control de flujo de red en los puertos de red de clúster dentro de un clúster de ONTAP. NetApp no ofrece otras recomendaciones para seguir las prácticas recomendadas para los puertos de red restantes que se usan para el tráfico de datos. Debe activar o desactivar según sea necesario. Consulte http://www.netapp.com/us/media/tr-4182.pdf["CONSULTE TR-4182"^] para obtener más fondo sobre el control de flujo.
+* Cuando las cabinas de almacenamiento ESXi y ONTAP están conectadas a redes de almacenamiento Ethernet, NetApp recomienda configurar los puertos Ethernet a los que se conectan estos sistemas como puertos periféricos del protocolo de árbol de expansión rápido (RSTP) o mediante la función PortFast de Cisco. NetApp recomienda habilitar la función de enlace troncal Spanning-Tree PortFast en entornos que utilizan la función Cisco PortFast y que tienen la conexión de enlaces VLAN 802.1Q habilitada tanto para el servidor ESXi como para las cabinas de almacenamiento ONTAP.
+* NetApp recomienda las siguientes prácticas recomendadas para la agregación de enlaces:
++
+** Utilice switches que admitan la agregación de enlaces de puertos en dos chasis de switch separados mediante un enfoque de grupo de agregación de enlaces de varios chasis, como Virtual PortChannel (VPC) de Cisco.
+** Deshabilite LACP para los puertos del switch conectados a ESXi a menos que utilice dvSwitch 5.1 o una versión posterior con LACP configurado.
+** Utilice LACP para crear agregados de enlaces para sistemas de almacenamiento de ONTAP con grupos de interfaces dinámicas multimodo con puerto o hash IP. Consulte https://docs.netapp.com/us-en/ontap/networking/combine_physical_ports_to_create_interface_groups.html#dynamic-multimode-interface-group["Gestión de redes"^] para obtener más orientación.
+** Utilice una política de agrupación de hash IP en ESXi cuando utilice la agregación de enlaces estáticos (por ejemplo, EtherChannel) y vSwitch estándar, o la agregación de enlaces basada en LACP con switches distribuidos de vSphere. Si no se utiliza la agregación de enlaces, utilice en su lugar «Ruta basada en el identificador de puerto virtual de origen».
+
+
+
+
+En la siguiente tabla se ofrece un resumen de los elementos de configuración de red e indica dónde se aplican los ajustes.
+
+|===
+| Elemento | ESXi | Conmutador | Nodo | SVM 
+
+
+| Dirección IP | VMkernel | No** | No** | Sí 
+
+
+| Agregación de enlaces | Switch virtual | Sí | Sí | No* 
+
+
+| VLAN | VMkernel y grupos de puertos de máquina virtual | Sí | Sí | No* 
+
+
+| Control de flujo | NIC | Sí | Sí | No* 
+
+
+| Árbol expansivo | No | Sí | No | No 
+
+
+| MTU (para tramas gigantes) | Conmutador virtual y puerto de VMkernel (9000) | Sí (configurado como máx.) | Sí (9000) | No* 
+
+
+| Grupos de conmutación por error | No | No | Sí (crear) | Sí (seleccione) 
+|===
+*Las LIF de SVM se conectan a puertos, grupos de interfaces o interfaces VLAN que tienen VLAN, MTU y otras configuraciones. Sin embargo, la configuración no se gestiona a nivel de SVM.
+
+**Estos dispositivos tienen direcciones IP propias para la administración, pero estas direcciones no se utilizan en el contexto de las redes de almacenamiento ESXi.
+
+
+
+== SAN (FC, FCoE, NVMe/FC, iSCSI), RDM
+
+En vSphere hay tres formas de usar LUN de almacenamiento basado en bloques:
+
+* Con almacenes de datos VMFS
+* Con asignación de dispositivos sin formato (RDM)
+* A medida que una LUN accede y está controlada por un iniciador de software desde un SO invitado de máquina virtual
+
+
+VMFS es un sistema de archivos en clúster de alto rendimiento que proporciona almacenes de datos que son pools de almacenamiento compartido. Los almacenes de datos VMFS pueden configurarse con LUN a las que se accede mediante espacios de nombres FC, iSCSI, FCoE o NVMe a los que se accede mediante el protocolo NVMe/FC. VMFS permite que cada servidor ESX acceda a las LUN tradicionales de forma simultánea en un clúster. El tamaño máximo de LUN de ONTAP suele ser de 16 TB; por tanto, se crea un almacén de datos VMFS 5 de tamaño máximo de 64 TB (consulte la primera tabla de esta sección) mediante cuatro LUN de 16 TB (los sistemas de cabinas SAN admiten el tamaño máximo de LUN de VMFS de 64 TB). Como la arquitectura de LUN de ONTAP no cuenta con pequeñas profundidades de cola individuales, los almacenes de datos VMFS en ONTAP pueden escalarse a un mayor grado que con las arquitecturas de cabinas tradicionales de forma relativamente sencilla.
+
+VSphere incluye compatibilidad incorporada para múltiples rutas a los dispositivos de almacenamiento, conocida como multivía nativa (NMP). NMP puede detectar el tipo de almacenamiento para los sistemas de almacenamiento compatibles y configura automáticamente la pila NMP para admitir las funcionalidades del sistema de almacenamiento en uso.
+
+Tanto NMP como ONTAP de NetApp son compatibles con ALUA (Asymmetric Logical Unit Access) para negociar rutas optimizadas y no optimizadas. En ONTAP, una ruta optimizada para ALUA sigue una ruta de datos directa mediante un puerto de destino en el nodo que aloja la LUN a la que se está accediendo. De forma predeterminada, ALUA está activado tanto en vSphere como en ONTAP. El NMP reconoce el clúster ONTAP como ALUA y utiliza el complemento de tipo de cabina de almacenamiento ALUA (`VMW_SATP_ALUA`) y selecciona el complemento de selección de ruta de operación por turnos (`VMW_PSP_RR`).
+
+ESXi 6 admite hasta 256 LUN y hasta 1,024 rutas totales a LUN. ESXi no ve ningún LUN o ruta que supere estos límites. Suponiendo el número máximo de LUN, el límite de rutas permite cuatro rutas por LUN. En un clúster de ONTAP mayor, es posible alcanzar el límite de ruta antes del límite de LUN. Para solucionar esta limitación, ONTAP admite una asignación de LUN selectiva (SLM) en la versión 8.3 y posteriores.
+
+SLM limita los nodos que anuncian rutas a un LUN determinado. NetApp es una práctica recomendada tener al menos un LIF por nodo por SVM y usar SLM para limitar las rutas anunciadas al nodo que aloja la LUN y su partner de alta disponibilidad. Aunque existen otras rutas, no se anuncian por defecto. Es posible modificar las rutas anunciadas con los argumentos de nodo de informes Agregar y quitar dentro de SLM. Tenga en cuenta que las LUN creadas en versiones anteriores a la 8.3 anuncian todas las rutas y necesitan modificarse para anunciar únicamente las rutas a la pareja de alta disponibilidad del host. Para obtener más información sobre SLM, consulte la sección 5.9 de http://www.netapp.com/us/media/tr-4080.pdf["CONSULTE TR-4080"^]. El método anterior de conjuntos de puertos también puede utilizarse para reducir aún más las rutas disponibles para una LUN. Los conjuntos de puertos ayudan a reducir el número de rutas visibles a través de las cuales los iniciadores de un igroup pueden ver LUN.
+
+* SLM está habilitado de forma predeterminada. A menos que utilice conjuntos de puertos, no se requiere ninguna configuración adicional.
+* Para LUN creados antes de Data ONTAP 8.3, ejecute manualmente la ejecución de SLM `lun mapping remove-reporting-nodes` Comando para quitar los nodos de generación de informes de LUN y restringir el acceso de las LUN al nodo de propiedad de LUN y a su partner de alta disponibilidad.
+
+
+Los protocolos de bloque (iSCSI, FC y FCoE) acceden a las LUN utilizando los ID de LUN y los números de serie, junto con nombres únicos. FC y FCoE utilizan nombres globales (WWN y WWPN); iSCSI utiliza nombres completos de iSCSI (IQN). La ruta a las LUN del interior del almacenamiento no tiene sentido para los protocolos de bloque y no se presenta en ningún lugar del protocolo. Por lo tanto, no es necesario montar de forma interna un volumen que solo contiene LUN; por lo tanto, no es necesaria una ruta de unión para los volúmenes que contengan LUN usadas en los almacenes de datos. El subsistema NVMe en ONTAP funciona de manera similar.
+
+Otras prácticas recomendadas a tener en cuenta:
+
+* Asegúrese de que se crea una interfaz lógica (LIF) para cada SVM en cada nodo del clúster de ONTAP para garantizar la máxima disponibilidad y movilidad. La práctica recomendada para SAN de ONTAP es usar dos puertos físicos y LIF por nodo, uno para cada estructura. ALUA se utiliza para analizar las rutas e identificar las rutas activas optimizadas (directas) en comparación con las rutas activas no optimizadas. ALUA se utiliza para FC, FCoE e iSCSI.
+* En el caso de las redes iSCSI, utilice varias interfaces de red de VMkernel en distintas subredes de la red con la agrupación de NIC cuando haya varios switches virtuales. También puede utilizar varias NIC físicas conectadas a varios switches físicos para proporcionar alta disponibilidad y mayor rendimiento. En la figura siguiente se proporciona un ejemplo de conectividad multivía. En ONTAP, configure un grupo de interfaces de un único modo para realizar la conmutación al nodo de respaldo con dos o más enlaces conectados a dos o más switches, o bien utilice LACP u otra tecnología de agregación de enlaces con grupos de interfaces multimodo para proporcionar alta disponibilidad y las ventajas de la agregación de enlaces.
+* Si el protocolo de autenticación por desafío mutuo (CHAP) se utiliza en ESXi para la autenticación de destino, también debe configurarse en ONTAP mediante la CLI (`vserver iscsi security create`) O con System Manager (edite Initiator Security en almacenamiento > SVM > SVM Settings > Protocols > iSCSI).
+* Utilice las herramientas de ONTAP para VMware vSphere para crear y gestionar LUN y iGroups. El plugin determina automáticamente los WWPN de los servidores y crea iGroups adecuados. También configura las LUN de acuerdo con las prácticas recomendadas y las asigna a los iGroups correctos.
+* Use los DMR con cuidado porque pueden ser más difíciles de manejar, y también usan rutas, que son limitadas como se describió anteriormente. Las LUN de ONTAP son compatibles con ambos https://kb.vmware.com/s/article/2009226["modo de compatibilidad físico y virtual"^] RDM.
+* Para obtener más información sobre cómo usar NVMe/FC con vSphere 7.0, consulte este tema https://docs.netapp.com/us-en/ontap-sanhost/nvme_esxi_7.html["Guía de configuración de hosts ONTAP NVMe/FC"^] y.. http://www.netapp.com/us/media/tr-4684.pdf["CONSULTE TR-4684"^].En la siguiente figura, se muestra la conectividad multivía de un host de vSphere a un LUN de ONTAP.
+
+
+image:vsphere_ontap_image2.png["Error: Falta la imagen gráfica"]
+
+
+
+== NFS
+
+VSphere permite a los clientes utilizar cabinas NFS de nivel empresarial para proporcionar acceso simultáneo a los almacenes de datos en todos los nodos de un clúster ESXi. Como hemos mencionado en la sección de almacenes de datos, existen algunas ventajas de facilidad de uso y visibilidad de la eficiencia del almacenamiento al usar NFS con vSphere.
+
+Las siguientes prácticas recomendadas se recomiendan al usar NFS de ONTAP con vSphere:
+
+* Utilice una sola interfaz lógica (LIF) para cada SVM en cada nodo del clúster de ONTAP. Ya no son necesarias las recomendaciones anteriores de una LIF por almacén de datos. Aunque el acceso directo (LIF y almacén de datos en el mismo nodo) es el mejor, no se preocupe por el acceso indirecto, ya que el efecto sobre el rendimiento suele ser mínimo (microsegundos).
+* VMware ha sido compatible con NFSv3 desde VMware Infrastructure 3. VSphere 6.0 ha añadido compatibilidad con NFSv4.1, lo cual permite algunas funcionalidades avanzadas, como la seguridad de Kerberos. Donde NFSv3 utiliza el bloqueo del lado del cliente, NFSv4.1 utiliza el bloqueo del lado del servidor. Aunque un volumen ONTAP se puede exportar mediante ambos protocolos, ESXi solo se puede montar a través de un único protocolo. Este montaje de protocolo único no excluye que otros hosts ESXi monten el mismo almacén de datos a través de una versión diferente. Asegúrese de especificar la versión del protocolo que se va a utilizar al montar para que todos los hosts utilicen la misma versión y, por lo tanto, el mismo estilo de bloqueo. No mezcle versiones de NFS entre hosts. Si es posible, utilice perfiles de host para comprobar el cumplimiento.
++
+** Dado que no existe ninguna conversión automática de almacenes de datos entre NFSv3 y NFSv4.1, cree un nuevo almacén de datos NFSv4.1 y utilice Storage vMotion para migrar las máquinas virtuales al nuevo almacén de datos.
+** Consulte las notas de la tabla de interoperabilidad de NFS v4.1 en el https://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad de NetApp"^] Para los niveles de parches específicos de ESXi que se requieren para soporte.
+
+
+* Los hosts de vSphere utilizan políticas de exportación de NFS para controlar el acceso. Puede usar una política con varios volúmenes (almacenes de datos). Con NFSv3, ESXi utiliza el estilo de seguridad sys (UNIX) y requiere la opción de montaje raíz para ejecutar las máquinas virtuales. En ONTAP, esta opción se denomina superusuario y cuando se utiliza la opción superusuario, no es necesario especificar el ID de usuario anónimo. Tenga en cuenta que las reglas de política de exportación con valores diferentes para `-anon` y.. `-allow-suid` Puede causar problemas de detección de SVM con las herramientas de ONTAP. He aquí una política de ejemplo:
++
+** Protocolo de acceso: Nfs3
+** Especificación de coincidencia de cliente: 192.168.42.21
+** Regla DE ACCESO DE RO: Sys
+** Regla de acceso RW: Sys
+** UID anónimo
+** Superusuario: Sys
+
+
+* Si se utiliza el plugin de NetApp NFS para VMware VAAI, se debe establecer el protocolo como `nfs` cuando se crea o se modifica la regla de política de exportación. El protocolo NFSv4 se requiere para que la copia VAAI se descargue para que funcione y especifique el protocolo como `nfs` Incluye automáticamente tanto las versiones NFSv3 como NFSv4.
+* Los volúmenes de almacenes de datos NFS se unen desde el volumen raíz de la SVM; por lo tanto, ESXi también debe tener acceso al volumen raíz para navegar y montar volúmenes de almacenes de datos. La política de exportación del volumen raíz y para cualquier otro volumen en el que esté anidada la unión del volumen de almacenes de datos, debe incluir una regla o reglas para los servidores ESXi que les otorgan acceso de solo lectura. A continuación, se muestra una política de ejemplo para el volumen raíz, que también utiliza el complemento VAAI:
++
+** Protocolo de acceso: nfs (que incluye nfs3 y nfs4)
+** Especificación de coincidencia de cliente: 192.168.42.21
+** Regla DE ACCESO DE RO: Sys
+** Regla de acceso RW: Nunca (mejor seguridad para el volumen raíz)
+** UID anónimo
+** Superusuario: Sys (también necesario para el volumen raíz con VAAI)
+
+
+* Use las herramientas de ONTAP para VMware vSphere (las mejores prácticas más importantes):
++
+** Utilice herramientas de ONTAP para VMware vSphere para aprovisionar almacenes de datos, ya que simplifica la gestión de políticas de exportación de forma automática.
+** Cuando se crean almacenes de datos para clústeres de VMware con el plugin, seleccione el clúster en lugar de un único servidor ESX. Esta opción la activa para montar automáticamente el almacén de datos en todos los hosts del clúster.
+** Utilice la función de montaje de plugins para aplicar almacenes de datos existentes a servidores nuevos.
+** Si no se utilizan las herramientas de ONTAP para VMware vSphere, utilice una única política de exportación para todos los servidores o para cada cluster de servidores donde se necesite un control de acceso adicional.
+
+
+* Aunque ONTAP ofrece una estructura de espacio de nombres de volúmenes flexibles para organizar los volúmenes en un árbol mediante uniones, este enfoque no tiene valor para vSphere. Crea un directorio para cada equipo virtual en la raíz del almacén de datos, independientemente de la jerarquía de espacio de nombres del almacenamiento. Por lo tanto, la práctica recomendada es simplemente montar la ruta de unión para volúmenes para vSphere en el volumen raíz de la SVM, que es la forma en que las herramientas de ONTAP para VMware vSphere aprovisiona almacenes de datos. No tener rutas de unión anidadas también significa que ningún volumen depende de ningún otro volumen que no sea el volumen raíz y que el hecho de desconectar un volumen o destruirlo, incluso intencionalmente, no afecta la ruta a otros volúmenes.
+* El tamaño de bloque de 4K se ajusta a las particiones NTFS en almacenes de datos NFS. En la siguiente figura, se muestra la conectividad de un host vSphere a un almacén de datos NFS de ONTAP.
+
+
+image:vsphere_ontap_image3.png["Error: Falta la imagen gráfica"]
+
+En la siguiente tabla, se enumeran las versiones de NFS y las funciones compatibles.
+
+|===
+| Funciones de vSphere | NFSv3 | NFSv4,1 
+
+
+| VMotion y Storage vMotion | Sí | Sí 
+
+
+| Alta disponibilidad | Sí | Sí 
+
+
+| Tolerancia a fallos | Sí | Sí 
+
+
+| DRS | Sí | Sí 
+
+
+| Perfiles de host | Sí | Sí 
+
+
+| DRS de almacenamiento | Sí | No 
+
+
+| Control de la actividad de I/o de almacenamiento | Sí | No 
+
+
+| SRM | Sí | No 
+
+
+| Volúmenes virtuales | Sí | No 
+
+
+| Aceleración de hardware (VAAI) | Sí | Sí 
+
+
+| Autenticación Kerberos | No | Sí (mejorada con vSphere 6.5 y versiones posteriores para ser compatible con AES, krb5i) 
+
+
+| Compatibilidad con accesos múltiples | No | No 
+|===
+
+
+== Volúmenes de FlexGroup
+
+ONTAP 9,8 añade compatibilidad con los almacenes de datos de volúmenes FlexGroup en vSphere, además de compatibilidad con las herramientas de ONTAP para VMware vSphere y el complemento SnapCenter para VMware vSphere. FlexGroup simplifica la creación de grandes almacenes de datos y crea automáticamente una serie de volúmenes constituyentes para obtener el máximo rendimiento de un sistema ONTAP. Utilice FlexGroup con vSphere si necesita un único almacén de datos de vSphere escalable con la potencia de un clúster ONTAP completo, o si cuenta con cargas de trabajo de clonado muy grandes que pueden beneficiarse del nuevo mecanismo de clonación de FlexGroup.
+
+Además de las pruebas exhaustivas del sistema con las cargas de trabajo de vSphere, ONTAP 9.8 también añade un nuevo mecanismo de descarga de copias para los almacenes de datos de FlexGroup. Utiliza un motor de copia actualizado que utiliza los primeros clones para rellenar una caché local en cada volumen constituyente. A continuación, esta caché local se utiliza para instanciar rápidamente clones de equipos virtuales bajo demanda.
+
+Considere el siguiente escenario:
+
+* Ha creado un nuevo FlexGroup con 8 componentes
+* El tiempo de espera de caché para el nuevo FlexGroup se establece en 160 minutos
+
+
+En esta situación, los primeros 8 clones que se realizarán serán copias completas, no clones de archivos locales. Cualquier clonación adicional de ese equipo virtual antes de que caduque el tiempo de espera de 160 segundos utilizará el motor de clonado de archivos dentro de cada componente en turno rotatorio para crear copias casi inmediatas distribuidas uniformemente en los volúmenes constituyentes.
+
+Cada trabajo de clon nuevo que recibe un volumen restablece el tiempo de espera. Si un volumen constituyente de FlexGroup de ejemplo no recibe una solicitud de clonado antes del tiempo de espera, se borrará la caché de esa máquina virtual en particular y el volumen se deberá volver a completar. Además, si el origen del clon original cambia (por ejemplo, ha actualizado la plantilla), la caché local de cada componente se invalidará para evitar cualquier conflicto. La caché se puede ajustar y se puede establecer para que coincida con las necesidades del entorno.
+
+En entornos donde no es posible aprovechar al máximo la caché FlexGroup, pero aún así requerir un clonado rápido entre volúmenes, considere el uso de vVols. La clonación entre volúmenes con vVols es mucho más rápida que el uso de almacenes de datos tradicionales y no utiliza una caché.
+
+Para obtener más información sobre el uso de FlexGroups con VAAI, consulte este artículo de la base de conocimientos: https://kb.netapp.com/?title=onprem%2Fontap%2Fdm%2FVAAI%2FVAAI%3A_How_does_caching_work_with_FlexGroups%253F["VAAI: ¿Cómo funciona el almacenamiento en caché con volúmenes FlexGroup?"^]
+
+ONTAP 9,8 también agrega nuevas métricas de rendimiento basadas en archivos (IOPS, rendimiento y latencia) para archivos de volúmenes de FlexGroup. Estas métricas se pueden ver en la consola de herramientas de ONTAP para la consola de VMware vSphere e informes de VM. Las herramientas de ONTAP para el complemento VMware vSphere también le permiten establecer reglas de calidad de servicio (QoS) con una combinación de IOPS máximo o mínimo. Estos conjuntos se pueden establecer en todas las máquinas virtuales de un almacén de datos o individualmente para máquinas virtuales específicas.
+
+A continuación figuran algunas de las mejores prácticas que ha desarrollado NetApp:
+
+* Use los valores predeterminados de aprovisionamiento de volúmenes FlexGroup. Aunque se recomiendan las herramientas de ONTAP para VMware vSphere porque crea y monta FlexGroup en vSphere, ONTAP System Manager o la línea de comandos puede utilizarse para necesidades especiales. Incluso entonces, utilice los valores predeterminados como el número de miembros constituyentes por nodo porque esto es lo que se ha probado más a fondo con vSphere. Dicho esto, la configuración no predeterminada, como cambiar el número o la colocación de los componentes, sigue siendo totalmente compatible.
+* Al ajustar el tamaño de un almacén de datos basado en FlexGroup, tenga en cuenta que FlexGroup consiste en varios volúmenes FlexVol más pequeños que crean un espacio de nombres mayor. De este modo, cuando utilice una FlexGroup con ocho componentes, asegúrese de ajustar el tamaño del almacén de datos para que tenga al menos 8x veces el tamaño de la máquina virtual más grande. Por ejemplo, si tiene una máquina virtual de 6 TB en el entorno, ajuste el tamaño del almacén de datos FlexGroup no menor que 48 TB.
+* Permita que FlexGroup gestione el espacio en almacenes de datos. AutoSize y Elastic Sizing se han probado con almacenes de datos vSphere. Si el almacén de datos se aproximara a la capacidad completa, use las herramientas de ONTAP para VMware vSphere u otra herramienta para ajustar el tamaño del volumen de FlexGroup. FlexGroup mantiene la capacidad y la inodos equilibrados a través de los componentes, dando prioridad a los archivos de una carpeta (VM) al mismo componente si la capacidad lo permite.
+* VMware y NetApp no admiten actualmente un enfoque de red multivía común. Para NFSv4.1, NetApp admite pNFS, mientras que VMware admite la conexión de enlaces de sesiones. NFSv3 no admite varias rutas físicas a un volumen. Para FlexGroup con ONTAP 9,8, recomendamos que las herramientas de ONTAP para VMware vSphere creen el FlexGroup; sin embargo, deberá desmontarlo y volver a montarlo mediante DNS round robin para distribuir la carga por el clúster. Las herramientas de ONTAP solo utilizan un LIF al montar almacenes de datos. Después de volver a montar el almacén de datos, se pueden utilizar las herramientas de ONTAP para supervisarlo y gestionarlo.
+* Se ha probado la compatibilidad con almacenes de datos FlexGroup vSphere de hasta 1500 equipos virtuales con la versión 9.8.
+* Use el plugin de NFS para VAAI de VMware para la descarga de copias. Tenga en cuenta que, aunque el clonado se mejora dentro de un almacén de datos de FlexGroup, como se ha mencionado anteriormente, ONTAP no ofrece importantes ventajas de rendimiento con respecto a la copia del host ESXi al copiar máquinas virtuales entre FlexVol y/o volúmenes de FlexGroup. Por tanto, considere las cargas de trabajo de clonado cuando decida usar VAAI o FlexGroups. Modificar el número de volúmenes constituyentes es una forma de optimizar para la clonación basada en FlexGroup. Al ajustar el tiempo de espera de la caché.
+* Utilice las herramientas de ONTAP para VMware vSphere 9.8 para supervisar el rendimiento de las máquinas virtuales de FlexGroup mediante métricas de ONTAP (panel e informes de máquinas virtuales) y para gestionar la calidad de servicio en máquinas virtuales individuales. Estas métricas no están disponibles a través de los comandos o las API de ONTAP.
+* Puede establecerse calidad de servicio (IOPS máx./mín.) en máquinas virtuales individuales o en todas las máquinas virtuales de un almacén de datos en ese momento. La configuración de la calidad de servicio en todas las máquinas virtuales sustituye cualquier configuración independiente por cada máquina virtual. Los ajustes no amplían en el futuro a máquinas virtuales nuevas o migradas; establezca la calidad de servicio en las nuevas máquinas virtuales o vuelva a aplicar la calidad de servicio a todas las máquinas virtuales del almacén de datos. Las políticas de calidad de servicio de FlexGroup tampoco siguen a la máquina virtual si se migra a otro almacén de datos. Esto contrasta con vVols, que puede mantener su configuración de políticas de calidad de servicio si migran a otro almacén de datos.
+* El plugin de SnapCenter para VMware vSphere versión 4,4 y versiones posteriores admite el backup y la recuperación de máquinas virtuales en un almacén de datos FlexGroup en el sistema de almacenamiento principal. SCV 4,6 añade compatibilidad con SnapMirror para almacenes de datos basados en FlexGroup.
+

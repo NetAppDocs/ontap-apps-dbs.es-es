@@ -1,0 +1,34 @@
+---
+section: mssql
+title: Microsoft SQL Server
+entries:
+- title: Descripción general
+  url: "/mssql/overview.html"
+- title: Cargas de trabajo
+  url: "/mssql/workloads.html"
+- title: Configuración de ONTAP
+  url: "/postgres/ontap.html"
+- title: Configuración de la base de datos
+  entries:
+  - title: Instancia compartida frente a instancia dedicada
+    url: "/mssql/shared-vs-dedicated.html"
+  - title: Configuración de CPU
+    url: "/mssql/CPUConfiguration.html"
+  - title: Configuración de memoria
+    url: "/mssql/Memoryconfiguration.html"
+- title: Configuración del almacenamiento
+  entries:
+  - title: Archivos de base de datos y grupos de archivos
+    url: "/mssql/files-and-filegroups.html"
+  - title: Archivos tempdb
+    url: "/mssql/tempdb.html"
+  - title: Consideraciones sobre el almacenamiento
+    url: "/mssql/Storage-considerations.html"
+  - title: Eficiencia del almacenamiento
+    url: "/mssql/storage-efficiency.html"
+- title: Protección de datos
+  url: "/mssql/data-protection.html"
+- title: Recuperación tras siniestros
+  url: "/mssql/SQL-disaster-recovery.html"
+- title: Seguridad de datos
+  url: "/mssql/data-security.html"

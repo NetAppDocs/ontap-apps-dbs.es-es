@@ -1,0 +1,57 @@
+= Configuración del sistema operativo host
+:allow-uri-read: 
+
+
+
+
+== Configuración del sistema operativo host
+
+La mayoría de la documentación del proveedor de aplicaciones incluye configuraciones TCP y ethernet específicas para garantizar que la aplicación funcione de manera óptima. Estas mismas configuraciones suelen ser suficientes para ofrecer también un rendimiento óptimo del almacenamiento basado en IP.
+
+
+
+== Control de flujo Ethernet
+
+Esta tecnología permite a un cliente solicitar que un remitente detenga temporalmente la transmisión de datos. Esto suele hacerse porque el receptor no puede procesar los datos entrantes con la suficiente rapidez. Al mismo tiempo, solicitar que un remitente cesara la transmisión era menos perjudicial que tener un receptor descarte de paquetes porque los buffers estaban llenos. Este ya no es el caso con las pilas TCP utilizadas en los sistemas operativos actualmente. De hecho, el control de flujo causa más problemas de los que resuelve.
+
+Los problemas de rendimiento causados por el control de flujo de Ethernet han aumentado en los últimos años. Esto se debe a que el control de flujo Ethernet funciona en la capa Physical. Si una configuración de red permite que un sistema operativo del host envíe una solicitud de control de flujo de Ethernet a un sistema de almacenamiento, el resultado es una pausa en las operaciones de I/O de todos los clientes conectados. Debido a que una única controladora de almacenamiento atiende cada vez más a un número de clientes, la probabilidad de que uno o varios de estos clientes envíen solicitudes de control de flujo aumenta. El problema se ha observado con frecuencia en las instalaciones de los clientes con una amplia virtualización del SO.
+
+Una NIC de un sistema NetApp no debe recibir solicitudes de control de flujo. El método utilizado para lograr este resultado varía según el fabricante del conmutador de red. En la mayoría de los casos, el control de flujo en un conmutador Ethernet se puede establecer en `receive desired` o. `receive on`, lo que significa que una solicitud de control de flujo no se reenvía al controlador de almacenamiento. En otros casos, la conexión de red en la controladora de almacenamiento puede no permitir la deshabilitación de control de flujo. En estos casos, los clientes deben configurarse para que nunca envíen solicitudes de control de flujo, ya sea cambiando a la configuración de NIC en el propio servidor host o a los puertos de switch a los que está conectado el servidor host.
+
+
+TIP: *NetApp recomienda* asegurarse de que los controladores de almacenamiento NetApp no reciban paquetes de control de flujo Ethernet. Por lo general, esto puede realizarse mediante la configuración de los puertos del switch a los que está conectada la controladora, pero algunas limitaciones en el hardware del switch pueden requerir cambios en el lado del cliente.
+
+
+
+== Tamaños de MTU
+
+Se ha demostrado que el uso de tramas gigantes ofrece alguna mejora del rendimiento en las redes 1GB al reducir la sobrecarga de la CPU y de la red, pero el beneficio no suele ser significativo.
+
+
+TIP: *NetApp recomienda* implementar marcos jumbo cuando sea posible, tanto para obtener beneficios potenciales de rendimiento como para preparar la solución para el futuro.
+
+El uso de tramas gigantes en una red 10Gb es casi obligatorio. Esto se debe a que la mayoría de las implementaciones de 10Gb alcanzan un límite de paquetes por segundo sin tramas gigantes antes de alcanzar la marca de 10Gb. El uso de tramas gigantes mejora la eficiencia del procesamiento TCP/IP porque permite que el sistema operativo, el servidor, las NIC y el sistema de almacenamiento procesen menos paquetes, pero más grandes. La mejora del rendimiento varía de NIC a NIC, pero es significativa.
+
+En las implementaciones de tramas gigantes, existe la creencia común, aunque incorrecta, de que todos los dispositivos conectados deben admitir tramas gigantes y que el tamaño de MTU debe coincidir de extremo a extremo En su lugar, los dos extremos de red negocian el tamaño de trama más alto mutuamente aceptable al establecer una conexión. En un entorno típico, un switch de red se establece con un tamaño de MTU de 9216, la controladora NetApp se establece en 9000 y los clientes se configuran con una combinación de 9000 y 1514. Los clientes que admiten un MTU de 9000 pueden utilizar tramas gigantes, y los clientes que solo puedan admitir 1514 pueden negociar un valor inferior.
+
+Los problemas con esta disposición son raros en un entorno completamente conmutado. Sin embargo, tenga cuidado en un entorno enrutado que ningún enrutador intermedio se vea forzado a fragmentar tramas gigantes.
+
+[TIP]
+====
+*NetApp recomienda* configurar lo siguiente:
+
+* Las tramas gigantes son deseables, pero no se requieren con Ethernet de 1GB Gb (GbE).
+* Se requieren tramas gigantes para lograr el máximo rendimiento, con 10GbE y más rápido.
+
+
+====
+
+
+== Parámetros de TCP
+
+A menudo hay tres ajustes mal configurados: Marcas de tiempo TCP, reconocimiento selectivo (SACK) y escalado de ventana TCP. Muchos documentos desactualizados en Internet recomiendan deshabilitar uno o varios de estos parámetros para mejorar el rendimiento. Había algo de mérito en esta recomendación hace muchos años, cuando las capacidades de la CPU eran mucho menores y había un beneficio en reducir la sobrecarga en el procesamiento TCP siempre que fuera posible.
+
+Sin embargo, con los sistemas operativos modernos, deshabilitar cualquiera de estas características de TCP generalmente no resulta en ningún beneficio detectable, a la vez que también puede dañar el rendimiento. Los daños en el rendimiento son especialmente probables en entornos de red virtualizados, ya que estas características son necesarias para gestionar eficazmente la pérdida de paquetes y los cambios en la calidad de la red.
+
+
+TIP: *NetApp recomienda* habilitar las marcas de tiempo TCP, EL SACK y el escalado de la ventana TCP en el host, y los tres parámetros deben estar activados por defecto en cualquier sistema operativo actual.

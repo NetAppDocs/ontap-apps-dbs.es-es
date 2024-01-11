@@ -1,0 +1,31 @@
+---
+sidebar: sidebar 
+permalink: oracle/dp/oracle-data-protection-introduction.html 
+keywords: oracle, database, ontap 
+summary: Introducción a la protección de datos de Oracle 
+---
+= Protección de datos de Oracle con ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+Los datos más críticos para la misión se encuentran en las bases de datos.
+
+Una empresa no puede operar sin acceso a sus datos y, a veces, los datos definen el negocio. Estos datos deben protegerse; sin embargo, la protección de datos no solo garantiza un backup utilizable; se trata de realizar backups de forma rápida y fiable, además de almacenarlos de forma segura.
+
+El otro lado de la protección de datos es la recuperación de datos. Cuando no se puede acceder a los datos, la empresa se ve afectada y puede dejar de funcionar hasta que se restauren los datos. Este proceso debe ser rápido y fiable. Por último, la mayoría de las bases de datos deben protegerse frente a desastres, lo que significa mantener una réplica de la base de datos. La réplica debe estar lo suficientemente actualizada. También debe ser rápido y sencillo hacer de la réplica una base de datos completamente operativa.
+
+
+NOTE: Esta documentación sustituye al informe técnico _TR-4591 publicado anteriormente: Protección de datos de Oracle: Backup, recuperación y replicación._
+
+
+
+== Planificación
+
+La arquitectura de protección de datos empresariales adecuada depende de los requisitos empresariales relacionados con la retención de datos, la capacidad de recuperación y la tolerancia a interrupciones durante diversos eventos.
+
+Por ejemplo, piense en el número de aplicaciones, bases de datos y conjuntos de datos importantes. Crear una estrategia de backup para un único conjunto de datos que garantice el cumplimiento de los acuerdos de nivel de servicio típicos es bastante sencillo, ya que no hay muchos objetos que gestionar. A medida que aumenta el número de conjuntos de datos, la supervisión se hace más complicada y los administradores pueden verse forzados a invertir cada vez más tiempo en solucionar los fallos de backup. A medida que un entorno llega al cloud y escala el proveedor de servicios, se necesita un enfoque totalmente diferente.
+
+El tamaño del conjunto de datos también afecta a la estrategia. Por ejemplo, existen muchas opciones para backup y recuperación con una base de datos 100GB porque el conjunto de datos es tan pequeño. La simple copia de los datos de los medios de backup con herramientas tradicionales suele proporcionar un objetivo de tiempo de recuperación suficiente para la recuperación. Una base de datos de 100TB suele necesitar una estrategia completamente diferente a menos que el objetivo de tiempo de recuperación permita una interrupción de varios días, en cuyo caso puede ser aceptable un procedimiento tradicional de backup y recuperación basado en copia.
+
+Por último, existen factores fuera del propio proceso de backup y recuperación. Por ejemplo, ¿existen bases de datos que respalden actividades de producción críticas, lo que convierte la recuperación en un evento raro que solo realizan los administradores de bases de datos cualificados? Alternativamente, ¿las bases de datos forman parte de un entorno de desarrollo de gran tamaño en el que la recuperación es una ocurrencia frecuente y gestionada por un EQUIPO de TECNOLOGÍA generalista?

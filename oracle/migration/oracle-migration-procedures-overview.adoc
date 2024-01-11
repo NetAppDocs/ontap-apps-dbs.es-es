@@ -1,0 +1,208 @@
+---
+sidebar: sidebar 
+permalink: oracle/migration/oracle-migration-procedures-overview.html 
+keywords: migration, oracle 
+summary: Procedimientos de migración de Oracle 
+---
+= Descripción general de los procedimientos de migración de Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../../media/
+
+
+[role="lead"]
+Hay muchos procedimientos disponibles para la base de datos de migración de Oracle. El correcto depende de las necesidades de su empresa.
+
+En muchos casos, los administradores de sistemas y los administradores de bases de datos cuentan con sus propios métodos preferidos para reubicar datos de volúmenes físicos, realizar mirroring y desduplicación o utilizar Oracle RMAN para copiar datos.
+
+Estos procedimientos se proporcionan principalmente como orientación para el PERSONAL DE TI menos familiarizado con algunas de las opciones disponibles. Además, los procedimientos muestran las tareas, los requisitos de tiempo y las demandas de habilidades para cada método de migración. De este modo, otras partes como NetApp y los servicios profesionales de partners o el equipo de gestión de TI pueden apreciar de forma más completa los requisitos de cada procedimiento.
+
+No existe una práctica recomendada única para crear una estrategia de migración. La creación de un plan requiere primero comprender las opciones de disponibilidad y luego seleccionar el método que mejor se adapte a las necesidades del negocio. La siguiente figura ilustra las consideraciones básicas y las conclusiones típicas de los clientes, pero no es universalmente aplicable a todas las situaciones.
+
+Por ejemplo, un paso plantea el problema del tamaño total de la base de datos. El siguiente paso depende de si la base de datos es mayor o menor que 1TB. Los pasos recomendados son simplemente eso: Recomendaciones basadas en las prácticas típicas del cliente. La mayoría de los clientes no utilizarían DataGuard para copiar una base de datos pequeña, pero algunos podrían. La mayoría de los clientes no intentarían copiar una base de datos de 50TB GB debido al tiempo necesario, pero algunos pueden tener una ventana de mantenimiento lo suficientemente grande como para permitir dicha operación.
+
+Puede encontrar un diagrama de flujo de los tipos de consideraciones sobre qué ruta de migración es la mejor link:/media/migration-options-flowchart.png["aquí"].
+
+
+
+== Movimiento de archivos de datos en línea
+
+Oracle 12cR1 y las versiones superiores incluyen la capacidad de mover un archivo de datos mientras la base de datos permanece en línea. Además, funciona entre diferentes tipos de sistemas de archivos. Por ejemplo, un archivo de datos se puede reubicar de un sistema de archivos xfs a ASM. Este método no se utiliza generalmente a escala debido al número de operaciones de movimiento de archivos de datos individuales que serían necesarias, pero es una opción que vale la pena considerar con bases de datos más pequeñas con menos archivos de datos.
+
+Además, simplemente mover un archivo de datos es una buena opción para migrar partes de bases de datos existentes. Por ejemplo, los archivos de datos menos activos podrían reubicarse en un almacenamiento más rentable, como un volumen FabricPool que pueda almacenar bloques inactivos en el almacén de objetos.
+
+
+
+== Migración a nivel de base de datos
+
+La migración a nivel de base de datos implica permitir que la base de datos vuelva a ubicar los datos. Específicamente, esto significa el envío de registros. Tecnologías como RMAN y ASM son productos de Oracle, pero, para la migración, funcionan en el nivel de host en el que copian archivos y gestionan volúmenes.
+
+
+
+=== Trasvase de registros
+
+La base para la migración a nivel de base de datos es el archive log de Oracle, que contiene un log de los cambios realizados en la base de datos. La mayoría de las veces, un registro de archivo forma parte de una estrategia de backup y recuperación. El proceso de recuperación comienza con la restauración de una base de datos y luego la reproducción de uno o más registros de archivos para que la base de datos alcance el estado deseado. Esta misma tecnología básica se puede usar para realizar una migración con poca o ninguna interrupción de las operaciones. Y lo que es más importante, esta tecnología permite la migración sin modificar la base de datos original, lo que mantiene un camino de back-out.
+
+El proceso de migración comienza con la restauración de un backup de base de datos a un servidor secundario. Puede hacerlo de varias formas, pero la mayoría de los clientes utilizan su aplicación de backup normal para restaurar los archivos de datos. Después de restaurar los archivos de datos, los usuarios establecen un método para el envío de registros. El objetivo es crear una fuente constante de los archive logs generados por la base de datos primaria y reproducirlos en la base de datos restaurada para mantenerlos cerca del mismo estado. Cuando llega el tiempo de transposición, la base de datos de origen se cierra por completo y los archive logs finales, y en algunos casos los redo logs, se copian y se vuelven a reproducir. Es fundamental que los redo logs también se tengan en cuenta porque pueden contener algunas de las transacciones finales confirmadas.
+
+Después de transferir y reproducir estos registros, ambas bases de datos son coherentes entre sí. En este momento, la mayoría de los clientes realizan algunas pruebas básicas. Si se produce algún error durante el proceso de migración, la reproducción de log debe informar de los errores y fallar. Aún es aconsejable realizar algunas pruebas rápidas basadas en consultas conocidas o actividades controladas por aplicaciones para verificar que la configuración es óptima. También es una práctica común crear una tabla de prueba final antes de cerrar la base de datos original para verificar si está presente en la base de datos migrada. Este paso garantiza que no se hayan producido errores durante la sincronización del registro final.
+
+Una simple migración de envío de registros se puede configurar fuera de banda con respecto a la base de datos original, lo que la hace particularmente útil para las bases de datos de misión crítica. No se requieren cambios de configuración para la base de datos de origen, y la restauración y configuración inicial del entorno de migración no afectan a las operaciones de producción. Después de configurar el envío de registros, coloca algunas demandas de E/S en los servidores de producción. Sin embargo, el envío de registros consiste en lecturas secuenciales simples de los archive logs, lo que es poco probable que afecte al rendimiento de la base de datos de producción.
+
+El envío de registros ha demostrado ser particularmente útil para proyectos de migración de larga distancia y alta tasa de cambio. En un ejemplo, una sola base de datos de 220TB TB se migró a una nueva ubicación aproximadamente a 500 kilómetros de distancia. La tasa de cambio fue extremadamente alta y las restricciones de seguridad impidieron el uso de una conexión de red. El envío de registros se realizó mediante cinta y mensajería. Se restauró inicialmente una copia de la base de datos de origen mediante los procedimientos descritos a continuación. A continuación, los registros se enviaron semanalmente por mensajería hasta el momento de la transición, cuando se entregó el conjunto final de cintas y se aplicaron los registros a la base de datos de réplica.
+
+
+
+=== Oracle DataGuard
+
+En algunos casos, se garantiza un entorno DataGuard completo. No es correcto utilizar el término DataGuard para hacer referencia a cualquier envío de log o configuración de base de datos en espera. Oracle DataGuard es un marco completo para gestionar la replicación de bases de datos, pero no es una tecnología de replicación. La principal ventaja de un entorno DataGuard completo en un esfuerzo de migración es el switchover transparente de una base de datos a otra. DATAGUARD también permite un switchover transparente a la base de datos original si se detecta un problema, como un problema de rendimiento o conectividad de red con el nuevo entorno. Un entorno DataGuard completamente configurado requiere la configuración no sólo de la capa de base de datos, sino también de las aplicaciones, de modo que las aplicaciones puedan detectar un cambio en la ubicación de la base de datos primaria. En general, no es necesario utilizar DataGuard para completar una migración, pero algunos clientes tienen una amplia experiencia en DataGuard interna y ya dependen de ella para el trabajo de migración.
+
+
+
+=== Vuelva a diseñar la arquitectura
+
+Como hemos visto anteriormente, aprovechar las funciones avanzadas de las cabinas de almacenamiento en ocasiones requiere cambiar el diseño de la base de datos. Además, un cambio en el protocolo de almacenamiento, como migrar de ASM a un sistema de archivos NFS, altera necesariamente la distribución del sistema de archivos.
+
+Una de las principales ventajas de los métodos de envío de registros, incluido DataGuard, es que el destino de replicación no tiene que coincidir con el origen. No hay problemas con el uso de un enfoque de envío de logs para migrar de ASM a un sistema de archivos normal o viceversa. El diseño preciso de los archivos de datos se puede cambiar en el destino para optimizar el uso de la tecnología de base de datos conectable (PDB) o para establecer controles de QoS de forma selectiva en ciertos archivos. En otras palabras, un proceso de migración basado en el envío de registros le permite optimizar el diseño de almacenamiento de la base de datos de forma fácil y segura.
+
+
+
+=== Recursos del servidor
+
+La necesidad de un segundo servidor es una limitación para la migración a nivel de base de datos. Hay dos maneras de usar este segundo servidor:
+
+. Puede utilizar el segundo servidor como nuevo directorio raíz permanente para la base de datos.
+. Puede utilizar el segundo servidor como servidor temporal. Una vez completada y probada la migración de datos a la nueva cabina de almacenamiento, los sistemas de archivos LUN o NFS se desconectan del servidor provisional y se vuelven a conectar al servidor original.
+
+
+La primera opción es la más fácil, pero su uso podría no ser factible en entornos muy grandes que requieran servidores muy potentes. La segunda opción requiere trabajo adicional para volver a ubicar los sistemas de archivos en la ubicación original. Esta operación puede ser sencilla en la que NFS se utiliza como protocolo de almacenamiento, ya que los sistemas de archivos se pueden desmontar del servidor de almacenamiento provisional y volver a montarse en el servidor original.
+
+Los sistemas de archivos basados en bloques requieren trabajo adicional para actualizar la división en zonas de FC o los iniciadores de iSCSI. Con la mayoría de los administradores de volúmenes lógicos (incluido ASM), los LUN se detectan automáticamente y se conectan después de que estén disponibles en el servidor original. Sin embargo, algunas implementaciones de sistemas de archivos y LVM pueden requerir más trabajo para exportar e importar los datos. El procedimiento preciso puede variar, pero generalmente es fácil establecer un procedimiento simple y repetible para completar la migración y volver a alojar los datos en el servidor original.
+
+Aunque es posible configurar el envío de logs y replicar una base de datos en un entorno de servidor único, la nueva instancia debe tener un SID de proceso diferente para reproducir los logs. Es posible traer temporalmente la base de datos bajo un juego diferente de IDs de proceso con un SID diferente y cambiarla más tarde. Sin embargo, esta operación puede resultar en una gran cantidad de actividades de gestión complicadas y pone en riesgo al entorno de bases de datos de que se produzcan errores por parte del usuario.
+
+
+
+== Migración de nivel de host
+
+Migrar datos a nivel de host significa utilizar el sistema operativo del host y las utilidades asociadas para completar la migración. Este proceso incluye cualquier utilidad que copie datos, incluidos Oracle RMAN y Oracle ASM.
+
+
+
+=== Copiado de datos
+
+No se debe subestimar el valor de una operación de copia simple. Las infraestructuras de red modernas pueden transferir datos a velocidades medidas en gigabytes por segundo y las operaciones de copia de archivos se basan en una eficiente E/S de lectura y escritura secuencial Una operación de copia de host no puede evitar más interrupciones cuando se compara con el envío de registros, pero una migración supone algo más que movimiento de datos. Por lo general, incluye cambios en las redes, el tiempo de reinicio de la base de datos y las pruebas posteriores a la migración.
+
+El tiempo real necesario para copiar los datos puede no ser significativo. Además, una operación de copia conserva una ruta de back-out garantizada, ya que los datos originales permanecen sin tocar. Si se produce algún problema durante el proceso de migración, se pueden volver a activar los sistemas de archivos originales con los datos originales.
+
+
+
+=== Cambio de la plataforma
+
+El cambio de plataforma hace referencia a un cambio en el tipo de CPU. Cuando una base de datos se migra desde una plataforma tradicional Solaris, AIX o HP-UX a x86 Linux, los datos se deben volver a formatear debido a los cambios en la arquitectura de la CPU. Las CPU SPARC, IA64 y POWER se conocen como procesadores big endian, mientras que las arquitecturas x86 y x86_64 se conocen como little endian. Como resultado, algunos datos de los archivos de datos de Oracle se ordenan de forma diferente dependiendo del procesador en uso.
+
+Tradicionalmente, los clientes utilizaban DataPump para replicar datos entre plataformas. DataPump es una utilidad que crea un tipo especial de exportación de datos lógicos que se puede importar más rápidamente en la base de datos destino. Debido a que crea una copia lógica de los datos, DataPump deja atrás las dependencias de endianness del procesador. Algunos clientes siguen utilizando DataPump para la transformación de plataformas, pero se ha puesto a disposición una opción más rápida con los tablespaces transportables multiplataforma de Oracle 11g:. Este avance permite que un tablespace se convierta a un formato endian diferente. Se trata de una transformación física que ofrece un mejor rendimiento que una exportación de DataPump, que debe convertir bytes físicos en datos lógicos y luego volver a convertir a bytes físicos.
+
+No se trata completamente de la NetApp documentación de DataPump y los espacios de tablas transportables. No obstante, NetApp cuenta con algunas recomendaciones basadas en nuestra experiencia al ayudar a los clientes durante la migración a un nuevo registro de cabina de almacenamiento con una nueva arquitectura de CPU:
+
+* Si se utiliza DataPump, el tiempo necesario para completar la migración se debe medir en un entorno de prueba. A veces, los clientes se sorprenden por el momento necesario para completar la migración. Este tiempo de inactividad adicional inesperado puede provocar una interrupción.
+* Muchos clientes creen erróneamente que los tablespaces transportables entre plataformas no requieren conversión de datos. Cuando se utiliza una CPU con un endian diferente, un RMAN `convert` la operación debe realizarse en los archivos de datos de antemano. No se trata de una operación instantánea. En algunos casos, el proceso de conversión se puede acelerar al tener varios subprocesos que funcionan en diferentes archivos de datos, pero el proceso de conversión no se puede evitar.
+
+
+
+
+=== Migración controlada por el gestor de volúmenes lógicos
+
+Los LVM funcionan tomando un grupo de uno o más LUN y dividiéndolos en unidades pequeñas que normalmente se conocen como extensiones. El pool de extensiones se utiliza entonces como origen para crear volúmenes lógicos que están esencialmente virtualizados. Esta capa de virtualización proporciona valor de varias formas:
+
+* Los volúmenes lógicos pueden utilizar extensiones extraídas de varios LUN. Cuando se crea un sistema de archivos en un volumen lógico, puede utilizar todas las funcionalidades de rendimiento de todas las LUN. También promueve la carga uniforme de todas las LUN en el grupo de volúmenes, lo que ofrece un rendimiento más previsible.
+* Los volúmenes lógicos se pueden cambiar de tamaño agregando y, en algunos casos, eliminando extensiones. Cambiar el tamaño de un sistema de archivos en un volumen lógico suele ser no disruptivo.
+* Los volúmenes lógicos pueden migrarse de forma no disruptiva moviendo las extensiones subyacentes.
+
+
+La migración mediante un LVM funciona de dos maneras: Mover una extensión o duplicar/desactivar una extensión. La migración de LVM utiliza I/O secuencial de grandes bloques y solo rara vez crea preocupación sobre el rendimiento. Si esto se convierte en un problema, normalmente existen opciones para reducir la tasa de I/O. Hacerlo, aumenta el tiempo necesario para completar la migración pero reduce la carga de I/O en el host y los sistemas de almacenamiento.
+
+
+
+==== Retrovisor y retrovisor
+
+Algunos administradores de volúmenes, como AIX LVM, permiten al usuario especificar el número de copias para cada extensión y controlar qué dispositivos alojan cada copia. La migración se lleva a cabo tomando un volumen lógico existente, reflejando las extensiones subyacentes a los nuevos volúmenes, esperando a que se sincronicen las copias y borrando la antigua. Si se desea una ruta de retroceso, se puede crear una instantánea de los datos originales antes del punto en el que se descarta la copia de duplicación. También puede apagar el servidor brevemente para enmascarar las LUN originales antes de eliminar forzosamente las copias de duplicación contenidas. De este modo se conserva una copia recuperable de los datos en su ubicación original.
+
+
+
+==== Migración de extensiones
+
+Casi todos los gestores de volúmenes permiten migrar extensiones y, a veces, existen varias opciones. Por ejemplo, algunos administradores de volúmenes permiten que un administrador reubique las extensiones individuales de un volumen lógico específico, de almacenamiento antiguo a nuevo. Los gestores de volúmenes, como Linux LVM2, ofrecen el `pvmove` Comando, que reubica todas las extensiones del dispositivo LUN especificado en una LUN nueva. Después de evacuar la LUN antigua, puede quitarse.
+
+
+NOTE: El principal riesgo para las operaciones es la eliminación de LUN antiguas y no utilizadas de la configuración. Debe tenerse mucho cuidado al cambiar la división en zonas de FC y eliminar los dispositivos LUN obsoletos.
+
+
+
+=== Gestión Automática de Almacenamiento de Oracle
+
+Oracle ASM es un gestor de volúmenes lógicos y un sistema de archivos combinados. En un nivel superior, Oracle ASM toma una colección de LUN, los divide en pequeñas unidades de asignación y los presenta como un único volumen conocido como grupo de discos ASM. ASM también incluye la capacidad de reflejar el grupo de discos mediante la definición del nivel de redundancia. Un volumen puede estar no reflejado (redundancia externa), reflejado (redundancia normal) o reflejado en tres direcciones (alta redundancia). Se debe tener cuidado al configurar el nivel de redundancia porque no se puede cambiar después de la creación.
+
+ASM también proporciona la funcionalidad del sistema de archivos. Aunque el sistema de archivos no está visible directamente desde el host, la base de datos Oracle puede crear, mover y suprimir archivos y directorios en un grupo de discos ASM. Además, la estructura puede ser navegada usando la utilidad asmcmd.
+
+Al igual que con otras implementaciones de LVM, Oracle ASM optimiza el rendimiento de E/S mediante la segmentación y el equilibrio de carga de E/S de cada archivo en todas las LUN disponibles. En segundo lugar, las extensiones subyacentes se pueden reubicar para permitir tanto el cambio de tamaño del grupo de discos de ASM como la migración. Oracle ASM automatiza el proceso mediante la operación de reequilibrio. Se agregan nuevos LUN a un grupo de discos ASM y se eliminan LUN antiguas, lo que activa la reubicación de extensiones y la posterior caída de la LUN evacuada del grupo de discos. Este proceso es uno de los métodos de migración más probados, y la fiabilidad de ASM a la hora de proporcionar una migración transparente es posiblemente su característica más importante.
+
+
+NOTE: Como el nivel de mirroring de Oracle ASM es fijo, no se puede utilizar con el método de migración mirror y demirror.
+
+
+
+== Migración de nivel de almacenamiento
+
+La migración al nivel de almacenamiento significa realizar la migración por debajo tanto del nivel de aplicación como del sistema operativo. Anteriormente, esto suponía el uso de dispositivos especializados que copiaban LUN a nivel de red, pero estas funcionalidades ahora se encuentran de forma nativa en ONTAP.
+
+
+
+=== SnapMirror
+
+La migración de bases de datos desde sistemas NetApp se realiza casi universalmente con el software de replicación de datos SnapMirror de NetApp. El proceso implica configurar una relación de mirroring para los volúmenes que se migrarán, lo que permite que se sincronicen y luego esperar la ventana de transposición. Cuando llega, la base de datos de origen se cierra, se realiza una actualización de duplicación final y se interrumpe la duplicación. A continuación, los volúmenes de réplica están listos para su uso, ya sea montando un directorio de sistema de archivos NFS contenido o detectando los LUN contenidos e iniciando la base de datos.
+
+La reubicación de volúmenes dentro de un único clúster de ONTAP no se considera una migración, sino una rutina `volume move` funcionamiento. SnapMirror se utiliza como motor de replicación de datos en el clúster. Este proceso está totalmente automatizado. No hay otros pasos de migración que se deben realizar cuando atributos del volumen, como la asignación de LUN o los permisos de exportación de NFS, se mueven con el propio volumen. La reubicación no provoca interrupciones en las operaciones del host. En algunos casos, el acceso a la red debe actualizarse para garantizar que se accede a los datos recién reubicados de la forma más eficiente posible, pero estas tareas también no producen interrupciones.
+
+
+
+=== Importación de LUN externa (FLI)
+
+FLI es una función que permite que un sistema Data ONTAP que ejecuta 8,3 o superior migre un LUN existente desde otra cabina de almacenamiento. El procedimiento es simple: El sistema ONTAP se divide en zonas en la cabina de almacenamiento existente como si fuera cualquier otro host SAN. A continuación, Data ONTAP toma el control de las LUN heredadas deseadas y migra los datos subyacentes. Además, el proceso de importación utiliza la configuración de eficiencia del volumen nuevo a medida que se migran los datos, lo que significa que los datos se pueden comprimir y deduplicar online durante el proceso de migración.
+
+La primera implementación de FLI en Data ONTAP 8,3 solo permitía la migración sin conexión. Esta transferencia fue extremadamente rápida, pero seguía significando que los datos de la LUN no estaban disponibles hasta que se completó la migración. La migración en línea se introdujo en Data ONTAP 8,3.1. Este tipo de migración minimiza las interrupciones al permitir que ONTAP sirva datos de LUN durante el proceso de transferencia. Se produce una breve interrupción mientras se vuelve a dividir en zonas el host para usar los LUN a través de ONTAP. No obstante, tan pronto como se realicen estos cambios, los datos volverán a estar accesibles y seguirán siendo accesibles durante todo el proceso de migración.
+
+La I/O de lectura se proxy mediante ONTAP hasta que se completa la operación de copia, mientras que la I/O de escritura se escribe de forma síncrona en el LUN externo y en el LUN de ONTAP. Las dos copias LUN se mantienen sincronizadas de esta manera hasta que el administrador ejecuta una transposición completa que libera la LUN externa y ya no replica las escrituras.
+
+FLI está diseñado para funcionar con FC, pero si se desea cambiar a iSCSI, el LUN migrado puede volver a asignarse fácilmente como LUN iSCSI una vez finalizada la migración.
+
+Entre las características de FLI se encuentra la detección y ajuste automático de alineación. En este contexto, el término alineación hace referencia a una partición en un dispositivo LUN. Para un rendimiento óptimo es necesario alinear las E/S con bloques de 4K KB. Si una partición se coloca en un desplazamiento que no es múltiplo de 4K, el rendimiento se ve afectado.
+
+Hay un segundo aspecto de la alineación que no se puede corregir ajustando un desplazamiento de partición: El tamaño del bloque del sistema de archivos. Por ejemplo, un sistema de archivos ZFS generalmente toma por defecto un tamaño de bloque interno de 512 bytes. Otros clientes que usan AIX han creado ocasionalmente sistemas de archivos JFS2 con un tamaño de bloque de 512 o 1, 024 bytes. Aunque es posible que el sistema de archivos esté alineado con un límite de 4K KB, los archivos creados dentro de ese sistema de archivos no lo están y el rendimiento se resienta.
+
+FLI no debe utilizarse en estas circunstancias. Aunque se puede acceder a los datos tras la migración, el resultado son sistemas de archivos con serias limitaciones de rendimiento. Como principio general, cualquier sistema de archivos que admita una carga de trabajo de sobrescritura aleatoria en ONTAP debería utilizar un tamaño de bloque de 4K KB. Esto es aplicable principalmente a cargas de trabajo como los archivos de datos de bases de datos e implementaciones de VDI. El tamaño de bloque se puede identificar mediante los comandos del sistema operativo del host relevantes.
+
+Por ejemplo, en AIX, el tamaño de bloque se puede ver con `lsfs -q`. Con Linux, `xfs_info` y.. `tune2fs` se puede utilizar para `xfs` y.. `ext3/ext4`, respectivamente. Con `zfs`, el comando es `zdb -C`.
+
+El parámetro que controla el tamaño del bloque es `ashift` y, por lo general, el valor predeterminado es 9, lo que significa 2^9, o 512 bytes. Para un rendimiento óptimo, el `ashift` El valor debe ser 12 (2^12=4K). Este valor se define en el momento en que se crea zpool y no se puede cambiar, lo que significa que los datos zpools con un `ashift` los datos que no sean 12 se deben migrar copiando a un zpool recién creado.
+
+Oracle ASM no tiene un tamaño de bloque fundamental. El único requisito es que la partición en la que se crea el disco de ASM esté alineada correctamente.
+
+
+
+=== Herramienta de transición de 7-Mode
+
+La herramienta de transición de 7-Mode (7MTT) es una utilidad de automatización que se usa para migrar configuraciones de 7- Mode de gran tamaño a ONTAP. La mayoría de los clientes de bases de datos encuentran otros métodos más sencillos, en parte, debido a que suelen migrar la base de datos de sus entornos por base de datos en lugar de reubicar todo el espacio físico de almacenamiento. Además, normalmente las bases de datos solo forman parte de un entorno de almacenamiento de mayor tamaño. Por tanto, las bases de datos suelen migrarse de forma individual y entonces el entorno restante puede moverse con el 7MTT.
+
+Hay un número pequeño pero significativo de clientes que disponen de sistemas de almacenamiento dedicados a entornos de bases de datos complicados. Estos entornos pueden contener numerosos volúmenes, copias Snapshot y numerosos detalles de configuración, como permisos de exportación, grupos de iniciadores de LUN, permisos de usuario y configuración de protocolo ligero de acceso a directorios. En tales casos, las capacidades de automatización de 7MTT pueden simplificar una migración.
+
+7MTT puede funcionar en uno de dos modos:
+
+* *Transición basada en copia (CBT).* 7MTT Con CBT se configuran los volúmenes de SnapMirror a partir de un sistema 7-Mode existente en el nuevo entorno. Una vez que los datos están sincronizados, 7MTT orquesta el proceso de transición.
+* *Transición sin copia (CFT).* 7MTT con CFT se basa en la conversión in situ de las bandejas de discos 7-Mode existentes. No se copian datos y las bandejas de discos existentes pueden volver a utilizarse. La configuración existente de la protección de datos y la eficiencia del almacenamiento se conserva.
+
+
+La principal diferencia entre estas dos opciones es que la transición sin copias es un método muy importante, en el que todas las bandejas de discos conectadas al par de alta disponibilidad 7- Mode original deben reubicarse en el nuevo entorno. No existe una opción para mover un subconjunto de bandejas. El enfoque basado en copia permite mover los volúmenes seleccionados. También hay potencialmente un periodo de transición más largo con una transición sin copias debido al vínculo necesario para volver a conectar las bandejas de discos y convertir los metadatos. Según la experiencia práctica, NetApp recomienda permitir 1 hora para reubicar y reconectar las bandejas de discos, y entre 15 minutos y 2 horas para la conversión de metadatos.

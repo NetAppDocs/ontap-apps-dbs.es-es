@@ -1,0 +1,24 @@
+---
+settings:
+  name: Enterprise applications
+  internal:
+    pdf_enabled: true
+  prod:
+    pdf_enabled: true
+    harmony_enabled: false
+  langs: es-es,us-en,ja-jp,ko-kr,zh-cn,zh-tw,de-de,fr-fr,it-it
+sidebar:
+  entries:
+  - title: Aplicaciones de negocio
+    url: "/index.html"
+  - section: mssql
+  - section: mysql
+  - section: oracle
+  - section: postgres
+  - title: SAP
+    entries:
+    - title: SAP HANA y AnyDB
+      url: sap-solutions.html
+  - section: vmware
+  - title: Avisos legales
+    url: "/legal-notices.html"

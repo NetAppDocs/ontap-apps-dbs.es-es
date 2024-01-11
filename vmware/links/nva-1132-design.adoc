@@ -1,0 +1,23 @@
+---
+sidebar: sidebar 
+permalink: vmware/links/nva-1132-design.html 
+keywords: design, HCI, computing, vmware, cloud 
+summary: La computación de usuario final de VMware con NetApp HCI es una arquitectura de centro de datos prevalidada y con mejores prácticas para poner en marcha cargas de trabajo de puestos de trabajo virtuales a escala empresarial. 
+---
+= NVA-1132-DESIGN: Computación de usuario final de VMware con NetApp HCI
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./../media/
+:firstname: d
+:authorinitials: d
+:author: d
+:authors: d
+:revdate: [.lead]
+
+
+La computación de usuario final de VMware con NetApp HCI es una arquitectura de centro de datos prevalidada y con mejores prácticas para poner en marcha cargas de trabajo de puestos de trabajo virtuales a escala empresarial. Este documento describe el diseño de la arquitectura y las mejores prácticas para poner en marcha la solución a escala de producción de forma fiable y sin riesgos.
+
+link:https://www.netapp.com/pdf.html?item=/media/7121-nva1132designpdf.pdf["NVA-1132-DESIGN: Computación de usuario final de VMware con NetApp HCI"^]

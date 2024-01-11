@@ -1,0 +1,12 @@
+---
+permalink: mysql/tiering.html 
+sidebar: sidebar 
+keywords: tiering, fabricpool 
+summary: Información general de FabricPool 
+---
+= Organización en niveles de MySQL con FabricPool
+:allow-uri-read: 
+
+
+[role="lead"]
+Comprender cómo la organización por niveles de FabricPool afecta a las aplicaciones y las bases de datos requiere comprender la arquitectura de FabricPool de bajo nivel.

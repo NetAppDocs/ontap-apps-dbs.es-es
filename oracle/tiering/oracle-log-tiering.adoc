@@ -1,0 +1,30 @@
+---
+sidebar: sidebar 
+permalink: oracle/tiering/oracle-log-tiering.html 
+keywords: tiering, fabricpool 
+summary: Organización en niveles de archive log de Oracle 
+---
+= Clasificación por niveles de registros de Oracle
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Quizás el uso más importante de FabricPool sea mejorar la eficiencia de los datos fríos conocidos, como los registros de transacciones de base de datos.
+
+La mayoría de las bases de datos relacionales funcionan en modo de archivado de registros de transacciones para ofrecer una recuperación puntual. Los cambios en las bases de datos se confirman registrando los cambios en los registros de transacciones y el registro de transacciones se conserva sin sobrescribirse. El resultado, puede ser un requisito para conservar un enorme volumen de registros de transacciones archivados. Existen ejemplos similares con muchos otros flujos de trabajo de aplicaciones que generan datos que deben conservarse, pero es muy poco probable que se acceda jamás.
+
+FabricPool resuelve estos problemas al ofrecer una única solución con organización en niveles integrada. Los archivos se almacenan y siguen siendo accesibles en su ubicación habitual, pero prácticamente no ocupan espacio en la matriz primaria.
+
+
+
+== Normativas
+
+Utilice un `tiering-minimum-cooling-days` la política de unos días provoca una retención de bloques en los archivos creados recientemente (que son los archivos con mayor probabilidad de que sean necesarios a corto plazo) en el nivel de rendimiento. Los bloques de datos de los archivos antiguos se mueven al nivel de capacidad.
+
+La `auto` aplica la clasificación por niveles de avisos cuando se alcanza el umbral de enfriamiento independientemente de si los registros se han suprimido o siguen existiendo en el sistema de archivos primario. También se simplifica la gestión, almacenar todos los registros potencialmente necesarios en una sola ubicación del sistema de archivos activo. No hay razón para buscar a través de instantáneas para localizar un archivo que necesita ser restaurado.
+
+Algunas aplicaciones, como Microsoft SQL Server, truncan los archivos de registro de transacciones durante las operaciones de backup de modo que los registros ya no estén en el sistema de archivos activo. Se puede ahorrar capacidad mediante el uso del `snapshot-only` la política de organización en niveles, solo el `auto` la política no es útil para los datos de registro porque rara vez deben enfriarse los datos de registro en el sistema de archivos activo.

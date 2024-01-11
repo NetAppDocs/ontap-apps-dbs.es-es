@@ -1,0 +1,135 @@
+---
+sidebar: sidebar 
+permalink: oracle/dp/oracle-data-integrity.html 
+keywords: checksums, data integrity 
+summary: Checksums y protección de datos de Oracle 
+---
+= Checksums e integridad de datos de Oracle
+:allow-uri-read: 
+
+
+[role="lead"]
+Una pregunta dirigida comúnmente a NetApp es cómo proteger la integridad de los datos de una base de datos de Oracle.
+
+La protección de datos lógicos en ONTAP consta de tres requisitos clave:
+
+* Los datos deben protegerse contra la corrupción de datos.
+* Los datos deben protegerse contra un fallo de unidad.
+* Los cambios en los datos deben protegerse contra la pérdida.
+
+
+Estas tres necesidades se tratan en las siguientes secciones.
+
+
+
+== Corrupción de la red: Sumas de comprobación
+
+El nivel más básico de protección de datos es la suma de comprobación, que es un código especial de detección de errores almacenado junto con los datos. La corrupción de datos durante la transmisión de red se detecta con el uso de una suma de comprobación y, en algunos casos, varias sumas de comprobación.
+
+Por ejemplo, una trama de FC incluye una forma de suma de comprobación denominada comprobación de redundancia cíclica (CRC) para asegurarse de que la carga útil no está dañada en tránsito. El transmisor envía tanto los datos como el CRC de los datos. El receptor de una trama FC vuelve a calcular el CRC de los datos recibidos para asegurarse de que coincida con el CRC transmitido. Si el CRC recién calculado no coincide con el CRC conectado a la trama, los datos están dañados y se descarta o rechaza la trama de FC. Las operaciones de I/O iSCSI incluyen sumas de comprobación en las capas TCP/IP y Ethernet y, para una protección adicional, también se puede incluir protección CRC opcional en la capa SCSI. Cualquier daño de bit en el cable se detecta mediante la capa TCP o la capa IP, lo que provoca la retransmisión del paquete. Al igual que con FC, los errores en el CRC de SCSI provocan un descarte o el rechazo de la operación.
+
+
+
+== Daños en unidades: Sumas de comprobación
+
+También se utilizan sumas de comprobación para verificar la integridad de los datos almacenados en las unidades. Los bloques de datos escritos en las unidades se almacenan con una función de suma de comprobación que genera un número impredecible ligado a los datos originales. Cuando se leen datos de la unidad, la suma de comprobación se vuelve a calcular y se compara con la suma de comprobación almacenada. Si no coincide, los datos se han dañado y deben ser recuperados por la capa RAID.
+
+
+
+== Datos dañados: Escrituras perdidas
+
+Uno de los tipos de daños más difíciles de detectar es una escritura perdida o ubicada incorrectamente. Cuando se reconoce una escritura, se debe escribir en el soporte en la ubicación correcta. Los datos dañados in situ son relativamente fáciles de detectar usando una sencilla suma de comprobación almacenada con los datos. Sin embargo, si la escritura simplemente se pierde, es posible que aún exista la versión anterior de los datos y la suma de comprobación sea correcta. Si la escritura se realiza en una ubicación física incorrecta, la suma de comprobación asociada sería una vez más válida para los datos almacenados, aunque la escritura haya destruido otros datos.
+
+La solución a este reto es la siguiente:
+
+* Una operación de escritura debe incluir metadatos que indiquen la ubicación donde se espera que se encuentre la escritura.
+* Una operación de escritura debe incluir algún tipo de identificador de versión.
+
+
+Cuando ONTAP escribe un bloque, incluye los datos donde pertenece el bloque. Si una lectura posterior identifica un bloque, pero los metadatos indican que pertenece a la ubicación 123 cuando se encontró en la ubicación 456, la escritura se ha colocado de forma incorrecta.
+
+Detectar una escritura totalmente perdida es más difícil. La explicación es muy complicada, pero básicamente ONTAP almacena los metadatos de manera que una operación de escritura da como resultado actualizaciones en dos ubicaciones distintas en las unidades. Si se pierde una escritura, una lectura posterior de los datos y los metadatos asociados muestra dos identidades de versión diferentes. Esto indica que la unidad no completó la escritura.
+
+Los daños en la escritura perdidos o mal ubicados son extremadamente raros, pero, a medida que las unidades siguen creciendo y los conjuntos de datos pasan a la escala de exabytes, el riesgo aumenta. La detección de escritura perdida debe incluirse en cualquier sistema de almacenamiento que admita cargas de trabajo de base de datos.
+
+
+
+== Fallos de unidad: RAID, RAID DP y RAID-TEC
+
+Si se detecta que un bloque de datos en una unidad está dañado, o que toda la unidad falla y no está totalmente disponible, los datos deben reconstituirse. Esto se realiza en ONTAP utilizando unidades de paridad. Los datos se dividen entre varias unidades de datos y, a continuación, se generan datos de paridad. Se almacena por separado de los datos originales.
+
+ONTAP utilizó originalmente RAID 4, que utiliza una sola unidad de paridad para cada grupo de unidades de datos. El resultado fue que cualquier unidad del grupo podría fallar sin producir una pérdida de datos. Si se produjo un error en la unidad de paridad, no se dañaron los datos y se pudo construir una nueva unidad de paridad. Si falla una unidad de datos única, las unidades restantes podrían usarse con la unidad de paridad para volver a generar los datos ausentes.
+
+Cuando las unidades eran pequeñas, la posibilidad estadística de que fallaran en dos unidades a la vez era insignificante. A medida que aumenta la capacidad de las unidades, también aumenta el tiempo necesario para reconstruir los datos tras un fallo de unidad. Esto ha aumentado el intervalo en el que un segundo fallo de unidad provocaría la pérdida de datos. Además, el proceso de recompilación crea una gran cantidad de I/O adicionales en las unidades supervivientes. A medida que las unidades envejecen, también aumenta el riesgo de la carga adicional que produce un segundo fallo de unidad. Por último, incluso si el riesgo de pérdida de datos no aumentara con el uso continuado de RAID 4, las consecuencias de la pérdida de datos serían más graves. Cuantos más datos se pierdan en caso de un fallo de un grupo RAID, más tiempo se necesitaría para recuperar los datos, lo que prolonga la interrupción del negocio.
+
+Estos problemas llevaron a NetApp a desarrollar la tecnología NetApp RAID DP, una variante de RAID 6. Esta solución incluye dos unidades de paridad, lo que significa que dos unidades cualesquiera de un grupo RAID pueden fallar sin crear pérdida de datos. El tamaño de las unidades ha continuado creciendo, lo que finalmente llevó a NetApp a desarrollar la tecnología NetApp RAID-TEC, que introduce una tercera unidad de paridad.
+
+Algunas mejores prácticas históricas de bases de datos recomiendan el uso de RAID-10, también conocido como mirroring segmentado. Esto ofrece menos protección de datos que RAID DP, ya que existen varias situaciones de fallo de dos discos, mientras que en RAID DP no hay ninguna.
+
+También hay algunas mejores prácticas históricas de bases de datos que indican que se prefiere RAID-10 a las opciones de RAID-4/5/6 debido a cuestiones de rendimiento. En ocasiones, estas recomendaciones se refieren a una penalización de RAID. Aunque estas recomendaciones son generalmente correctas, no son aplicables a las implementaciones de RAID en ONTAP. El problema de rendimiento está relacionado con la regeneración de paridad. Con las implementaciones de RAID tradicionales, procesar las escrituras aleatorias rutinarias realizadas por una base de datos requiere varias lecturas de disco para regenerar los datos de paridad y completar la escritura. La penalización se define como las IOPS de lectura adicional necesarias para ejecutar operaciones de escritura.
+
+ONTAP no incurre en una penalización de RAID, ya que las escrituras se almacenan en memoria donde se genera la paridad y se escriben en el disco como una única franja de RAID. No se requieren lecturas para completar la operación de escritura.
+
+En resumen, en comparación con RAID 10, RAID DP y RAID-TEC ofrecen mucha más capacidad utilizable, una mejor protección ante fallos de unidad y sin sacrificios de rendimiento.
+
+
+
+== Protección contra fallos del hardware: NVRAM
+
+Cualquier cabina de almacenamiento que sirva a una carga de trabajo de base de datos debe procesar operaciones de escritura lo más rápido posible. Además, una operación de escritura debe protegerse contra pérdidas provocadas por eventos inesperados, como un fallo de alimentación. Esto significa que cualquier operación de escritura debe almacenarse de forma segura en al menos dos ubicaciones.
+
+Los sistemas AFF y FAS confían en NVRAM para cumplir estos requisitos. El proceso de escritura funciona de la siguiente manera:
+
+. Los datos de escritura entrantes se almacenan en la RAM.
+. Los cambios que se deben realizar en los datos del disco se registran en NVRAM en el nodo local y el asociado. NVRAM no es una caché de escritura, sino un diario similar a un redo log de base de datos. En condiciones normales, no se lee. Solo se utiliza para recuperación, como después de un fallo de alimentación durante el procesamiento de I/O.
+. A continuación, la escritura se reconoce en el host.
+
+
+El proceso de escritura en esta fase se completa desde el punto de vista de la aplicación y los datos están protegidos contra pérdidas debido a que están almacenados en dos ubicaciones diferentes. Eventualmente, los cambios se escriben en el disco, pero este proceso es fuera de banda desde el punto de vista de la aplicación, porque se produce una vez que se reconoce la escritura y, por lo tanto, no afecta a la latencia. Este proceso es una vez más similar al registro de la base de datos. Un cambio en la base de datos se registra en los redo logs lo antes posible y el cambio se confirma como confirmado. Las actualizaciones de los archivos de datos se producen mucho más tarde y no afectan directamente a la velocidad de procesamiento.
+
+En caso de que se produzca un fallo en la controladora, la controladora asociada toma la propiedad de los discos necesarios y reproduce los datos registrados en la NVRAM para recuperar las operaciones de I/O que estuvieran en curso al producirse el fallo.
+
+
+
+== Protección contra fallos de hardware: NVFAIL
+
+Como hemos visto anteriormente, la escritura no se reconoce hasta que se haya iniciado sesión en la NVRAM local y NVRAM en al menos otra controladora. Este método garantiza que un fallo de hardware o una interrupción del suministro eléctrico no provoquen la pérdida de operaciones de I/O en tránsito Si la NVRAM local falla o la conectividad con el partner de alta disponibilidad falla, estos datos en curso ya no se duplicarán.
+
+Si la NVRAM local informa de un error, el nodo se apaga. Este apagado hace que se produzca una conmutación al nodo de respaldo con una controladora asociada de alta disponibilidad. No se pierden datos porque la controladora que experimenta el fallo no reconoció la operación de escritura.
+
+ONTAP no permite una conmutación por error cuando los datos no están sincronizados a menos que se vean obligados a recurrir a la conmutación por error. Al forzar un cambio en las condiciones de esta manera, se reconoce que los datos podrían dejarse atrás en la controladora original y que la pérdida de datos es aceptable.
+
+Las bases de datos son especialmente vulnerables a los daños si se fuerza una conmutación por error porque las bases de datos mantienen grandes cachés internos de datos en el disco. Si se produce una conmutación por error forzada, los cambios previamente aceptados se descartan efectivamente. El contenido de la cabina de almacenamiento retrocede efectivamente en el tiempo y el estado de la caché de base de datos ya no refleja el estado de los datos del disco.
+
+Para proteger datos contra esta situación, ONTAP permite configurar volúmenes para una protección especial contra un fallo NVRAM. Cuando se activa, este mecanismo de protección hace que un volumen entre en un estado denominado NVFAIL. Este estado provoca errores de I/O que provocan el cierre de una aplicación para que no utilicen datos obsoletos. No se deben perder los datos porque debe haber alguna escritura reconocida en la cabina de almacenamiento.
+
+Los siguientes pasos habituales son para que un administrador apague completamente los hosts antes de volver a poner manualmente los LUN y los volúmenes de nuevo en línea. Aunque estos pasos pueden implicar cierto trabajo, este enfoque es la manera más segura de garantizar la integridad de los datos. No todos los datos requieren esta protección, por lo que el comportamiento NVFAIL se puede configurar volumen por volumen.
+
+
+
+== Protección frente a fallos de sitios y bandejas: SyncMirror y complejos
+
+SyncMirror es una tecnología de mirroring que mejora, pero no sustituye, RAID DP ni RAID-TEC. Refleja el contenido de dos grupos RAID independientes. La configuración lógica es la siguiente:
+
+* Las unidades se configuran en dos pools según la ubicación. Un pool se compone de todas las unidades en el sitio A, y el segundo pool se compone de todas las unidades en el sitio B.
+* A continuación, se crea un pool de almacenamiento común, conocido como agregado, basado en conjuntos reflejados de grupos RAID. Se extrae un número igual de unidades en cada sitio. Por ejemplo, un agregado SyncMirror de 20 unidades estaría compuesto por 10 unidades del sitio A y 10 unidades del sitio B.
+* Cada conjunto de unidades en un sitio determinado se configura automáticamente como uno o varios grupos RAID-DP o RAID-TEC completamente redundantes, independientemente del uso del mirroring. Esto proporciona una protección de datos continua, incluso después de la pérdida de un sitio.
+
+
+image:syncmirror.png["Error: Falta la imagen gráfica"]
+
+La figura anterior muestra una configuración de SyncMirror de ejemplo. Se creó un agregado de 24 unidades en la controladora con 12 unidades de una bandeja asignada en el sitio A y 12 unidades de una bandeja asignada en el sitio B. Las unidades se agruparon en dos grupos RAID reflejados. RAID Group 0 incluye un plex de 6 unidades en el sitio A duplicado en un plex de 6 unidades en el sitio B. Del mismo modo, RAID Group 1 incluye un plex de 6 unidades en el sitio A duplicado en un plex de 6 unidades en el sitio B.
+
+Normalmente, SyncMirror se utiliza para proporcionar mirroring remoto con sistemas MetroCluster, con una copia de los datos de cada sitio. En ocasiones, se ha utilizado para proporcionar un nivel adicional de redundancia en un único sistema. En particular, proporciona redundancia a nivel de bandeja. Una bandeja de unidades ya contiene fuentes de alimentación y controladoras duales y en general es poco más que chapa metálica, pero en algunos casos, la protección adicional puede estar garantizada. Por ejemplo, un cliente de NetApp ha puesto en marcha SyncMirror para una plataforma móvil de análisis en tiempo real que se usa durante las pruebas de automoción. El sistema se separó en dos racks físicos alimentados por fuentes de alimentación independientes de sistemas UPS independientes.
+
+==sumas de comprobación
+
+El tema de las sumas de comprobación es de particular interés para los administradores de bases de datos que están acostumbrados a usar backups en streaming de Oracle RMAN, que migran a backups basados en instantáneas. Una función de RMAN es que realiza comprobaciones de integridad durante las operaciones de copia de seguridad. Aunque esta función posee cierto valor, su principal ventaja es en una base de datos que no se utiliza en una cabina de almacenamiento moderna. Cuando se utilizan unidades físicas en una base de datos de Oracle, resulta casi seguro que los daños eventualmente se producen cuando las unidades envejecen, un problema que resuelven las sumas de comprobación basadas en cabinas de almacenamiento reales.
+
+Con una cabina de almacenamiento real, la integridad de los datos se protege utilizando sumas de comprobación en varios niveles. Si los datos están dañados en una red basada en IP, la capa Protocolo de control de transmisión (TCP) rechaza los datos del paquete y solicita la retransmisión. El protocolo FC incluye sumas de comprobación, al igual que los datos SCSI encapsulados. Después de que se encuentra en la cabina, ONTAP tiene protección RAID y suma de comprobación. La corrupción puede ocurrir, pero, como en la mayoría de las matrices empresariales, se detecta y corrige. Normalmente, falla una unidad completa, solicita una reconstrucción de RAID y la integridad de la base de datos no se ve afectada. Con menos frecuencia, ONTAP detecta un error de suma de comprobación, lo que significa que los datos de la unidad están dañados. Entonces, la unidad conmuta al nodo de respaldo y se inicia una reconstrucción de RAID. Una vez más, la integridad de los datos no se ve afectada.
+
+La arquitectura de archivo de datos y redo log de Oracle también está diseñada para ofrecer el nivel más alto posible de integridad de datos, incluso en circunstancias extremas. En el nivel más básico, los bloques de Oracle incluyen suma de comprobación y comprobaciones lógicas básicas con casi todas las E/S. Si Oracle no se ha bloqueado o ha puesto un tablespace fuera de línea, los datos estarán intactos. El grado de comprobación de la integridad de los datos es ajustable y Oracle también puede configurarse para confirmar las escrituras. Como resultado, casi todos los escenarios de accidente y fallo se pueden recuperar, y en el caso extremadamente raro de una situación irrecuperable, la corrupción se detecta rápidamente.
+
+La mayoría de los clientes de NetApp que utilizan bases de datos Oracle interrumpen el uso de RMAN y otros productos de backup después de la migración a backups basados en snapshots. Todavía hay opciones en las que se puede utilizar RMAN para realizar la recuperación a nivel de bloque con SnapCenter. Sin embargo, en el día a día, RMAN, NetBackup y otros productos sólo se utilizan ocasionalmente para crear copias de archivado mensuales o trimestrales.
+
+Algunos clientes eligen correr `dbv` periódicamente para realizar comprobaciones de integridad de sus bases de datos existentes. NetApp desaconseja esta práctica porque crea una carga de I/O innecesaria. Como se mencionó anteriormente, si la base de datos no estaba experimentando problemas anteriormente, la posibilidad de `dbv` La detección de un problema es cercana a cero, y esta utilidad crea una carga secuencial de I/O muy elevada en la red y el sistema de almacenamiento. A menos que exista un motivo para creer que existe corrupción, como la exposición a un bug de Oracle conocido, no hay motivo para ejecutarse `dbv`.
