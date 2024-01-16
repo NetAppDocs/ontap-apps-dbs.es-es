@@ -10,7 +10,7 @@ summary: 'ONTAP admite los principales protocolos de almacenamiento utilizados p
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

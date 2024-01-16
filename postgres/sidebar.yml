@@ -4,8 +4,6 @@ title: PostgreSQL
 entries:
 - title: Descripción general
   url: "/postgres/overview.html"
-- title: Configuración de ONTAP
-  url: "/postgres/ontap.html"
 - title: Configuración de la base de datos
   entries:
   - title: Arquitectura

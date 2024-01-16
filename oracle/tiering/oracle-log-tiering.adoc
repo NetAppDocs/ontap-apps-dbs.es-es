@@ -9,7 +9,7 @@ summary: Organización en niveles de archive log de Oracle
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

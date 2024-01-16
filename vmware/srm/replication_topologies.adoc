@@ -10,7 +10,7 @@ summary: En ONTAP 9, los componentes físicos de un clúster son visibles para l
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

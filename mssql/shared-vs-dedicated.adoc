@@ -6,6 +6,7 @@ summary: Microsoft SQL Server en ONTAP
 ---
 = Instancia compartida de Microsoft SQL Server frente a instancia dedicada
 :allow-uri-read: 
+:imagesdir: ../media/
 
 
 [role="lead"]

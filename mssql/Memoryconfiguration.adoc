@@ -10,6 +10,7 @@ summary: Microsoft SQL Server en ONTAP
 :author: [.lead]
 :authorinitials: [
 :authors: [.lead]
+:imagesdir: ../media/
 
 
 
@@ -27,7 +28,7 @@ En un clúster de SQL Server con varias instancias de SQL Server, cada instancia
 
 TIP: *NetApp recomienda* dejar al menos 4GB a 6GB de RAM para el sistema operativo para evitar problemas de rendimiento.
 
-image:./media/max-server-memory.png["Error: Falta la imagen gráfica"]
+image:mssql-max-server-memory.png["Error: Falta la imagen gráfica"]
 
 
 
@@ -74,7 +75,7 @@ Cuando se ejecuta una consulta, SQL Server intenta asignar la cantidad óptima d
 
 De forma predeterminada, la configuración de memoria mínima por consulta asigna > o = a 1024KB para cada consulta que se ejecute. Es recomendable dejar este valor en el valor por defecto de 0 para permitir que SQL Server gestione dinámicamente la cantidad de memoria asignada para las operaciones de creación de índices. Sin embargo, si SQL Server tiene más RAM de la que necesita para ejecutarse de manera eficiente, el rendimiento de algunas consultas se puede aumentar si aumenta este valor. Por lo tanto, siempre y cuando la memoria esté disponible en el servidor que no esté utilizando SQL Server, ninguna otra aplicación o el sistema operativo, aumentar esta configuración puede ayudar en general al rendimiento de SQL Server. Si no hay memoria libre disponible, aumentar esta configuración puede afectar al rendimiento general.
 
-image:./media/min-memory-per-query.png["Error: Falta la imagen gráfica"]
+image:mssql-min-memory-per-query.png["Error: Falta la imagen gráfica"]
 
 
 

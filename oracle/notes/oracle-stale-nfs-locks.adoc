@@ -10,7 +10,7 @@ summary: Oracle y bloqueos NFSv3 obsoletos
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

@@ -10,7 +10,7 @@ summary: Escenarios de fallos de Oracle SM-BC
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../../media/
 
 
 [role="lead"]

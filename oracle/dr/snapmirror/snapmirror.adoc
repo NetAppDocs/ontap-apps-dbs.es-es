@@ -10,7 +10,7 @@ summary: SnapMirror y SyncMirror
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../../media/
 
 
 [role="lead"]

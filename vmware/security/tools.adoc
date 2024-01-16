@@ -10,7 +10,7 @@ summary: En este documento se trata la seguridad de productos de las herramienta
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
 
 
 

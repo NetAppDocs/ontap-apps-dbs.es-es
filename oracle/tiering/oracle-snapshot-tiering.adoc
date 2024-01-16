@@ -10,7 +10,7 @@ summary: Organización en niveles de copias Snapshot de Oracle
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

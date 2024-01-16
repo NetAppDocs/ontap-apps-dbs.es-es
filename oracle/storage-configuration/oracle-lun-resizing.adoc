@@ -10,7 +10,7 @@ summary: Cambio de tamaño de LUN y LVM con bases de datos de Oracle
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

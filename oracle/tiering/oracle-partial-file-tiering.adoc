@@ -10,7 +10,7 @@ summary: Organización parcial en niveles de archivos con FabricPool
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

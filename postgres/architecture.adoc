@@ -11,7 +11,7 @@ summary: Bases de datos PostgreSQL en ONTAP
 [role="lead"]
 PostgreSQL es un RDBMS basado en la arquitectura de cliente y servidor. Una instancia PostgreSQL se conoce como un cluster de base de datos, que es una colección de bases de datos en lugar de una colección de servidores.
 
-image:architecture.png["Error: No se ha encontrado el gráfico"]
+image:postgresql-architecture.png["Error: No se ha encontrado el gráfico"]
 
 Hay tres elementos principales en una base de datos PostgreSQL: El postmaster, el front-end (cliente) y el back-end El cliente envía solicitudes al postmaster con información como el protocolo IP y a qué base de datos conectarse. El posmaster autentica la conexión y la pasa al proceso back-end para continuar la comunicación. El proceso back-end ejecuta la consulta y envía los resultados directamente al front-end (cliente).
 

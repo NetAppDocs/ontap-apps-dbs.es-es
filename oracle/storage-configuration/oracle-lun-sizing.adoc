@@ -10,7 +10,7 @@ summary: Directrices para el dimensionamiento de LUN y el número de LUN de la b
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

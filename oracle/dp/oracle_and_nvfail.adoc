@@ -18,5 +18,3 @@ El almacenamiento en caché puede tener lugar en la capa de aplicaciones o del s
 Un uso menos obvio del almacenamiento en caché se da en la capa del sistema de archivos del sistema de sistemas operativos. Los bloques de un sistema de archivos NFS montado se pueden almacenar en caché en el sistema operativo. Como alternativa, un sistema de archivos en clúster basado en las LUN ubicadas en el sitio primario podría montarse en servidores en el sitio remoto y una vez más podrían almacenarse los datos en caché. Un fallo de NVRAM o una toma de control forzada o una conmutación de sitios forzada en estas situaciones podría provocar daños en el sistema de archivos.
 
 ONTAP protege las bases de datos y los sistemas operativos de este escenario con NVFAIL y su configuración asociada.
-
-Para obtener información adicional importante, lea link:../../common/dp/integrity.html#hardware-failure-protection-nvfail["NVFAIL con pares de alta disponibilidad"] y.. link:../../common/metrocluster/nvfail.html["NVFAIL con MetroCluster"]

@@ -10,7 +10,7 @@ summary: Con la transición del dispositivo virtual anterior, las herramientas d
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

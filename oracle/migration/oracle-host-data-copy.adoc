@@ -10,7 +10,7 @@ summary: Migración de Oracle mediante la pila de almacenamiento del host
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

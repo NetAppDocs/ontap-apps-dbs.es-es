@@ -10,7 +10,7 @@ summary: SnapCenter permite crear políticas de backup que se pueden aplicar a v
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

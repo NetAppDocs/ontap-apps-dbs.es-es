@@ -10,7 +10,7 @@ summary: Maximizar la disponibilidad con Oracle en ONTAP
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

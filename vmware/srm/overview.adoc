@@ -10,12 +10,13 @@ summary: ONTAP de NetApp es una solución de almacenamiento líder para entornos
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
+:firstname: [.lead]
+:author: [.lead]
+:authorinitials: [
+:authors: [.lead]
+:revdate: == ONTAP for vSphere
 
-
-
-
-== ONTAP para vSphere
 
 
 NOTE: Esta documentación sustituye al informe técnico _TR-4900 publicado anteriormente: VMware Site Recovery Manager por ONTAP_

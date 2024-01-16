@@ -10,7 +10,7 @@ summary: Recuperación ante desastres de Oracle con ONTAP
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

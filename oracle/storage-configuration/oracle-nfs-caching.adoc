@@ -10,7 +10,7 @@ summary: Bases de datos de almacenamiento en caché de atributos NFS
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

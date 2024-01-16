@@ -10,7 +10,7 @@ summary: La recuperación rápida de bases de datos de Oracle en ONTAP desde una
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

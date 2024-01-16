@@ -10,7 +10,7 @@ summary: Oracle Database y NFS leasing y bloqueos
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

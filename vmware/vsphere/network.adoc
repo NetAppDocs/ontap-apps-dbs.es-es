@@ -10,11 +10,13 @@ summary: Esta página describe las prácticas recomendadas para implementar una 
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
+:firstname: [.lead]
+:author: [.lead]
+:authorinitials: [
+:authors: [.lead]
+:revdate: Configuring network settings when using vSphere with systems running ONTAP software is straightforward and similar to other network configuration.
 
-
-[role="lead"]
-La configuración de ajustes de red cuando se usa vSphere con sistemas que ejecutan el software ONTAP es sencilla y similar a la de otra configuración de red.
 
 Estas son algunas cosas a tener en cuenta:
 

@@ -10,12 +10,13 @@ summary: Esta página describe las prácticas recomendadas para implementar una 
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
+:firstname: [.lead]
+:author: [.lead]
+:authorinitials: [
+:authors: [.lead]
+:revdate: == vSphere datastore and protocol features
 
-
-
-
-== Funciones de almacén de datos y protocolo de vSphere
 
 Se utilizan siete protocolos para conectar VMware vSphere a almacenes de datos en un sistema que ejecuta el software ONTAP:
 

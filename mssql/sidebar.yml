@@ -27,7 +27,7 @@ entries:
   - title: Eficiencia del almacenamiento
     url: "/mssql/storage-efficiency.html"
 - title: Protección de datos
-  url: "/mssql/data-protection.html"
+  url: "/mssql/sql-data-protection.html"
 - title: Recuperación tras siniestros
   url: "/mssql/SQL-disaster-recovery.html"
 - title: Seguridad de datos

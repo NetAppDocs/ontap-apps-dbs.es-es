@@ -23,6 +23,8 @@ Suponiendo que los archivos de datos están encapsulados en volúmenes dedicados
 
 El diseño más simple se muestra en la siguiente figura.
 
+image:2-volume.png["Error: Falta la imagen gráfica"]
+
 Este es el enfoque más común. Desde el punto de vista del DBA, puede parecer inusual colocar todas las copias de los redo logs y archive logs en el mismo volumen. Sin embargo, la separación no ofrece mucha protección adicional cuando los archivos y las LUN aún se encuentran en el mismo conjunto de unidades subyacente.
 
 
@@ -30,6 +32,8 @@ Este es el enfoque más común. Desde el punto de vista del DBA, puede parecer i
 == Distribución de tres volúmenes
 
 En ocasiones, es necesario separar los redo logs debido a problemas de protección de datos o a la necesidad de distribuir E/S de redo log entre las controladoras. Si es así, la distribución de tres volúmenes que se muestra en la siguiente figura se utilizará para la replicación sin dejar de tener que realizar recuperaciones incompletas o depender de los archivos de control de backup.
+
+image:3-volume.png["Error: Falta la imagen gráfica"]
 
 Esto permite la segmentación de los redo logs y los archivos de control en conjuntos independientes de discos y controladores en el origen. Sin embargo, los archive logs y un juego de archivos de control y redo logs se pueden replicar en un estado sincronizado con los archive logs.
 

@@ -10,7 +10,7 @@ summary: 'Con ONTAP, el concepto de las máquinas virtuales de almacenamiento (S
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
 
 
 

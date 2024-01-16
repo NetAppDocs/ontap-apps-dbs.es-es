@@ -6,12 +6,11 @@ summary: Microsoft SQL Server en ONTAP
 ---
 = Recuperación ante desastres de Microsoft SQL Server
 :allow-uri-read: 
+:imagesdir: ../media/
 
 
 [role="lead"]
 NetApp ofrece varios enfoques para aumentar la disponibilidad de los datos en caso de un fallo de hardware, software o en el sitio.
-
-NetApp ofrece tecnologías como MetroCluster, SnapMirror Business Continuity(SM-BC) y SnapMirror. Puede encontrar una descripción de estas características link:../common/overview-dr.html["aquí"].
 
 
 

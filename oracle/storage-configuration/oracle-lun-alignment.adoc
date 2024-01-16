@@ -10,7 +10,7 @@ summary: Alineación de LUN con bases de datos de Oracle
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]
@@ -22,7 +22,7 @@ La alineación también afecta a las arquitecturas LVM. Si se define un volumen 
 
 En entornos Linux, cree grupos de volúmenes lógicos en todo el dispositivo de la unidad. Cuando se necesita una partición, compruebe la alineación ejecutando `fdisk –u` y verificando que el inicio de cada partición es un múltiplo de ocho. Esto significa que la partición comienza en un múltiplo de ocho sectores de 512 bytes, que es 4KB.
 
-Consulte también la sección sobre la alineación de los bloques de compresión link:/oracle/ontap-configuration/oracle-efficiency.html["Eficiencia"]. Cualquier diseño alineado con los límites de bloques de compresión de 8KB KB también se alineará con los límites de 4KB KB.
+Consulte también la sección sobre la alineación de los bloques de compresión link:../ontap-configuration/oracle-efficiency.html["Eficiencia"]. Cualquier diseño alineado con los límites de bloques de compresión de 8KB KB también se alineará con los límites de 4KB KB.
 
 
 

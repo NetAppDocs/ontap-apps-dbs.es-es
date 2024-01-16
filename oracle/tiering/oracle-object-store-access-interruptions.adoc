@@ -10,7 +10,7 @@ summary: Acceso a la base de datos durante las interrupciones del acceso al alma
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

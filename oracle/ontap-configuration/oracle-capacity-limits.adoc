@@ -10,7 +10,7 @@ summary: Bases de datos y la capacidad de almacenamiento y el espacio libre de O
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

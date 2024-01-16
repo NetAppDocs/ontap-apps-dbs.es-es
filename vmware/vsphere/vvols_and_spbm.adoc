@@ -10,7 +10,7 @@ summary: Esta página describe las prácticas recomendadas para implementar una 
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
 
 
 

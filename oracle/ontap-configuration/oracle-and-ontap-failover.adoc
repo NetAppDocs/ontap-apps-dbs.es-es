@@ -10,7 +10,7 @@ summary: Se requiere comprender las funciones de toma de control y conmutación 
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

@@ -10,7 +10,7 @@ summary: Eficiencia del almacenamiento y bases de datos de Oracle
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

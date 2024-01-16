@@ -10,7 +10,7 @@ summary: El flujo de trabajo del SRM es significativamente diferente al usar la 
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./../media/
+:imagesdir: ../../media/
 
 
 [role="lead"]

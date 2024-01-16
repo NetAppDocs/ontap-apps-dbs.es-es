@@ -4,8 +4,6 @@ title: MySQL
 entries:
 - title: Descripción general
   url: "/mysql/overview.html"
-- title: Configuración de ONTAP
-  url: "/mysql/ontap.html"
 - title: Configuración de la base de datos
   entries:
   - title: Estructura de archivos
@@ -40,8 +38,6 @@ entries:
     url: "/mysql/file-descriptors.html"
 - title: Configuración del almacenamiento
   entries:
-  - title: Configuración general de almacenamiento
-    url: "/mysql/storage.html"
   - title: MySQL sobre NFS
     url: "/mysql/mysql-over-nfs.html"
   - title: MySQL sobre SAN

@@ -10,7 +10,7 @@ summary: Cambiar el protocolo SAN tras la migración FLI
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../../media/
 
 
 [role="lead"]
