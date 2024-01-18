@@ -1,0 +1,152 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-srm-operational_best_practices.html 
+keywords: vmware, site, recovery manager, vsrm, datastores, protocols, spbm, vvols, protection, replication, volumes, array, groups, failover test, reportect, failback 
+summary: Si es posible, utilice siempre herramientas ONTAP para aprovisionar almacenes de datos y volúmenes. De este modo se garantiza que los volúmenes, rutas de unión, LUN, iGroups, políticas de exportación, y otros ajustes se configuran de forma compatible. 
+---
+= Mejores prácticas operativas
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+:firstname: [.lead]
+:author: [.lead]
+:authorinitials: [
+:authors: [.lead]
+:revdate: == Datastores and protocols
+
+
+Si es posible, utilice siempre herramientas ONTAP para aprovisionar almacenes de datos y volúmenes. De este modo se garantiza que los volúmenes, rutas de unión, LUN, iGroups, políticas de exportación, y otros ajustes se configuran de forma compatible.
+
+El SRM admite iSCSI, Fibre Channel y NFS versión 3 con ONTAP 9 al usar la replicación basada en cabinas a través de SRA. SRM no admite la replicación basada en cabinas para NFS versión 4.1 con almacenes de datos tradicionales o vVols.
+
+Para confirmar la conectividad, siempre compruebe que puede montar y desmontar un almacén de datos de prueba nuevo en el sitio de recuperación ante desastres del clúster de ONTAP de destino. Pruebe cada protocolo que pretenda utilizar para la conectividad de almacenes de datos. Una práctica recomendada es usar las herramientas de ONTAP para crear su almacén de datos de prueba, ya que está haciendo toda la automatización del almacén de datos según las indicaciones del SRM.
+
+Los protocolos SAN deben ser homogéneos para cada sitio. Puede mezclar NFS y SAN, pero los protocolos SAN no deben mezclarse dentro de un sitio. Por ejemplo, puede utilizar FCP en el sitio A y iSCSI en el sitio B. No debe usar FCP e iSCSI en el sitio A. El motivo es que el SRA no crea iGroups mixtos en el sitio de recuperación y el SRM no filtra la lista de iniciadores dada al SRA.
+
+Se recomienda utilizar guías anteriores para crear LIF a localidad de datos. Es decir, monte siempre un almacén de datos con una LIF ubicada en el nodo que posee físicamente el volumen. Esto ya no es un requisito en las versiones modernas de ONTAP 9. Siempre que sea posible y, si se dan las credenciales de ámbito del clúster, las herramientas de ONTAP seguirán eligiendo equilibrar la carga en las LIF locales de los datos, pero no es un requisito de alta disponibilidad o rendimiento.
+
+NetApp ONTAP 9 se puede configurar para eliminar automáticamente instantáneas para mantener el tiempo de actividad en caso de una condición de falta de espacio cuando autosize no puede suministrar suficiente capacidad de emergencia. La configuración predeterminada para esta funcionalidad no elimina automáticamente las copias Snapshot que crea SnapMirror. Si se eliminan las snapshots de SnapMirror, el SRA de NetApp no puede revertir ni resincronizar la replicación del volumen afectado. Para evitar que ONTAP elimine snapshots de SnapMirror, configure la funcionalidad de eliminación automática de Snapshot para intentar.
+
+....
+snap autodelete modify -volume -commitment try
+....
+el ajuste de tamaño automático de volumen debe estar establecido en `grow` Para volúmenes que contienen almacenes de datos SAN y `grow_shrink` Para almacenes de datos NFS. Más información acerca de link:https://docs.netapp.com/us-en/ontap/flexgroup/configure-automatic-grow-shrink-task.html["configuración de volúmenes para crecer o reducir automáticamente"^].
+
+
+
+== Gestión basada en la política de almacenamiento (SPBM) y vVols
+
+A partir de SRM 8.3, se admite la protección de equipos virtuales con almacenes de datos vVols. Las programaciones de SnapMirror se exponen a políticas de almacenamiento de máquinas virtuales por parte del proveedor VASA cuando la replicación de vVols está habilitada en el menú de configuración de herramientas de ONTAP, como se muestra en las siguientes capturas de pantalla.
+
+En el siguiente ejemplo se muestra la habilitación de la replicación de vVols.
+
+image:vsrm-ontap9_image2.png["Error: Falta la imagen gráfica"]
+
+La siguiente captura de pantalla proporciona un ejemplo de las programaciones de SnapMirror que se muestran en el asistente Create VM Storage Policy.
+
+image:vsrm-ontap9_image3.png["Error: Falta la imagen gráfica"]
+
+El proveedor de VASA de ONTAP admite la conmutación por error a un almacenamiento diferente. Por ejemplo, el sistema puede conmutar al respaldo de ONTAP Select en una ubicación perimetral a un sistema AFF en el centro de datos principal. Independientemente de la similitud de almacenamiento, siempre debe configurar las asignaciones de políticas de almacenamiento y las asignaciones inversa de las políticas de almacenamiento de máquinas virtuales habilitadas para la replicación para garantizar que los servicios proporcionados en el sitio de recuperación cumplan las expectativas y los requisitos. La siguiente captura de pantalla resalta una asignación de directivas de ejemplo.
+
+image:vsrm-ontap9_image4.png["Error: Falta la imagen gráfica"]
+
+
+
+== Cree volúmenes replicados para almacenes de datos vVols
+
+A diferencia de los almacenes de datos vVols anteriores, los almacenes de datos vVols replicados deben crearse desde el principio con la replicación habilitada, y deben utilizar volúmenes que se han creado previamente en los sistemas ONTAP con relaciones de SnapMirror. Esto requiere configurar previamente elementos como cluster peering y SVM peering. Estas actividades las debe realizar el administrador de ONTAP, ya que esto facilita una separación estricta de responsabilidades entre quienes gestionan los sistemas de ONTAP en varios sitios y los principales responsables de las operaciones de vSphere.
+
+Esto viene con un nuevo requisito en nombre del administrador de vSphere. Dado que los volúmenes se crean fuera del ámbito de las herramientas de ONTAP, no conoce los cambios que ha realizado el administrador de ONTAP hasta el periodo de repetición de la detección programado periódicamente. Por este motivo, se recomienda ejecutar la redetección siempre que se cree una relación de volúmenes o SnapMirror que se utilice con vVols. Simplemente haga clic con el botón derecho en el host o clúster y seleccione ONTAP Tools de NetApp > Update Host and Storage Data, tal y como se muestra en la siguiente captura de pantalla.
+
+image:vsrm-ontap9_image5.png["Error: Falta la imagen gráfica"]
+
+Hay que tener cuidado cuando se trata de vVols y SRM. No mezcle nunca máquinas virtuales protegidas y sin protección en el mismo almacén de datos vVols. La razón es que, cuando utiliza SRM para conmutar por error a su sitio de recuperación ante desastres, solo se conecta a las máquinas virtuales que forman parte del grupo de protección en caso de desastre. Por lo tanto, cuando se vuelve a proteger (SnapMirror de recuperación ante desastres se vuelve a proteger a producción), es posible que sobrescriba los equipos virtuales que no se dieron el error y contengan datos valiosos.
+
+
+
+== Acerca de parejas de cabinas
+
+Se crea un gestor de cabinas para cada pareja de cabinas. Con las herramientas SRM y ONTAP, el emparejamiento de cabinas se realiza con el ámbito de una SVM, incluso si utiliza credenciales de clúster. Esto le permite segmentar los flujos de trabajo de recuperación ante desastres entre inquilinos en función de los cuales se hayan asignado a gestionar las SVM. Es posible crear varios administradores de cabinas para un clúster determinado y tienen una naturaleza asimétrica. Es posible fan out o fan in entre diferentes clústeres de ONTAP 9. Por ejemplo, puede tener SVM-A y SVM-B en el clúster-1 que replica en SVM-C en el clúster-2, SVM-D en el clúster-3 o viceversa.
+
+Al configurar parejas de cabinas en SRM, siempre debe añadirlas a SRM de la misma forma que las añadió a las herramientas de ONTAP, lo que significa que deben usar el mismo nombre de usuario, contraseña y LIF de gestión. Este requisito garantiza que el SRA se comunique correctamente con la matriz. La siguiente captura de pantalla ilustra cómo puede aparecer un clúster en las herramientas de ONTAP y cómo se puede añadir a un administrador de cabinas.
+
+image:vsrm-ontap9_image6.jpg["Error: Falta la imagen gráfica"]
+
+
+
+== Acerca de los grupos de replicación
+
+Los grupos de replicación contienen colecciones lógicas de máquinas virtuales que se recuperan juntas. Las herramientas de ONTAP VASA Provider crean automáticamente grupos de replicación por usted. Dado que la replicación de SnapMirror de ONTAP se produce en el nivel de volumen, todas las máquinas virtuales de un volumen se encuentran en el mismo grupo de replicación.
+
+La consideración de los grupos de replicación es diversa y cómo se distribuyen los equipos virtuales entre los volúmenes de FlexVol. La agrupación de máquinas virtuales similares en el mismo volumen puede aumentar la eficiencia de almacenamiento con sistemas ONTAP antiguos que carecen de deduplicación en el nivel de agregados, pero la agrupación aumenta el tamaño del volumen y reduce la concurrencia de I/o del volumen. El mejor equilibrio entre rendimiento y eficiencia del almacenamiento puede lograrse en sistemas ONTAP modernos distribuyendo las máquinas virtuales entre volúmenes de FlexVol en el mismo agregado, aprovechando la deduplicación a nivel de agregado y aumentando la paralelización de I/o entre varios volúmenes. Puede recuperar las máquinas virtuales en los volúmenes juntos porque un grupo de protección (tratado a continuación) puede contener varios grupos de replicación. La desventaja de esta distribución es que es posible que los bloques se transmitan a través del cable varias veces, debido a que SnapMirror para volúmenes no tiene en cuenta la deduplicación del agregado.
+
+Un aspecto final que se debe tener en cuenta para los grupos de replicación es que cada uno de ellos es, por su naturaleza, un grupo de consistencia lógico (que no se debe confundir con los grupos de consistencia SRM). Esto se debe a que todas las máquinas virtuales del volumen se transfieren juntas con la misma copia de Snapshot. Si tiene equipos virtuales que deben ser coherentes entre sí, considere almacenarlos en el mismo FlexVol.
+
+
+
+== Acerca de los grupos de protección
+
+Los grupos de protección definen las máquinas virtuales y los almacenes de datos en grupos que se recuperan conjuntamente del sitio protegido. El sitio protegido es donde existen las máquinas virtuales configuradas en un grupo de protección durante las operaciones normales de estado constante. Es importante tener en cuenta que, aunque SRM puede mostrar varios administradores de cabinas para un grupo de protección, un grupo de protección no puede abarcar varios administradores de cabinas. Por este motivo, no debe abarcar los archivos de equipos virtuales entre almacenes de datos en diferentes SVM.
+
+
+
+== Acerca de los planes de recuperación
+
+Los planes de recuperación definen qué grupos de protección se recuperan en el mismo proceso. Se pueden configurar varios grupos de protección en el mismo plan de recuperación. Además, para ofrecer más opciones para la ejecución de planes de recuperación, se puede incluir un solo grupo de protección en varios planes de recuperación.
+
+Los planes de recuperación permiten a los administradores de SRM definir flujos de trabajo de recuperación asignando las máquinas virtuales a un grupo de prioridad de 1 (más alta) a 5 (más baja), siendo 3 (medio) el valor predeterminado. Dentro de un grupo de prioridad, las máquinas virtuales pueden configurarse para las dependencias.
+
+Por ejemplo, su empresa puede tener una aplicación esencial de nivel 1 que depende de un servidor Microsoft SQL para su base de datos. Por lo tanto, se deciden colocar las máquinas virtuales en el grupo de prioridad 1. Dentro del grupo de prioridad 1, comienza a planificar el pedido para que se traigan los servicios. Probablemente desee que su controlador de dominio de Microsoft Windows se inicie antes de su servidor Microsoft SQL, que tendría que estar en línea antes de su servidor de aplicaciones, etc. Es posible añadir todas estas máquinas virtuales al grupo de prioridad y, luego, configurar las dependencias, ya que solo se aplican las dependencias dentro de un grupo de prioridad dado.
+
+NetApp recomienda encarecidamente trabajar con sus equipos de aplicaciones para comprender el orden de las operaciones necesarias en un escenario de conmutación por error y construir sus planes de recuperación según corresponda.
+
+
+
+== Probar la recuperación tras fallos
+
+Como práctica recomendada, realice siempre una conmutación al nodo de respaldo de prueba cuando se realice un cambio en la configuración de un almacenamiento de equipo virtual protegido. Esto garantiza que, en caso de desastre, pueda confiar en que Site Recovery Manager pueda restaurar los servicios dentro del objetivo de tiempo de recuperación previsto.
+
+NetApp también recomienda confirmar la funcionalidad de aplicaciones «en invitado» ocasionalmente, especialmente tras reconfigurar el almacenamiento de máquinas virtuales.
+
+Cuando se realiza una operación de recuperación de pruebas, se crea una red privada de burbuja de pruebas en el host ESXi para los equipos virtuales. Sin embargo, esta red no está conectada automáticamente a ningún adaptador de red físico y, por lo tanto, no proporciona conectividad entre los hosts ESXi. Para permitir la comunicación entre máquinas virtuales que se ejecutan en diferentes hosts ESXi durante las pruebas de recuperación ante desastres, se crea una red privada física entre los hosts ESXi en el sitio de recuperación ante desastres. Para verificar que la red de prueba es privada, la red de burbuja de prueba se puede separar físicamente o mediante VLAN o etiquetado VLAN. Esta red debe separarse de la red de producción porque, a medida que se recuperan los equipos virtuales, no se pueden colocar en la red de producción con direcciones IP que puedan entrar en conflicto con los sistemas de producción reales. Cuando se crea un plan de recuperación en SRM, es posible seleccionar la red de pruebas creada como la red privada para conectar los equipos virtuales a durante la prueba.
+
+Una vez que la prueba se ha validado y ya no es necesaria, realice una operación de limpieza. La ejecución de la limpieza devuelve las máquinas virtuales protegidas a su estado inicial y restablece el plan de recuperación al estado Ready.
+
+
+
+== Consideraciones sobre la conmutación por error
+
+Hay otros factores que se deben tener en cuenta a la hora de conmutar por error un sitio además del orden de las operaciones mencionado en esta guía.
+
+Un problema que puede tener que lidiar es las diferencias de redes entre sitios. Es posible que algunos entornos puedan usar las mismas direcciones IP de red en el sitio primario y en el sitio de recuperación tras desastres. Esta capacidad se conoce como una configuración de red LAN virtual (VLAN) ampliada o extendida. Es posible que otros entornos tengan que utilizar diferentes direcciones IP de red (por ejemplo, diferentes VLAN) en el sitio principal con respecto al sitio de recuperación ante desastres.
+
+VMware ofrece varias formas de resolver este problema. En primer lugar, las tecnologías de virtualización de redes como el centro de datos NSX-T de VMware abstraen toda la pila de redes de las capas 2 a 7 del entorno operativo, permitiendo soluciones más portátiles. Más información acerca de link:https://docs.vmware.com/en/Site-Recovery-Manager/8.4/com.vmware.srm.admin.doc/GUID-89402F1B-1AFB-42CD-B7D5-9535AF32435D.html["Opciones de NSX-T con SRM"^].
+
+SRM también le permite cambiar la configuración de red de un equipo virtual mientras se recupera. Esta reconfiguración incluye la configuración como direcciones IP, dirección de puerta de enlace y configuración del servidor DNS. Los diferentes ajustes de red, que se aplican a las VM individuales a medida que se recuperan, se pueden especificar en la configuración de la propiedad de una VM en el plan de recuperación.
+
+Para configurar SRM de modo que aplique diferentes ajustes de red a varios equipos virtuales sin tener que editar las propiedades de cada uno del plan de recuperación, VMware ofrece una herramienta llamada DR-ip-customizer. Aprenda a usar esta utilidad, consulte link:https://docs.vmware.com/en/Site-Recovery-Manager/8.4/com.vmware.srm.admin.doc/GUID-2B7E2B25-2B82-4BC4-876B-2FE0A3D71B84.html["Documentación de VMware"^].
+
+
+
+== Vuelva a proteger
+
+Después de una recuperación, el sitio de recuperación se convierte en el nuevo sitio de producción. Dado que la operación de recuperación rompió la replicación de SnapMirror, el nuevo sitio de producción no está protegido contra ningún desastre futuro. Una mejor práctica es proteger el nuevo site de producción en otro site inmediatamente después de una recuperación. Si el sitio de producción original está operativo, el administrador de VMware puede utilizar el sitio de producción original como un nuevo sitio de recuperación para proteger el nuevo sitio de producción, invirtiendo efectivamente la dirección de la protección. La reprotección solo está disponible en fallos no catastróficos. Por lo tanto, en algún momento deben recuperarse los servidores vCenter Server, los servidores ESXi, los servidores SRM y las bases de datos correspondientes originales. Si no están disponibles, deben crearse un nuevo grupo de protección y un nuevo plan de recuperación.
+
+
+
+== Conmutación tras recuperación
+
+Una operación de conmutación tras recuperación es fundamentalmente una conmutación por error en una dirección diferente a la anterior. Como práctica recomendada, compruebe que el sitio original vuelve a los niveles aceptables de funcionalidad antes de intentar realizar la conmutación tras recuperación o, en otras palabras, la conmutación por error al sitio original. Si la instalación original sigue en peligro, deberá retrasar la conmutación tras recuperación hasta que se solucione el fallo lo suficiente.
+
+Otra práctica recomendada para la conmutación tras recuperación es siempre realizar una conmutación al nodo de respaldo de prueba después de completar la reprotección y antes de llevar a cabo la conmutación tras recuperación final. Esto verifica que los sistemas en el sitio original pueden completar la operación.
+
+
+
+== Volver a proteger el sitio original
+
+Después de la conmutación por recuperación, debe confirmar con todos los titulares de las apuestas que sus servicios se han devuelto a la normalidad antes de volver a ejecutar la reprotección,
+
+La ejecución de la reprotección después de la conmutación tras recuperación hace que el entorno vuelva a estar en el estado que estaba al principio, cuando la replicación de SnapMirror se ejecuta de nuevo desde el centro de producción al centro de recuperación.

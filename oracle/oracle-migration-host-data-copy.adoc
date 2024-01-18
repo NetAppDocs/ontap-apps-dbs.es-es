@@ -1,0 +1,1526 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-migration-host-data-copy.html 
+keywords: migration, oracle, data copy, lvm, rebalance, asm 
+summary: Migración de Oracle mediante la pila de almacenamiento del host 
+---
+= Copia de datos del host de Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Al igual que sucede con la migración a nivel de base de datos, la migración en la capa de host proporciona un enfoque independiente del proveedor de almacenamiento.
+
+En otras palabras, en algún momento “solo copiar los archivos” es la mejor opción.
+
+Aunque este enfoque de baja tecnología puede parecer demasiado básico, ofrece beneficios significativos porque no se requiere ningún software especial y los datos originales permanecen intactos de forma segura durante el proceso. La principal limitación es el hecho de que una migración de datos de copia de archivos es un proceso disruptivo, ya que la base de datos debe cerrarse antes de que comience la operación de copia. No hay una buena manera de sincronizar los cambios dentro de un archivo, por lo que los archivos deben estar completamente desactivados antes de que comience la copia.
+
+Si el cierre necesario para una operación de copia no es deseable, la siguiente mejor opción basada en host es utilizar un gestor de volúmenes lógicos (LVM). Existen muchas opciones de LVM, incluido Oracle ASM, todas con capacidades similares, pero también con algunas limitaciones que deben tenerse en cuenta. En la mayoría de los casos, la migración se puede realizar sin tiempos de inactividad ni interrupciones.
+
+
+
+== Copiando sistema de archivos al sistema de archivos
+
+La utilidad de una operación de copia simple no debe subestimarse. Esta operación requiere un tiempo de inactividad durante el proceso de copia, pero es un proceso muy fiable y no requiere experiencia especial en sistemas operativos, bases de datos o sistemas de almacenamiento. Además, es muy seguro porque no afecta a los datos originales. Normalmente, un administrador de sistemas cambia los sistemas de archivos de origen para montarse como de solo lectura y luego reinicia un servidor para garantizar que nada pueda dañar los datos actuales. El proceso de copia se puede programar para asegurarse de que se ejecuta lo más rápido posible sin riesgo de error por parte del usuario. Dado que el tipo de I/O es una transferencia secuencial simple de datos, es altamente eficiente del ancho de banda.
+
+El siguiente ejemplo muestra una opción para una migración segura y rápida.
+
+
+
+=== Entorno Oracle
+
+El entorno que se va a migrar es el siguiente:
+
+* Sistemas de archivos actuales
++
+....
+ontap-nfs1:/host1_oradata       52428800  16196928  36231872  31% /oradata
+ontap-nfs1:/host1_logs          49807360    548032  49259328   2% /logs
+....
+* Sistemas de archivos nuevos
++
+....
+ontap-nfs1:/host1_logs_new      49807360       128  49807232   1% /new/logs
+ontap-nfs1:/host1_oradata_new   49807360       128  49807232   1% /new/oradata
+....
+
+
+
+
+==== Descripción general
+
+El DBA puede migrar la base de datos simplemente cerrando la base de datos y copiando los archivos, pero el proceso se ejecuta fácilmente en la secuencia de comandos si se deben migrar muchas bases de datos o si se minimiza el tiempo de inactividad es crítico. El uso de scripts también reduce la posibilidad de errores de los usuarios.
+
+Los scripts de ejemplo que se muestran automatizan las siguientes operaciones:
+
+* Cerrando la base de datos
+* Convertir los sistemas de archivos existentes a un estado de sólo lectura
+* Copia de todos los datos de los sistemas de archivos de origen a los de destino, lo que conserva todos los permisos de archivos
+* Desmontaje de los sistemas de archivos antiguos y nuevos
+* Volver a montar los nuevos sistemas de archivos en las mismas rutas que los sistemas de archivos anteriores
+
+
+
+
+=== Procedimiento
+
+. Cierre la base de datos.
++
+....
+[root@host1 current]# ./dbshut.pl NTAP
+ORACLE_SID = [oracle] ? The Oracle base has been set to /orabin
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Dec 3 15:58:48 2015
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+SQL> Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> Disconnected from Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+NTAP shut down
+....
+. Convierta los sistemas de archivos a sólo lectura. Esto se puede hacer más rápidamente usando un script, como se muestra en link:oracle-migration-sample-scripts.html#convert-file-system-to-read-only["Convertir sistema de archivos a Sólo lectura"].
++
+....
+[root@host1 current]# ./mk.fs.readonly.pl /oradata
+/oradata unmounted
+/oradata mounted read-only
+[root@host1 current]# ./mk.fs.readonly.pl /logs
+/logs unmounted
+/logs mounted read-only
+....
+. Confirme que los sistemas de archivos ahora son de sólo lectura.
++
+....
+ontap-nfs1:/host1_oradata on /oradata type nfs (ro,bg,vers=3,rsize=65536,wsize=65536,addr=172.20.101.10)
+ontap-nfs1:/host1_logs on /logs type nfs (ro,bg,vers=3,rsize=65536,wsize=65536,addr=172.20.101.10)
+....
+. Sincronice el contenido del sistema de archivos con `rsync` comando.
++
+....
+[root@host1 current]# rsync -rlpogt --stats --progress --exclude=.snapshot /oradata/ /new/oradata/
+sending incremental file list
+./
+NTAP/
+NTAP/IOPS.dbf
+ 10737426432 100%  153.50MB/s    0:01:06 (xfer#1, to-check=10/13)
+NTAP/iops.dbf.zip
+    22823573 100%   12.09MB/s    0:00:01 (xfer#2, to-check=9/13)
+...
+NTAP/undotbs02.dbf
+  1073750016 100%  131.60MB/s    0:00:07 (xfer#10, to-check=1/13)
+NTAP/users01.dbf
+     5251072 100%    3.95MB/s    0:00:01 (xfer#11, to-check=0/13)
+Number of files: 13
+Number of files transferred: 11
+Total file size: 18570092218 bytes
+Total transferred file size: 18570092218 bytes
+Literal data: 18570092218 bytes
+Matched data: 0 bytes
+File list size: 277
+File list generation time: 0.001 seconds
+File list transfer time: 0.000 seconds
+Total bytes sent: 18572359828
+Total bytes received: 228
+sent 18572359828 bytes  received 228 bytes  162204017.96 bytes/sec
+total size is 18570092218  speedup is 1.00
+[root@host1 current]# rsync -rlpogt --stats --progress --exclude=.snapshot /logs/ /new/logs/
+sending incremental file list
+./
+NTAP/
+NTAP/1_22_897068759.dbf
+    45523968 100%   95.98MB/s    0:00:00 (xfer#1, to-check=15/18)
+NTAP/1_23_897068759.dbf
+    40601088 100%   49.45MB/s    0:00:00 (xfer#2, to-check=14/18)
+...
+NTAP/redo/redo02.log
+    52429312 100%   44.68MB/s    0:00:01 (xfer#12, to-check=1/18)
+NTAP/redo/redo03.log
+    52429312 100%   68.03MB/s    0:00:00 (xfer#13, to-check=0/18)
+Number of files: 18
+Number of files transferred: 13
+Total file size: 527032832 bytes
+Total transferred file size: 527032832 bytes
+Literal data: 527032832 bytes
+Matched data: 0 bytes
+File list size: 413
+File list generation time: 0.001 seconds
+File list transfer time: 0.000 seconds
+Total bytes sent: 527098156
+Total bytes received: 278
+sent 527098156 bytes  received 278 bytes  95836078.91 bytes/sec
+total size is 527032832  speedup is 1.00
+....
+. Desmonte los sistemas de archivos antiguos y reubique los datos copiados. Esto se puede hacer más rápidamente usando un script, como se muestra en link:oracle-migration-sample-scripts.html#replace-file-system["Reemplazar sistema de archivos"].
++
+....
+[root@host1 current]# ./swap.fs.pl /logs,/new/logs
+/new/logs unmounted
+/logs unmounted
+Updated /logs mounted
+[root@host1 current]# ./swap.fs.pl /oradata,/new/oradata
+/new/oradata unmounted
+/oradata unmounted
+Updated /oradata mounted
+....
+. Confirme que los nuevos sistemas de archivos están en posición.
++
+....
+ontap-nfs1:/host1_logs_new on /logs type nfs (rw,bg,vers=3,rsize=65536,wsize=65536,addr=172.20.101.10)
+ontap-nfs1:/host1_oradata_new on /oradata type nfs (rw,bg,vers=3,rsize=65536,wsize=65536,addr=172.20.101.10)
+....
+. Inicie la base de datos.
++
+....
+[root@host1 current]# ./dbstart.pl NTAP
+ORACLE_SID = [oracle] ? The Oracle base has been set to /orabin
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Dec 3 16:10:07 2015
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+Connected to an idle instance.
+SQL> ORACLE instance started.
+Total System Global Area  805306368 bytes
+Fixed Size                  2929552 bytes
+Variable Size             390073456 bytes
+Database Buffers          406847488 bytes
+Redo Buffers                5455872 bytes
+Database mounted.
+Database opened.
+SQL> Disconnected from Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+NTAP started
+....
+
+
+
+
+=== Transición totalmente automatizada
+
+Este script de ejemplo acepta argumentos del SID de la base de datos seguidos de pares de sistemas de archivos delimitados comúnmente. Para el ejemplo mostrado anteriormente, el comando se emite del siguiente modo:
+
+....
+[root@host1 current]# ./migrate.oracle.fs.pl NTAP /logs,/new/logs /oradata,/new/oradata
+....
+Cuando se ejecuta, el script de ejemplo intenta realizar la siguiente secuencia. Termina si encuentra un error en cualquier paso:
+
+. Cierre la base de datos.
+. Convierta los sistemas de archivos actuales al estado de sólo lectura.
+. Utilice cada par delimitado por comas de argumentos del sistema de archivos y sincronice el primer sistema de archivos con el segundo.
+. Desmonte los sistemas de archivos anteriores.
+. Actualice el `/etc/fstab` el archivo es el siguiente:
++
+.. Cree un backup en `/etc/fstab.bak`.
+.. Comente las entradas anteriores de los sistemas de archivos anteriores y nuevos.
+.. Cree una nueva entrada para el nuevo sistema de archivos que utilice el antiguo punto de montaje.
+
+
+. Monte los sistemas de archivos.
+. Inicie la base de datos.
+
+
+El siguiente texto proporciona un ejemplo de ejecución para este script:
+
+....
+[root@host1 current]# ./migrate.oracle.fs.pl NTAP /logs,/new/logs /oradata,/new/oradata
+ORACLE_SID = [oracle] ? The Oracle base has been set to /orabin
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Dec 3 17:05:50 2015
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+SQL> Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> Disconnected from Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+NTAP shut down
+sending incremental file list
+./
+NTAP/
+NTAP/1_22_897068759.dbf
+    45523968 100%  185.40MB/s    0:00:00 (xfer#1, to-check=15/18)
+NTAP/1_23_897068759.dbf
+    40601088 100%   81.34MB/s    0:00:00 (xfer#2, to-check=14/18)
+...
+NTAP/redo/redo02.log
+    52429312 100%   70.42MB/s    0:00:00 (xfer#12, to-check=1/18)
+NTAP/redo/redo03.log
+    52429312 100%   47.08MB/s    0:00:01 (xfer#13, to-check=0/18)
+Number of files: 18
+Number of files transferred: 13
+Total file size: 527032832 bytes
+Total transferred file size: 527032832 bytes
+Literal data: 527032832 bytes
+Matched data: 0 bytes
+File list size: 413
+File list generation time: 0.001 seconds
+File list transfer time: 0.000 seconds
+Total bytes sent: 527098156
+Total bytes received: 278
+sent 527098156 bytes  received 278 bytes  150599552.57 bytes/sec
+total size is 527032832  speedup is 1.00
+Succesfully replicated filesystem /logs to /new/logs
+sending incremental file list
+./
+NTAP/
+NTAP/IOPS.dbf
+ 10737426432 100%  176.55MB/s    0:00:58 (xfer#1, to-check=10/13)
+NTAP/iops.dbf.zip
+    22823573 100%    9.48MB/s    0:00:02 (xfer#2, to-check=9/13)
+... NTAP/undotbs01.dbf
+   309338112 100%   70.76MB/s    0:00:04 (xfer#9, to-check=2/13)
+NTAP/undotbs02.dbf
+  1073750016 100%  187.65MB/s    0:00:05 (xfer#10, to-check=1/13)
+NTAP/users01.dbf
+     5251072 100%    5.09MB/s    0:00:00 (xfer#11, to-check=0/13)
+Number of files: 13
+Number of files transferred: 11
+Total file size: 18570092218 bytes
+Total transferred file size: 18570092218 bytes
+Literal data: 18570092218 bytes
+Matched data: 0 bytes
+File list size: 277
+File list generation time: 0.001 seconds
+File list transfer time: 0.000 seconds
+Total bytes sent: 18572359828
+Total bytes received: 228
+sent 18572359828 bytes  received 228 bytes  177725933.55 bytes/sec
+total size is 18570092218  speedup is 1.00
+Succesfully replicated filesystem /oradata to /new/oradata
+swap 0 /logs /new/logs
+/new/logs unmounted
+/logs unmounted
+Mounted updated /logs
+Swapped filesystem /logs for /new/logs
+swap 1 /oradata /new/oradata
+/new/oradata unmounted
+/oradata unmounted
+Mounted updated /oradata
+Swapped filesystem /oradata for /new/oradata
+ORACLE_SID = [oracle] ? The Oracle base has been set to /orabin
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Dec 3 17:08:59 2015
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+Connected to an idle instance.
+SQL> ORACLE instance started.
+Total System Global Area  805306368 bytes
+Fixed Size                  2929552 bytes
+Variable Size             390073456 bytes
+Database Buffers          406847488 bytes
+Redo Buffers                5455872 bytes
+Database mounted.
+Database opened.
+SQL> Disconnected from Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+NTAP started
+[root@host1 current]#
+....
+
+
+== Migración de Oracle ASM spfile y passwd
+
+Una dificultad para completar la migración que implica ASM es el spfile específico de ASM y el archivo de contraseñas. Por defecto, estos archivos de metadatos críticos se crean en el primer grupo de discos de ASM definido. Si se debe evacuar y eliminar un grupo de discos de ASM concreto, se debe reubicar el archivo spfile y de contraseñas que rigen dicha instancia de ASM.
+
+Otro caso de uso en el que es posible que sea necesario reubicar estos archivos es durante un despliegue de software de gestión de base de datos como SnapManager para Oracle o el complemento de Oracle de SnapCenter. Una de las características de estos productos es restaurar rápidamente una base de datos mediante la reversión del estado de las LUN de ASM que alojan los archivos de datos. Para hacerlo, es necesario desconectar el grupo de discos de ASM antes de realizar una restauración. Esto no es un problema siempre que los archivos de datos de una base de datos determinada estén aislados en un grupo de discos de ASM dedicado.
+
+Cuando ese grupo de discos también contiene el archivo spfile/passwd de ASM, la única forma en que el grupo de discos se puede poner fuera de línea es cerrar toda la instancia de ASM. Este es un proceso disruptivo, lo que significa que el archivo spfile/passwd tendría que ser reubicado.
+
+
+
+=== Entorno Oracle
+
+. SID de base de datos = TOAST
+. Archivos de datos actuales en `+DATA`
+. Archivos log y archivos de control actuales en `+LOGS`
+. Se han establecido nuevos grupos de discos de ASM como `+NEWDATA` y.. `+NEWLOGS`
+
+
+
+
+=== Ubicaciones de archivos spfile/passwd de ASM
+
+La reubicación de estos archivos puede realizarse de forma no disruptiva. Sin embargo, por motivos de seguridad, NetApp recomienda cerrar el entorno de la base de datos para que pueda estar seguro de que los archivos se han reubicado y que la configuración se ha actualizado correctamente. Este procedimiento se debe repetir si hay varias instancias de ASM presentes en un servidor.
+
+
+
+==== Identificar instancias de ASM
+
+Identifique las instancias de ASM en función de los datos registrados en la `oratab` archivo. Las instancias de ASM se indican con un símbolo +.
+
+....
+-bash-4.1$ cat /etc/oratab | grep '^+'
++ASM:/orabin/grid:N             # line added by Agent
+....
+Hay una instancia de ASM denominada +ASM en este servidor.
+
+
+
+==== Asegúrese de que todas las bases de datos están cerradas
+
+El único proceso smon visible debe ser smon para la instancia de ASM en uso. La presencia de otro proceso smon indica que una base de datos todavía está en ejecución.
+
+....
+-bash-4.1$ ps -ef | grep smon
+oracle     857     1  0 18:26 ?        00:00:00 asm_smon_+ASM
+....
+El único proceso smon es la propia instancia de ASM. Esto significa que no se ejecuta ninguna otra base de datos y es seguro continuar sin riesgo de interrumpir las operaciones de la base de datos.
+
+
+
+==== Localizar archivos
+
+Identifique la ubicación actual del archivo spfile y de contraseña de ASM mediante `spget` y.. `pwget` comandos.
+
+....
+bash-4.1$ asmcmd
+ASMCMD> spget
++DATA/spfile.ora
+....
+....
+ASMCMD> pwget --asm
++DATA/orapwasm
+....
+Los archivos se encuentran en la base del `+DATA` grupo de discos.
+
+
+
+=== Copiar archivos
+
+Copie los archivos en el nuevo grupo de discos de ASM con `spcopy` y.. `pwcopy` comandos. Si el nuevo grupo de discos se ha creado recientemente y está vacío actualmente, es posible que tenga que montarlo primero.
+
+....
+ASMCMD> mount NEWDATA
+....
+....
+ASMCMD> spcopy +DATA/spfile.ora +NEWDATA/spfile.ora
+copying +DATA/spfile.ora -> +NEWDATA/spfilea.ora
+....
+....
+ASMCMD> pwcopy +DATA/orapwasm +NEWDATA/orapwasm
+copying +DATA/orapwasm -> +NEWDATA/orapwasm
+....
+Los archivos se han copiado ahora de `+DATA` para `+NEWDATA`.
+
+
+
+==== Actualizar instancia de ASM
+
+La instancia de ASM debe actualizarse para reflejar el cambio de ubicación. La `spset` y.. `pwset` Los comandos actualizan los metadatos de ASM necesarios para iniciar el grupo de discos de ASM.
+
+....
+ASMCMD> spset +NEWDATA/spfile.ora
+ASMCMD> pwset --asm +NEWDATA/orapwasm
+....
+
+
+==== Active ASM con archivos actualizados
+
+En este punto, la instancia de ASM sigue utilizando las ubicaciones anteriores de estos archivos. La instancia se debe reiniciar para forzar una nueva lectura de los archivos desde sus nuevas ubicaciones y liberar bloqueos en los archivos anteriores.
+
+....
+-bash-4.1$ sqlplus / as sysasm
+SQL> shutdown immediate;
+ASM diskgroups volume disabled
+ASM diskgroups dismounted
+ASM instance shutdown
+....
+....
+SQL> startup
+ASM instance started
+Total System Global Area 1140850688 bytes
+Fixed Size                  2933400 bytes
+Variable Size            1112751464 bytes
+ASM Cache                  25165824 bytes
+ORA-15032: not all alterations performed
+ORA-15017: diskgroup "NEWDATA" cannot be mounted
+ORA-15013: diskgroup "NEWDATA" is already mounted
+....
+
+
+==== Elimine los archivos de contraseña y spfile antiguos
+
+Si el procedimiento se ha realizado correctamente, los archivos anteriores ya no se bloquean y ahora se pueden eliminar.
+
+....
+-bash-4.1$ asmcmd
+ASMCMD> rm +DATA/spfile.ora
+ASMCMD> rm +DATA/orapwasm
+....
+
+
+== Copia de Oracle ASM en ASM
+
+Oracle ASM es esencialmente un gestor de volúmenes combinado ligero y un sistema de archivos. Dado que el sistema de archivos no se puede ver fácilmente, se debe utilizar RMAN para realizar operaciones de copia. A pesar de que un proceso de migración basado en copias es seguro y sencillo, el resultado es cierto tipo de interrupciones. La interrupción puede minimizarse, pero no eliminarse por completo.
+
+Si desea una migración no disruptiva de una base de datos basada en ASM, la mejor opción es aprovechar la capacidad de ASM para reequilibrar las extensiones de ASM a nuevos LUN y borrar los LUN antiguos. Hacerlo resulta generalmente seguro y no disruptivo para las operaciones, pero no ofrece ningún camino de retroceso. Si se encuentran problemas funcionales o de rendimiento, la única opción es volver a migrar los datos al origen.
+
+Este riesgo puede evitarse copiando la base de datos a la nueva ubicación en lugar de mover los datos, de modo que los datos originales queden intactos. La base de datos se puede probar completamente en su nueva ubicación antes de comenzar a funcionar, y la base de datos original está disponible como opción de reserva si se encuentran problemas.
+
+Este procedimiento es una de las muchas opciones que implica RMAN. Está diseñado para permitir un proceso de dos pasos en el que se crea la copia de seguridad inicial y, a continuación, se sincroniza a través de la reproducción de log. Este proceso es deseable minimizar los tiempos de inactividad, ya que permite que la base de datos permanezca operativa y sirviendo datos durante la copia básica inicial.
+
+
+
+=== Copiar base de datos
+
+Oracle RMAN crea una copia de nivel 0 (completa) de la base de datos de origen ubicada actualmente en el grupo de discos de ASM `+DATA` a la nueva ubicación en `+NEWDATA`.
+
+....
+-bash-4.1$ rman target /
+Recovery Manager: Release 12.1.0.2.0 - Production on Sun Dec 6 17:40:03 2015
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+connected to target database: TOAST (DBID=2084313411)
+RMAN> backup as copy incremental level 0 database format '+NEWDATA' tag 'ONTAP_MIGRATION';
+Starting backup at 06-DEC-15
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=302 device type=DISK
+channel ORA_DISK_1: starting datafile copy
+input datafile file number=00001 name=+DATA/TOAST/DATAFILE/system.262.897683141
+...
+input datafile file number=00004 name=+DATA/TOAST/DATAFILE/users.264.897683151
+output file name=+NEWDATA/TOAST/DATAFILE/users.258.897759623 tag=ONTAP_MIGRATION RECID=5 STAMP=897759622
+channel ORA_DISK_1: datafile copy complete, elapsed time: 00:00:01
+channel ORA_DISK_1: starting incremental level 0 datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+including current SPFILE in backup set
+channel ORA_DISK_1: starting piece 1 at 06-DEC-15
+channel ORA_DISK_1: finished piece 1 at 06-DEC-15
+piece handle=+NEWDATA/TOAST/BACKUPSET/2015_12_06/nnsnn0_ontap_migration_0.262.897759623 tag=ONTAP_MIGRATION comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:01
+Finished backup at 06-DEC-15
+....
+
+
+=== Forzar el cambio de archive log
+
+Debe forzar un cambio de archive log para asegurarse de que los archive logs contienen todos los datos necesarios para que la copia sea totalmente coherente. Sin este comando, es posible que los datos clave sigan presentes en los redo logs.
+
+....
+RMAN> sql 'alter system archive log current';
+sql statement: alter system archive log current
+....
+
+
+=== Cierre la base de datos de origen
+
+La interrupción comienza en este paso porque la base de datos se cierra y se coloca en un modo de solo lectura de acceso limitado. Para cerrar la base de datos de origen, ejecute los siguientes comandos:
+
+....
+RMAN> shutdown immediate;
+using target database control file instead of recovery catalog
+database closed
+database dismounted
+Oracle instance shut down
+RMAN> startup mount;
+connected to target database (not started)
+Oracle instance started
+database mounted
+Total System Global Area     805306368 bytes
+Fixed Size                     2929552 bytes
+Variable Size                390073456 bytes
+Database Buffers             406847488 bytes
+Redo Buffers                   5455872 bytes
+....
+
+
+=== Backup de CONTROLFILE
+
+Debe realizar una copia de seguridad del archivo de control en caso de que deba anular la migración y volver a la ubicación de almacenamiento original. Una copia del archivo de control de copia de seguridad no es 100% necesaria, pero hace que el proceso de restablecer las ubicaciones de los archivos de base de datos a la ubicación original sea más fácil.
+
+....
+RMAN> backup as copy current controlfile format '/tmp/TOAST.ctrl';
+Starting backup at 06-DEC-15
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=358 device type=DISK
+channel ORA_DISK_1: starting datafile copy
+copying current control file
+output file name=/tmp/TOAST.ctrl tag=TAG20151206T174753 RECID=6 STAMP=897760073
+channel ORA_DISK_1: datafile copy complete, elapsed time: 00:00:01
+Finished backup at 06-DEC-15
+....
+
+
+=== Actualizaciones de parámetros
+
+El spfile actual contiene referencias a los archivos de control en sus ubicaciones actuales dentro del antiguo grupo de discos de ASM. Debe editarse, lo cual se hace fácilmente editando una versión pfile intermedia.
+
+....
+RMAN> create pfile='/tmp/pfile' from spfile;
+Statement processed
+....
+
+
+==== Actualizar archivo pfile
+
+Actualice los parámetros que hagan referencia a los grupos de discos de ASM antiguos para reflejar los nuevos nombres de grupos de discos de ASM. A continuación, guarde el archivo pfile actualizado. Compruebe que la `db_create` los parámetros están presentes.
+
+En el ejemplo siguiente, las referencias a. `+DATA` eso fue cambiado a. `+NEWDATA` se resaltan en amarillo. Dos parámetros clave son el `db_create` parámetros que crean cualquier archivo nuevo en la ubicación correcta.
+
+....
+*.compatible='12.1.0.2.0'
+*.control_files='+NEWLOGS/TOAST/CONTROLFILE/current.258.897683139'
+*.db_block_size=8192
+*. db_create_file_dest='+NEWDATA'
+*. db_create_online_log_dest_1='+NEWLOGS'
+*.db_domain=''
+*.db_name='TOAST'
+*.diagnostic_dest='/orabin'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=TOASTXDB)'
+*.log_archive_dest_1='LOCATION=+NEWLOGS'
+*.log_archive_format='%t_%s_%r.dbf'
+....
+
+
+==== Actualice el archivo init.ora
+
+La mayoría de las bases de datos basadas en ASM utilizan un `init.ora` archivo ubicado en la `$ORACLE_HOME/dbs` Directorio, que es un punto a spfile en el grupo de discos de ASM. Este archivo se debe redirigir a una ubicación en el nuevo grupo de discos de ASM.
+
+....
+-bash-4.1$ cd $ORACLE_HOME/dbs
+-bash-4.1$ cat initTOAST.ora
+SPFILE='+DATA/TOAST/spfileTOAST.ora'
+....
+Cambie este archivo de la siguiente manera:
+
+....
+SPFILE=+NEWLOGS/TOAST/spfileTOAST.ora
+....
+
+
+==== Recreación del archivo de parámetros
+
+El archivo spfile ya está listo para ser rellenado por los datos del archivo pfile editado.
+
+....
+RMAN> create spfile from pfile='/tmp/pfile';
+Statement processed
+....
+
+
+==== Inicie la base de datos para empezar a utilizar el nuevo spfile
+
+Inicie la base de datos para asegurarse de que ahora utiliza el spfile recién creado y de que cualquier otro cambio en los parámetros del sistema se registra correctamente.
+
+....
+RMAN> startup nomount;
+connected to target database (not started)
+Oracle instance started
+Total System Global Area     805306368 bytes
+Fixed Size                     2929552 bytes
+Variable Size                373296240 bytes
+Database Buffers             423624704 bytes
+Redo Buffers                   5455872 bytes
+....
+
+
+=== Restaure el archivo de control
+
+RMAN también puede restaurar el archivo de control de copia de seguridad creado por RMAN directamente en la ubicación especificada en el nuevo spfile.
+
+....
+RMAN> restore controlfile from '+DATA/TOAST/CONTROLFILE/current.258.897683139';
+Starting restore at 06-DEC-15
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=417 device type=DISK
+channel ORA_DISK_1: copied control file copy
+output file name=+NEWLOGS/TOAST/CONTROLFILE/current.273.897761061
+Finished restore at 06-DEC-15
+....
+Monte la base de datos y verifique el uso del nuevo archivo de control.
+
+....
+RMAN> alter database mount;
+using target database control file instead of recovery catalog
+Statement processed
+....
+....
+SQL> show parameter control_files;
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+control_files                        string      +NEWLOGS/TOAST/CONTROLFILE/cur
+                                                 rent.273.897761061
+....
+
+
+=== Reproducción de registro
+
+La base de datos utiliza actualmente los archivos de datos en la ubicación antigua. Antes de poder utilizar la copia, deben sincronizarse. Ha transcurrido tiempo durante el proceso de copia inicial y los cambios se han registrado principalmente en los archive logs. Estos cambios se replican de la siguiente manera:
+
+. Realice una copia de seguridad incremental de RMAN, que contiene los archive logs.
++
+....
+RMAN> backup incremental level 1 format '+NEWLOGS' for recover of copy with tag 'ONTAP_MIGRATION' database;
+Starting backup at 06-DEC-15
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=62 device type=DISK
+channel ORA_DISK_1: starting incremental level 1 datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00001 name=+DATA/TOAST/DATAFILE/system.262.897683141
+input datafile file number=00002 name=+DATA/TOAST/DATAFILE/sysaux.260.897683143
+input datafile file number=00003 name=+DATA/TOAST/DATAFILE/undotbs1.257.897683145
+input datafile file number=00004 name=+DATA/TOAST/DATAFILE/users.264.897683151
+channel ORA_DISK_1: starting piece 1 at 06-DEC-15
+channel ORA_DISK_1: finished piece 1 at 06-DEC-15
+piece handle=+NEWLOGS/TOAST/BACKUPSET/2015_12_06/nnndn1_ontap_migration_0.268.897762693 tag=ONTAP_MIGRATION comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:01
+channel ORA_DISK_1: starting incremental level 1 datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+including current control file in backup set
+including current SPFILE in backup set
+channel ORA_DISK_1: starting piece 1 at 06-DEC-15
+channel ORA_DISK_1: finished piece 1 at 06-DEC-15
+piece handle=+NEWLOGS/TOAST/BACKUPSET/2015_12_06/ncsnn1_ontap_migration_0.267.897762697 tag=ONTAP_MIGRATION comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:01
+Finished backup at 06-DEC-15
+....
+. Vuelva a reproducir el log.
++
+....
+RMAN> recover copy of database with tag 'ONTAP_MIGRATION';
+Starting recover at 06-DEC-15
+using channel ORA_DISK_1
+channel ORA_DISK_1: starting incremental datafile backup set restore
+channel ORA_DISK_1: specifying datafile copies to recover
+recovering datafile copy file number=00001 name=+NEWDATA/TOAST/DATAFILE/system.259.897759609
+recovering datafile copy file number=00002 name=+NEWDATA/TOAST/DATAFILE/sysaux.263.897759615
+recovering datafile copy file number=00003 name=+NEWDATA/TOAST/DATAFILE/undotbs1.264.897759619
+recovering datafile copy file number=00004 name=+NEWDATA/TOAST/DATAFILE/users.258.897759623
+channel ORA_DISK_1: reading from backup piece +NEWLOGS/TOAST/BACKUPSET/2015_12_06/nnndn1_ontap_migration_0.268.897762693
+channel ORA_DISK_1: piece handle=+NEWLOGS/TOAST/BACKUPSET/2015_12_06/nnndn1_ontap_migration_0.268.897762693 tag=ONTAP_MIGRATION
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+Finished recover at 06-DEC-15
+....
+
+
+
+
+=== Activación
+
+El archivo de control que se restauró sigue haciendo referencia a los archivos de datos en la ubicación original y también contiene la información de ruta de acceso para los archivos de datos copiados.
+
+. Para cambiar los archivos de datos activos, ejecute el `switch database to copy` comando.
++
+....
+RMAN> switch database to copy;
+datafile 1 switched to datafile copy "+NEWDATA/TOAST/DATAFILE/system.259.897759609"
+datafile 2 switched to datafile copy "+NEWDATA/TOAST/DATAFILE/sysaux.263.897759615"
+datafile 3 switched to datafile copy "+NEWDATA/TOAST/DATAFILE/undotbs1.264.897759619"
+datafile 4 switched to datafile copy "+NEWDATA/TOAST/DATAFILE/users.258.897759623"
+....
++
+Los archivos de datos activos son ahora los archivos de datos copiados, pero es posible que haya cambios en los redo logs finales.
+
+. Para reproducir todos los logs restantes, ejecute el `recover database` comando. Si el mensaje `media recovery complete` aparece, el proceso se ha realizado correctamente.
++
+....
+RMAN> recover database;
+Starting recover at 06-DEC-15
+using channel ORA_DISK_1
+starting media recovery
+media recovery complete, elapsed time: 00:00:01
+Finished recover at 06-DEC-15
+....
++
+Este proceso solo cambió la ubicación de los archivos de datos normales. Se debe cambiar el nombre de los archivos de datos temporales, pero no es necesario copiarlos porque solo son temporales. La base de datos está inactiva, por lo que no hay datos activos en los archivos de datos temporales.
+
+. Para reubicar los archivos de datos temporales, primero identifique su ubicación.
++
+....
+RMAN> select file#||' '||name from v$tempfile;
+FILE#||''||NAME
+--------------------------------------------------------------------------------
+1 +DATA/TOAST/TEMPFILE/temp.263.897683145
+....
+. Reubicar los archivos de datos temporales mediante un comando de RMAN que define el nuevo nombre para cada archivo de datos. Con Oracle Managed Files (OMF), el nombre completo no es necesario; el grupo de discos de ASM es suficiente. Cuando se abre la base de datos, OMF se enlaza a la ubicación adecuada en el grupo de discos de ASM. Para reubicar archivos, ejecute los siguientes comandos:
++
+....
+run {
+set newname for tempfile 1 to '+NEWDATA';
+switch tempfile all;
+}
+....
++
+....
+RMAN> run {
+2> set newname for tempfile 1 to '+NEWDATA';
+3> switch tempfile all;
+4> }
+executing command: SET NEWNAME
+renamed tempfile 1 to +NEWDATA in control file
+....
+
+
+
+
+=== Migración de redo log
+
+El proceso de migración está casi completo, pero los redo logs siguen estando en el grupo de discos de ASM original. Los redo logs no se pueden reubicar directamente. En su lugar, se crea un nuevo juego de redo logs y se agrega a la configuración, seguido de un borrado de los antiguos logs.
+
+. Identifique el Núm. De grupos de redo logs y sus respectivos Núm.s de grupo.
++
+....
+RMAN> select group#||' '||member from v$logfile;
+GROUP#||''||MEMBER
+--------------------------------------------------------------------------------
+1 +DATA/TOAST/ONLINELOG/group_1.261.897683139
+2 +DATA/TOAST/ONLINELOG/group_2.259.897683139
+3 +DATA/TOAST/ONLINELOG/group_3.256.897683139
+....
+. Introduzca el tamaño de los redo logs.
++
+....
+RMAN> select group#||' '||bytes from v$log;
+GROUP#||''||BYTES
+--------------------------------------------------------------------------------
+1 52428800
+2 52428800
+3 52428800
+....
+. Para cada redo log, cree un nuevo grupo con una configuración coincidente. Si no utiliza OMF, debe especificar la ruta completa. Este es también un ejemplo que utiliza `db_create_online_log` parámetros. Como se mostró anteriormente, este parámetro se estableció en +NEWLOGS. Esta configuración permite utilizar los siguientes comandos para crear nuevos logs en línea sin necesidad de especificar una ubicación de archivo o incluso un grupo de discos de ASM específico.
++
+....
+RMAN> alter database add logfile size 52428800;
+Statement processed
+RMAN> alter database add logfile size 52428800;
+Statement processed
+RMAN> alter database add logfile size 52428800;
+Statement processed
+....
+. Abra la base de datos.
++
+....
+SQL> alter database open;
+Database altered.
+....
+. Borre los registros antiguos.
++
+....
+RMAN> alter database drop logfile group 1;
+Statement processed
+....
+. Si encuentra un error que le impide borrar un log activo, fuerce un cambio al siguiente log para liberar el bloqueo y forzar un punto de control global. A continuación se muestra un ejemplo. Se ha denegado el intento de borrar el grupo de archivos de registro 3, que se encontraba en la ubicación anterior, porque todavía había datos activos en este archivo de registro. Un archivo de registro después de un punto de control le permite suprimir el archivo de registro.
++
+....
+RMAN> alter database drop logfile group 3;
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of sql statement command at 12/08/2015 20:23:51
+ORA-01623: log 3 is current log for instance TOAST (thread 4) - cannot drop
+ORA-00312: online log 3 thread 1: '+LOGS/TOAST/ONLINELOG/group_3.259.897563549'
+RMAN> alter system switch logfile;
+Statement processed
+RMAN> alter system checkpoint;
+Statement processed
+RMAN> alter database drop logfile group 3;
+Statement processed
+....
+. Revise el entorno para asegurarse de que todos los parámetros basados en la ubicación estén actualizados.
++
+....
+SQL> select name from v$datafile;
+SQL> select member from v$logfile;
+SQL> select name from v$tempfile;
+SQL> show parameter spfile;
+SQL> select name, value from v$parameter where value is not null;
+....
+. El siguiente script muestra cómo simplificar este proceso:
++
+....
+[root@host1 current]# ./checkdbdata.pl TOAST
+TOAST datafiles:
++NEWDATA/TOAST/DATAFILE/system.259.897759609
++NEWDATA/TOAST/DATAFILE/sysaux.263.897759615
++NEWDATA/TOAST/DATAFILE/undotbs1.264.897759619
++NEWDATA/TOAST/DATAFILE/users.258.897759623
+TOAST redo logs:
++NEWLOGS/TOAST/ONLINELOG/group_4.266.897763123
++NEWLOGS/TOAST/ONLINELOG/group_5.265.897763125
++NEWLOGS/TOAST/ONLINELOG/group_6.264.897763125
+TOAST temp datafiles:
++NEWDATA/TOAST/TEMPFILE/temp.260.897763165
+TOAST spfile
+spfile                               string      +NEWDATA/spfiletoast.ora
+TOAST key parameters
+control_files +NEWLOGS/TOAST/CONTROLFILE/current.273.897761061
+log_archive_dest_1 LOCATION=+NEWLOGS
+db_create_file_dest +NEWDATA
+db_create_online_log_dest_1 +NEWLOGS
+....
+. Si los grupos de discos de ASM se evacuaron por completo, ahora se pueden desmontar con `asmcmd`. Sin embargo, en muchos casos, los archivos que pertenecen a otras bases de datos o al archivo spfile/passwd de ASM pueden estar presentes.
++
+....
+-bash-4.1$ . oraenv
+ORACLE_SID = [TOAST] ? +ASM
+The Oracle base remains unchanged with value /orabin
+-bash-4.1$ asmcmd
+ASMCMD> umount DATA
+ASMCMD>
+....
+
+
+
+
+== Oracle ASM a la copia del sistema de archivos
+
+El procedimiento de copia del sistema de archivos de Oracle ASM a es muy similar al procedimiento de copia de ASM a ASM, con ventajas y restricciones similares. La diferencia principal es la sintaxis de los distintos comandos y parámetros de configuración cuando se utiliza un sistema de archivos visible en lugar de un grupo de discos de ASM.
+
+
+
+=== Copiar base de datos
+
+Oracle RMAN se utiliza para crear una copia de nivel 0 (completa) de la base de datos de origen ubicada actualmente en el grupo de discos de ASM `+DATA` a la nueva ubicación en `/oradata`.
+
+....
+RMAN> backup as copy incremental level 0 database format '/oradata/TOAST/%U' tag 'ONTAP_MIGRATION';
+Starting backup at 13-MAY-16
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=377 device type=DISK
+channel ORA_DISK_1: starting datafile copy
+input datafile file number=00001 name=+ASM0/TOAST/system01.dbf
+output file name=/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSTEM_FNO-1_01r5fhjg tag=ONTAP_MIGRATION RECID=1 STAMP=911722099
+channel ORA_DISK_1: datafile copy complete, elapsed time: 00:00:07
+channel ORA_DISK_1: starting datafile copy
+input datafile file number=00002 name=+ASM0/TOAST/sysaux01.dbf
+output file name=/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSAUX_FNO-2_02r5fhjo tag=ONTAP_MIGRATION RECID=2 STAMP=911722106
+channel ORA_DISK_1: datafile copy complete, elapsed time: 00:00:07
+channel ORA_DISK_1: starting datafile copy
+input datafile file number=00003 name=+ASM0/TOAST/undotbs101.dbf
+output file name=/oradata/TOAST/data_D-TOAST_I-2098173325_TS-UNDOTBS1_FNO-3_03r5fhjt tag=ONTAP_MIGRATION RECID=3 STAMP=911722113
+channel ORA_DISK_1: datafile copy complete, elapsed time: 00:00:07
+channel ORA_DISK_1: starting datafile copy
+copying current control file
+output file name=/oradata/TOAST/cf_D-TOAST_id-2098173325_04r5fhk5 tag=ONTAP_MIGRATION RECID=4 STAMP=911722118
+channel ORA_DISK_1: datafile copy complete, elapsed time: 00:00:01
+channel ORA_DISK_1: starting datafile copy
+input datafile file number=00004 name=+ASM0/TOAST/users01.dbf
+output file name=/oradata/TOAST/data_D-TOAST_I-2098173325_TS-USERS_FNO-4_05r5fhk6 tag=ONTAP_MIGRATION RECID=5 STAMP=911722118
+channel ORA_DISK_1: datafile copy complete, elapsed time: 00:00:01
+channel ORA_DISK_1: starting incremental level 0 datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+including current SPFILE in backup set
+channel ORA_DISK_1: starting piece 1 at 13-MAY-16
+channel ORA_DISK_1: finished piece 1 at 13-MAY-16
+piece handle=/oradata/TOAST/06r5fhk7_1_1 tag=ONTAP_MIGRATION comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:01
+Finished backup at 13-MAY-16
+....
+
+
+=== Forzar el cambio de archive log
+
+Es necesario forzar el cambio de archive log para asegurarse de que los archive logs contienen todos los datos necesarios para que la copia sea totalmente coherente. Sin este comando, es posible que los datos clave sigan presentes en los redo logs. Para forzar un cambio de archive log, ejecute el siguiente comando:
+
+....
+RMAN> sql 'alter system archive log current';
+sql statement: alter system archive log current
+....
+
+
+=== Cierre la base de datos de origen
+
+La interrupción comienza en este paso porque la base de datos se cierra y se coloca en un modo de solo lectura de acceso limitado. Para cerrar la base de datos de origen, ejecute los siguientes comandos:
+
+....
+RMAN> shutdown immediate;
+using target database control file instead of recovery catalog
+database closed
+database dismounted
+Oracle instance shut down
+RMAN> startup mount;
+connected to target database (not started)
+Oracle instance started
+database mounted
+Total System Global Area     805306368 bytes
+Fixed Size                  2929552 bytes
+Variable Size             331353200 bytes
+Database Buffers          465567744 bytes
+Redo Buffers                5455872 bytes
+....
+
+
+=== Backup de CONTROLFILE
+
+Realice una copia de seguridad de controlfiles en caso de que deba cancelar la migración y volver a la ubicación de almacenamiento original. Una copia del archivo de control de copia de seguridad no es 100% necesaria, pero hace que el proceso de restablecer las ubicaciones de los archivos de base de datos a la ubicación original sea más fácil.
+
+....
+RMAN> backup as copy current controlfile format '/tmp/TOAST.ctrl';
+Starting backup at 08-DEC-15
+using channel ORA_DISK_1
+channel ORA_DISK_1: starting datafile copy
+copying current control file
+output file name=/tmp/TOAST.ctrl tag=TAG20151208T194540 RECID=30 STAMP=897939940
+channel ORA_DISK_1: datafile copy complete, elapsed time: 00:00:01
+Finished backup at 08-DEC-15
+....
+
+
+=== Actualizaciones de parámetros
+
+....
+RMAN> create pfile='/tmp/pfile' from spfile;
+Statement processed
+....
+
+
+==== Actualizar archivo pfile
+
+Todos los parámetros que hagan referencia a grupos de discos de ASM antiguos deben actualizarse y, en algunos casos, suprimirse cuando ya no sean relevantes. Actualícelos para reflejar las nuevas rutas del sistema de archivos y guardar el archivo pfile actualizado. Asegúrese de que se muestra la ruta de destino completa. Para actualizar estos parámetros, ejecute los siguientes comandos:
+
+....
+*.audit_file_dest='/orabin/admin/TOAST/adump'
+*.audit_trail='db'
+*.compatible='12.1.0.2.0'
+*.control_files='/logs/TOAST/arch/control01.ctl','/logs/TOAST/redo/control02.ctl'
+*.db_block_size=8192
+*.db_domain=''
+*.db_name='TOAST'
+*.diagnostic_dest='/orabin'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=TOASTXDB)'
+*.log_archive_dest_1='LOCATION=/logs/TOAST/arch'
+*.log_archive_format='%t_%s_%r.dbf'
+*.open_cursors=300
+*.pga_aggregate_target=256m
+*.processes=300
+*.remote_login_passwordfile='EXCLUSIVE'
+*.sga_target=768m
+*.undo_tablespace='UNDOTBS1'
+....
+
+
+==== Desactive el archivo init.ora original
+
+Este archivo se encuentra en la `$ORACLE_HOME/dbs` Directory AND se encuentra normalmente en un archivo pfile que sirve como puntero al spfile en el grupo de discos de ASM. Para asegurarse de que el spfile original ya no se utiliza, cámbiele el nombre. Sin embargo, no lo elimine porque este archivo es necesario si se debe cancelar la migración.
+
+....
+[oracle@jfsc1 ~]$ cd $ORACLE_HOME/dbs
+[oracle@jfsc1 dbs]$ cat initTOAST.ora
+SPFILE='+ASM0/TOAST/spfileTOAST.ora'
+[oracle@jfsc1 dbs]$ mv initTOAST.ora initTOAST.ora.prev
+[oracle@jfsc1 dbs]$
+....
+
+
+==== Recreación del archivo de parámetros
+
+Este es el último paso en la reubicación de spfile. El spfile original ya no se utiliza y la base de datos se inicia actualmente (pero no se monta) mediante el archivo intermedio. El contenido de este archivo se puede escribir en la nueva ubicación spfile de la siguiente manera:
+
+....
+RMAN> create spfile from pfile='/tmp/pfile';
+Statement processed
+....
+
+
+==== Inicie la base de datos para empezar a utilizar el nuevo spfile
+
+Debe iniciar la base de datos para liberar los bloqueos en el archivo intermedio e iniciar la base de datos utilizando sólo el nuevo archivo spfile. El inicio de la base de datos también demuestra que la nueva ubicación spfile es correcta y que sus datos son válidos.
+
+....
+RMAN> shutdown immediate;
+Oracle instance shut down
+RMAN> startup nomount;
+connected to target database (not started)
+Oracle instance started
+Total System Global Area     805306368 bytes
+Fixed Size                     2929552 bytes
+Variable Size                331353200 bytes
+Database Buffers             465567744 bytes
+Redo Buffers                   5455872 bytes
+....
+
+
+=== Restaure el archivo de control
+
+Se creó un archivo de control de copia de seguridad en la ruta `/tmp/TOAST.ctrl` anteriormente en el procedimiento. El nuevo spfile define las ubicaciones del archivo de control como /`logfs/TOAST/ctrl/ctrlfile1.ctrl` y.. `/logfs/TOAST/redo/ctrlfile2.ctrl`. Sin embargo, esos archivos aún no existen.
+
+. Este comando restaura los datos del archivo de control a las rutas definidas en spfile.
++
+....
+RMAN> restore controlfile from '/tmp/TOAST.ctrl';
+Starting restore at 13-MAY-16
+using channel ORA_DISK_1
+channel ORA_DISK_1: copied control file copy
+output file name=/logs/TOAST/arch/control01.ctl
+output file name=/logs/TOAST/redo/control02.ctl
+Finished restore at 13-MAY-16
+....
+. Emita el comando mount para que los archivos de control se detecten correctamente y contengan datos válidos.
++
+....
+RMAN> alter database mount;
+Statement processed
+released channel: ORA_DISK_1
+....
++
+Para validar el `control_files` parámetro, ejecute el siguiente comando:
+
++
+....
+SQL> show parameter control_files;
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+control_files                        string      /logs/TOAST/arch/control01.ctl
+                                                 , /logs/TOAST/redo/control02.c
+                                                 tl
+....
+
+
+
+
+=== Reproducción de registro
+
+La base de datos está utilizando actualmente los archivos de datos en la ubicación antigua. Para poder utilizar la copia, es necesario sincronizar los archivos de datos. El tiempo transcurrido durante el proceso de copia inicial y los cambios se registraron principalmente en los registros de archivos. Estos cambios se replican en los dos pasos siguientes.
+
+. Realice una copia de seguridad incremental de RMAN, que contiene los archive logs.
++
+....
+RMAN>  backup incremental level 1 format '/logs/TOAST/arch/%U' for recover of copy with tag 'ONTAP_MIGRATION' database;
+Starting backup at 13-MAY-16
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=124 device type=DISK
+channel ORA_DISK_1: starting incremental level 1 datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00001 name=+ASM0/TOAST/system01.dbf
+input datafile file number=00002 name=+ASM0/TOAST/sysaux01.dbf
+input datafile file number=00003 name=+ASM0/TOAST/undotbs101.dbf
+input datafile file number=00004 name=+ASM0/TOAST/users01.dbf
+channel ORA_DISK_1: starting piece 1 at 13-MAY-16
+channel ORA_DISK_1: finished piece 1 at 13-MAY-16
+piece handle=/logs/TOAST/arch/09r5fj8i_1_1 tag=ONTAP_MIGRATION comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:01
+Finished backup at 13-MAY-16
+RMAN-06497: WARNING: control file is not current, control file AUTOBACKUP skipped
+....
+. Vuelva a reproducir los registros.
++
+....
+RMAN> recover copy of database with tag 'ONTAP_MIGRATION';
+Starting recover at 13-MAY-16
+using channel ORA_DISK_1
+channel ORA_DISK_1: starting incremental datafile backup set restore
+channel ORA_DISK_1: specifying datafile copies to recover
+recovering datafile copy file number=00001 name=/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSTEM_FNO-1_01r5fhjg
+recovering datafile copy file number=00002 name=/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSAUX_FNO-2_02r5fhjo
+recovering datafile copy file number=00003 name=/oradata/TOAST/data_D-TOAST_I-2098173325_TS-UNDOTBS1_FNO-3_03r5fhjt
+recovering datafile copy file number=00004 name=/oradata/TOAST/data_D-TOAST_I-2098173325_TS-USERS_FNO-4_05r5fhk6
+channel ORA_DISK_1: reading from backup piece /logs/TOAST/arch/09r5fj8i_1_1
+channel ORA_DISK_1: piece handle=/logs/TOAST/arch/09r5fj8i_1_1 tag=ONTAP_MIGRATION
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+Finished recover at 13-MAY-16
+RMAN-06497: WARNING: control file is not current, control file AUTOBACKUP skipped
+....
+
+
+
+
+=== Activación
+
+El archivo de control que se restauró sigue haciendo referencia a los archivos de datos en la ubicación original y también contiene la información de ruta de acceso para los archivos de datos copiados.
+
+. Para cambiar los archivos de datos activos, ejecute el `switch database to copy` comando:
++
+....
+RMAN> switch database to copy;
+datafile 1 switched to datafile copy "/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSTEM_FNO-1_01r5fhjg"
+datafile 2 switched to datafile copy "/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSAUX_FNO-2_02r5fhjo"
+datafile 3 switched to datafile copy "/oradata/TOAST/data_D-TOAST_I-2098173325_TS-UNDOTBS1_FNO-3_03r5fhjt"
+datafile 4 switched to datafile copy "/oradata/TOAST/data_D-TOAST_I-2098173325_TS-USERS_FNO-4_05r5fhk6"
+....
+. Aunque los archivos de datos deben ser totalmente coherentes, se necesita un paso final para reproducir los cambios restantes registrados en los redo logs en línea. Utilice la `recover database` comando para reproducir estos cambios y hacer que la copia sea 100% idéntica a la original. Sin embargo, la copia aún no está abierta.
++
+....
+RMAN> recover database;
+Starting recover at 13-MAY-16
+using channel ORA_DISK_1
+starting media recovery
+archived log for thread 1 with sequence 28 is already on disk as file +ASM0/TOAST/redo01.log
+archived log file name=+ASM0/TOAST/redo01.log thread=1 sequence=28
+media recovery complete, elapsed time: 00:00:00
+Finished recover at 13-MAY-16
+....
+
+
+
+
+==== Reubicar archivos de datos temporales
+
+. Identifique la ubicación de los archivos de datos temporales que aún se están utilizando en el grupo de discos original.
++
+....
+RMAN> select file#||' '||name from v$tempfile;
+FILE#||''||NAME
+--------------------------------------------------------------------------------
+1 +ASM0/TOAST/temp01.dbf
+....
+. Para reubicar los archivos de datos, ejecute los siguientes comandos. Si hay muchos archivos temporales, utilice un editor de texto para crear el comando RMAN y, a continuación, córtelo y péguelo.
++
+....
+RMAN> run {
+2> set newname for tempfile 1 to '/oradata/TOAST/temp01.dbf';
+3> switch tempfile all;
+4> }
+executing command: SET NEWNAME
+renamed tempfile 1 to /oradata/TOAST/temp01.dbf in control file
+....
+
+
+
+
+=== Migración de redo log
+
+El proceso de migración está casi completo, pero los redo logs siguen estando en el grupo de discos de ASM original. Los redo logs no se pueden reubicar directamente. En su lugar, se crea un nuevo juego de redo logs y se agrega a la configuración, luego se borran los logs antiguos.
+
+. Identifique el Núm. De grupos de redo logs y sus respectivos Núm.s de grupo.
++
+....
+RMAN> select group#||' '||member from v$logfile;
+GROUP#||''||MEMBER
+--------------------------------------------------------------------------------
+1 +ASM0/TOAST/redo01.log
+2 +ASM0/TOAST/redo02.log
+3 +ASM0/TOAST/redo03.log
+....
+. Introduzca el tamaño de los redo logs.
++
+....
+RMAN> select group#||' '||bytes from v$log;
+GROUP#||''||BYTES
+--------------------------------------------------------------------------------
+1 52428800
+2 52428800
+3 52428800
+....
+. Para cada redo log, cree un nuevo grupo utilizando el mismo tamaño que el grupo de redo logs actual mediante la nueva ubicación del sistema de archivos.
++
+....
+RMAN> alter database add logfile '/logs/TOAST/redo/log00.rdo' size 52428800;
+Statement processed
+RMAN> alter database add logfile '/logs/TOAST/redo/log01.rdo' size 52428800;
+Statement processed
+RMAN> alter database add logfile '/logs/TOAST/redo/log02.rdo' size 52428800;
+Statement processed
+....
+. Elimine los grupos de archivos de registro antiguos que aún se encuentran en el almacenamiento anterior.
++
+....
+RMAN> alter database drop logfile group 4;
+Statement processed
+RMAN> alter database drop logfile group 5;
+Statement processed
+RMAN> alter database drop logfile group 6;
+Statement processed
+....
+. Si se detecta un error que bloquea el borrado de un log activo, fuerce un cambio al siguiente log para liberar el bloqueo y forzar un punto de control global. A continuación se muestra un ejemplo. Se ha denegado el intento de borrar el grupo de archivos de registro 3, que se encontraba en la ubicación anterior, porque todavía había datos activos en este archivo de registro. Un archivo log seguido de un punto de control permite la supresión de archivos log.
++
+....
+RMAN> alter database drop logfile group 4;
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of sql statement command at 12/08/2015 20:23:51
+ORA-01623: log 4 is current log for instance TOAST (thread 4) - cannot drop
+ORA-00312: online log 4 thread 1: '+NEWLOGS/TOAST/ONLINELOG/group_4.266.897763123'
+RMAN> alter system switch logfile;
+Statement processed
+RMAN> alter system checkpoint;
+Statement processed
+RMAN> alter database drop logfile group 4;
+Statement processed
+....
+. Revise el entorno para asegurarse de que todos los parámetros basados en la ubicación estén actualizados.
++
+....
+SQL> select name from v$datafile;
+SQL> select member from v$logfile;
+SQL> select name from v$tempfile;
+SQL> show parameter spfile;
+SQL> select name, value from v$parameter where value is not null;
+....
+. El siguiente script muestra cómo facilitar este proceso.
++
+....
+[root@jfsc1 current]# ./checkdbdata.pl TOAST
+TOAST datafiles:
+/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSTEM_FNO-1_01r5fhjg
+/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSAUX_FNO-2_02r5fhjo
+/oradata/TOAST/data_D-TOAST_I-2098173325_TS-UNDOTBS1_FNO-3_03r5fhjt
+/oradata/TOAST/data_D-TOAST_I-2098173325_TS-USERS_FNO-4_05r5fhk6
+TOAST redo logs:
+/logs/TOAST/redo/log00.rdo
+/logs/TOAST/redo/log01.rdo
+/logs/TOAST/redo/log02.rdo
+TOAST temp datafiles:
+/oradata/TOAST/temp01.dbf
+TOAST spfile
+spfile                               string      /orabin/product/12.1.0/dbhome_
+                                                 1/dbs/spfileTOAST.ora
+TOAST key parameters
+control_files /logs/TOAST/arch/control01.ctl, /logs/TOAST/redo/control02.ctl
+log_archive_dest_1 LOCATION=/logs/TOAST/arch
+....
+. Si los grupos de discos de ASM se evacuaron por completo, ahora se pueden desmontar con `asmcmd`. En muchos casos, los archivos que pertenecen a otras bases de datos o al archivo spfile/passwd de ASM pueden seguir presentes.
++
+....
+-bash-4.1$ . oraenv
+ORACLE_SID = [TOAST] ? +ASM
+The Oracle base remains unchanged with value /orabin
+-bash-4.1$ asmcmd
+ASMCMD> umount DATA
+ASMCMD>
+....
+
+
+
+
+=== Procedimiento de limpieza del archivo de datos
+
+El proceso de migración puede dar lugar a archivos de datos con sintaxis larga o críptica, según cómo se haya utilizado Oracle RMAN. En el ejemplo que se muestra aquí, la copia de seguridad se realizó con el formato de archivo de `/oradata/TOAST/%U`. `%U` Indica que RMAN debe crear un nombre único por defecto para cada archivo de datos. El resultado es similar al que se muestra en el siguiente texto. Los nombres tradicionales de los archivos de datos están incrustados en los nombres. Esto se puede limpiar utilizando el enfoque con guión que se muestra en la link:oracle-migration-sample-scripts.html#asm-migration-cleanup["Limpieza de Migración de ASM"].
+
+....
+[root@jfsc1 current]# ./fixuniquenames.pl TOAST
+#sqlplus Commands
+shutdown immediate;
+startup mount;
+host mv /oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSTEM_FNO-1_01r5fhjg /oradata/TOAST/system.dbf
+host mv /oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSAUX_FNO-2_02r5fhjo /oradata/TOAST/sysaux.dbf
+host mv /oradata/TOAST/data_D-TOAST_I-2098173325_TS-UNDOTBS1_FNO-3_03r5fhjt /oradata/TOAST/undotbs1.dbf
+host mv /oradata/TOAST/data_D-TOAST_I-2098173325_TS-USERS_FNO-4_05r5fhk6 /oradata/TOAST/users.dbf
+alter database rename file '/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSTEM_FNO-1_01r5fhjg' to '/oradata/TOAST/system.dbf';
+alter database rename file '/oradata/TOAST/data_D-TOAST_I-2098173325_TS-SYSAUX_FNO-2_02r5fhjo' to '/oradata/TOAST/sysaux.dbf';
+alter database rename file '/oradata/TOAST/data_D-TOAST_I-2098173325_TS-UNDOTBS1_FNO-3_03r5fhjt' to '/oradata/TOAST/undotbs1.dbf';
+alter database rename file '/oradata/TOAST/data_D-TOAST_I-2098173325_TS-USERS_FNO-4_05r5fhk6' to '/oradata/TOAST/users.dbf';
+alter database open;
+....
+
+
+== Reequilibrio de Oracle ASM
+
+Como se ha explicado anteriormente, un grupo de discos de Oracle ASM se puede migrar de forma transparente a un nuevo sistema de almacenamiento mediante el proceso de reequilibrio. En resumen, el proceso de reequilibrio requiere la adición de LUN de igual tamaño al grupo existente de LUN seguido de una operación de eliminación del LUN anterior. Oracle ASM reubica automáticamente los datos subyacentes en un nuevo almacenamiento en un diseño óptimo y, al finalizar, libera las LUN antiguas.
+
+El proceso de migración utiliza I/O secuencial eficiente y no suele provocar interrupciones en el rendimiento, pero la tasa de migración puede acelerarse cuando es necesario.
+
+
+
+=== Identifique los datos que se van a migrar
+
+....
+SQL> select name||' '||group_number||' '||total_mb||' '||path||' '||header_status from v$asm_disk;
+NEWDATA_0003 1 10240 /dev/mapper/3600a098038303537762b47594c315864 MEMBER
+NEWDATA_0002 1 10240 /dev/mapper/3600a098038303537762b47594c315863 MEMBER
+NEWDATA_0000 1 10240 /dev/mapper/3600a098038303537762b47594c315861 MEMBER
+NEWDATA_0001 1 10240 /dev/mapper/3600a098038303537762b47594c315862 MEMBER
+SQL> select group_number||' '||name from v$asm_diskgroup;
+1 NEWDATA
+....
+
+
+=== Cree nuevas LUN
+
+Cree nuevas LUN del mismo tamaño y establezca la pertenencia de usuarios y grupos como sea necesario. Las LUN deben aparecer como `CANDIDATE` discos.
+
+....
+SQL> select name||' '||group_number||' '||total_mb||' '||path||' '||header_status from v$asm_disk;
+ 0 0 /dev/mapper/3600a098038303537762b47594c31586b CANDIDATE
+ 0 0 /dev/mapper/3600a098038303537762b47594c315869 CANDIDATE
+ 0 0 /dev/mapper/3600a098038303537762b47594c315858 CANDIDATE
+ 0 0 /dev/mapper/3600a098038303537762b47594c31586a CANDIDATE
+NEWDATA_0003 1 10240 /dev/mapper/3600a098038303537762b47594c315864 MEMBER
+NEWDATA_0002 1 10240 /dev/mapper/3600a098038303537762b47594c315863 MEMBER
+NEWDATA_0000 1 10240 /dev/mapper/3600a098038303537762b47594c315861 MEMBER
+NEWDATA_0001 1 10240 /dev/mapper/3600a098038303537762b47594c315862 MEMBER
+....
+
+
+=== Agregar NUEVAS LUN
+
+Aunque las operaciones de agregar y soltar se pueden realizar de forma conjunta, generalmente es más sencillo añadir nuevas LUN en dos pasos. En primer lugar, agregue las nuevas LUN al grupo de discos. Este paso hace que la mitad de las extensiones se migren de las LUN de ASM actuales a las nuevas LUN.
+
+La potencia de reequilibrio indica la velocidad a la que se transfieren los datos. Cuanto mayor sea el número, mayor será el paralelismo de la transferencia de datos. La migración se realiza con eficientes operaciones de I/O secuenciales que es poco probable que provoquen problemas de rendimiento. Sin embargo, si lo desea, la potencia de reequilibrio de una migración continua se puede ajustar con el `alter diskgroup [name] rebalance power [level]` comando. Las migraciones típicas utilizan un valor de 5.
+
+....
+SQL> alter diskgroup NEWDATA add disk '/dev/mapper/3600a098038303537762b47594c31586b' rebalance power 5;
+Diskgroup altered.
+SQL> alter diskgroup NEWDATA add disk '/dev/mapper/3600a098038303537762b47594c315869' rebalance power 5;
+Diskgroup altered.
+SQL> alter diskgroup NEWDATA add disk '/dev/mapper/3600a098038303537762b47594c315858' rebalance power 5;
+Diskgroup altered.
+SQL> alter diskgroup NEWDATA add disk '/dev/mapper/3600a098038303537762b47594c31586a' rebalance power 5;
+Diskgroup altered.
+....
+
+
+=== Supervise el funcionamiento
+
+Una operación de reequilibrio puede supervisarse y gestionarse de varias maneras. Utilizamos el siguiente comando para este ejemplo.
+
+....
+SQL> select group_number,operation,state from v$asm_operation;
+GROUP_NUMBER OPERA STAT
+------------ ----- ----
+           1 REBAL RUN
+           1 REBAL WAIT
+....
+Una vez finalizada la migración, no se informan las operaciones de reequilibrio.
+
+....
+SQL> select group_number,operation,state from v$asm_operation;
+no rows selected
+....
+
+
+=== Borre las LUN antiguas
+
+La migración se ha completado a mitad de camino. Podría ser deseable realizar algunas pruebas de rendimiento básicas para asegurarse de que el entorno está en buen estado. Después de la confirmación, se pueden reubicar los datos restantes eliminando las LUN antiguas. Tenga en cuenta que esto no provoca una versión inmediata de las LUN. La operación de borrado indica a Oracle ASM que reubique primero las extensiones y, a continuación, libere el LUN.
+
+....
+sqlplus / as sysasm
+SQL> alter diskgroup NEWDATA drop disk NEWDATA_0000 rebalance power 5;
+Diskgroup altered.
+SQL> alter diskgroup NEWDATA drop disk NEWDATA_0001 rebalance power 5;
+Diskgroup altered.
+SQL> alter diskgroup newdata drop disk NEWDATA_0002 rebalance power 5;
+Diskgroup altered.
+SQL> alter diskgroup newdata drop disk NEWDATA_0003 rebalance power 5;
+Diskgroup altered.
+....
+
+
+=== Supervise el funcionamiento
+
+La operación de reequilibrio se puede supervisar y gestionar de varias maneras. Utilizamos el siguiente comando para este ejemplo:
+
+....
+SQL> select group_number,operation,state from v$asm_operation;
+GROUP_NUMBER OPERA STAT
+------------ ----- ----
+           1 REBAL RUN
+           1 REBAL WAIT
+....
+Una vez finalizada la migración, no se informan las operaciones de reequilibrio.
+
+....
+SQL> select group_number,operation,state from v$asm_operation;
+no rows selected
+....
+
+
+=== Quite las LUN antiguas
+
+Antes de quitar las LUN antiguas del grupo de discos, debe realizar una comprobación final del estado del encabezado. Después de liberar una LUN desde ASM, ya no aparece un nombre y el estado de la cabecera aparece como `FORMER`. Esto indica que estas LUN se pueden eliminar de forma segura del sistema.
+
+....
+SQL> select name||' '||group_number||' '||total_mb||' '||path||' '||header_status from v$asm_disk;
+NAME||''||GROUP_NUMBER||''||TOTAL_MB||''||PATH||''||HEADER_STATUS
+--------------------------------------------------------------------------------
+ 0 0 /dev/mapper/3600a098038303537762b47594c315863 FORMER
+ 0 0 /dev/mapper/3600a098038303537762b47594c315864 FORMER
+ 0 0 /dev/mapper/3600a098038303537762b47594c315861 FORMER
+ 0 0 /dev/mapper/3600a098038303537762b47594c315862 FORMER
+NEWDATA_0005 1 10240 /dev/mapper/3600a098038303537762b47594c315869 MEMBER
+NEWDATA_0007 1 10240 /dev/mapper/3600a098038303537762b47594c31586a MEMBER
+NEWDATA_0004 1 10240 /dev/mapper/3600a098038303537762b47594c31586b MEMBER
+NEWDATA_0006 1 10240 /dev/mapper/3600a098038303537762b47594c315858 MEMBER
+8 rows selected.
+....
+
+
+== Migración de LVM
+
+El procedimiento que se presenta aquí muestra los principios de una migración basada en LVM de un grupo de volúmenes llamado `datavg`. Los ejemplos se extraen del LVM de Linux, pero los principios se aplican por igual a AIX, HP-UX y VxVM. Los comandos precisos pueden variar.
+
+. Identifique las LUN actualmente en el `datavg` grupo de volúmenes.
++
+....
+[root@host1 ~]# pvdisplay -C | grep datavg
+  /dev/mapper/3600a098038303537762b47594c31582f datavg lvm2 a--  10.00g 10.00g
+  /dev/mapper/3600a098038303537762b47594c31585a datavg lvm2 a--  10.00g 10.00g
+  /dev/mapper/3600a098038303537762b47594c315859 datavg lvm2 a--  10.00g 10.00g
+  /dev/mapper/3600a098038303537762b47594c31586c datavg lvm2 a--  10.00g 10.00g
+....
+. Cree nuevas LUN del mismo tamaño físico o ligeramente mayor y definiéndolas como volúmenes físicos.
++
+....
+[root@host1 ~]# pvcreate /dev/mapper/3600a098038303537762b47594c315864
+  Physical volume "/dev/mapper/3600a098038303537762b47594c315864" successfully created
+[root@host1 ~]# pvcreate /dev/mapper/3600a098038303537762b47594c315863
+  Physical volume "/dev/mapper/3600a098038303537762b47594c315863" successfully created
+[root@host1 ~]# pvcreate /dev/mapper/3600a098038303537762b47594c315862
+  Physical volume "/dev/mapper/3600a098038303537762b47594c315862" successfully created
+[root@host1 ~]# pvcreate /dev/mapper/3600a098038303537762b47594c315861
+  Physical volume "/dev/mapper/3600a098038303537762b47594c315861" successfully created
+....
+. Añada los volúmenes nuevos al grupo de volúmenes.
++
+....
+[root@host1 tmp]# vgextend datavg /dev/mapper/3600a098038303537762b47594c315864
+  Volume group "datavg" successfully extended
+[root@host1 tmp]# vgextend datavg /dev/mapper/3600a098038303537762b47594c315863
+  Volume group "datavg" successfully extended
+[root@host1 tmp]# vgextend datavg /dev/mapper/3600a098038303537762b47594c315862
+  Volume group "datavg" successfully extended
+[root@host1 tmp]# vgextend datavg /dev/mapper/3600a098038303537762b47594c315861
+  Volume group "datavg" successfully extended
+....
+. Emita el `pvmove` Comando para reubicar las extensiones de cada LUN actual en la nueva LUN. La `- i [seconds]` argument supervisa el progreso de la operación.
++
+....
+[root@host1 tmp]# pvmove -i 10 /dev/mapper/3600a098038303537762b47594c31582f /dev/mapper/3600a098038303537762b47594c315864
+  /dev/mapper/3600a098038303537762b47594c31582f: Moved: 0.0%
+  /dev/mapper/3600a098038303537762b47594c31582f: Moved: 14.2%
+  /dev/mapper/3600a098038303537762b47594c31582f: Moved: 28.4%
+  /dev/mapper/3600a098038303537762b47594c31582f: Moved: 42.5%
+  /dev/mapper/3600a098038303537762b47594c31582f: Moved: 57.1%
+  /dev/mapper/3600a098038303537762b47594c31582f: Moved: 72.3%
+  /dev/mapper/3600a098038303537762b47594c31582f: Moved: 87.3%
+  /dev/mapper/3600a098038303537762b47594c31582f: Moved: 100.0%
+[root@host1 tmp]# pvmove -i 10 /dev/mapper/3600a098038303537762b47594c31585a /dev/mapper/3600a098038303537762b47594c315863
+  /dev/mapper/3600a098038303537762b47594c31585a: Moved: 0.0%
+  /dev/mapper/3600a098038303537762b47594c31585a: Moved: 14.9%
+  /dev/mapper/3600a098038303537762b47594c31585a: Moved: 29.9%
+  /dev/mapper/3600a098038303537762b47594c31585a: Moved: 44.8%
+  /dev/mapper/3600a098038303537762b47594c31585a: Moved: 60.1%
+  /dev/mapper/3600a098038303537762b47594c31585a: Moved: 75.8%
+  /dev/mapper/3600a098038303537762b47594c31585a: Moved: 90.9%
+  /dev/mapper/3600a098038303537762b47594c31585a: Moved: 100.0%
+[root@host1 tmp]# pvmove -i 10 /dev/mapper/3600a098038303537762b47594c315859 /dev/mapper/3600a098038303537762b47594c315862
+  /dev/mapper/3600a098038303537762b47594c315859: Moved: 0.0%
+  /dev/mapper/3600a098038303537762b47594c315859: Moved: 14.8%
+  /dev/mapper/3600a098038303537762b47594c315859: Moved: 29.8%
+  /dev/mapper/3600a098038303537762b47594c315859: Moved: 45.5%
+  /dev/mapper/3600a098038303537762b47594c315859: Moved: 61.1%
+  /dev/mapper/3600a098038303537762b47594c315859: Moved: 76.6%
+  /dev/mapper/3600a098038303537762b47594c315859: Moved: 91.7%
+  /dev/mapper/3600a098038303537762b47594c315859: Moved: 100.0%
+[root@host1 tmp]# pvmove -i 10 /dev/mapper/3600a098038303537762b47594c31586c /dev/mapper/3600a098038303537762b47594c315861
+  /dev/mapper/3600a098038303537762b47594c31586c: Moved: 0.0%
+  /dev/mapper/3600a098038303537762b47594c31586c: Moved: 15.0%
+  /dev/mapper/3600a098038303537762b47594c31586c: Moved: 30.4%
+  /dev/mapper/3600a098038303537762b47594c31586c: Moved: 46.0%
+  /dev/mapper/3600a098038303537762b47594c31586c: Moved: 61.4%
+  /dev/mapper/3600a098038303537762b47594c31586c: Moved: 77.2%
+  /dev/mapper/3600a098038303537762b47594c31586c: Moved: 92.3%
+  /dev/mapper/3600a098038303537762b47594c31586c: Moved: 100.0%
+....
+. Cuando finalice este proceso, borre las LUN antiguas del grupo de volúmenes mediante el `vgreduce` comando. Si es correcto, la LUN ahora se puede quitar de forma segura del sistema.
++
+....
+[root@host1 tmp]# vgreduce datavg /dev/mapper/3600a098038303537762b47594c31582f
+Removed "/dev/mapper/3600a098038303537762b47594c31582f" from volume group "datavg"
+[root@host1 tmp]# vgreduce datavg /dev/mapper/3600a098038303537762b47594c31585a
+  Removed "/dev/mapper/3600a098038303537762b47594c31585a" from volume group "datavg"
+[root@host1 tmp]# vgreduce datavg /dev/mapper/3600a098038303537762b47594c315859
+  Removed "/dev/mapper/3600a098038303537762b47594c315859" from volume group "datavg"
+[root@host1 tmp]# vgreduce datavg /dev/mapper/3600a098038303537762b47594c31586c
+  Removed "/dev/mapper/3600a098038303537762b47594c31586c" from volume group "datavg"
+....
+

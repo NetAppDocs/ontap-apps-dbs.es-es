@@ -1,0 +1,28 @@
+---
+sidebar: sidebar 
+permalink: postgres/postgres-native-dp.html 
+keywords: PostgreSQL,database,postgres 
+summary: Bases de datos PostgreSQL en ONTAP 
+---
+= Protección de datos nativa
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Uno de los principales aspectos del diseño del almacenamiento es permitir la protección para volúmenes PostgreSQL. Los clientes pueden proteger sus bases de datos PostgreSQL mediante el método de volcado o mediante copias de seguridad del sistema de archivos. Esta sección explica los diferentes enfoques para realizar una copia de seguridad de bases de datos individuales o de todo el cluster.
+
+Existen tres enfoques para respaldar los datos de PostgreSQL:
+
+* Volcado de SQL Server
+* Backup de nivel de sistema de archivos
+* Archivado continuo
+
+
+La idea detrás del método de volcado de SQL Server es generar un archivo con comandos de SQL Server que, cuando se devuelve al servidor, pueda volver a crear la base de datos como estaba en el momento del volcado. PostgreSQL proporciona los programas de utilidad `pg_dump` y.. `pg_dump_all` para crear backup individual y a nivel de clúster. Estos volcados son lógicos y no contienen suficiente información para ser utilizada por WAL Replay.
+
+Una estrategia de backup alternativa consiste en utilizar copias de seguridad a nivel de sistema de archivos, en las que los administradores copian directamente los archivos que PostgreSQL utiliza para almacenar los datos en la base de datos. Este método se realiza en modo offline: La base de datos o el cluster deben cerrarse. Otra alternativa es usar `pg_basebackup` Para ejecutar la copia de seguridad de transmisión en caliente de la base de datos PostgreSQL.

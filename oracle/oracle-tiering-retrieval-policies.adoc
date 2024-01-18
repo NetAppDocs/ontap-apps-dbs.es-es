@@ -1,0 +1,55 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-tiering-retrieval-policies.html 
+keywords: tiering, FabricPool 
+summary: Practique las políticas de recuperación de niveles 
+---
+= Políticas de recuperación
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las políticas de organización en niveles controlan qué bloques de la base de datos de Oracle se organizan en niveles desde el nivel de rendimiento al nivel de capacidad. Las políticas de recuperación controlan lo que sucede cuando se lee un bloque que se ha organizado en niveles.
+
+
+
+== Predeterminado
+
+Inicialmente, todos los volúmenes FabricPool se establecen en `default`, que significa que el comportamiento está controlado por la `política de recuperación de nubes. `El comportamiento exacto depende de la política de organización en niveles utilizada.
+
+* `auto`– solo recuperar datos de lectura aleatoria
+* `snapshot-only`– recuperar todos los datos de lectura secuencial o aleatoria
+* `none`– recuperar todos los datos de lectura secuencial o aleatoria
+* `all`– no recuperar datos del nivel de capacidad
+
+
+
+
+== En lectura
+
+Ajuste `cloud-retrieval-policy` en la lectura sobrescribe el comportamiento predeterminado, de modo que la lectura de cualquier dato por niveles provoca que esos datos se devuelvan al nivel de rendimiento.
+
+Por ejemplo, es posible que un volumen se haya usado ligeramente durante mucho tiempo en `auto` la política de organización en niveles y la mayoría de los bloques están ahora organizados en niveles.
+
+Si un cambio inesperado en las necesidades empresariales requirió que algunos de los datos se escanearan repetidamente para preparar un determinado informe, puede ser conveniente cambiar el `cloud-retrieval-policy` para `on-read` para garantizar que todos los datos que se leen se devuelven al nivel de rendimiento, incluidos datos de lectura secuencial y aleatoria. Esto mejoraría el rendimiento de I/O secuenciales en el volumen.
+
+
+
+== Promocione
+
+El comportamiento de la política de promoción depende de la política de organización en niveles. Si la política de organización en niveles es `auto`, y, a continuación, ajuste el `cloud-retrieval-policy `to `promote` devuelve todos los bloques del nivel de capacidad en el siguiente análisis de organización en niveles.
+
+Si la política de organización en niveles es `snapshot-only`, entonces, los únicos bloques que se devuelven son los bloques asociados al sistema de archivos activo. Normalmente, esto no tendría ningún efecto porque los únicos bloques organizados en niveles en `snapshot-only` la política sería bloques asociados exclusivamente a las instantáneas. No habría bloques por niveles en el sistema de archivos activo.
+
+Sin embargo, si un SnapRestore de volumen o una operación de clonado de archivos se restauraron los datos de un volumen desde una copia Snapshot, es posible que algunos de los bloques organizados en niveles debido a que solo estaban asociados a snapshots ahora sean requeridos por el sistema de archivos activo. Puede ser conveniente cambiar temporalmente el `cloud-retrieval-policy` política a. `promote` para recuperar rápidamente todos los bloques necesarios localmente.
+
+
+
+== Nunca
+
+No recupere bloques del nivel de capacidad.

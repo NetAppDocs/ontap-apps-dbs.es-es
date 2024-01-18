@@ -1,0 +1,33 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-srm-additional-information.html 
+keywords: vmware, site, recovery manager, vsrm, hybrid, cloud, additional, information 
+summary: Para obtener más información sobre la información descrita en este documento, consulte los siguientes documentos o sitios web. 
+---
+= Información adicional
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Si quiere más información sobre el contenido de este documento, consulte los siguientes documentos o sitios web:
+
+* TR-4597: VMware vSphere para ONTAP
+https://docs.netapp.com/us-en/netapp-solutions/virtualization/vsphere_ontap_ontap_for_vsphere.html["https://docs.netapp.com/us-en/netapp-solutions/virtualization/vsphere_ontap_ontap_for_vsphere.html"^]
+* TR-4400: VMware vSphere Virtual Volumes con ONTAP
+https://www.netapp.com/pdf.html?item=/media/13555-tr4400.pdf["https://www.netapp.com/pdf.html?item=/media/13555-tr4400.pdf"^]
+* TR-4015 Guía de mejores prácticas para la configuración de SnapMirror para ONTAP 9
+https://www.netapp.com/media/17229-tr4015.pdf?v=127202175503P[]
+* RBAC User Creator para ONTAP
+https://mysupport.netapp.com/site/tools/tool-eula/rbac["https://mysupport.netapp.com/site/tools/tool-eula/rbac"^]
+* Herramientas de ONTAP para recursos de VMware vSphere
+https://mysupport.netapp.com/site/products/all/details/otv/docsandkb-tab["https://mysupport.netapp.com/site/products/all/details/otv/docsandkb-tab"^]
+* Documentación de VMware Site Recovery Manager
+https://docs.vmware.com/en/Site-Recovery-Manager/index.html["https://docs.vmware.com/en/Site-Recovery-Manager/index.html"^]
+
+
+Consulte la http://mysupport.netapp.com/matrix["Herramienta de matriz de interoperabilidad (IMT)"^] En el sitio de soporte de NetApp, con el fin de validar que las versiones exactas del producto y las funciones descritas en este documento son compatibles con su entorno concreto. La cabina IMT de NetApp define los componentes y las versiones del producto que pueden utilizarse para crear configuraciones que sean compatibles con NetApp. Los resultados específicos dependen de la instalación que realice cada cliente de acuerdo con las especificaciones publicadas.

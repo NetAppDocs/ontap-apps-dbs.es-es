@@ -5,56 +5,56 @@ entries:
 - title: VMware vSphere con ONTAP
   entries:
   - title: Descripción general
-    url: "/vmware/vsphere/overview.html"
+    url: "/vmware/vmware-vsphere-overview.html"
   - title: Almacenamiento unificado
-    url: "/vmware/vsphere/unified.html"
+    url: "/vmware/vmware-vsphere-unified.html"
   - title: Herramientas de virtualización
-    url: "/vmware/vsphere/vtools.html"
+    url: "/vmware/vmware-vsphere-vtools.html"
   - title: Gestión basada en volúmenes virtuales y políticas de almacenamiento
-    url: "/vmware/vsphere/vvols_and_spbm.html"
+    url: "/vmware/vmware-vsphere-vvols_and_spbm.html"
   - title: Almacenes de datos y protocolos
-    url: "/vmware/vsphere/datastores.html"
+    url: "/vmware/vmware-vsphere-datastores.html"
   - title: Configuración de red
-    url: "/vmware/vsphere/network.html"
+    url: "/vmware/vmware-vsphere-network.html"
   - title: Clonado
-    url: "/vmware/vsphere/cloning.html"
+    url: "/vmware/vmware-vsphere-cloning.html"
   - title: Protección de datos
-    url: "/vmware/vsphere/dp.html"
+    url: "/vmware/vmware-vsphere-dp.html"
   - title: Calidad de servicio
-    url: "/vmware/vsphere/qos.html"
+    url: "/vmware/vmware-vsphere-qos.html"
   - title: Gestión basada en la política de almacenamiento
-    url: "/vmware/vsphere/policy-and-vvols.html"
+    url: "/vmware/vmware-vsphere-policy-and-vvols.html"
   - title: Planificador de recursos distribuidos de almacenamiento de VMware
-    url: "/vmware/vsphere/sdrs.html"
+    url: "/vmware/vmware-vsphere-sdrs.html"
   - title: Configuración recomendada
-    url: "/vmware/vsphere/settings.html"
+    url: "/vmware/vmware-vsphere-settings.html"
 - title: Virtual Volumes (vVols) con ONTAP
   entries:
   - title: Descripción general
-    url: "/vmware/vvols/overview.html"
+    url: "/vmware/vmware-vvols-overview.html"
   - title: Usar vVols con ONTAP
-    url: "/vmware/vvols/ontap.html"
+    url: "/vmware/vmware-vvols-ontap.html"
   - title: Implementar el almacenamiento de vVols
-    url: "/vmware/vvols/deploy.html"
+    url: "/vmware/vmware-vvols-deploy.html"
   - title: Protección de vVols
-    url: "/vmware/vvols/protect.html"
+    url: "/vmware/vmware-vvols-protect.html"
   - title: Resolución de problemas
-    url: "/vmware/vvols/resources.html"
+    url: "/vmware/vmware-vvols-resources.html"
 - title: VMware Site Recovery Manager con ONTAP
   entries:
   - title: Descripción general
-    url: "/vmware/srm/overview.html"
+    url: "/vmware/vmware-srm-overview.html"
   - title: Mejores prácticas de puesta en marcha
-    url: "/vmware/srm/deployment_best_practices.html"
+    url: "/vmware/vmware-srm-deployment_best_practices.html"
   - title: Mejores prácticas operativas
-    url: "/vmware/srm/operational_best_practices.html"
+    url: "/vmware/vmware-srm-operational_best_practices.html"
   - title: Topologías de replicación
-    url: "/vmware/srm/replication_topologies.html"
+    url: "/vmware/vmware-srm-replication_topologies.html"
   - title: Solución de problemas de SRM al utilizar la replicación de vVols
-    url: "/vmware/srm/appendix_a__troubleshooting_srm_when_using_vvols_replication.html"
+    url: "/vmware/vmware-srm-vvol-troubleshooting.html"
 - title: Seguridad de los productos
   entries:
   - title: Herramientas de ONTAP para VMware vSphere
-    url: "/vmware/security/tools.html"
+    url: "/vmware/vmware-security-tools.html"
   - title: Plugin de SnapCenter para VMware vSphere
-    url: "/vmware/security/snapcenter.html"
+    url: "/vmware/vmware-security-snapcenter.html"

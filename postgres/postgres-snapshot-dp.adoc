@@ -1,0 +1,33 @@
+---
+sidebar: sidebar 
+permalink: postgres/postgres-snapshot-dp.html 
+keywords: PostgreSQL,database,postgres 
+summary: Bases de datos PostgreSQL en ONTAP 
+---
+= Snapshot
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las copias de seguridad basadas en instantáneas con PostgreSQL requieren la configuración de instantáneas para archivos de datos, archivos WAL y archivos WAL archivados para proporcionar una recuperación completa o puntual.
+
+Para las bases de datos PostgreSQL, el tiempo promedio de backup con snapshots es de unos pocos segundos a unos pocos minutos. Esta velocidad de backup es entre 60 y 100 veces más rápida que `pg_basebackup` y otros enfoques de backup basados en sistemas de archivos.
+
+Las copias Snapshot en el almacenamiento de NetApp pueden ser coherentes con los fallos y con las aplicaciones. Se crea una copia Snapshot coherente con los fallos en el almacenamiento sin desactivar la base de datos, mientras que se crea una copia Snapshot coherente con la aplicación mientras la base de datos está en modo de backup. NetApp también garantiza que las copias Snapshot posteriores sean backups permanentes para ahorrar en almacenamiento y mejorar la eficiencia de la red.
+
+Como las copias Snapshot son rápidas y no afectan al rendimiento del sistema, puede programar varias copias Snapshot diariamente en lugar de crear un único backup diario, como ocurre con otra tecnología de backup en streaming. Cuando es necesaria una operación de restauración y recuperación, el tiempo de inactividad del sistema se reduce gracias a dos funciones clave:
+
+* La tecnología de recuperación de datos de NetApp SnapRestore significa que la operación de restauración se ejecuta en segundos.
+* Los objetivos de punto de recuperación agresivos (RPO) significan que es necesario aplicar menos registros de base de datos y que también se acelera la nueva recuperación.
+
+
+Para realizar el backup de PostgreSQL, debe asegurarse de que los volúmenes de datos estén protegidos simultáneamente con WAL (grupo de consistencia) y los registros archivados. Mientras utiliza la tecnología Snapshot para copiar archivos WAL, asegúrese de ejecutar `pg_stop` Para vaciar todas las entradas de WAL que se deben archivar. Si vacíe las entradas DE WAL durante la restauración, solo tendrá que detener la base de datos, desmontar o eliminar el directorio de datos existente, y realizar una operación de SnapRestore en el almacenamiento. Una vez finalizada la restauración, puede montar el sistema y devolverlo a su estado actual. Para la recuperación point-in-time, también puede restaurar WAL y archive logs; luego PostgreSQL decide el punto más consistente y lo recupera automáticamente.
+
+Los grupos de coherencia son una función en ONTAP y se recomienda cuando hay varios volúmenes montados en una sola instancia o en una base de datos con varios espacios de tabla. Una snapshot de grupo de coherencia garantiza que todos los volúmenes estén agrupados y protegidos. Un grupo de consistencia puede gestionarse de manera eficiente desde ONTAP System Manager, e incluso puede clonarlo para crear una copia de instancia de una base de datos con fines de prueba o desarrollo.
+
+Para obtener más información sobre los grupos de consistencia, consulte link:../../ontap/consistency-groups/index.html["Información general de los grupos de consistencia NetApp"].

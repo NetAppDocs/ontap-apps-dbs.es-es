@@ -1,0 +1,71 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-dp-online-backup.html 
+keywords: oracle, data protection, hot backup 
+summary: Backups y recuperación de datos basados en snapshots de Oracle 
+---
+= Backups en línea de Oracle
+:allow-uri-read: 
+
+
+[role="lead"]
+Se necesitan dos conjuntos de datos para proteger y recuperar una base de datos de Oracle en modo de backup. Tenga en cuenta que esta no es la única opción de copia de seguridad de Oracle, pero es la más común.
+
+* Instantánea de los archivos de datos en modo de copia de seguridad
+* Los registros de archivos creados mientras los archivos de datos estaban en modo de backup
+
+
+Si se necesita una recuperación completa, incluidas todas las transacciones confirmadas, se requiere un tercer elemento:
+
+* Juego de redo logs actuales
+
+
+Existen varias formas de impulsar la recuperación de un backup en línea. Muchos clientes restauran snapshots mediante la interfaz de línea de comandos de ONTAP y, a continuación, usando Oracle RMAN o sqlplus para completar la recuperación. Esto es especialmente habitual en entornos de producción de gran tamaño en los que la probabilidad y frecuencia de las restauraciones de bases de datos es extremadamente baja y cualquier procedimiento de restauración lo gestiona un administrador de bases de datos cualificado. Para obtener una automatización completa, las soluciones como NetApp SnapCenter incluyen un complemento de Oracle con interfaces gráficas y de línea de comandos.
+
+Algunos clientes a gran escala han adoptado un enfoque más simple mediante la configuración de secuencias de comandos básicas en los hosts para colocar las bases de datos en modo de backup en un momento específico de preparación para una copia Snapshot programada. Por ejemplo, programe el comando `alter database begin backup` a las 23:58, `alter database end backup` a las 00:02, y después programe copias snapshot directamente en el sistema de almacenamiento a medianoche. El resultado es una estrategia de backup sencilla y altamente escalable que no requiere software ni licencias externas.
+
+
+
+== Distribución de datos
+
+El diseño más sencillo es aislar los archivos de datos en uno o varios volúmenes dedicados. No deben estar contaminados por ningún otro tipo de archivo. De este modo, se garantiza que los volúmenes de archivos de datos puedan restaurarse rápidamente mediante una operación SnapRestore sin destruir un registro de recuperación, un archivo de control o un archivo importante.
+
+SAN tiene requisitos similares para aislamiento de archivos de datos en volúmenes dedicados. Con un sistema operativo como Microsoft Windows, un único volumen puede contener varios LUN de archivos de datos, cada uno con un sistema de archivos NTFS. Con otros sistemas operativos, generalmente hay un administrador de volúmenes lógicos. Por ejemplo, con Oracle ASM, la opción más sencilla sería confinar los LUN de un grupo de discos ASM en un único volumen del que se pueda incluir y restaurar como unidad en un backup. Si se necesitan volúmenes adicionales por motivos de rendimiento o gestión de capacidad, crear un grupo de discos adicional en el nuevo volumen simplifica la gestión.
+
+Si se siguen estas directrices, se pueden programar Snapshot directamente en el sistema de almacenamiento sin requisitos para realizar una snapshot de grupo de coherencia. El motivo es que las copias de seguridad de Oracle no necesitan que se realice una copia de seguridad de los archivos de datos al mismo tiempo. El procedimiento de backup online se diseñó para permitir que los archivos de datos sigan actualizándose a medida que se transmiten lentamente a la cinta durante horas.
+
+Se produce una complicación en situaciones como el uso de un grupo de discos de ASM que se distribuye entre volúmenes. En estos casos, se debe realizar una cg-snapshot para garantizar que los metadatos de ASM sean coherentes en todos los volúmenes constituyentes.
+
+*Precaución:* Verifique que el ASM `spfile` y.. `passwd` los archivos no están en el grupo de discos que aloja los archivos de datos. Esto interfiere con la capacidad de restaurar selectivamente archivos de datos y solo archivos de datos.
+
+
+
+== Procedimiento de recuperación local: NFS
+
+Este procedimiento se puede realizar manualmente o a través de una aplicación como SnapCenter. El procedimiento básico es el siguiente:
+
+. Cierre la base de datos.
+. Recupere los volúmenes del archivo de datos en la instantánea inmediatamente antes del punto de restauración deseado.
+. Reproduzca los archive logs en el punto deseado.
+. Reproduzca los redo logs actuales si desea una recuperación completa.
+
+
+En este procedimiento se asume que los archive logs deseados siguen presentes en el sistema de archivos activo. De lo contrario, se deben restaurar los archive logs o se puede dirigir rman/sqlplus a los datos del directorio de instantáneas.
+
+Además, para bases de datos más pequeñas, un usuario final puede recuperar archivos de datos directamente desde `.snapshot` directorio sin la ayuda de herramientas de automatización o administradores del almacenamiento para ejecutar un `snaprestore` comando.
+
+
+
+== Procedimiento de recuperación local: San
+
+Este procedimiento se puede realizar manualmente o a través de una aplicación como SnapCenter. El procedimiento básico es el siguiente:
+
+. Cierre la base de datos.
+. Desactive los grupos de discos que alojan los archivos de datos. El procedimiento varía en función del gestor de volúmenes lógico elegido. Con ASM, el proceso requiere desmontar el grupo de discos. Con Linux, los sistemas de archivos deben desmontarse y los volúmenes lógicos y los grupos de volúmenes deben desactivarse. El objetivo es detener todas las actualizaciones en el grupo de volúmenes objetivo que se va a restaurar.
+. Restaure los grupos de discos de archivos de datos en la instantánea inmediatamente antes del punto de restauración deseado.
+. Vuelva a activar los grupos de discos recién restaurados.
+. Reproduzca los archive logs en el punto deseado.
+. Vuelva a reproducir todos los redo logs si desea realizar una recuperación completa.
+
+
+En este procedimiento se asume que los archive logs deseados siguen presentes en el sistema de archivos activo. Si no lo son, los registros de archivos se deben restaurar desconectando las LUN del registro de archivos y ejecutando una restauración. Este es también un ejemplo en el que la división de archive logs en volúmenes dedicados es útil. Si los registros de archivos comparten un grupo de volúmenes con registros de recuperación, se deben copiar en otro lugar los registros de recuperación antes de restaurar el conjunto general de LUN. Este paso evita la pérdida de las transacciones registradas finales.

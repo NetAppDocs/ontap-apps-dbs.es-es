@@ -1,0 +1,96 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-host-config-hp-ux.html 
+keywords: oracle, database, ontap, hp-ux 
+summary: Oracle en ONTAP usando HP-UX 
+---
+= HP-UX
+:allow-uri-read: 
+
+
+[role="lead"]
+Temas de configuración específicos del sistema operativo HP-UX.
+
+
+
+== Opciones de montaje NFS de HP-UX
+
+En la siguiente tabla se enumeran las opciones de montaje de HP-UX NFS para una única instancia.
+
+|===
+| Tipo de archivo | Opciones de montaje 
+
+
+| Directorio Raíz de ADR | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+suid` 
+
+
+| Archivos de control
+Archivos de datos
+Rehacer registros | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,forcedirectio, nointr,suid` 
+
+
+| `ORACLE_HOME` | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+suid` 
+|===
+En la siguiente tabla se enumeran las opciones de montaje de HP-UX NFS para RAC.
+
+|===
+| Tipo de archivo | Opciones de montaje 
+
+
+| Directorio Raíz de ADR | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+noac,suid` 
+
+
+| Archivos de control
+Archivos de datos
+Rehacer registros | `rw, bg,hard, [vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+nointr,noac,forcedirectio,suid` 
+
+
+| CRS/votación | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+nointr,noac,
+forcedirectio,suid` 
+
+
+| Específico `ORACLE_HOME` | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+suid` 
+
+
+| Compartido `ORACLE_HOME` | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+nointr,noac,suid` 
+|===
+La diferencia principal entre las opciones de montaje de instancia única y RAC es la adición de `noac` y.. `forcedirectio` a las opciones de montaje. Esta adición tiene el efecto de deshabilitar el almacenamiento en caché del sistema operativo del host, lo que permite que todas las instancias del clúster RAC tengan una vista coherente del estado de los datos. Aunque utilice el `init.ora` parámetro `filesystemio_options=setall` tiene el mismo efecto de deshabilitar el almacenamiento en caché de host, sigue siendo necesario utilizarlo `noac` y.. `forcedirectio`.
+
+La razón `noac` es necesario para el uso compartido `ORACLE_HOME` Despliegues es para facilitar la coherencia de archivos como archivos de contraseñas de Oracle y archivos spfiles. Si cada instancia de un clúster de RAC tiene un dedicado `ORACLE_HOME`, este parámetro no es necesario.
+
+
+
+== Opciones de montaje HP-UX VxFS
+
+Utilice las siguientes opciones de montaje para sistemas de archivos que alojan binarios de Oracle:
+
+....
+delaylog,nodatainlog
+....
+Utilice las siguientes opciones de montaje para sistemas de archivos que contienen archivos de datos, redo logs, archive logs y archivos de control en los que la versión de HP-UX no admite E/S simultáneas:
+
+....
+nodatainlog,mincache=direct,convosync=direct
+....
+Cuando se admiten E/S simultáneas (VxFS 5.0.1 y posteriores, o con ServiceGuard Storage Management Suite), utilice estas opciones de montaje para sistemas de archivos que contengan archivos de datos, redo logs, archive logs y archivos de control:
+
+....
+delaylog,cio
+....
+
+NOTE: El parámetro `db_file_multiblock_read_count` Es especialmente crítico en entornos VxFS. Oracle recomienda que este parámetro permanezca sin definir en Oracle 10g R1 y posteriores a menos que se indique lo contrario específicamente. El valor por defecto con un tamaño de bloque de Oracle 8KB es 128. Si el valor de este parámetro se fuerza a 16 o menos, quite el `convosync=direct` Opción de montaje porque puede dañar el rendimiento de I/O secuencial. Este paso daña otros aspectos del rendimiento y solo debe tomarse si el valor de `db_file_multiblock_read_count` debe cambiarse a partir del valor predeterminado.

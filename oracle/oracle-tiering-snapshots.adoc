@@ -1,0 +1,33 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-tiering-snapshots.html 
+keywords: tiering, fabricpool 
+summary: Organización en niveles de copias Snapshot de Oracle 
+---
+= Organización en niveles de copias Snapshot de Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La versión inicial de FabricPool se dirigía al caso de uso de backup. El único tipo de bloques que se podía organizar en niveles eran bloques que ya no estaban asociados a los datos del sistema de archivos activo. Por lo tanto, solo se pueden mover los bloques de datos de Snapshot al nivel de capacidad. Esta sigue siendo una de las opciones de organización en niveles más seguras cuando hay que garantizar que el rendimiento nunca se vea afectado.
+
+
+
+== Políticas: Snapshots locales
+
+Existen dos opciones para organizar en niveles los bloques Snapshot inactivos en el nivel de capacidad. En primer lugar, el `snapshot-only` la política solo apunta a los bloques de instantáneas. Aunque la `auto` la política incluye el `snapshot-only` bloques, también organiza en niveles bloques del sistema de archivos activo. Esto podría no ser deseable.
+
+La `tiering-minimum-cooling-days` el valor se debe establecer en un período de tiempo que permita que los datos que pueden necesitarse durante una restauración estén disponibles en el nivel de rendimiento. Por ejemplo, la mayoría de los escenarios de restauración de una base de datos de producción crucial incluyen un punto de restauración en algún momento en los pocos días anteriores. Ajuste A `tiering-minimum-cooling-days` el valor de 3 garantizaría que cualquier restauración del archivo da como resultado un archivo que proporciona un rendimiento máximo inmediatamente. Todos los bloques de los archivos activos se encuentran presentes en un almacenamiento rápido sin necesidad de recuperarlos del nivel de capacidad.
+
+
+
+== Políticas: Snapshots replicadas
+
+Un snapshot que se replica con SnapMirror o SnapVault solo se usa para la recuperación deberá utilizar FabricPool `all` política. Con esta política, los metadatos se replican, pero todos los bloques de datos se envían inmediatamente al nivel de capacidad, lo que genera un rendimiento máximo. La mayoría de los procesos de recuperación implican una I/O secuencial, que es inherentemente eficiente. El tiempo de recuperación del almacén de objetos se debe evaluar, pero en una arquitectura bien diseñada, no es necesario que este proceso de recuperación sea significativamente más lento que la recuperación de datos locales.
+
+Si también se van a usar los datos replicados para la clonación, el `auto` la política es más apropiada, con un `tiering-minimum-cooling-days` valor que abarca los datos que se espera que se utilicen regularmente en un entorno de clonación. Por ejemplo, el conjunto de trabajo activo de una base de datos puede incluir datos leídos o escritos en los tres días anteriores, pero también podría incluir otros 6 meses de datos históricos. Si es así, entonces el `auto` En el destino de SnapMirror, el conjunto de trabajo está disponible en el nivel de rendimiento.

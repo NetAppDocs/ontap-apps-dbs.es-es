@@ -1,0 +1,82 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-migration-planning.html 
+keywords: migration, oracle 
+summary: Planificación de la migración de Oracle 
+---
+= Una planificación de migración irregular
+:allow-uri-read: 
+
+
+[role="lead"]
+La migración de datos de Oracle puede producirse en uno de tres niveles: La base de datos, el host o la cabina de almacenamiento.
+
+Las diferencias residen en qué componente de la solución general es responsable del movimiento de datos: La base de datos, el sistema operativo del host o el sistema de almacenamiento.
+
+La siguiente figura muestra un ejemplo de los niveles de migración y el flujo de datos. En el caso de la migración a nivel de base de datos, los datos se mueven desde el sistema de almacenamiento original a través de las capas de base de datos y host al nuevo entorno. La migración al nivel de host es similar, pero los datos no pasan a través de la capa de aplicaciones y, en su lugar, se escriben en la nueva ubicación mediante procesos de host. Por último, con la migración a nivel del almacenamiento, una cabina como un sistema NetApp FAS es responsable del movimiento de datos.
+
+image:levels.png["Error: Falta la imagen gráfica"]
+
+Una migración a nivel de base de datos generalmente hace referencia al uso del envío de logs de Oracle a través de una base de datos en espera para completar una migración en la capa de Oracle. Las migraciones a nivel de host se realizan utilizando la capacidad nativa de la configuración del sistema operativo host. Esta configuración incluye operaciones de copia de archivos mediante comandos como cp, tar y Oracle Recovery Manager (RMAN) o mediante un gestor de volúmenes lógicos (LVM) para reubicar los bytes subyacentes de un sistema de archivos. Oracle Automatic Storage Management (ASM) se clasifica como una capacidad de nivel de host porque se ejecuta por debajo del nivel de la aplicación de base de datos. ASM sustituye al administrador de volúmenes lógicos habitual en un host. Por último, los datos pueden migrarse a nivel de cabina de almacenamiento, lo cual significa que se encuentra debajo del nivel del sistema operativo.
+
+
+
+== Consideraciones DE PLANIFICACIÓN
+
+La mejor opción para la migración depende de una combinación de factores, como la escala del entorno que se va a migrar, la necesidad de evitar el tiempo de inactividad y el esfuerzo general requerido para realizar la migración. Obviamente, las bases de datos grandes requieren más tiempo y esfuerzo para la migración, pero la complejidad de estas migraciones es mínima. Las bases de datos pequeñas se pueden migrar rápidamente, pero, si hay miles que migrar, la escala del esfuerzo puede crear complicaciones. Por último, cuanto mayor sea la base de datos, más probabilidades hay de que sea crítica para el negocio, lo cual da lugar a la necesidad de minimizar los tiempos de inactividad a la vez que se conserva una ruta de back-out.
+
+Aquí se tratan algunas de las consideraciones para planificar una estrategia de migración.
+
+
+
+== Tamaño de datos
+
+Los tamaños de las bases de datos que se migrarán afectan obviamente a la planificación de la migración, aunque el tamaño no afecta necesariamente al tiempo de transición. Cuando es necesario migrar una gran cantidad de datos, la principal cuestión es el ancho de banda. Las operaciones de copia suelen realizarse con I/O secuenciales eficientes Según estimaciones conservadoras, asuma el aprovechamiento del 50% del ancho de banda de red disponible para operaciones de copia. Por ejemplo, un puerto FC de 8GB Gb puede transferir aproximadamente 800Mbps Gb en teoría. Suponiendo una utilización del 50%, se puede copiar una base de datos a una velocidad de aproximadamente 400Mbps KB. Por lo tanto, una base de datos de 10TB TB se puede copiar en unas siete horas a esta velocidad.
+
+La migración a distancias más largas generalmente requiere un enfoque más creativo, como el proceso de envío de registros explicado en link:oracle-migration-datafile-move.html["Movimiento de archivos de datos en línea"]. Las redes IP de larga distancia rara vez tienen ancho de banda en cualquier lugar cercano a las velocidades LAN o SAN. En un caso, NetApp ayudó en la migración a larga distancia de una base de datos de 220TB con tasas muy altas de generación de registros de archivo. El enfoque elegido para la transferencia de datos era el envío diario de cintas, ya que este método ofrecía el máximo ancho de banda posible.
+
+
+
+== Recuento de bases de datos
+
+En muchos casos, el problema de mover una gran cantidad de datos no es el tamaño de los datos, sino la complejidad de la configuración que soporta la base de datos. No basta con saber que deben migrarse 50TB TB de bases de datos. Podría ser una única base de datos de misión crítica de 50TB TB, una colección de 4, 000 bases de datos heredadas o una combinación de datos de producción y no de producción. En algunos casos, gran parte de los datos se componen de clones de una base de datos de origen. Estos clones no tienen que migrarse de ninguna manera, ya que pueden volver a crearse fácilmente, especialmente cuando la nueva arquitectura está diseñada para aprovechar los volúmenes FlexClone de NetApp.
+
+Para la planificación de la migración, hay que entender cuántas bases de datos están incluidas y cómo deben priorizarse. A medida que aumenta el número de bases de datos, la opción de migración preferida tiende a ser más baja y más baja en la pila. Por ejemplo, la copia de una única base de datos se puede realizar fácilmente con RMAN y una interrupción breve. Es la replicación a nivel de host.
+
+Si hay bases de datos 50, es posible que sea más fácil evitar configurar una nueva estructura del sistema de archivos para recibir una copia de RMAN y, en su lugar, mover los datos. Este proceso puede realizarse aprovechando la migración de LVM basada en host para reubicar datos de las LUN antiguas a nuevas LUN. De este modo, se traslada la responsabilidad del equipo del administrador de la base de datos (DBA) al equipo del sistema operativo y, como resultado, los datos se migran de forma transparente con respecto a la base de datos. La configuración del sistema de archivos no cambia.
+
+Por último, si es necesario migrar 500 bases de datos en 200 servidores, pueden utilizarse opciones basadas en almacenamiento como la funcionalidad Importación de LUN externas (FLI) de ONTAP para realizar una migración directa de las LUN.
+
+
+
+== Vuelva a crear los requisitos de la arquitectura
+
+Normalmente, el diseño de un archivo de base de datos debe modificarse para aprovechar las funciones de la nueva cabina de almacenamiento; sin embargo, esto no siempre es así. Por ejemplo, las funciones de las cabinas all-flash EF-Series se dirigen principalmente al rendimiento SAN y la fiabilidad de SAN. En la mayoría de los casos, las bases de datos pueden migrarse a una cabina EF-Series sin tener en cuenta ninguna necesidad de distribución de los datos. Los únicos requisitos son el alto nivel de IOPS, la baja latencia y la sólida fiabilidad. Aunque existen prácticas recomendadas en relación con factores como la configuración de RAID o los pools de discos dinámicos, los proyectos EF-Series rara vez requieren cambios significativos en la arquitectura general de almacenamiento para aprovechar estas funciones.
+
+Por el contrario, la migración a ONTAP generalmente requiere tener en cuenta el diseño de la base de datos para asegurarse de que la configuración final aporta el máximo valor. Por sí mismo, ONTAP ofrece muchas funciones para un entorno de base de datos, incluso sin ningún esfuerzo de arquitectura específico. Y lo que es más importante, ofrece la capacidad de migrar sin interrupciones a un nuevo hardware cuando el hardware actual llega al final de su vida útil. En términos generales, una migración a ONTAP es la última migración que se debería realizar. Se actualiza el hardware subsiguiente in situ y los datos se migran a los nuevos medios de forma no disruptiva.
+
+Con un poco de planificación, aún hay más beneficios disponibles. Las consideraciones más importantes rodean el uso de instantáneas. Las copias Snapshot son la base para realizar backups, restauraciones de datos y operaciones de clonado casi instantáneas. Como ejemplo del potencial de las copias Snapshot, el uso más grande conocido es con una única base de datos de 996TB TB que se ejecuta en unas 250 LUN en 6 controladoras. Puede realizarse backup de esta base de datos en 2 minutos, restaurarse en 2 minutos y clonarse en 15 minutos. Entre otras ventajas, se incluyen la capacidad de mover datos por el clúster en respuesta a los cambios en la carga de trabajo y la aplicación de controles de calidad de servicio para proporcionar un buen rendimiento constante en un entorno multibase de datos.
+
+Tecnologías como los controles de calidad de servicio, la reubicación de datos, las snapshots y el clonado funcionan en prácticamente cualquier configuración. Sin embargo, generalmente se requiere algo de pensamiento para maximizar los beneficios. En algunos casos, la distribución del almacenamiento de la base de datos puede requerir cambios en el diseño para maximizar la inversión en la nueva cabina de almacenamiento. Estos cambios de diseño pueden afectar a la estrategia de migración, ya que las migraciones basadas en host o basadas en almacenamiento replican la distribución de datos original. Podrían ser necesarios pasos adicionales para completar la migración y ofrecer una distribución de datos optimizada para ONTAP. Los procedimientos que se muestran en la link:oracle-migration-procedures-overview.html["Descripción general de los procedimientos de migración de Oracle"] y más tarde, mostrar algunos de los métodos no solo para migrar una base de datos, sino para migrarla al diseño final óptimo con el mínimo esfuerzo.
+
+
+
+== Tiempo de transición
+
+Se debe determinar la interrupción máxima permitida del servicio durante la transición. Es un error común asumir que todo el proceso de migración provoca interrupciones. Muchas tareas pueden completarse antes de que comience cualquier interrupción del servicio y muchas opciones permiten completar la migración sin interrupciones ni interrupciones del servicio. Incluso cuando resulte imposible evitar las interrupciones, debe definir la interrupción del servicio máxima permitida, puesto que la duración del tiempo de transición varía de un procedimiento a otro.
+
+Por ejemplo, la copia de una base de datos de 10TB GB normalmente requiere aproximadamente siete horas para completarse. Si su empresa necesita permitir un fallo de siete horas, la copia de archivos es una opción fácil y segura para la migración. Si cinco horas son inaceptables, un simple proceso de envío de registros (consulte link:oracle-migration-log-shipping["Envío de registros de Oracle"]) puede configurarse con un esfuerzo mínimo para reducir el tiempo de transición a aproximadamente 15 minutos. Durante este tiempo, un administrador de la base de datos puede completar el proceso. Si 15 minutos son inaceptables, el proceso final de transición se puede automatizar mediante secuencias de comandos para reducir el tiempo de transición a tan solo unos minutos. Siempre se puede acelerar la migración, pero hacerlo conlleva un coste de tiempo y esfuerzo. Los objetivos de tiempo de transición deben basarse en lo que sea aceptable para la empresa.
+
+
+
+== Ruta de retroceso
+
+Ninguna migración está completamente exenta de riesgos. Incluso si la tecnología funciona perfectamente, siempre existe la posibilidad de error del usuario. El riesgo asociado a una ruta de migración elegida debe tenerse en cuenta junto con las consecuencias de una migración fallida. Por ejemplo, la capacidad transparente de migración de almacenamiento en línea de Oracle ASM es una de sus funciones clave, y este método es una de las más fiables conocidas. Sin embargo, los datos se copian de forma irreversible con este método. En el caso muy poco probable de que se produzca un problema con ASM, no hay una ruta de salida fácil. La única opción es restaurar el entorno original o utilizar ASM para revertir la migración de nuevo a las LUN originales. El riesgo puede minimizarse, pero no eliminarse, realizando un backup del tipo snapshot en el sistema de almacenamiento original, asumiendo que el sistema sea capaz de realizar dicha operación.
+
+
+
+== Ensayo
+
+Algunos procedimientos de migración deben verificarse por completo antes de la ejecución. La necesidad de migración y ensayo del proceso de transición es una solicitud común con bases de datos críticas para la misión para la que la migración debe tener éxito y se debe minimizar el tiempo de inactividad. Además, las pruebas de aceptación del usuario se incluyen con frecuencia como parte del trabajo posterior a la migración y el sistema en general solo puede volver a la producción una vez que se hayan completado estas pruebas.
+
+Si hay una necesidad de ensayo, varias capacidades de ONTAP pueden hacer el proceso mucho más fácil. En particular, las copias Snapshot pueden restablecer un entorno de prueba y crear rápidamente varias copias con gestión eficiente del espacio de un entorno de base de datos.

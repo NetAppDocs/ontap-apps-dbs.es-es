@@ -1,0 +1,34 @@
+---
+sidebar: sidebar 
+permalink: mysql/mysql-innodb_flush_method.html 
+keywords: MySQL,MariaDB,innodb_flush_method 
+summary: MySQL en ONTAP 
+---
+= innodb_flush_method
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+El parámetro innodb_flush_method especifica cómo InnoDB abre y vacía los archivos log y de datos.
+
+
+
+== Optimizaciones
+
+En la optimización de InnoDB, la configuración de este parámetro modifica el rendimiento de la base de datos cuando es aplicable.
+
+Las siguientes opciones son para vaciar los archivos a través de InnoDB:
+
+* `fsync`. InnoDB utiliza el `fsync()` llamada del sistema para vaciar los archivos de datos y de registro. Esta opción es el valor predeterminado.
+*  `O_DSYNC`. InnoDB utiliza el `O_DSYNC` opción para abrir y vaciar los archivos de registro y fsync() para vaciar los archivos de datos. InnoDB no utiliza `O_DSYNC` Directamente, porque ha habido problemas con él en muchas variedades de UNIX.
+*  `O_DIRECT`. InnoDB utiliza el `O_DIRECT` opción (o. `directio()` En Solaris) para abrir los archivos de datos y usos `fsync()` para vaciar los archivos de datos y de registro. Esta opción está disponible en algunas versiones de GNU/Linux, FreeBSD y Solaris.
+* `O_DIRECT_NO_FSYNC`. InnoDB utiliza el `O_DIRECT` Durante el vaciado de I/O; sin embargo, omite el `fsync()` llamada del sistema posterior. Esta opción no es adecuada para algunos tipos de sistemas de archivos (por ejemplo, XFS). Si no está seguro de si su sistema de archivos requiere un `fsync()` llamada al sistema (por ejemplo, para conservar todos los metadatos del archivo), utilice el `O_DIRECT` en su lugar.
+
+
+
+
+== Observación
+
+En las pruebas de laboratorio de NetApp, el `fsync` La opción predeterminada se utilizó en NFS y SAN, y fue un gran improvisador de rendimiento `O_DIRECT`. Mientras se utiliza el método de vaciado como `O_DIRECT` Con ONTAP, hemos observado que el cliente escribe muchas escrituras de un solo byte en el borde del bloque de 4096 KB de forma en serie. Estas escrituras aumentan la latencia en la red y el rendimiento disminuye.

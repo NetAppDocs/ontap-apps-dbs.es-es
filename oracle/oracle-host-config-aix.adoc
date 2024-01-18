@@ -1,0 +1,113 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-host-config-aix.html 
+keywords: oracle, database, ontap, aix, cio 
+summary: Oracle en ONTAP mediante AIX 
+---
+= IBM AIX
+:allow-uri-read: 
+
+
+[role="lead"]
+Temas de configuración específicos del sistema operativo IBM AIX.
+
+
+
+== I/O concurrente
+
+Lograr un rendimiento óptimo en IBM AIX requiere el uso de E/S concurrentes Sin operaciones de I/O simultáneas, es probable que las limitaciones de rendimiento se deban a que AIX realiza I/O atómicas serializadas, lo que conlleva una sobrecarga significativa.
+
+En un principio, NetApp recomendó utilizar el `cio` Opción de montaje para forzar el uso de E/S concurrentes en el sistema de archivos, pero este proceso tenía inconvenientes y ya no es necesario. Desde la introducción de AIX 5,2 y Oracle 10gR1, Oracle en AIX puede abrir archivos individuales para I/O simultánea, en lugar de forzar las operaciones de I/O simultáneas en todo el sistema de archivos.
+
+El mejor método para habilitar E/S concurrente es establecer el `init.ora` parámetro `filesystemio_options` para `setall`. Al hacerlo, Oracle puede abrir archivos específicos para utilizarlos con E/S simultáneas
+
+Uso `cio` Como opción de montaje fuerza el uso de I/O concurrente, lo cual puede tener consecuencias negativas. Por ejemplo, al forzar la E/S simultánea se desactiva la lectura anticipada en los sistemas de archivos, lo que puede dañar el rendimiento de las E/S que se producen fuera del software de la base de datos Oracle, como copiar archivos y realizar copias de seguridad en cinta. Además, productos como Oracle GoldenGate y SAP BR*Tools no son compatibles con el uso del `cio` Opción de montaje con determinadas versiones de Oracle.
+
+[TIP]
+====
+*NetApp recomienda* lo siguiente:
+
+* No utilice la `cio` opción de montaje en el nivel de sistema de archivos. En su lugar, habilite la I/O simultánea mediante el uso de `filesystemio_options=setall`.
+* Utilice sólo el `cio` la opción de montaje debería si no es posible configurarla `filesystemio_options=setall`.
+
+
+====
+
+
+== Opciones de montaje de AIX NFS
+
+En la siguiente tabla, se enumeran las opciones de montaje de AIX NFS para bases de datos de instancia única de Oracle.
+
+|===
+| Tipo de archivo | Opciones de montaje 
+
+
+| Directorio Raíz de ADR | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144` 
+
+
+| Archivos de control
+Archivos de datos
+Rehacer registros | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144` 
+
+
+| `ORACLE_HOME` | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+intr` 
+|===
+En la siguiente tabla, se enumeran las opciones de montaje de AIX NFS para RAC.
+
+|===
+| Tipo de archivo | Opciones de montaje 
+
+
+| Directorio Raíz de ADR | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144` 
+
+
+| Archivos de control
+Archivos de datos
+Rehacer registros | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+nointr,noac` 
+
+
+| `CRS/Voting` | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+nointr,noac` 
+
+
+| Específico `ORACLE_HOME` | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144` 
+
+
+| Compartido `ORACLE_HOME` | `rw,bg,hard,[vers=3,vers=4.1],proto=tcp,
+timeo=600,rsize=262144,wsize=262144,
+nointr` 
+|===
+La diferencia principal entre las opciones de montaje de instancia única y RAC es la adición de `noac` a las opciones de montaje. Esta adición tiene el efecto de deshabilitar el almacenamiento en caché del SO del host que permite que todas las instancias del clúster RAC tengan una vista uniforme del estado de los datos.
+
+Aunque utilice el `cio` monte la opción y la `init.ora` parámetro `filesystemio_options=setall` tiene el mismo efecto de deshabilitar el almacenamiento en caché de host, sigue siendo necesario utilizarlo `noac`. `noac` es necesario para el uso compartido `ORACLE_HOME` Despliegues para facilitar la coherencia de archivos como archivos de contraseñas de Oracle y. `spfile` archivos de parámetros. Si cada instancia de un clúster de RAC tiene un dedicado `ORACLE_HOME`, entonces este parámetro no es necesario.
+
+
+
+== Opciones de montaje jfs/JFS2 de AIX
+
+En la siguiente tabla se enumeran las opciones de montaje jfs/JFS2 de AIX.
+
+|===
+| Tipo de archivo | Opciones de montaje 
+
+
+| Directorio Raíz de ADR | Valores predeterminados 
+
+
+| Archivos de control
+Archivos de datos
+Rehacer registros | Valores predeterminados 
+
+
+| ORACLE_HOME | Valores predeterminados 
+|===
+Antes de utilizar AIX `hdisk` los dispositivos de cualquier entorno, incluidas las bases de datos, comprueban el parámetro `queue_depth`. Este parámetro no es la profundidad de la cola del HBA, más bien se relaciona con la profundidad de la cola SCSI de una persona `hdisk device. Depending on how the LUNs are configured, the value for `queue_depth` puede ser demasiado bajo para un buen rendimiento. Las pruebas han demostrado que el valor óptimo es 64.

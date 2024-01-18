@@ -1,0 +1,19 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-overview.html 
+keywords: oracle, database, ontap, TR-3633 
+summary: NetApp ONTAP es una potente plataforma de gestión de datos con funcionalidades nativas que incluyen elementos como backup instantáneo, funcionalidades de restauración y clonado, funciones de eficiencia como compresión inline, actualizaciones de hardware no disruptivas y la capacidad de importar una LUN desde una cabina de almacenamiento externa. 
+---
+= Bases de datos de Oracle en ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+ONTAP está diseñado para bases de datos de Oracle. Durante décadas, ONTAP se ha optimizado para las demandas específicas de las I/O de las bases de datos relacionales y se crearon varias funciones de ONTAP específicamente para satisfacer las necesidades de las bases de datos de Oracle e incluso a petición de la misma Oracle Inc.
+
+
+NOTE: Esta documentación sustituye a los informes técnicos _TR-3633 publicados anteriormente: Bases de datos Oracle en ONTAP; TR-4591: Protección de datos de Oracle: Backup, recuperación, replicación; TR-4592: Oracle en MetroCluster; y TR-4534: Migración de bases de datos de Oracle a sistemas de almacenamiento de NetApp_
+
+Además de las muchas formas posibles en que ONTAP aporta valor a su entorno de bases de datos, también presenta una amplia variedad de requisitos de usuario, como el tamaño de la base de datos, los requisitos de rendimiento y las necesidades de protección de datos. Las puestas en marcha conocidas del almacenamiento de NetApp incluyen todo, desde un entorno virtualizado de aproximadamente 6.000 bases de datos que se ejecutan con VMware ESX hasta un almacén de datos de instancia única con un tamaño actualmente de 996TB TB, que sigue creciendo. Como resultado, existen pocas mejores prácticas claras para configurar una base de datos Oracle en un almacenamiento de NetApp.
+
+Los requisitos para operar una base de datos Oracle en el almacenamiento de NetApp se tratan de dos formas. En primer lugar, cuando existe una práctica recomendada clara, se llamará específicamente. En un nivel general, se explicarán muchas consideraciones de diseño que deben tratar los arquitectos de las soluciones de almacenamiento de Oracle basadas en sus requisitos empresariales específicos.

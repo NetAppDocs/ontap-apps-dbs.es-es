@@ -1,0 +1,27 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-tiering-backups.html 
+keywords: tiering, fabricpool 
+summary: Organización en niveles de backup de Oracle 
+---
+= Organización en niveles de backup de Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las copias de seguridad de aplicaciones tradicionales incluyen productos como Oracle Recovery Manager, que crea copias de seguridad basadas en archivos fuera de la ubicación de la base de datos original.
+
+ `tiering-minimum-cooling-days` policy of a few days preserves the most recent backups, and therefore the backups most likely to be required for an urgent recovery situation, on the performance tier. The data blocks of the older files are then moved to the capacity tier.
+La `auto` la política más adecuada para los datos de backup. Esto garantiza la clasificación por niveles de avisos cuando se ha alcanzado el umbral de enfriamiento independientemente de si los archivos se han suprimido o siguen existiendo en el sistema de archivos primario. También simplifica la gestión almacenar todos los archivos potencialmente necesarios en una sola ubicación del sistema de archivos activo. No hay razón para buscar a través de instantáneas para localizar un archivo que necesita ser restaurado.
+
+La `snapshot-only` la política podría funcionar, pero esa política solo se aplica a los bloques que ya no están en el sistema de archivos activo. Por lo tanto, los archivos en un recurso compartido NFS o SMB deben eliminarse primero para poder organizar los datos en niveles.
+
+Esta política sería aún menos eficiente con una configuración de LUN porque la eliminación de un archivo de una LUN solo elimina las referencias de archivos de los metadatos del sistema de archivos. Los bloques reales de las LUN permanecen en su lugar hasta que se sobrescriben. Esta situación puede crear un retraso prolongado entre el momento en que se elimina un archivo y el tiempo que se sobrescriben los bloques y se convierten en candidatos para la organización en niveles. El traslado de la `snapshot-only` Bloques en el nivel de capacidad pero, en general, la gestión de datos de backup de FabricPool funciona mejor con el `auto` política.
+
+
+NOTE: Este enfoque ayuda a los usuarios a gestionar el espacio necesario para los backups de una forma más eficiente, pero el propio FabricPool no es una tecnología de backup. La organización en niveles de los archivos de backup en el almacén de objetos simplifica la gestión, ya que los archivos siguen visibles en el sistema de almacenamiento original, pero los bloques de datos del destino del almacén de objetos dependen del sistema de almacenamiento original. Si se pierde el volumen de origen, los datos del almacén de objetos ya no se pueden usar.

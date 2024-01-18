@@ -1,0 +1,94 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-dp-slas.html 
+keywords: SLA, data protection, RPO, RTO 
+summary: Acuerdos de nivel de servicios de protección de datos de Oracle 
+---
+= Objetivo de tiempo de recuperación, objetivo de punto de recuperación y acuerdos de nivel de servicio
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Deben definirse una estrategia de protección de datos por los requisitos del negocio.
+
+Entre estos requisitos se incluyen factores como la velocidad de recuperación, la pérdida de datos máxima permitida y las necesidades de retención de backup. El plan de protección de datos también debe tener en cuenta varios requisitos normativos para la retención y restauración de datos. Por último, deben tenerse en cuenta diferentes escenarios de recuperación de datos, que van desde la recuperación típica y previsible que se produce por errores de usuarios o aplicaciones hasta escenarios de recuperación de desastres que incluyen la pérdida completa de un sitio.
+
+Los cambios pequeños en las políticas de protección y recuperación de datos pueden tener un efecto significativo en la arquitectura general de almacenamiento, respaldo y recuperación. Es crucial definir y documentar los estándares antes de comenzar a trabajar de diseño, para evitar complicar la arquitectura de protección de datos. Las funciones o niveles de protección innecesarios generan costes innecesarios y gastos generales de gestión, y un requisito que al principio se pasa por alto puede dirigir un proyecto en la dirección equivocada o requerir cambios de diseño de última hora.
+
+
+
+== Objetivo de tiempo de recuperación
+
+El objetivo de tiempo de recuperación (RTO) define el tiempo máximo permitido para la recuperación de un servicio. Por ejemplo, una base de datos de recursos humanos podría tener un objetivo de tiempo de recuperación de 24 horas porque, si bien sería un inconveniente perder el acceso a estos datos durante la jornada laboral, la empresa aún puede seguir funcionando. Por el contrario, una base de datos que respalde el libro mayor general de un banco tendría un RTO medido en minutos o incluso segundos. Un RTO de cero no es posible, porque debe haber una manera de diferenciar entre una interrupción real del servicio y un evento rutinario, como un paquete de red perdido. Sin embargo, un objetivo de tiempo de recuperación de casi cero es un requisito típico.
+
+
+
+== Objetivo de punto de recuperación
+
+El objetivo de punto de recuperación (RPO) define la pérdida de datos máxima tolerable. En muchos casos, el objetivo de punto de recuperación solo viene determinado por la frecuencia de las copias Snapshot o las actualizaciones de snapmirror.
+
+En algunos casos, el objetivo de punto de recuperación puede hacerse más agresivo ya que protege de forma selectiva ciertos datos con mayor frecuencia. En un contexto de base de datos, el RPO suele ser una cuestión de cuántos datos de registro se pueden perder en una situación específica. En un escenario típico de recuperación en el que una base de datos está dañada debido a un error de producto o de usuario, el RPO debe ser cero, lo que significa que no debe haber pérdida de datos. El procedimiento de recuperación implica restaurar una copia anterior de los archivos de base de datos y, a continuación, volver a reproducir los archivos de registro para que el estado de la base de datos alcance el momento deseado. Los archivos de registro necesarios para esta operación ya deben estar en su lugar en la ubicación original.
+
+En escenarios inusuales, los datos de registro pueden perderse. Por ejemplo, un ataque accidental o malintencionado `rm -rf *` de archivos de base de datos podría resultar en la eliminación de todos los datos. La única opción sería restaurar desde la copia de seguridad, incluidos los archivos de registro, y algunos datos inevitablemente se perderían. La única opción para mejorar el RPO en un entorno de backup tradicional sería realizar backups repetidos de los datos de registro. Sin embargo, esto tiene limitaciones debido al movimiento constante de datos y la dificultad de mantener un sistema de backup como un servicio en constante ejecución. Una de las ventajas de los sistemas de almacenamiento avanzados es la capacidad de proteger los datos frente a daños accidentales o malintencionados en los archivos para proporcionar, de este modo, un mejor objetivo de punto de recuperación sin transferir datos.
+
+
+
+== Recuperación tras siniestros
+
+La recuperación tras desastres incluye la arquitectura de TI, las políticas y los procedimientos necesarios para recuperar un servicio en caso de desastre físico. Esto puede incluir inundaciones, incendios o personas que actúen con intención maliciosa o negligente.
+
+La recuperación ante desastres va más allá de un conjunto de procedimientos de recuperación. Se trata del proceso completo de identificar los diversos riesgos, de definir los requisitos de recuperación de datos y continuidad del servicio, y de proporcionar la arquitectura correcta con los procedimientos asociados.
+
+Cuando se establecen requisitos de protección de datos, es fundamental diferenciar entre los requisitos típicos de RPO y RTO, así como los requisitos de RPO y RTO necesarios para la recuperación ante desastres. Algunos entornos de aplicaciones requieren un objetivo de punto de recuperación de cero y un objetivo de tiempo de recuperación de casi cero para situaciones de pérdida de datos, que van desde un error relativamente normal del usuario hasta un incendio que destruya un centro de datos. Sin embargo, estos altos niveles de protección tienen consecuencias administrativas y de costes.
+
+En general, los requisitos de recuperación de datos sin desastre deben ser estrictos por dos motivos. En primer lugar, los errores en las aplicaciones y los errores de los usuarios que dañan los datos son previsibles hasta el punto de que son casi inevitables. En segundo lugar, no es difícil diseñar una estrategia de backup que proporcione un RPO de cero y un RTO bajo, siempre que el sistema de almacenamiento no esté destruido. No hay motivo para no abordar un riesgo significativo que sea fácil de solucionar, por lo que los objetivos de RPO y RTO para la recuperación local deben ser agresivos.
+
+Los requisitos del objetivo de tiempo de recuperación ante desastres y del objetivo de punto de recuperación varían mucho más según la probabilidad de que se produzca un desastre y las consecuencias de la pérdida de datos o las interrupciones de un negocio. Los requisitos del objetivo de punto de recuperación y del objetivo de tiempo de recuperación deben basarse en las necesidades reales de la empresa, no en los principios generales. Deben explicar múltiples escenarios de desastre lógicos y físicos.
+
+
+
+=== Desastres lógicos
+
+Entre los desastres lógicos se encuentra la corrupción de datos causada por los usuarios, errores de la aplicación o del SO y mal funcionamiento del software. Los desastres lógicos también pueden incluir ataques maliciosos de terceros con virus o gusanos, o mediante la explotación de las vulnerabilidades de las aplicaciones. En estos casos, la infraestructura física permanece intacta, pero los datos subyacentes ya no son válidos.
+
+Un tipo cada vez más común de desastre lógico se conoce como ransomware, en el que se utiliza un vector de ataque para cifrar los datos. El cifrado no daña los datos, pero no los hace disponibles hasta que se realiza el pago a un tercero. Un número cada vez mayor de empresas se dirigen específicamente a ataques de ransomware. Para esta amenaza, NetApp ofrece copias Snapshot a prueba de manipulaciones donde ni siquiera el administrador de almacenamiento puede cambiar los datos protegidos antes de la fecha de caducidad configurada.
+
+
+
+=== Desastres físicos
+
+Los desastres físicos incluyen la falla de los componentes de una infraestructura que supera sus capacidades de redundancia y dan lugar a una pérdida de datos o una prolongada pérdida de servicio. Por ejemplo, la protección RAID proporciona redundancia de unidades de disco y el uso de HBA proporciona redundancia de puertos FC y cables FC. Los errores de hardware de dichos componentes son previsibles y no afectan a la disponibilidad.
+
+En un entorno empresarial, generalmente es posible proteger la infraestructura de todo un sitio con componentes redundantes hasta el punto en que el único escenario de desastre físico previsible es la pérdida completa del sitio. En ese caso, el plan de la recuperación ante desastres depende de la replicación entre sitios.
+
+
+
+=== Protección de datos síncrona y asíncrona
+
+En un mundo ideal, todos los datos se replicarían de forma sincrónica en sitios dispersos geográficamente. Dicha replicación no siempre es factible o incluso posible por varias razones:
+
+* La replicación síncrona aumenta inevitablemente la latencia de escritura porque todos los cambios deben replicarse en ambas ubicaciones antes de que la aplicación o base de datos pueda continuar con el procesamiento. El efecto sobre el rendimiento resultante es a veces inaceptable, lo que descarta el uso del mirroring síncrono.
+* Al aumentar la adopción del almacenamiento SSD del 100 %, es más probable que se note latencia de escritura adicional, ya que las expectativas de rendimiento incluyen cientos de miles de IOPS y latencia inferior al milisegundo. Para obtener todas las ventajas del uso del 100 % de las unidades SSD es necesario volver a analizar la estrategia de recuperación ante desastres.
+* Los conjuntos de datos siguen creciendo en términos de bytes, generando retos que exigen un ancho de banda suficiente para sostener la replicación síncrona.
+* Los conjuntos de datos también crecen en términos de complejidad, lo que genera retos con la gestión de la replicación síncrona a gran escala.
+* Las estrategias basadas en cloud a menudo implican mayores distancias de replicación y latencia, lo que excluye aún más el uso del mirroring síncrono.
+
+
+NetApp ofrece soluciones que incluyen replicación sincrónica para las exigencias de recuperación de datos más exigentes y soluciones asincrónicas que permiten un mejor rendimiento y flexibilidad. Además, la tecnología de NetApp se integra sin problemas con muchas soluciones de replicación de terceros, como Oracle DataGuard
+
+
+
+== Tiempo de retención
+
+El aspecto final de una estrategia de protección de datos es el tiempo de retención, que puede variar drásticamente.
+
+* Normalmente, se requieren 14 días de backups nocturnos en el sitio principal y 90 días de backups almacenados en un sitio secundario.
+* Muchos clientes crean archivos trimestrales independientes almacenados en diferentes medios.
+* Es posible que una base de datos constantemente actualizada no necesite datos históricos y que las copias de seguridad solo se conserven durante unos pocos días.
+* Los requisitos normativos pueden requerir la capacidad de recuperación hasta el punto de cualquier transacción arbitraria en un periodo de 365 días.
+

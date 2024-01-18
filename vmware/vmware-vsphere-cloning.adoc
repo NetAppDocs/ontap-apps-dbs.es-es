@@ -1,0 +1,42 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-vsphere-cloning.html 
+keywords: Data protection, Space reclamation, VM and datastore cloning, Storage efficiency, thin provisioning, QoS, SIOC, Storage Distributed Resource Scheduler, DRS, Active IQ Unified Manager, Encryption 
+summary: SnapCenter permite crear políticas de backup que se pueden aplicar a varias tareas. Estas políticas pueden definir programaciones, retención, replicación y otras funcionalidades. Continúan permitiendo la selección opcional de snapshots consistentes con las máquinas virtuales, lo que aprovecha la capacidad del hipervisor para desactivar la I/O antes de tomar una snapshot de VMware. 
+---
+= Clonado de máquinas virtuales y almacenes de datos
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+:firstname: [.lead]
+:author: [.lead]
+:authorinitials: [
+:authors: [.lead]
+:revnumber: 
+:revdate: and so on.
+
+
+En vSphere, es posible clonar una máquina virtual, un disco virtual, VVol o un almacén de datos. Después de que se clona, el objeto se puede personalizar aún más, a menudo mediante un proceso automatizado. VSphere es compatible con ambos clones de copias completas, así como clones enlazados, donde sigue los cambios de forma independiente del objeto original.
+
+Los clones enlazados son excelentes para ahorrar espacio, pero aumentan la cantidad de I/o que vSphere gestiona para el equipo virtual, lo que afecta al rendimiento de ese equipo virtual y, quizás, al host en general. Por eso los clientes de NetApp suelen usar clones basados en sistemas de almacenamiento para obtener lo mejor de ambos mundos: Un uso eficiente del almacenamiento y un mayor rendimiento.
+
+La siguiente figura muestra la clonación de ONTAP.
+
+image:vsphere_ontap_image5.png["Error: Falta la imagen gráfica"]
+
+Es posible descargar la clonado en sistemas que ejecutan software ONTAP mediante varios mecanismos, normalmente a nivel de máquina virtual, VVol o almacén de datos. Entre ellos se incluyen los siguientes:
+
+* VVols utiliza el proveedor de API de vSphere para el reconocimiento del almacenamiento (VASA) de NetApp.  Los clones de ONTAP se utilizan para admitir copias Snapshot VVOL gestionadas por vCenter, que gestionan el espacio de forma eficiente y tienen un efecto de I/O mínimo para crearlas y eliminarlas.  Las máquinas virtuales también pueden clonarse mediante vCenter y también se descargan en ONTAP, ya sea en un único almacén de datos/volumen o entre almacenes de datos/volúmenes.
+* Clonado y migración de vSphere mediante API de vSphere: Integración de cabina (VAAI). Es posible descargar las operaciones de clonado de máquinas virtuales en ONTAP tanto en entornos SAN como NAS (NetApp suministra un complemento ESXi para habilitar VAAI para NFS).  VSphere solo descarga las operaciones en máquinas virtuales frías (apagadas) en un almacén de datos NAS, mientras que las operaciones en máquinas virtuales activas (clonado y vMotion de almacenamiento) también se descargan para SAN. ONTAP usa el método más eficaz basado en el origen, el destino y las licencias de productos instaladas. Esta funcionalidad también la utiliza VMware Horizon View.
+* SRA (usado con VMware Site Recovery Manager). Aquí, se utilizan clones para probar la recuperación de la réplica de recuperación ante desastres de forma no disruptiva.
+* Backup y recuperación de datos con herramientas de NetApp como SnapCenter. Los clones de equipos virtuales se utilizan para verificar las operaciones de backup y montar un backup de equipo virtual para que se puedan copiar archivos individuales.
+
+
+El clonado descargado de ONTAP puede invocarse con VMware, NetApp y herramientas de terceros. Los clones que se descargan en ONTAP tienen varias ventajas. Ofrecen una gestión eficiente del espacio en la mayoría de los casos, y necesitan almacenamiento solo para los cambios en el objeto; no hay ningún efecto adicional en el rendimiento para leerlos y escribirlos; en algunos casos, el rendimiento mejora si se comparten los bloques en las cachés de alta velocidad. También descargan los ciclos de CPU y las operaciones de I/o de red del servidor ESXi. La descarga de copias en un almacén de datos tradicional mediante un volumen FlexVol puede ser rápida y eficiente con la licencia de FlexClone, pero las copias entre volúmenes FlexVol pueden ser más lentas. Si mantiene las plantillas de equipos virtuales como origen de los clones, considere colocarlas en el volumen del almacén de datos (utilice carpetas o bibliotecas de contenido para organizarlas) para lograr clones rápidos con un uso eficiente del espacio.
+
+También es posible clonar un volumen o LUN directamente en ONTAP para clonar un almacén de datos. Con almacenes de datos NFS, la tecnología FlexClone puede clonar un volumen completo, y el clon se puede exportar desde ONTAP y montar en ESXi como otro almacén de datos. En almacenes de datos VMFS, ONTAP puede clonar una LUN dentro de un volumen o un volumen entero, incluida una o varias LUN dentro de él. Una LUN que contiene un VMFS debe asignarse a un iGroup de ESXi y, a continuación, volver a firmar la bandeja de ESXi para que se monte y utilice como almacén de datos normal. Para algunos casos de uso temporales, se puede montar un VMFS clonado sin renuncias. Una vez que se ha clonado un almacén de datos, los equipos virtuales del interior se pueden registrar, volver a configurar y personalizar como si se clonaran individualmente.
+
+En algunos casos, se pueden utilizar otras funciones con licencia para mejorar la clonación, como SnapRestore para backup o FlexClone. Estas licencias se incluyen a menudo en los paquetes de licencias sin coste adicional. Se necesita una licencia de FlexClone para las operaciones de clonado de VVol, así como para admitir Snapshot gestionadas de un VVol (que se descargan del hipervisor a ONTAP). Una licencia de FlexClone también puede mejorar ciertos clones basados en VAAI cuando se usan en un almacén de datos/volumen (crea copias instantáneas con gestión eficiente del espacio en lugar de copias de bloques).  El SRA también usa para probar la recuperación de una réplica de DR, y el SnapCenter para las operaciones de clonado y para buscar copias de backup para restaurar archivos individuales.

@@ -1,0 +1,49 @@
+---
+sidebar: sidebar 
+permalink: mysql/mysql-mysql-over-nfs.html 
+keywords: MySQL,MariaDB,NFS 
+summary: MySQL en ONTAP 
+---
+= MySQL sobre NFS
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+La documentación de MySQL recomienda el uso de NFSv4 para puestas en marcha de NAS.
+
+
+
+== Tamaños de transferencia NFS de ONTAP
+
+De forma predeterminada, ONTAP limitará el tamaño de I/O de NFS a 64K. La E/S aleatoria con una base de datos MySQL utiliza un tamaño de bloque mucho más pequeño, que es muy inferior al máximo de 64K KB. Las E/S de bloques grandes suelen estar en paralelo, por lo que el máximo de 64K KB tampoco es una limitación.
+
+Hay algunas cargas de trabajo en las que el máximo de 64K crea una limitación. En particular, las operaciones de un solo subproceso, como las operaciones de copia de seguridad de exploración de tabla completa, se ejecutarán de forma más rápida y eficiente si la base de datos puede realizar menos I/O pero más grandes. El tamaño óptimo de gestión de I/O para ONTAP con cargas de trabajo de base de datos es 256K. Las opciones de montaje de NFS indicadas para sistemas operativos específicos a continuación se han actualizado de la versión 64K a la 256K correspondiente.
+
+El tamaño de transferencia máximo para una SVM de ONTAP determinada se puede cambiar de la siguiente manera:
+
+[listing]
+----
+Cluster01::> set advanced
+
+Warning: These advanced commands are potentially dangerous; use them only when directed to do so by NetApp personnel.
+
+Do you want to continue? {y|n}: y
+
+Cluster01::*> nfs server modify -vserver vserver1 -tcp-max-xfer-size 262144
+----
+
+CAUTION: Nunca reduzca el tamaño máximo permitido de transferencia en ONTAP por debajo del valor de rsize/wsize de los sistemas de archivos NFS montados actualmente. Esto puede crear bloqueos o incluso corrupción de datos con algunos sistemas operativos. Por ejemplo, si los clientes NFS se establecen actualmente con un valor de rsize/wsize de 65536 000, el tamaño de transferencia máximo de ONTAP se podría ajustar entre 65536 000 y 1048576 000 sin que ello afecte a porque los propios clientes están limitados. Reducir el tamaño máximo de transferencia por debajo de 65536 puede dañar la disponibilidad o los datos.
+
+[TIP]
+====
+*NetApp recomienda*
+
+Ajuste de la siguiente configuración de NFSv4 fstab (/etc/fstab):
+
+`nfs4 rw, hard,nointr,bg,vers=4,proto=tcp,noatime,rsize=262144,wsize=262144`
+
+====
+
+NOTE: Un problema común con NFSv3 era los archivos de registro InnoDB bloqueados después de una interrupción del suministro eléctrico. El uso de archivos de registro de hora o cambio solucionó este problema. Sin embargo, NFSv4 tiene operaciones de bloqueo y realiza un seguimiento de archivos abiertos y delegaciones.

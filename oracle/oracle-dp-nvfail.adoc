@@ -1,0 +1,20 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-dp-nvfail.html 
+keywords: oracle, metrocluster, nvfail 
+summary: Configurar NVFAIL para proteger bases de datos de Oracle 
+---
+= Oracle y NVFAIL
+:allow-uri-read: 
+
+
+[role="lead"]
+NVFAIL es una función de ONTAP que garantiza la integridad en situaciones catastróficas de conmutación por error.
+
+Las bases de datos son vulnerables a daños durante eventos de conmutación por error de almacenamiento debido a que mantienen cachés internos de gran tamaño. Si un evento catastrófico requiere forzar una conmutación por error de ONTAP o forzar la conmutación por error de MetroCluster, independientemente del estado de la configuración general, el resultado es que los cambios confirmados previamente se pueden descartar de forma efectiva. El contenido de la cabina de almacenamiento se retrocede en el tiempo y el estado de la caché de base de datos ya no refleja el estado de los datos del disco. Esta inconsistencia provoca daños en los datos.
+
+El almacenamiento en caché puede tener lugar en la capa de aplicaciones o del servidor. Por ejemplo, una configuración de Oracle Real Application Cluster (RAC) con servidores activos tanto en un sitio primario como en un sitio remoto almacena datos en caché en Oracle SGA. Una operación de conmutación de sitios forzada que provocara una pérdida de datos pondría la base de datos en riesgo de dañarse, ya que los bloques almacenados en el SGA podrían no coincidir con los bloques del disco.
+
+Un uso menos obvio del almacenamiento en caché se da en la capa del sistema de archivos del sistema de sistemas operativos. Los bloques de un sistema de archivos NFS montado se pueden almacenar en caché en el sistema operativo. Como alternativa, un sistema de archivos en clúster basado en las LUN ubicadas en el sitio primario podría montarse en servidores en el sitio remoto y una vez más podrían almacenarse los datos en caché. Un fallo de NVRAM o una toma de control forzada o una conmutación de sitios forzada en estas situaciones podría provocar daños en el sistema de archivos.
+
+ONTAP protege las bases de datos y los sistemas operativos de este escenario con NVFAIL y su configuración asociada.

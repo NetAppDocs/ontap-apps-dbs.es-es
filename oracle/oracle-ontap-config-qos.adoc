@@ -1,0 +1,58 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-ontap-config-qos.html 
+keywords: qos, bandwidth, minimum, guaranteed 
+summary: Gestión del rendimiento de Oracle con QoS 
+---
+= Calidad de servicio con bases de datos de Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La gestión segura y eficaz de varias bases de datos Oracle requiere una estrategia de QoS eficaz. La razón es el aumento constante en las funcionalidades de rendimiento de un sistema de almacenamiento moderno.
+
+En concreto, la creciente adopción del almacenamiento all-flash ha permitido consolidar las cargas de trabajo. Las cabinas de almacenamiento que se basan en medios giratorios tendían a admitir solo una cantidad limitada de cargas de trabajo con un gran volumen de I/O debido a las funcionalidades de IOPS limitadas de la tecnología de unidades rotacionales más antigua. Una o dos bases de datos altamente activas saturarían las unidades subyacentes mucho antes de que las controladoras de almacenamiento alcanzaran sus límites. Esto ha cambiado. La funcionalidad de rendimiento de un número relativamente pequeño de unidades SSD puede saturar incluso las controladoras de almacenamiento más potentes. Esto significa que pueden aprovecharse todas las funcionalidades de las controladoras sin miedo al colapso repentino del rendimiento cuando se disparan los picos de latencia de los medios giratorios.
+
+Como ejemplo de referencia, un sencillo sistema AFF A800 de alta disponibilidad de dos nodos es capaz de dar servicio a hasta un millón de IOPS aleatorias antes de que la latencia aumente por encima del milisegundo. Sería de esperar que muy pocas cargas de trabajo individuales alcancen estos niveles. El uso completo de esta cabina para el sistema A800 de AFF implicará alojar múltiples cargas de trabajo y hacerlo de forma segura y, al mismo tiempo, garantizar la previsibilidad, requiere controles de calidad de servicio.
+
+Existen dos tipos de calidad de servicio en ONTAP: IOPS y ancho de banda. Los controles de calidad de servicio se pueden aplicar a SVM, volúmenes, LUN y archivos.
+
+
+
+== Calidad de servicio IOPS
+
+Obviamente, un control de calidad de servicio de IOPS se basa en el número total de IOPS de un recurso determinado, pero hay una serie de aspectos de la calidad de servicio de IOPS que quizá no sean intuitivos. Al principio, algunos clientes se quedaron desconcertados por el aparente aumento de la latencia cuando se alcanza un umbral de IOPS. El aumento de la latencia es el resultado natural de la limitación de IOPS. Lógicamente, funciona de forma similar a un sistema de tokens. Por ejemplo, si un volumen determinado que contiene archivos de datos tiene un límite de 10K IOPS, cada I/O que llegue primero deberá recibir un token para continuar con el procesamiento. Mientras no se hayan consumido más de 10K tokens en un segundo determinado, no hay retrasos. Si las operaciones de I/O deben esperar para recibir el token, esta espera aparece como latencia adicional. Cuanto más fuerte sea una carga de trabajo que supere el límite de calidad de servicio, más tiempo debe esperar cada I/O en la cola para su procesamiento, lo cual parece que el usuario tiene una mayor latencia.
+
+
+NOTE: Tenga cuidado al aplicar controles QoS a los datos de transacción/redo log de la base de datos. Si bien las demandas de rendimiento del redo log suelen ser mucho más bajas que las de los archivos de datos, la actividad de redo log es rápida. El E/S se produce en pulsos breves y un límite de QoS que parece adecuado para los niveles medios de E/S de redo puede ser demasiado bajo para los requisitos reales. El resultado puede ser limitaciones de rendimiento graves ya que QoS se conecta con cada ráfaga de redo log. En general, el redo y el registro de archivos no deben estar limitados por QoS.
+
+
+
+== Calidad del ancho de banda
+
+No todos los tamaños de I/O son iguales. Por ejemplo, una base de datos puede estar realizando un gran número de lecturas de bloque pequeño, lo que haría que se alcance el umbral de IOPS. pero las bases de datos también pueden estar realizando una operación de exploración de tabla completa que consistiría en un número muy pequeño de lecturas de bloque grandes, lo que consume una gran cantidad de ancho de banda pero relativamente pocas IOPS.
+
+Del mismo modo, un entorno VMware podría generar un gran número de IOPS aleatorias durante el arranque, pero realizaría menos I/O, pero más grandes, durante un backup externo.
+
+A veces, para gestionar el rendimiento de forma efectiva se requieren límites de IOPS o de calidad de servicio del ancho de banda o incluso ambos.
+
+
+
+== Calidad de servicio mínima/garantizada
+
+Muchos clientes buscan una solución que incluya una calidad de servicio garantizada, una solución que se pueda conseguir más de lo que parece y que potencialmente supone un derroche. Por ejemplo, colocar 10 bases de datos con una garantía de 10K IOPS requiere configurar un sistema para un escenario en el que las 10 bases de datos se ejecuten simultáneamente a 10K 000 IOPS, para un total de 100K 000.
+
+El mejor uso para los controles mínimos de calidad de servicio es proteger las cargas de trabajo cruciales. Por ejemplo, piense en una controladora ONTAP con un número máximo de IOPS de 500K KB posible y una combinación de cargas de trabajo de producción y desarrollo. Debe aplicar políticas de calidad de servicio máximas a las cargas de trabajo de desarrollo para evitar que una base de datos determinada monopolice la controladora. A continuación, aplicaría políticas mínimas de calidad de servicio a las cargas de trabajo de producción para asegurarse de que siempre tengan las IOPS necesarias disponibles cuando las necesite.
+
+
+
+== Calidad de servicio adaptativa
+
+La calidad de servicio adaptativa se refiere a la función ONTAP, donde el límite de calidad de servicio se basa en la capacidad del objeto de almacenamiento. Rara vez se utiliza con bases de datos porque normalmente no hay ningún vínculo entre el tamaño de una base de datos y sus requisitos de rendimiento. Las bases de datos de gran tamaño pueden ser casi inertes, mientras que las bases de datos más pequeñas pueden ser las más intensivas en IOPS.
+
+La calidad de servicio adaptativa puede resultar muy útil con los almacenes de datos de virtualización porque los requisitos de IOPS de dichos conjuntos de datos tienden a correlacionarse con el tamaño total de la base de datos. Es probable que los almacenes de datos más recientes que contienen 1TB TB de archivos VMDK requieran la mitad de rendimiento que un almacén de datos de 2TB GB. La calidad de servicio adaptativa le permite aumentar automáticamente los límites de calidad de servicio a medida que el almacén de datos se llena con datos.

@@ -1,0 +1,20 @@
+---
+sidebar: sidebar 
+permalink: mysql/mysql-innodb_lru_scan_depth.html 
+keywords: MySQL,MariaDB,innodb_lru_scan_depth 
+summary: MySQL en ONTAP 
+---
+= innodb_lru_scan_profund
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+La `innodb_lru_scan_depth` El parámetro influye en los algoritmos y la heurística de la operación de vaciado para el pool de buffers de InnoDB.
+
+Este parámetro es principalmente interesante para los expertos en rendimiento que ajustan las cargas de trabajo con un gran volumen de I/O. Para cada instancia de pool de buffers, este parámetro especifica hasta qué punto en la lista de páginas de uso menos reciente (LRU) el thread del limpiador de páginas debe continuar escaneando, buscando páginas sucias para vaciar. Esta operación en segundo plano se realiza una vez por segundo.
+
+Puede ajustar el valor hacia arriba o hacia abajo para minimizar el número de páginas libres. No establezca el valor mucho más alto de lo necesario, ya que los escaneos pueden tener un costo de rendimiento significativo. Además, considere ajustar este parámetro al cambiar el Núm. De instancias del pool de buffers, porque `innodb_lru_scan_depth * innodb_buffer_pool_instances` define la cantidad de trabajo que realiza el thread de limpieza de páginas cada segundo.
+
+Una configuración inferior a la predeterminada es adecuada para la mayoría de las cargas de trabajo. Considere aumentar el valor solo si cuenta con capacidad de I/O de reserva con una carga de trabajo típica. Por el contrario, si una carga de trabajo con gran cantidad de escritura satura la capacidad de E/S, disminuya el valor, especialmente si tiene un pool de buffers grande.

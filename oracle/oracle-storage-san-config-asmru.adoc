@@ -1,0 +1,21 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-storage-san-config-asmru.html 
+keywords: ontap, thin provisioning 
+summary: Utilidad de Reclamación de ASM con ONTAP 
+---
+= ASM Reclamation Utility y detección de bloques cero
+:allow-uri-read: 
+
+
+[role="lead"]
+ONTAP elimina de manera eficiente los bloques puestos a cero que se escriben en un archivo o LUN cuando se habilita la compresión en línea. Las utilidades como Oracle ASM Reclamation Utility (ASRU) funcionan escribiendo ceros en extensiones de ASM no utilizadas.
+
+Esto permite a los administradores de bases de datos reclamar espacio en la cabina de almacenamiento después de la eliminación de los datos. ONTAP intercepta los ceros y desasigna el espacio de la LUN. El proceso de recuperación es extremadamente rápido porque no se escriben datos en el sistema de almacenamiento.
+
+Desde el punto de vista de la base de datos, el grupo de discos de ASM contiene ceros, y leer esas regiones de las LUN daría como resultado un flujo de ceros, pero ONTAP no almacena los ceros en las unidades. En su lugar, se realizan cambios sencillos en los metadatos que marcan internamente las regiones en cero de la LUN como vacías de datos.
+
+Por motivos similares, las pruebas de rendimiento que involucran datos puestos a cero no son válidas porque en realidad los bloques de ceros no se procesan como escrituras en la cabina de almacenamiento.
+
+
+NOTE: Al utilizar ASRU, asegúrese de que todos los parches recomendados por Oracle están instalados.

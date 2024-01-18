@@ -1,0 +1,38 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-ontap-config-svm.html 
+keywords: svm 
+summary: Aprovisionamiento de SVM para bases de datos de Oracle 
+---
+= Oracle Database y Storage Virtual Machines
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La gestión del almacenamiento de bases de datos de Oracle se centraliza en una máquina virtual de almacenamiento (SVM).
+
+Una SVM, conocida como Vserver en la interfaz de línea de comandos de ONTAP, es una unidad funcional básica de almacenamiento, lo que resulta útil comparar una SVM con una máquina virtual «guest» en un servidor VMware ESX.
+
+Cuando se instala por primera vez, ESX no tiene capacidades preconfiguradas, como alojar un sistema operativo invitado o admitir una aplicación de usuario final. Es un contenedor vacío hasta que se define una máquina virtual (VM). ONTAP es similar. Cuando ONTAP se instala por primera vez, no cuenta con funcionalidades de servicio de datos hasta que se crea una SVM. Es la personalidad de la SVM que define los servicios de datos.
+
+Al igual que otros aspectos de la arquitectura de almacenamiento, las mejores opciones para el diseño de SVM y de la interfaz lógica (LIF) dependen en gran medida de los requisitos de escalado y las necesidades del negocio.
+
+
+
+== SVM
+
+No existe ninguna práctica recomendada oficial para el aprovisionamiento de SVM para ONTAP. El método correcto depende de los requisitos de gestión y seguridad.
+
+La mayoría de los clientes operan un SVM principal para la mayoría de sus requisitos diarios y después crean un número pequeño de SVM para necesidades especiales. Por ejemplo, es posible que desee crear:
+
+* SVM para una base de datos empresarial crítica gestionada por un equipo especializado
+* Una SVM para un grupo de desarrollo al que se le ha otorgado un control administrativo completo para que pueda gestionar su propio almacenamiento de forma independiente
+* Una máquina virtual de almacenamiento SVM para datos empresariales confidenciales, como datos de recursos humanos o informes financieros, a los que debe limitarse el equipo administrativo
+
+
+En un entorno multitenant, los datos de cada inquilino pueden recibir una SVM dedicada. El límite del número de SVM y LIF por clúster, pareja de alta disponibilidad y nodo dependen del protocolo que se utilice, del modelo de nodo y de la versión de ONTAP.  Consulte la link:https://hwu.netapp.com/["Hardware Universe de NetApp"^] para estos límites.

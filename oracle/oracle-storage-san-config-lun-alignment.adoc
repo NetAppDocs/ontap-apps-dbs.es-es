@@ -1,0 +1,44 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-storage-san-config-lun-alignment.html 
+keywords: SAN, ASM, LVM 
+summary: Alineación de LUN con bases de datos de Oracle 
+---
+= Alineación de LUN para I/O de Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La alineación de LUN hace referencia a optimizar las I/O con respecto al diseño del sistema de archivos subyacente.
+
+En un sistema ONTAP, el almacenamiento se organiza en 4KB unidades. Un bloque 8KB de base de datos o sistema de archivos debe asignarse exactamente a dos bloques de 4KB KB. Si un error de configuración de una LUN cambia la alineación 1KB en cualquier dirección, cada bloque de 8KB KB existiría en tres bloques de almacenamiento de 4KB KB diferentes en lugar de dos. Esta disposición provocaría una mayor latencia y provocaría la realización de I/O adicionales en el sistema de almacenamiento.
+
+La alineación también afecta a las arquitecturas LVM. Si se define un volumen físico de un grupo de volúmenes lógicos en todo el dispositivo de la unidad (no se crean particiones), el primer bloque de 4KB KB del LUN se alinea con el primer bloque de 4KB KB del sistema de almacenamiento. Esta es una alineación correcta. Los problemas surgen con las particiones porque cambian la ubicación inicial en la que el sistema operativo utiliza la LUN. Siempre que la compensación se desplaza en unidades enteras de 4KB, la LUN se alinea.
+
+En entornos Linux, cree grupos de volúmenes lógicos en todo el dispositivo de la unidad. Cuando se necesita una partición, compruebe la alineación ejecutando `fdisk –u` y verificando que el inicio de cada partición es un múltiplo de ocho. Esto significa que la partición comienza en un múltiplo de ocho sectores de 512 bytes, que es 4KB.
+
+Consulte también la sección sobre la alineación de los bloques de compresión link:../ontap-configuration/oracle-efficiency.html["Eficiencia"]. Cualquier diseño alineado con los límites de bloques de compresión de 8KB KB también se alineará con los límites de 4KB KB.
+
+
+
+== Advertencias de desalineación
+
+El registro de rehacer/transacciones de bases de datos normalmente genera I/O no alineadas que pueden provocar advertencias engañosas acerca de las LUN mal alineadas en ONTAP.
+
+El registro realiza una escritura secuencial del archivo log con escrituras de tamaño variable. Una operación de escritura de registro que no se alinea con los límites de 4KB no provoca problemas de rendimiento normalmente, ya que la próxima operación de escritura de registro completa el bloque. El resultado es que ONTAP es capaz de procesar casi todas las escrituras de bloques de 4KB KB completos, aunque los datos de algunos bloques de 4KB KB se hayan escrito en dos operaciones independientes.
+
+Verifique la alineación mediante el uso de utilidades como `sio` o. `dd` Que puede generar I/O en un tamaño de bloque definido. Las estadísticas de alineación de I/O del sistema de almacenamiento se pueden ver con `stats` comando. Consulte link:../notes/wafl_alignment_verification.html["Verificación de la alineación de WAFL"] si quiere más información.
+
+La alineación en entornos Solaris es más complicada. Consulte http://support.netapp.com/documentation/productlibrary/index.html?productID=61343["Configuración de host SAN ONTAP"^] si quiere más información.
+
+|===
+| Precaución 
+
+
+| En entornos Solaris x86, tenga cuidado adicional con la alineación correcta, ya que la mayoría de las configuraciones tienen varias capas de particiones. Los segmentos de partición de Solaris x86 normalmente existen en la parte superior de una tabla de particiones de registro de inicio maestro estándar. 
+|===

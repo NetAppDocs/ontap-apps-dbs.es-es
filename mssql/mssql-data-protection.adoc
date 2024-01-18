@@ -1,0 +1,44 @@
+---
+sidebar: sidebar 
+permalink: mssql/mssql-data-protection.html 
+keywords: MS-SQL,mssql,SQL Server, SnapCenter, data protection 
+summary: Protección de datos de Microsoft SQL Server con ONTAP 
+---
+= Protección de datos de Microsoft SQL Server con ONTAP
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La protección de la base de datos es fundamental para cualquier organización. A medida que aumentan el tamaño de los datos y el número de bases de datos, es muy crucial mantener el objetivo de tiempo de recuperación y el objetivo de punto de recuperación.
+
+La consideración principal para los backups de las bases de datos es aprovechar la tecnología Snapshot de NetApp. El backup y la distribución de bases de datos coherentes con las aplicaciones son otra consideración clave para lograr el RTO y el RPO, que puede orquestar NetApp SnapCenter.
+
+
+
+== SnapCenter
+
+SnapCenter es el software de protección de datos de NetApp para aplicaciones empresariales.Las bases de datos de SQL Server pueden protegerse de forma rápida y fácil mediante el software NetApp SnapCenter con el plugin para SQL Server y el plugin para Microsoft Windows.
+
+Estos productos ofrecen backups consistentes con las aplicaciones, clonado automatizado y restauración y recuperación de bases de datos, instancias o grupos de disponibilidad de SQL Server.
+
+
+TIP: *NetApp recomienda* usar SnapCenter para crear copias snapshot.
+
+Para obtener más detalles sobre el plugin de SQL Server para SnapCenter, consulte link:https://www.netapp.com/pdf.html?item=/media/12400-tr4714.pdf["TR-4714: Guía de mejores prácticas para SQL Server con NetApp SnapCenter"^].
+
+
+
+== Protección de la base de datos mediante instantáneas de T-SQL
+
+En SQL Server 2022, Microsoft introdujo las copias Snapshot de T-SQL que ofrecen una ventaja integrada que el método tradicional que el administrador de la base de datos no consumía fácilmente. Aprovechando las API DE REST DE ONTAP, puede llamar a comandos a volúmenes Snapshot.
+
+A continuación, se muestra un flujo de trabajo de backup de ejemplo:
+
+. Congelar una base de datos con el comando ALTER: Ofrece la oportunidad de realizar una instantánea coherente en el almacenamiento subyacente. Después de esto, puede descongelar la base de datos y registrar la instantánea con el comando BACKUP.
+. Realice copias Snapshot de varias bases de datos en los volúmenes de almacenamiento de forma simultánea con los nuevos comandos DEL GRUPO DE BACKUP y DEL SERVIDOR DE BACKUP.
+. Realice copias de seguridad COMPLETAS o copias de seguridad COMPLETAS COPY_ONLY. Estas copias de seguridad también se registran en msdb.
+. Llevar a cabo una recuperación puntual mediante backups de registro realizados con el método de streaming normal después del backup COMPLETO de la instantánea. Las copias de seguridad diferenciales de transmisión también se admiten si se desea.
+
+
+Para obtener más información, consulte link:https://learn.microsoft.com/en-us/sql/relational-databases/databases/create-a-database-snapshot-transact-sql?view=sql-server-ver16["Documentación de Microsoft para conocer las instantáneas de T-SQL"^].

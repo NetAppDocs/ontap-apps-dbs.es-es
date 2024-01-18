@@ -1,0 +1,20 @@
+---
+sidebar: sidebar 
+permalink: mysql/mysql-schedulers.html 
+keywords: MySQL,MariaDB,schedulers 
+summary: MySQL en ONTAP 
+---
+= Programadores de I/O.
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+El kernel de Linux permite un control de bajo nivel sobre la forma en que se programa la E/S para bloquear los dispositivos.
+
+Los valores predeterminados en varias distribuciones de Linux varían considerablemente. MySQL recomienda que utilice `NOOP` o a `deadline` Planificador de I/O con I/O asíncrono nativo (AIO) en Linux. En general, los clientes de NetApp y las pruebas internas muestran mejores resultados con NoOps.
+
+El motor de almacenamiento InnoDB de MySQL utiliza el subsistema de E/S asíncrono (AIO nativo) en Linux para realizar solicitudes de lectura anticipada y escritura para páginas de archivos de datos. Este comportamiento es controlado por el `innodb_use_native_aio` opción de configuración, que está activada de forma predeterminada. Con AIO nativo, el tipo de programador de E/S tiene mayor influencia en el rendimiento de E/S. Realice pruebas de rendimiento para determinar qué programador de I/O ofrece los mejores resultados para su carga de trabajo y su entorno.
+
+Consulte la documentación relevante de Linux y MySQL para obtener instrucciones sobre la configuración del programador de I/O.

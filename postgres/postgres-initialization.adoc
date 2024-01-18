@@ -1,0 +1,25 @@
+---
+sidebar: sidebar 
+permalink: postgres/postgres-initialization.html 
+keywords: PostgreSQL,database,postgres 
+summary: Inicialización de PostgreSQL 
+---
+= Inicialización
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Cree un nuevo cluster de base de datos mediante `initdb` programa. An `initdb` script crea los archivos de datos, las tablas del sistema y las bases de datos de plantilla (template0 y template1) que definen el cluster.
+
+La base de datos de plantillas representa una base de datos de stock. Contiene definiciones para tablas del sistema, vistas estándar, funciones y tipos de dato. `pgdata` actúa como argumento para el `initdb` script que especifica la ubicación del cluster de base de datos.
+
+Todos los objetos de base de datos en PostgreSQL son administrados internamente por los OIDs respectivos. Las tablas y los índices también se gestionan mediante OID individuales. Las relaciones entre los objetos de base de datos y sus respectivos OID se almacenan en las tablas de catálogo del sistema adecuadas, según el tipo de objeto. Por ejemplo, los OIDs de las bases de datos y las tablas de pila se almacenan en `pg_database` y `pg_class, respectivamente. Puede determinar los OID emitiendo consultas en el cliente PostgreSQL.
+
+Cada base de datos tiene sus propias tablas individuales y archivos de índice que están restringidos a 1GB. Cada tabla tiene dos archivos asociados, sufijos respectivamente con `_fsm` y.. `_vm`. Se les conoce como el mapa de espacio libre y el mapa de visibilidad. Estos archivos almacenan la información sobre la capacidad de espacio libre y tienen visibilidad en cada página del archivo de tabla. Los índices solo tienen mapas de espacio libre individuales y no tienen mapas de visibilidad.
+
+La `pg_xlog/pg_wal` el directorio contiene los logs de escritura anticipada. Los registros de escritura anticipada se utilizan para mejorar el rendimiento y la fiabilidad de las bases de datos. Cada vez que actualiza una fila en una tabla, PostgreSQL escribe primero el cambio en el registro de escritura anticipada y, más tarde, escribe las modificaciones en las páginas de datos reales en un disco. La `pg_xlog` el directorio normalmente contiene varios archivos, pero initdb crea solo el primero. Se añaden archivos adicionales según sea necesario. Cada archivo xlog tiene 16MB cm de longitud.

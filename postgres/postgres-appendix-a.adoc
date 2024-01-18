@@ -1,0 +1,25 @@
+---
+sidebar: sidebar 
+permalink: postgres/postgres-appendix-a.html 
+keywords: PostgreSQL,database,postgres 
+summary: Bases de datos PostgreSQL en ONTAP 
+---
+= Apéndice A: Configuración de host
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Contenido DEL APÉNDICE:
+
+* Confirmar que los adaptadores de bus de host (HBA) de FC en el host ESX se ejecutan con los controladores actualizados, el firmware y la versión de BIOS correcta.
+* Instale las utilidades de host de NetApp en el host para ver las rutas directas e indirectas de una LUN determinada. El kit también proporciona información ampliada sobre la información de la SVM de LUN.
+* Utilice siempre un script de bus SCSI de nuevo escaneo en el host para:
+* Encuentre nuevas LUN
+* Descartar las LUN obsoletas
+* Actualizar las nuevas rutas a las LUN
+* Para establecer varias rutas al almacenamiento si hay un fallo de ruta, instale y configure el software multivía en el sistema operativo del host.
+* Si no utiliza software multivía, debe limitar cada LUN a una única ruta.
+* El kernel de Linux permite un control de bajo nivel sobre la programación de E/S para bloquear dispositivos. Los valores predeterminados en las versiones de Linux pueden variar considerablemente. En general, los clientes de NetApp y las pruebas internas muestran mejores resultados con el planificador NoOps para bases de datos. Debe realizar pruebas comparativas para determinar qué programadores de E/S son óptimos para su caso de uso.
+

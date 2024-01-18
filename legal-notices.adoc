@@ -16,9 +16,6 @@ summary:
 [role="lead"]
 Los avisos legales proporcionan acceso a las declaraciones de copyright, marcas comerciales, patentes y mucho más.
 
-[role="lead"]
-Los avisos legales proporcionan acceso a las declaraciones de copyright, marcas comerciales, patentes y mucho más.
-
 
 
 == Derechos de autor
@@ -55,7 +52,7 @@ Los archivos de notificación proporcionan información sobre los derechos de au
 
 
 
-=== ONTAP
+== ONTAP
 
 link:https://library.netapp.com/ecm/ecm_download_file/ECMLP2885801["Aviso para ONTAP 9.13.1"^]
 link:https://library.netapp.com/ecm/ecm_download_file/ECMLP2884813["Aviso para ONTAP 9.12.1"^]
@@ -75,7 +72,7 @@ link:https://library.netapp.com/ecm/ecm_download_file/ECMLP2516795["Aviso para O
 
 
 
-=== Mediador ONTAP para MCC IP
+== Mediador ONTAP para MCC IP
 
 link:https://library.netapp.com/ecm/ecm_download_file/ECMLP2870521["9.9.1 Aviso para Mediador ONTAP para IP MCC"^]
 link:https://library.netapp.com/ecm/ecm_download_file/ECMLP2870521["9,8 Aviso para Mediador ONTAP para IP MCC"^]

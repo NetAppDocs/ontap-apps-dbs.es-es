@@ -1,0 +1,33 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-app-config-block-sizes.html 
+keywords: oracle, database, ontap, SAN, ASM 
+summary: Tamaño de bloque de Oracle 
+---
+= Tamaños de los bloques de Oracle
+:allow-uri-read: 
+
+
+[role="lead"]
+ONTAP utiliza internamente un tamaño de bloque variable, lo que significa que las bases de datos Oracle se pueden configurar con el tamaño de bloque deseado. Sin embargo, los tamaños de bloque del sistema de archivos pueden afectar al rendimiento y, en algunos casos, un tamaño de bloque de redo más grande puede mejorar el rendimiento.
+
+
+
+== Tamaños de bloque de archivos de datos
+
+Algunos sistemas operativos ofrecen diferentes tamaños de bloque del sistema de archivos. En el caso de los sistemas de archivos que admiten archivos de datos de Oracle, el tamaño de bloque debe ser 8KB cuando se utiliza la compresión. Cuando no se necesita compresión, se puede utilizar un tamaño de bloque de 8KB KB o 4KB KB.
+
+Si se coloca un archivo de datos en un sistema de archivos con un bloque de 512 bytes, es posible que los archivos estén mal alineados. El LUN y el sistema de archivos podrían alinearse correctamente de acuerdo con las recomendaciones de NetApp, pero la I/O de archivo estaría mal alineada. Tal desalineación podría causar graves problemas de rendimiento.
+
+Los sistemas de archivos compatibles con redo logs deben utilizar un tamaño de bloque que sea múltiplo del tamaño del bloque de redo. Esto generalmente requiere que tanto el sistema de archivos redo log como el propio redo log utilicen un tamaño de bloque de 512 bytes.
+
+
+
+== Rehacer tamaños de bloques
+
+Con tasas de redo muy elevadas, es posible que los bloques de 4KB KB rindan mejor porque las tasas de rehacer elevadas permiten realizar I/O en operaciones cada vez más eficientes. Si las tasas de redo son mayores que 50Mbps, considere la posibilidad de probar un tamaño de bloque de 4KB KB.
+
+Se han identificado algunos problemas de los clientes con bases de datos que utilizan redo logs con un tamaño de bloque de 512 bytes en un sistema de archivos con un tamaño de bloque de 4KB KB y muchas transacciones muy pequeñas. La sobrecarga involucrada en la aplicación de varios cambios de 512 bytes a un único bloque del sistema de archivos de 4KB se tradujo en problemas de rendimiento que se resolvieron mediante el cambio del sistema de archivos para que utilizara un tamaño de bloque de 512 bytes.
+
+
+TIP: *NetApp recomienda* que no cambie el tamaño del bloque de redo a menos que se lo indique un servicio de atención al cliente relevante o una organización de servicios profesionales o que el cambio se base en la documentación oficial del producto.

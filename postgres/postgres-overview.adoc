@@ -1,0 +1,25 @@
+---
+sidebar: sidebar 
+permalink: postgres/postgres-overview.html 
+keywords: PostgreSQL,database,postgres 
+summary: Bases de datos PostgreSQL en ONTAP 
+---
+= Bases de datos PostgreSQL en ONTAP
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+PostgreSQL viene con variantes que incluyen PostgreSQL, PostgreSQL Plus y EDB Postgres Advanced Server (EPAS). PostgreSQL suele ponerse en marcha como base de datos de back-end para aplicaciones de varios niveles. Es compatible con paquetes de middleware comunes (como PHP, Java, Python, Tcl/Tk, ODBC, etc.). JDBC) y, desde siempre, ha sido una opción popular para los sistemas de gestión de bases de datos de código abierto. NetApp ONTAP es una opción excelente para ejecutar bases de datos PostgreSQL en cuanto a su fiabilidad, alto rendimiento y eficacia.
+
+
+NOTE: Esta documentación sobre ONTAP y la base de datos PostgreSQL reemplaza a la base de datos _TR-4770: PostgreSQL sobre las mejores prácticas de ONTAP._
+
+A medida que los datos crecen exponencialmente, la gestión de datos se vuelve más compleja para las empresas. Esta complejidad aumenta los costes de licencias, operaciones, soporte y mantenimiento. Para reducir el coste total de propiedad, considere la posibilidad de cambiar de bases de datos comerciales a bases de datos de código abierto con un almacenamiento de back-end fiable y de alto rendimiento. PostgreSQL es una base de datos avanzada de código abierto que se utiliza ampliamente en el ámbito académico, comercial y grandes empresas. Viene con un nuevo conjunto de características que aborda las brechas en otros sistemas de gestión de bases de datos relacionales (RDBMSs).
+
+
+NOTE: Los clientes de NetApp que utilizan bases de datos PostgreSQL en entornos físicos o virtualizados pueden beneficiarse de comprender las mejores prácticas para poner en marcha y gestionar correctamente bases de datos PostgreSQL en ONTAP. Las recomendaciones son genéricas, por lo que no son específicas de ninguna configuración. Dependiendo de las necesidades de su negocio, algunas sugerencias pueden requerir cambios. Debe evaluar su entorno respecto a la documentación oficial de PostgreSQL, hipervisores, sistema operativo y almacenamiento ONTAP.

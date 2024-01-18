@@ -1,0 +1,19 @@
+---
+sidebar: sidebar 
+permalink: mysql/mysql-innodb_doublewrite.html 
+keywords: MySQL,MariaDB,innodb_doublewrite 
+summary: MySQL en ONTAP 
+---
+= innodb_doublewrite
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Cuando `innodb_doublewrite` Está activado (por defecto), InnoDB almacena todos los datos dos veces: Primero en el buffer de doble escritura y luego en los archivos de datos reales.
+
+Es posible desactivar este parámetro con `--skip-innodb_doublewrite` para pruebas de rendimiento o cuando le preocupa más el rendimiento superior que la integridad de los datos o posibles fallos. InnoDB utiliza una técnica de vaciado de archivos denominada doble escritura. Antes de escribir páginas en los archivos de datos, InnoDB las escribe en un área contigua denominada buffer de doble escritura. Una vez que se hayan completado las operaciones de escritura y vaciado en el buffer de doble escritura, InnoDB escribe las páginas en sus posiciones adecuadas en el archivo de datos. Si el sistema operativo o un proceso mysqld se bloquea durante la escritura de una página, InnoDB puede encontrar más tarde una buena copia de la página desde el buffer de doble escritura durante la recuperación de fallos.
+
+
+TIP: *NetApp recomienda* deshabilitar el buffer de doble escritura. NVRAM de ONTAP sirve la misma función. El almacenamiento en búfer doble dañará innecesariamente el rendimiento.
