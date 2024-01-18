@@ -1,0 +1,86 @@
+---
+sidebar: sidebar 
+permalink: postgres/postgres-nfs-filesystems.html 
+keywords: PostgreSQL,database,postgres 
+summary: Bases de datos PostgreSQL NFS con ONTAP 
+---
+= PostgreSQL con sistemas de archivos NFS
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las bases de datos PostgreSQL se pueden alojar en sistemas de archivos NFSv3 o NFSv4. La mejor opción depende de factores fuera de la base de datos.
+
+Por ejemplo, el comportamiento de bloqueo NFSv4 puede ser preferible en ciertos entornos agrupados en clúster. (Consulte link:../oracle/oracle-notes-stale-nfs-locks.html["aquí"] para obtener más información).
+
+De lo contrario, la funcionalidad de la base de datos debería ser casi idéntica, incluido el rendimiento. El único requisito es el uso del `hard` opción de montaje. Esto es necesario para garantizar que los tiempos de espera de software no produzcan errores de E/S irrecuperables.
+
+Si se elige NFSv4 como protocolo, NetApp recomienda usar NFSv4,1. Existen algunas mejoras funcionales en el protocolo NFSv4 en NFSv4,1 que mejoran la resiliencia con respecto a la versión NFSv4,0.
+
+Utilice las siguientes opciones de montaje para cargas de trabajo generales de bases de datos:
+
+....
+rw, hard,nointr,bg,vers=[3|4],proto=tcp,rsize=65536,wsize=65536
+....
+Si se espera un gran volumen de I/O secuencial, se pueden aumentar los tamaños de transferencia de NFS.
+
+
+
+== Tamaños de transferencia de NFS
+
+De forma predeterminada, ONTAP limita el tamaño de I/O de NFS a 64K.
+
+La I/O aleatoria con la mayoría de aplicaciones y bases de datos utiliza un tamaño de bloque mucho más pequeño, que es muy inferior al máximo de 64K KB. Las operaciones de I/O de grandes bloques suelen estar en paralelo, por lo que el máximo de 64K KB tampoco se limita a obtener el ancho de banda máximo.
+
+Hay algunas cargas de trabajo en las que el máximo de 64K crea una limitación. En particular, las operaciones de subproceso único como la operación de copia de seguridad o recuperación o una exploración de tabla completa de la base de datos se ejecutan de forma más rápida y eficiente si la base de datos puede realizar menos E/S pero más grandes. El tamaño óptimo de gestión de I/O para ONTAP es de 256K KB.
+
+El tamaño de transferencia máximo para una SVM de ONTAP determinada se puede cambiar de la siguiente manera:
+
+....
+Cluster01::> set advanced
+Warning: These advanced commands are potentially dangerous; use them only when directed to do so by NetApp personnel.
+Do you want to continue? {y|n}: y
+Cluster01::*> nfs server modify -vserver vserver1 -tcp-max-xfer-size 262144
+Cluster01::*>
+....
+|===
+| Precaución 
+
+
+| No reduzca nunca el tamaño máximo permitido de transferencia en ONTAP por debajo del valor de rsize/wsize de los sistemas de archivos NFS montados actualmente. Esto puede crear bloqueos o incluso corrupción de datos con algunos sistemas operativos. Por ejemplo, si los clientes NFS se establecen actualmente con un valor de rsize/wsize de 65536 000, el tamaño de transferencia máximo de ONTAP se podría ajustar entre 65536 000 y 1048576 000 sin que ello afecte a porque los propios clientes están limitados. Reducir el tamaño máximo de transferencia por debajo de 65536 puede dañar la disponibilidad o los datos. 
+|===
+Una vez que se aumenta el tamaño de transferencia en el nivel de ONTAP, se utilizarán las siguientes opciones de montaje:
+
+....
+rw, hard,nointr,bg,vers=[3|4],proto=tcp,rsize=262144,wsize=262144
+....
+
+
+== NFSv3 Tablas de ranuras TCP
+
+Si NFSv3 se utiliza con Linux, es fundamental configurar correctamente las tablas de ranuras TCP.
+
+Las tablas de ranuras TCP son equivalentes a NFSv3 a la profundidad de la cola del adaptador de bus de host (HBA). En estas tablas se controla el número de operaciones de NFS que pueden extraordinarias a la vez. El valor predeterminado suele ser 16, que es demasiado bajo para un rendimiento óptimo. El problema opuesto ocurre en los kernels más nuevos de Linux, que pueden aumentar automáticamente el límite de la tabla de ranuras TCP a un nivel que sature el servidor NFS con solicitudes.
+
+Para obtener un rendimiento óptimo y evitar problemas de rendimiento, ajuste los parámetros del núcleo que controlan las tablas de ranuras TCP.
+
+Ejecute el `sysctl -a | grep tcp.*.slot_table` command, y observe los siguientes parámetros:
+
+....
+# sysctl -a | grep tcp.*.slot_table
+sunrpc.tcp_max_slot_table_entries = 128
+sunrpc.tcp_slot_table_entries = 128
+....
+Todos los sistemas Linux deben incluir `sunrpc.tcp_slot_table_entries`, pero solo algunos incluyen `sunrpc.tcp_max_slot_table_entries`. Ambos deben establecerse en 128.
+
+|===
+| Precaución 
+
+
+| Si no se establecen estos parámetros, puede tener efectos significativos en el rendimiento. En algunos casos, el rendimiento es limitado porque el sistema operativo linux no está emitiendo suficiente I/O. En otros casos, las latencias de I/O aumentan cuando el sistema operativo linux intenta emitir más operaciones de I/O de las que se pueden mantener. 
+|===
