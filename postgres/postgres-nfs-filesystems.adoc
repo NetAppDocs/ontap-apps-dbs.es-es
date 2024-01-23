@@ -25,9 +25,9 @@ Si se elige NFSv4 como protocolo, NetApp recomienda usar NFSv4,1. Existen alguna
 Utilice las siguientes opciones de montaje para cargas de trabajo generales de bases de datos:
 
 ....
-rw, hard,nointr,bg,vers=[3|4],proto=tcp,rsize=65536,wsize=65536
+rw,hard,nointr,bg,vers=[3|4],proto=tcp,rsize=65536,wsize=65536
 ....
-Si se espera un gran volumen de I/O secuencial, se pueden aumentar los tamaños de transferencia de NFS.
+Si se esperan operaciones de I/O secuenciales pesadas, los tamaños de transferencia NFS pueden aumentar, tal como se describe en la siguiente sección.
 
 
 
@@ -57,7 +57,7 @@ Cluster01::*>
 Una vez que se aumenta el tamaño de transferencia en el nivel de ONTAP, se utilizarán las siguientes opciones de montaje:
 
 ....
-rw, hard,nointr,bg,vers=[3|4],proto=tcp,rsize=262144,wsize=262144
+rw,hard,nointr,bg,vers=[3|4],proto=tcp,rsize=262144,wsize=262144
 ....
 
 

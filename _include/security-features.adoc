@@ -1,16 +1,6 @@
----
-sidebar: sidebar 
-permalink: mssql/mssql-data-security.html 
-keywords: MS-SQL,mssql,SQL Server, securing databases, security 
-summary: Microsoft SQL Server en ONTAP 
----
-= Seguridad de la base de datos
+= Copias Snapshot
 :allow-uri-read: 
-:imagesdir: ../media/
 
-
-[role="lead"]
-Proteger un entorno de base de datos es un esfuerzo multidimensional que va más allá de gestionar la propia base de datos. NetApp ofrece varias funciones únicas diseñadas para proteger el aspecto de almacenamiento de la infraestructura de bases de datos.
 
 
 

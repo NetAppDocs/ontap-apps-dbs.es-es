@@ -77,7 +77,7 @@ https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere/index.html["Para consul
 
 Además de la documentación del producto, también existen artículos de la base de conocimientos de soporte que pueden ser de utilidad.
 
-* https://kb.netapp.com/app/answers/answer_view/a_id/1031261["Cómo realizar una recuperación ante desastres de un proveedor VASA"^]
+* https://kb.netapp.com/mgmt/OTV/NetApp_VASA_Provider/How_to_perform_a_VASA_Provider_Disaster_Recovery_-_Resolution_Guide["Cómo realizar una recuperación de desastres de un proveedor VASA: Guía de resolución"^]
 
 
 

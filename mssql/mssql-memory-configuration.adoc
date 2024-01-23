@@ -6,12 +6,11 @@ summary: Microsoft SQL Server en ONTAP
 ---
 = Configuración de memoria de Microsoft SQL Server
 :allow-uri-read: 
-:firstname: [.lead]
-:author: [.lead]
-:authorinitials: [
-:authors: [.lead]
 :imagesdir: ../media/
 
+
+[role="lead"]
+En las siguientes secciones se explican algunos de los ajustes de configuración de memoria crítica.
 
 
 

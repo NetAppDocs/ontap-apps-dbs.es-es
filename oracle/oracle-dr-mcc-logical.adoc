@@ -153,10 +153,6 @@ Por el contrario, la arquitectura IP de MetroCluster enruta todas las I/O de for
 
 
 
-=== Conmutación automática desatendida de Mediator (MAUSO)
-
-
-
 === Tercer sitio virtual con ClusterLion
 
 ClusterLion es un dispositivo de supervisión MetroCluster avanzado que funciona como un tercer sitio virtual. Este enfoque permite implementar MetroCluster de forma segura en una configuración de dos sitios con capacidad de conmutación de sitios totalmente automatizada. Además, ClusterLion puede realizar una supervisión de nivel de red adicional y ejecutar operaciones posteriores a la conmutación. La documentación completa está disponible en ProLion.
