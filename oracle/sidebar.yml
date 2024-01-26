@@ -62,7 +62,7 @@ entries:
     entries:
     - title: Alineación de LUN
       url: "/oracle/oracle-storage-san-config-lun-alignment.html"
-    - title: Número de LUN y Tamaño de LUN
+    - title: Número de LUN y tamaño de LUN
       url: "/oracle/oracle-storage-san-config-lun-sizing.html"
     - title: Cambio de tamaño de LUN
       url: "/oracle/oracle-storage-san-config-lun-resizing.html"
@@ -114,7 +114,7 @@ entries:
   entries:
   - title: Descripción general
     url: "/oracle/oracle-dp-overview.html"
-  - title: RPO, TRO y SLA
+  - title: RPO, RTO y SLA
     url: "/oracle/oracle-dp-slas.html"
   - title: Disponibilidad de datos
     url: "/oracle/oracle-dp-data-availability.html"
