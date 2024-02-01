@@ -2,16 +2,16 @@
 sidebar: sidebar 
 permalink: mysql/mysql-configuration.html 
 keywords: MySQL,MariaDB 
-summary: Configuración de MySQL 
+summary: Parámetros de configuración de MySQL 
 ---
-= Información general de configuración
+= Parámetros de configuración de MySQL
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/
 
 
 [role="lead"]
-NetApp recomienda varios parámetros de configuración de MySQL importantes (enumerados en la tabla 1) para obtener un rendimiento óptimo.
+NetApp recomienda algunos parámetros de configuración MySQL importantes para obtener un rendimiento óptimo.
 
 [cols="1,1"]
 |===

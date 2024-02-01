@@ -2,16 +2,16 @@
 sidebar: sidebar 
 permalink: mysql/mysql-slot-tables.html 
 keywords: MySQL,MariaDB,TR-4722 
-summary: MySQL en ONTAP 
+summary: MySQL y NFSv3 mesas de ranura 
 ---
-= Tablas de ranuras
+= MySQL y NFSv3 mesas de ranura
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/
 
 
 [role="lead"]
-El rendimiento de NFS en Linux depende de un parámetro denominado `tcp_max_slot_table_entries`.
+El rendimiento de NFSv3 en Linux depende de un parámetro llamado `tcp_max_slot_table_entries`.
 
 Las tablas de ranuras TCP son equivalentes a NFSv3 a la profundidad de la cola del adaptador de bus de host (HBA). En estas tablas se controla el número de operaciones de NFS que pueden extraordinarias a la vez. El valor predeterminado suele ser 16, que es demasiado bajo para un rendimiento óptimo. El problema opuesto ocurre en los kernels más nuevos de Linux, que pueden aumentar automáticamente el límite de la tabla de ranuras TCP a un nivel que sature el servidor NFS con solicitudes.
 

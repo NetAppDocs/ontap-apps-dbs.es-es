@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: postgres/postgres-snapshot-dp.html 
 keywords: PostgreSQL,database,postgres 
-summary: Bases de datos PostgreSQL en ONTAP 
+summary: Bases de datos PostgreSQL e instantáneas de almacenamiento 
 ---
-= Snapshot
+= Bases de datos PostgreSQL e instantáneas de almacenamiento
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

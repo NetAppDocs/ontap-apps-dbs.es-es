@@ -4,7 +4,7 @@ permalink: oracle/oracle-notes-optimization-and-benchmarking.html
 keywords: oracle, database, ontap, performance, hammerdb, swingbench, calibrate_io, slob2, orion, slob, benchmarking, benchmark 
 summary: Pruebas de rendimiento de Oracle 
 ---
-= Optimización y evaluación comparativa del rendimiento de Oracle
+= Optimización del rendimiento de Oracle y procedimientos de evaluación comparativa
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -24,9 +24,9 @@ Las pruebas precisas del rendimiento del almacenamiento de la base de datos son 
 
 Además, hay tareas que no son de almacenamiento que se deben tener en cuenta. Hay un punto en el cual la optimización del rendimiento del almacenamiento no proporciona ventajas útiles, porque el rendimiento del almacenamiento ya no es un factor limitador del rendimiento.
 
-La mayoría de clientes de bases de datos seleccionan ahora las cabinas all-flash, lo que crea algunas consideraciones adicionales. Por ejemplo, piense en las pruebas de rendimiento en un sistema AFF8080 de dos nodos:
+La mayoría de clientes de bases de datos seleccionan ahora las cabinas all-flash, lo que crea algunas consideraciones adicionales. Por ejemplo, piense en las pruebas de rendimiento en un sistema AFF A900 de dos nodos:
 
-* Con una tasa de lectura/escritura de 75/25:1, dos nodos de AFF8080 pueden ofrecer más de 300K 000 IOPS de base de datos aleatorias antes de que la latencia incluso supere la marca de 1ms ms. Esto supera con creces las demandas de rendimiento actuales de la mayoría de las bases de datos, que es difícil predecir la mejora esperada. El almacenamiento se borrará en gran medida como un cuello de botella.
+* Con una tasa de lectura/escritura de 80/20:1, dos nodos de A900 pueden ofrecer más de 1M 000 IOPS de base de datos aleatorias antes de que la latencia supere incluso la marca 150µs. Esto supera con creces las demandas de rendimiento actuales de la mayoría de las bases de datos, que es difícil predecir la mejora esperada. El almacenamiento se borrará en gran medida como un cuello de botella.
 * El ancho de banda de red es una fuente cada vez más común de limitaciones de rendimiento. Por ejemplo, las soluciones de discos giratorios suelen ser cuellos de botella en el rendimiento de las bases de datos porque la latencia de I/O es muy alta. Cuando una cabina all-flash elimina las limitaciones de latencia, la barrera cambia frecuentemente a la red. Esto es especialmente notable en entornos virtualizados y sistemas blade donde la verdadera conectividad de red es difícil de visualizar. Esto puede complicar las pruebas de rendimiento si el sistema de almacenamiento en sí no se puede utilizar completamente debido a las limitaciones de ancho de banda.
 * Comparar el rendimiento de una cabina all-flash con una cabina que contiene discos giratorios no es posible debido a la latencia drásticamente mejorada de las cabinas all-flash. Los resultados de las pruebas no suelen ser significativos.
 * La comparación del rendimiento máximo de IOPS con una cabina all-flash no suele ser una prueba útil porque las bases de datos no están limitadas por las operaciones de I/O de almacenamiento Por ejemplo, supongamos que una cabina puede admitir 500K 000 IOPS aleatorias, mientras que otra puede admitir 300K. La diferencia no es relevante en el mundo real si la base de datos gasta el 99% de su tiempo en procesamiento de CPU. Las cargas de trabajo nunca utilizan todas las funcionalidades de la cabina de almacenamiento. En cambio, las funcionalidades de IOPS máximo pueden ser cruciales en una plataforma de consolidación en la cual se espera que la cabina de almacenamiento se cargue en sus capacidades máximas.

@@ -1,17 +1,17 @@
 ---
 sidebar: sidebar 
 permalink: mysql/mysql-file-descriptors.html 
-keywords: MySQL,MariaDB,TR-4722 
-summary: MySQL en ONTAP 
+keywords: MySQL,MariaDB,file descriptors 
+summary: Descripciones de archivos MySQL 
 ---
-= Descriptores de archivo
+= Descriptores de archivos MySQL
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/
 
 
 [role="lead"]
-Para ejecutarse, el servidor MySQL necesita descriptores de archivos.
+Para ejecutarse, el servidor MySQL necesita descriptores de archivo y los valores predeterminados no son suficientes.
 
 Las utiliza para abrir nuevas conexiones, almacenar tablas en la caché, crear tablas temporales para resolver consultas complicadas y acceder a las persistentes. Si mysqld no puede abrir nuevos archivos cuando sea necesario, puede dejar de funcionar correctamente. Un síntoma común de este problema es el error 24, “Demasiados archivos abiertos”. El número de descriptores de archivo que mysqld puede abrir simultáneamente se define por el `open_files_limit` opción establecida en el archivo de configuración (`/etc/my.cnf`). Pero `open_files_limit` también depende de los límites del sistema operativo. Esta dependencia hace que la configuración de la variable sea más complicada.
 

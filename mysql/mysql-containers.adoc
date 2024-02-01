@@ -1,10 +1,10 @@
 ---
 sidebar: sidebar 
 permalink: mysql/mysql-containers.html 
-keywords: MySQL,MariaDB,containers 
-summary: MySQL en ONTAP 
+keywords: MySQL,MariaDB,containers,trident 
+summary: Contenerización de MySQL 
 ---
-= Contenedores
+= Contenerización de MySQL
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/
