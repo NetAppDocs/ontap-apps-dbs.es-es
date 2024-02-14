@@ -20,7 +20,7 @@ summary: Esta página describe las prácticas recomendadas para implementar una 
 
 Estas son algunas cosas a tener en cuenta:
 
-* Hay que separar el tráfico de la red de almacenamiento de otras redes. Se puede lograr una red independiente a través de una VLAN dedicada o switches independientes para el almacenamiento. Si la red de almacenamiento comparte rutas físicas como los enlaces ascendentes, puede que necesite calidad de servicio o puertos adicionales para garantizar el ancho de banda suficiente. No conecte los hosts directamente al almacenamiento; utilice switches para que tengan rutas redundantes y permita que VMware HA funcione sin intervención alguna.
+* Hay que separar el tráfico de la red de almacenamiento de otras redes. Se puede lograr una red independiente a través de una VLAN dedicada o switches independientes para el almacenamiento. Si la red de almacenamiento comparte rutas físicas como los enlaces ascendentes, puede que necesite calidad de servicio o puertos adicionales para garantizar el ancho de banda suficiente. No conecte los hosts directamente al almacenamiento; utilice switches para que tengan rutas redundantes y permita que VMware HA funcione sin intervención alguna. Consulte link:vmware-vsphere-network.html#direct-connect-networking["Red de conexión directa"] para obtener más información.
 * Las tramas gigantes se pueden utilizar si se desean y admiten en la red, especialmente si se utiliza iSCSI. Si se usan, asegúrese de que estén configurados de la misma forma en todos los dispositivos de red, VLAN, etc., en la ruta entre el almacenamiento y el host ESXi. De lo contrario, puede que observe problemas de rendimiento o conexión. La MTU también debe establecerse de forma idéntica en el switch virtual ESXi, el puerto de VMkernel y, además, en los puertos físicos o los grupos de interfaces de cada nodo ONTAP.
 * NetApp solo recomienda deshabilitar el control de flujo de red en los puertos de red de clúster dentro de un clúster de ONTAP. NetApp no ofrece otras recomendaciones para seguir las prácticas recomendadas para los puertos de red restantes que se usan para el tráfico de datos. Debe activar o desactivar según sea necesario. Consulte http://www.netapp.com/us/media/tr-4182.pdf["CONSULTE TR-4182"^] para obtener más fondo sobre el control de flujo.
 * Cuando las cabinas de almacenamiento ESXi y ONTAP están conectadas a redes de almacenamiento Ethernet, NetApp recomienda configurar los puertos Ethernet a los que se conectan estos sistemas como puertos periféricos del protocolo de árbol de expansión rápido (RSTP) o mediante la función PortFast de Cisco. NetApp recomienda habilitar la función de enlace troncal Spanning-Tree PortFast en entornos que utilizan la función Cisco PortFast y que tienen la conexión de enlaces VLAN 802.1Q habilitada tanto para el servidor ESXi como para las cabinas de almacenamiento ONTAP.
@@ -196,7 +196,7 @@ En la siguiente tabla, se enumeran las versiones de NFS y las funciones compatib
 |===
 
 
-== Red de conexión directa
+== Conexión de red directa
 
 A veces, los administradores de almacenamiento prefieren simplificar sus infraestructuras eliminando los switches de red de la configuración. Esto puede ser soportado en algunos escenarios.
 
