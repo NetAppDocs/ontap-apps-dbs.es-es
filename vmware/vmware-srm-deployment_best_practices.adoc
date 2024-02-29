@@ -13,6 +13,9 @@ summary: 'Con ONTAP, el concepto de las máquinas virtuales de almacenamiento (S
 :imagesdir: ../media/
 
 
+[role="lead"]
+En las siguientes secciones se resumen las mejores prácticas de puesta en marcha con VMware y SRM de ONTAP.
+
 
 
 == Distribución y segmentación de SVM para SMT

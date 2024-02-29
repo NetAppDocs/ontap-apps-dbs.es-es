@@ -11,12 +11,14 @@ summary: Si es posible, utilice siempre herramientas ONTAP para aprovisionar alm
 :icons: font
 :linkattrs: 
 :imagesdir: ../media/
-:firstname: [.lead]
-:author: [.lead]
-:authorinitials: [
-:authors: [.lead]
-:revdate: == Datastores and protocols
 
+
+[role="lead"]
+Las siguientes secciones describen las mejores prácticas operativas para el almacenamiento de VMware SRM y ONTAP.
+
+
+
+== Almacenes de datos y protocolos
 
 * Si es posible, utilice siempre herramientas ONTAP para aprovisionar almacenes de datos y volúmenes. De este modo se garantiza que los volúmenes, rutas de unión, LUN, iGroups, políticas de exportación, y otros ajustes se configuran de forma compatible.
 * El SRM admite iSCSI, Fibre Channel y NFS versión 3 con ONTAP 9 al usar la replicación basada en cabinas a través de SRA. SRM no admite la replicación basada en cabinas para NFS versión 4.1 con almacenes de datos tradicionales o vVols.

@@ -11,13 +11,10 @@ summary: SnapCenter permite crear políticas de backup que se pueden aplicar a v
 :icons: font
 :linkattrs: 
 :imagesdir: ../media/
-:firstname: [.lead]
-:author: [.lead]
-:authorinitials: [
-:authors: [.lead]
-:revnumber: 
-:revdate: or entire SVMs.
 
+
+[role="lead"]
+Los sistemas que ejecutan el software ONTAP pueden utilizar la función de calidad de servicio del almacenamiento ONTAP para limitar el rendimiento en Mbps y/o I/o por segundo (IOPS) de diferentes objetos de almacenamiento como archivos, LUN, volúmenes o SVM completas.
 
 Los límites de rendimiento son útiles para controlar las cargas de trabajo desconocidas o de prueba antes de la implementación para asegurarse de que no afecten a otras cargas de trabajo. También se pueden utilizar para limitar una carga de trabajo abusivas una vez que se identifica. También admite niveles mínimos de servicio basados en IOPS para proporcionar un rendimiento constante para los objetos SAN en ONTAP 9.2 y para los objetos NAS en ONTAP 9.3.
 

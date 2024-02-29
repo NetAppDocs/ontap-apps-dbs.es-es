@@ -18,13 +18,13 @@ A veces, los administradores de almacenamiento prefieren simplificar sus infraes
 
 
 
-=== ISCSI y NVMe/TCP
+== ISCSI y NVMe/TCP
 
 Un host que utilice iSCSI o NVMe/TCP se puede conectar directamente a un sistema de almacenamiento y funcionar normalmente. El motivo son las rutas. Las conexiones directas a dos controladoras de almacenamiento diferentes dan como resultado dos rutas independientes para el flujo de datos. La pérdida de una ruta, un puerto o una controladora no impide que se utilice la otra ruta.
 
 
 
-=== NFS
+== NFS
 
 Se puede utilizar el almacenamiento NFS conectado directamente, pero con una limitación considerable: El fallo no funcionará si no se realiza una ejecución significativa de secuencias de comandos, que sería responsabilidad del cliente.
 
@@ -36,6 +36,6 @@ En la práctica, los clientes de NetApp disponen de NFS conectado directamente, 
 
 
 
-=== Conexión directa FC
+== Conexión directa FC
 
 No es posible conectar directamente un host a un sistema de almacenamiento ONTAP mediante el protocolo FC. La razón es el uso de NPIV. El WWN que identifica un puerto ONTAP FC con la red de FC utiliza un tipo de virtualización denominado NPIV. Cualquier dispositivo conectado a un sistema ONTAP debe poder reconocer un WWN de NPIV. No hay proveedores de HBA actuales que ofrezcan un HBA que se pueda instalar en un host que admita un destino NPIV.

@@ -11,13 +11,10 @@ summary: SnapCenter permite crear políticas de backup que se pueden aplicar a v
 :icons: font
 :linkattrs: 
 :imagesdir: ../media/
-:firstname: [.lead]
-:author: [.lead]
-:authorinitials: [
-:authors: [.lead]
-:revnumber: 
-:revdate: and so on.
 
+
+[role="lead"]
+El clonado de un objeto de almacenamiento le permite crear rápidamente copias para un uso adicional, como el aprovisionamiento de equipos virtuales adicionales, operaciones de backup/recuperación de datos, etc.
 
 En vSphere, es posible clonar una máquina virtual, un disco virtual, VVol o un almacén de datos. Después de que se clona, el objeto se puede personalizar aún más, a menudo mediante un proceso automatizado. VSphere es compatible con ambos clones de copias completas, así como clones enlazados, donde sigue los cambios de forma independiente del objeto original.
 

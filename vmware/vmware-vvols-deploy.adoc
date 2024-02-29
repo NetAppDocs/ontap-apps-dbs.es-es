@@ -10,12 +10,10 @@ summary:
 :icons: font
 :linkattrs: 
 :imagesdir: ../media/
-:firstname: [.lead]
-:author: [.lead]
-:authorinitials: [
-:authors: [.lead]
-:revdate: There are several steps to creating vVols storage for your VMs.
 
+
+[role="lead"]
+Hay varios pasos para crear almacenamiento vVols para las máquinas virtuales.
 
 Puede que los dos primeros pasos no sean necesarios para un entorno vSphere existente que utilice ONTAP para almacenes de datos tradicionales. Es posible que ya utilice las herramientas de ONTAP para gestionar, automatizar y generar informes con su VMFS o almacenamiento basado en NFS tradicional. Estos pasos se tratan con más detalle en la siguiente sección.
 
