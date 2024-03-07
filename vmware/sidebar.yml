@@ -13,7 +13,15 @@ entries:
   - title: Gestión basada en volúmenes virtuales y políticas de almacenamiento
     url: "/vmware/vmware-vsphere-vvols_and_spbm.html"
   - title: Almacenes de datos y protocolos
-    url: "/vmware/vmware-vsphere-datastores.html"
+    entries:
+    - title: Descripción general
+      url: "/vmware/vmware-vsphere-datastores-top.html"
+    - title: SAN
+      url: "/vmware/vmware-vsphere-datastores-san.html"
+    - title: NFS
+      url: "/vmware/vmware-vsphere-datastores-nfs.html"
+    - title: Volúmenes de FlexGroup
+      url: "/vmware/vmware-vsphere-datastores-fg.html"
   - title: Configuración de red
     url: "/vmware/vmware-vsphere-network.html"
   - title: Clonado
@@ -54,13 +62,13 @@ entries:
     url: "/vmware/vmware-srm-vvol-troubleshooting.html"
 - title: Clúster de almacenamiento vSphere Metro con ONTAP
   entries:
-  - title: Descripción general de VMSC
+  - title: Información general de VMSC
     url: "/vmware/vmware_vmsc_overview.html"
   - title: Solución de alta disponibilidad de vSphere
     url: "/vmware/vmware_vmsc_solution.html"
   - title: Diseño de VMSC
     url: "/vmware/vmware_vmsc_design.html"
-  - title: Flexibilidad de VMSC
+  - title: Resiliencia de VMSC
     url: "/vmware/vmware_vmsc_resiliency.html"
   - title: Escenarios VMSC con MCC
     url: "/vmware/vmware_vmsc_scen_mcc.html"

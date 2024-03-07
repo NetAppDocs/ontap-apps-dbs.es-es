@@ -9,52 +9,63 @@ summary: Introducción a la virtualización de bases de datos
 
 
 [role="lead"]
-La virtualización de bases de datos con VMware ESX, Oracle OVM o KVM es una opción cada vez más común para los clientes de NetApp que eligieron la virtualización incluso para las bases de datos más importantes.
+La virtualización de bases de datos con VMware, Oracle OLVM o KVM es una opción cada vez más común para los clientes de NetApp que eligieron la virtualización incluso para las bases de datos más importantes.
 
-Existen muchos malentendidos sobre las normativas de compatibilidad de la virtualización, especialmente respecto a los productos VMware. De hecho, no es raro saber que Oracle no admite la virtualización de ningún modo. Esta noción es incorrecta y conduce a la pérdida de oportunidades para la virtualización. El ID de documento de Oracle 249212,1 analiza los problemas conocidos en un entorno de Oracle y también especifica el soporte para RAC.
 
-Es posible que se solicite a un cliente con un problema desconocido para Oracle que reproduzca el problema en el hardware físico. Es posible que un cliente de Oracle que ejecuta una versión de borde de sangrado de un producto no desee utilizar la virtualización debido a la posibilidad de detectar nuevos errores. Sin embargo, esta situación no ha sido un problema en la práctica para los clientes de virtualización que utilizan versiones de producto generalmente disponibles.
+
+== Compatibilidad
+
+Existen muchos malentendidos acerca de las normativas de soporte de Oracle para la virtualización, especialmente para los productos VMware. No es raro escuchar que Oracle no admite la virtualización. Esta noción es incorrecta y conduce a la pérdida de oportunidades para beneficiarse de la virtualización. El ID de documento de Oracle 249212,1 analiza los requisitos reales y los clientes rara vez consideran que son una preocupación.
+
+Si se produce un problema en un servidor virtualizado y dicho problema es desconocido previamente para los Servicios de Soporte Oracle, es posible que se solicite al cliente que reproduzca el problema en el hardware físico. Es posible que un cliente de Oracle que ejecuta una versión de borde de sangrado de un producto no desee utilizar la virtualización debido a la posibilidad de problemas de compatibilidad, pero esta situación no ha sido un mundo real para los clientes de virtualización que utilizan versiones de productos de Oracle generalmente disponibles.
 
 
 
 == Presentación de almacenamiento
 
-Los clientes que están considerando la virtualización de sus bases de datos deben basar sus decisiones sobre almacenamiento en sus necesidades empresariales. Aunque esta es una afirmación generalmente verdadera para todas las decisiones DE TI, es especialmente importante para la virtualización, porque el tamaño y el alcance de los proyectos varían considerablemente.
+Los clientes que están considerando la virtualización de sus bases de datos deben basar sus decisiones sobre almacenamiento en sus necesidades empresariales. Aunque esta es una afirmación generalmente verdadera para todas las decisiones DE TI, es especialmente importante para los proyectos de bases de datos, porque el tamaño y el alcance de los requisitos varían considerablemente.
 
-Existen cuatro opciones básicas para la presentación del almacenamiento:
+Existen tres opciones básicas para la presentación del almacenamiento:
 
+* LUN virtualizados en almacenes de datos de hipervisores
 * LUN iSCSI gestionadas por el iniciador iSCSI en la máquina virtual, no el hipervisor
-* Sistemas de archivos NFS montados por la máquina virtual, no un disco de máquina virtual (VMDK)
-* Almacenes de datos de hipervisor
+* Sistemas de archivos NFS montados por la máquina virtual (no desde un almacén de datos basado en NFS)
+* Asignaciones directas de dispositivos. Los clientes no se ven favorecidos por los RDM de VMware, pero los dispositivos físicos siguen siendo a menudo asignados de forma similar directamente con la virtualización de KVM y OLVM.
 
 
-Como regla general, evite el uso de almacenes de datos para archivos de Oracle. Hay muchas razones para esta recomendación:
 
-* *Transparencia.* Cuando una VM posee sus sistemas de archivos, es más fácil para un administrador de bases de datos o un administrador del sistema identificar el origen de los sistemas de archivos para sus datos.
-* *Rendimiento.* Las pruebas han demostrado que hay un efecto de rendimiento al canalizar todas las E/S a través de un almacén de datos de hipervisor.
-* *Capacidad de gestión.* Cuando una VM es propietaria de sus sistemas de archivos, el uso o no uso de una capa de hipervisor afecta a la capacidad de gestión. Los mismos procedimientos para aprovisionamiento, supervisión, protección de datos, etc. se pueden utilizar en todo el conjunto, incluidos los entornos virtualizados y no virtualizados.
-* *Estabilidad y resolución de problemas.* Cuando una VM es propietaria de sus sistemas de archivos, ofrecer un rendimiento bueno y estable y solucionar problemas es mucho más simple porque toda la pila de almacenamiento está presente en la VM. El único rol del hipervisor es transportar tramas FC o IP. Cuando se incluye un almacén de datos en una configuración, esto complica la configuración introduciendo otro conjunto de tiempos de espera, parámetros, archivos de registro y posibles errores.
-* *Portabilidad.* Cuando una VM posee sus sistemas de archivos, el proceso de mover un entorno de Oracle se vuelve mucho más sencillo. Los sistemas de archivos se pueden mover fácilmente entre huéspedes virtualizados y no virtualizados.
-* * El bloqueo del proveedor.* Después de colocar los datos en un almacén de datos, usar un hipervisor diferente o extraer los datos del entorno virtualizado se vuelve completamente difícil.
-* *Activación de instantáneas.* En algunos casos, las copias de seguridad en un entorno virtualizado pueden convertirse en un problema debido al ancho de banda relativamente limitado. Por ejemplo, un tronco 10GbE de cuatro puertos podría ser suficiente para responder a las necesidades de rendimiento diario de muchas bases de datos virtualizadas. Sin embargo, tal tronco sería insuficiente para realizar copias de seguridad con RMAN u otros productos de copia de seguridad que requieran una copia de tamaño completo de los datos.
+
+=== Rendimiento
+
+El método de presentar almacenamiento a un invitado virtualizado no suele afectar al rendimiento. Todos los SO host, los controladores de red virtualizados y las implementaciones de almacenes de datos de hipervisor están muy optimizados y, por lo general, pueden consumir todo el ancho de banda de red FC o IP disponible entre el hipervisor y el sistema de almacenamiento, siempre que se sigan las prácticas recomendadas básicas. En algunos casos, obtener un rendimiento óptimo puede ser ligeramente más sencillo usando un método de presentación de almacenamiento en comparación con otro, pero el resultado final debería ser comparable.
+
+
+
+=== Gran capacidad de administración
+
+El factor clave para decidir cómo presentar el almacenamiento a un invitado virtualizado es la capacidad de gestión. No hay un método correcto o incorrecto. El mejor enfoque depende de las necesidades operativas, las habilidades y las preferencias de TI.
+
+Los factores a considerar incluyen:
+
+* *Transparencia.* Cuando una VM administra sus sistemas de archivos, es más fácil para un administrador de bases de datos o un administrador del sistema identificar el origen de los sistemas de archivos para sus datos. No se accede a los sistemas de archivos y LUN de manera diferente a con un servidor físico.
+* *Consistencia.* Cuando una VM es propietaria de sus sistemas de archivos, el uso o no uso de una capa de hipervisor afecta a la capacidad de gestión. Los mismos procedimientos para aprovisionamiento, supervisión, protección de datos, etc. se pueden utilizar en todo el conjunto, incluidos los entornos virtualizados y no virtualizados.
 +
-El uso de sistemas de archivos propiedad de máquinas virtuales facilita la utilización de los backups y las restauraciones basados en Snapshot. Un sistema de archivos propiedad de un equipo virtual libera el trabajo de realizar backups en el sistema de almacenamiento. No es necesario sobrecargar la configuración del hipervisor únicamente para admitir los requisitos de ancho de banda y CPU en la ventana de backup.
+Por otro lado, en un centro de datos virtualizado al 100% de lo contrario, puede que sea preferible también utilizar el almacenamiento basado en almacenes de datos en toda la huella en la misma razón mencionada anteriormente: Consistencia: La capacidad de usar los mismos procedimientos para aprovisionamiento, protección, montorización y protección de datos.
+
+* *Estabilidad y resolución de problemas.* Cuando una VM es propietaria de sus sistemas de archivos, ofrecer un rendimiento bueno y estable y solucionar problemas son más simples porque toda la pila de almacenamiento está presente en la VM. El único rol del hipervisor es transportar tramas FC o IP. Cuando se incluye un almacén de datos en una configuración, esto complica la configuración introduciendo otro conjunto de tiempos de espera, parámetros, archivos de registro y posibles errores.
+* *Portabilidad.* Cuando una VM posee sus sistemas de archivos, el proceso de mover un entorno de Oracle se vuelve mucho más sencillo. Los sistemas de archivos se pueden mover fácilmente entre huéspedes virtualizados y no virtualizados.
+* * Bloqueo del proveedor.* Después de colocar los datos en un almacén de datos, usar un hipervisor diferente o extraer los datos del entorno virtualizado se vuelve completamente difícil.
+* *Activación de instantáneas.* Los procedimientos de respaldo tradicionales en un entorno virtualizado pueden convertirse en un problema debido al ancho de banda relativamente limitado. Por ejemplo, un tronco 10GbE de cuatro puertos podría ser suficiente para soportar las necesidades de rendimiento diarias de muchas bases de datos virtualizadas, pero tal tronco sería insuficiente para realizar copias de seguridad con RMAN u otros productos de copia de seguridad que requieran transmitir una copia de tamaño completo de los datos. El resultado es que un entorno virtualizado cada vez más consolidado debe realizar backups a través de snapshots de almacenamiento. Esto evita la necesidad de sobrecargar la configuración del hipervisor únicamente para admitir los requisitos de ancho de banda y CPU de la ventana de backup.
++
+El uso de sistemas de archivos propiedad de invitados a veces facilita el uso de backups y restauraciones basados en copias Snapshot, ya que los objetos de almacenamiento que necesitan protección pueden dirigirse con mayor facilidad. Sin embargo, cada vez es más grande la cantidad de productos de protección de datos de virtualización que se integran bien con los almacenes de datos y las copias Snapshot. La estrategia de backup debe consistir completamente antes de tomar una decisión sobre cómo presentar el almacenamiento a un host virtualizado.
 
 
-
-
-TIP: *NetApp recomienda* evitar colocar los datos de Oracle en un almacén de datos para lograr un rendimiento y una gestión óptimos. Utilice sistemas de archivos propiedad del huésped, como sistemas de archivos NFS o iSCSI gestionados por el invitado o con RDM.
 
 
 
 == Controladores paravirtualizados
 
 Para un rendimiento óptimo, el uso de controladores de red paravirtualizados es fundamental. Cuando se utiliza un almacén de datos, se requiere un controlador SCSI paravirtualizado. Un controlador de dispositivo paravirtualizado permite a un invitado integrarse más profundamente en el hipervisor, en lugar de un controlador emulado en el que el hipervisor pasa más tiempo de CPU imitando el comportamiento del hardware físico.
-
-El rendimiento de la mayoría de las bases de datos está limitado por el almacenamiento. Por lo tanto, la latencia adicional introducida por un controlador de red o SCSI es particularmente notable. El servicio de atención al cliente de NetApp ha encontrado muchas quejas de rendimiento que se resolvieron mediante la instalación de controladores paravirtualizados. Durante la prueba de concepto de un cliente, las bases de datos mostraron un mejor rendimiento bajo ESX que si se ejecutaba el mismo hardware como «bare metal». Las pruebas realizaron grandes cargas de I/O y la diferencia de rendimiento se atribuyó al uso de controladores de red paravirtualizados ESX.
-
-
-TIP: *NetApp recomienda* usar siempre controladores de red paravirtualizados y controladores SCSI.
 
 
 
@@ -63,4 +74,19 @@ TIP: *NetApp recomienda* usar siempre controladores de red paravirtualizados y c
 Sobrecomprometer RAM significa configurar más RAM virtualizada en varios hosts de la que existe en el hardware físico. Si lo hace, se pueden producir problemas de rendimiento inesperados. Al virtualizar una base de datos, el hipervisor no debe intercambiar los bloques subyacentes del SGA de Oracle en el almacenamiento. Si lo hace, los resultados de rendimiento son muy inestables.
 
 
-TIP: *NetApp recomienda* no configurar un hipervisor de manera que permita intercambiar bloques SGA de Oracle.
+
+== Segmentación de almacenes de datos
+
+Cuando se usan bases de datos con almacenes de datos, hay un factor crucial que debe tenerse en cuenta con respecto al rendimiento: La segmentación.
+
+Las tecnologías de almacenes de datos como VMFS pueden abarcar varios LUN, pero no son dispositivos segmentados. Las LUN se concatenan. El resultado final pueden ser puntos de sobrecarga de la LUN. Por ejemplo, una base de datos de Oracle típica puede tener un grupo de discos ASM de 8 LUN. Se pueden aprovisionar los 8 LUN virtualizados en un almacén de datos VMFS de 8 LUN, pero no hay garantía de cuáles LUN residirán los datos. La configuración resultante podría ser todos los 8 LUN virtualizados que ocupen una única LUN dentro del almacén de datos VMFS. Esto se convierte en un cuello de botella en el rendimiento.
+
+La segmentación suele ser necesaria. Con algunos hipervisores, incluido KVM, es posible crear un almacén de datos con la segmentación de LVM, como se describe link:oracle-storage-san-config-lvm-striping.html["aquí"]. Con VMware, la arquitectura parece un poco diferente. Cada LUN virtualizado debe colocarse en un almacén de datos VMFS diferente.
+
+Por ejemplo:
+
+image:vmfs-striping.png["Error: Falta la imagen gráfica"]
+
+El impulsor principal de este enfoque no es ONTAP, sino que se debe a una limitación inherente al número de operaciones que una sola máquina virtual o LUN de hipervisor puede prestar servicio en paralelo. Por lo general, una sola LUN de ONTAP puede admitir muchas más IOPS de las que puede solicitar un host. El límite de rendimiento de una LUN es casi universal debido al SO del host. Como resultado, la mayoría de las bases de datos necesitan entre 4 y 8 LUN para satisfacer sus necesidades de rendimiento.
+
+Las arquitecturas de VMware deben planificar sus arquitecturas con cuidado para asegurarse de que no se encuentren los máximos de almacén de datos o ruta de LUN con este enfoque. Además, no es necesario disponer de un conjunto único de almacenes de datos VMFS para cada base de datos. La principal necesidad es asegurarse de que cada host tenga un conjunto limpio de 4-8 rutas de I/O desde las LUN virtualizadas hasta las LUN de back-end del sistema de almacenamiento propiamente dicho. En raras ocasiones, incluso más almacenes de datos pueden ser útiles para las demandas de rendimiento realmente extremas, pero 4-8 LUN suelen ser suficientes para el 95% de todas las bases de datos. Un solo volumen ONTAP que contiene 8 LUN puede admitir hasta 250.000 IOPS de bloques de Oracle aleatorias con una configuración típica de SO/ONTAP/red.
