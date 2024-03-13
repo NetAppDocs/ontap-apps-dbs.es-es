@@ -9,7 +9,7 @@ summary: Descripción general de la protección de datos de Oracle
 
 
 [role="lead"]
-Los datos más críticos para la misión se encuentran en las bases de datos.
+NetApp sabe que los datos más críticos se encuentran en las bases de datos.
 
 Una empresa no puede operar sin acceso a sus datos y, a veces, los datos definen el negocio. Estos datos deben protegerse; sin embargo, la protección de datos no solo garantiza un backup utilizable; se trata de realizar backups de forma rápida y fiable, además de almacenarlos de forma segura.
 

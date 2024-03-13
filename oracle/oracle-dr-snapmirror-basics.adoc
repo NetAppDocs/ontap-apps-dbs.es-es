@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dr-snapmirror-basics.html 
 keywords: ontap, snapmirror 
-summary: SnapMirror y SyncMirror 
+summary: Bases de datos de Oracle con SnapMirror y SyncMirror 
 ---
-= SnapMirror y SyncMirror
+= Bases de datos de Oracle con SnapMirror y SyncMirror
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -72,7 +72,7 @@ Para obtener una explicación completa de SM-S, consulte https://www.netapp.com/
 
 ONTAP permite crear snapshots de grupo de consistencia y, a partir de 9.13.1, ONTAP puede replicar grupos de volúmenes (recuerde que un volumen en la terminología de ONTAP no es una LUN, es un contenedor de gestión que consta de uno o más archivos o LUN) como grupo consistente.
 
-La replicación de SnapMirror y la interrupción de la relación de SnapMirror de CG preservan la coherencia entre los volúmenes, mientras que la continuidad del negocio de SnapMirror síncrono y SnapMirror Business Continuity preservan la coherencia entre los volúmenes constituyentes.
+La replicación de SnapMirror y la interrupción de la relación de SnapMirror de CG preservan la coherencia entre los volúmenes, y tanto la sincronización activa de SnapMirror síncrono como la sincronización activa de SnapMirror preservan la coherencia entre los volúmenes constituyentes.
 
 El resultado es que puede replicar un conjunto de datos de varios volúmenes y garantizar que todos los volúmenes sean coherentes entre sí. Entre otras cosas, esto permite dividir las operaciones de recuperación ante desastres «duplicaciones e iniciar» sin la necesidad de disponer de pasos adicionales de recuperación de aplicaciones o bases de datos.
 

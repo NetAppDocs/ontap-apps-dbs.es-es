@@ -2,14 +2,14 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dp-storage-snapshot-optimized-backups.html 
 keywords: oracle, data protection, snapshot-optimized, crash-consistent 
-summary: Backups optimizados para Snapshot 
+summary: Backups optimizados para Oracle Storage Snapshot 
 ---
-= Backups optimizados para Oracle Storage Snapshot
+= Backups optimizados de Snapshot de almacenamiento de bases de datos de Oracle
 :allow-uri-read: 
 
 
 [role="lead"]
-Con Oracle 12c es aún más sencillo realizar backups y recuperaciones basadas en Snapshot, ya que no es necesario colocar una base de datos en modo de backup dinámico. El resultado es la capacidad de programar backups basados en snapshots directamente en un sistema de almacenamiento y mantener la capacidad para realizar una recuperación completa o de un momento específico.
+Cuando se lanzó Oracle 12c, ya que no es necesario colocar una base de datos en modo de backup dinámico, se simplificaron aún más las tareas de backup y recuperación basadas en Snapshots. El resultado es la capacidad de programar backups basados en snapshots directamente en un sistema de almacenamiento y mantener la capacidad para realizar una recuperación completa o de un momento específico.
 
 Aunque el procedimiento de recuperación de backup dinámico es más familiar para los administradores de bases de datos, durante mucho tiempo ha sido posible usar snapshots que no se crearon mientras la base de datos estaba en modo de backup dinámico. Oracle 10g y 11g requerían pasos manuales adicionales durante la recuperación para hacer que la base de datos fuera coherente. Con Oracle 12c, `sqlplus` y.. `rman` contienen la lógica adicional para reproducir archive logs en copias de seguridad de archivos de datos que no estaban en modo de copia de seguridad activa.
 

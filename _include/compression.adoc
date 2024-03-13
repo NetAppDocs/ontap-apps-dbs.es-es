@@ -1,0 +1,37 @@
+= Compresión
+:allow-uri-read: 
+
+
+
+
+== Compresión
+
+Antes de la disponibilidad de sistemas de almacenamiento all-flash, la compresión basada en cabinas era de un valor limitado debido a que la mayoría de las cargas de trabajo con un gran volumen de I/O requerían un gran número de discos para proporcionar un rendimiento aceptable. Los sistemas de almacenamiento contenían invariablemente mucha más capacidad de la necesaria como efecto secundario al gran número de unidades. La situación ha cambiado con el aumento del almacenamiento de estado sólido. Ya no es necesario sobreaprovisionar enormemente las unidades solo para obtener un buen rendimiento. El espacio de las unidades de un sistema de almacenamiento puede coincidir con las necesidades de capacidad reales.
+
+La mayor funcionalidad de IOPS de las unidades de estado sólido (SSD) casi siempre genera ahorro de costes en comparación con las unidades giratorias, pero la compresión puede conseguir un mayor ahorro al aumentar la capacidad efectiva de los medios de estado sólido.
+
+Existen varias formas de comprimir datos. Muchas bases de datos incluyen sus propias funcionalidades de compresión, pero esto se observa muy rara vez en los entornos del cliente. La razón suele ser la penalización de rendimiento para un *cambio* a los datos comprimidos, además con algunas aplicaciones hay altos costos de licencia para la compresión a nivel de base de datos. Por último, existen las consecuencias de rendimiento generales para las operaciones de base de datos. Tiene poco sentido pagar un alto coste de licencia por CPU por una CPU que realiza compresión y descompresión de datos en lugar de trabajo real de base de datos. Una mejor opción es descargar el trabajo de compresión en el sistema de almacenamiento.
+
+
+
+=== Compresión adaptativa
+
+La compresión adaptativa se ha probado minuciosamente en cargas de trabajo empresariales sin que ello afecte al rendimiento, incluso en un entorno all-flash en el que la latencia se mide en microsegundos. Algunos clientes incluso han informado de un aumento del rendimiento con el uso de la compresión, ya que los datos siguen comprimidos en la caché, lo que aumenta efectivamente la cantidad de caché disponible en una controladora.
+
+ONTAP gestiona bloques físicos en 4KB unidades. La compresión adaptativa usa un tamaño de bloque de compresión predeterminado de 8KB KB, lo que significa que los datos se comprimen en 8KB unidades. Esto coincide con el tamaño de bloque de 8KB KB que suelen utilizar las bases de datos relacionales. Los algoritmos de compresión son más eficientes a medida que se comprimen más datos como una sola unidad. Un tamaño de bloque de compresión de 32KB KB haría más eficiente el espacio que una unidad de bloques de compresión de 8KB KB. Esto significa que la compresión adaptativa con el tamaño de bloque de 8KB KB predeterminado conduce a tasas de eficiencia ligeramente más bajas, pero también ofrece una ventaja significativa si se usa un tamaño de bloque de compresión más pequeño. Las cargas de trabajo de bases de datos incluyen una gran cantidad de actividad de sobrescritura. Para sobrescribir un bloque de datos de 8KB GB de 32KB comprimido, es necesario volver a leer los 32KB TB completos de datos lógicos, descomprimirlos, actualizar la región de 8KB requerida, recomprimir y, a continuación, volver a escribir todo el 32KB en las unidades. Esta es una operación muy cara para un sistema de almacenamiento y es el motivo por el que algunas cabinas de almacenamiento de la competencia basadas en bloques de compresión más grandes también incurren en un impacto significativo en el rendimiento con las cargas de trabajo de base de datos.
+
+
+NOTE: El tamaño de los bloques utilizado por la compresión adaptativa se puede aumentar hasta 32KB KB. Esto puede mejorar la eficiencia del almacenamiento y debe considerarse en el caso de archivos inactivos, como registros de transacciones y archivos de backup, cuando se almacena una cantidad sustancial de dichos datos en la cabina. En algunas situaciones, las bases de datos activas que usan un tamaño de bloque de 16KB KB o de 32KB KB también pueden beneficiarse de aumentar el tamaño de bloque de la compresión adaptativa para que coincida. Consulte a un representante de NetApp o de su partner para obtener orientación sobre si esto es adecuado para su carga de trabajo.
+
+
+CAUTION: Los bloques de compresión superiores a los 8KB MB no se deben usar junto a la deduplicación en destinos de backup en streaming. El motivo es que los pequeños cambios en los datos de backup afectan a la ventana de compresión de 32KB:1. Si la ventana cambia, los datos comprimidos resultantes difieren en todo el archivo. La deduplicación ocurre después de la compresión, lo que significa que el motor de deduplicación ve cada backup comprimido de forma diferente. Si se requiere la deduplicación de backups en streaming, solo deberá usarse la compresión adaptativa de 8KB bloques. Es preferible recurrir a la compresión adaptativa, ya que funciona con un tamaño de bloque más pequeño y no interrumpe la eficiencia de la deduplicación. Por motivos similares, la compresión en el lado del host también interfiere con la eficiencia de la deduplicación.
+
+
+
+=== Alineación de la compresión
+
+La compresión adaptativa en un entorno de base de datos requiere tener en cuenta algún tipo de aspecto en la alineación de bloques de compresión. Hacerlo solo es una preocupación para los datos sujetos a sobrescrituras aleatorias de bloques muy específicos. Este enfoque es similar en concepto a la alineación general del sistema de archivos, donde el inicio de un sistema de archivos debe alinearse con un límite de dispositivo 4K y el tamaño de bloque de un sistema de archivos debe ser un múltiplo de 4K.
+
+Por ejemplo, una escritura 8KB en un archivo se comprime solo si se alinea con un límite de 8KB KB en el propio sistema de archivos. Este punto significa que debe caer en los primeros 8KB del archivo, el segundo 8KB del archivo, y así sucesivamente. La forma más sencilla de garantizar una alineación correcta es utilizar el tipo de LUN correcto, cualquier partición creada debe tener un desplazamiento desde el inicio del dispositivo que sea un múltiplo de 8K y usar un tamaño de bloque del sistema de archivos que sea un múltiplo del tamaño del bloque de la base de datos.
+
+Los datos como los backups o los registros de transacciones son operaciones escritas secuencialmente que abarcan varios bloques, todos ellos comprimidos. Por lo tanto, no hay necesidad de considerar la alineación. El único patrón de E/S preocupante es la sobrescritura aleatoria de archivos.

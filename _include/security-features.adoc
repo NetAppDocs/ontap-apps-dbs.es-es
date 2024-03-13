@@ -66,7 +66,7 @@ Para obtener más información, haga clic en link:https://docs.netapp.com/us-en/
 
 La automatización requiere llamadas a la API, pero no todas las herramientas requieren un acceso administrativo completo. Para ayudar a proteger los sistemas de automatización, el control de acceso basado en roles también está disponible a nivel de API. Puede limitar las cuentas de usuario de automatización a las llamadas API necesarias. Por ejemplo, el software de monitoreo no necesita acceso de cambio, solo requiere acceso de lectura. Los flujos de trabajo que aprovisionan almacenamiento no necesitan la capacidad de eliminar almacenamiento.
 
-Para obtener más información, comience link:https://docs.netapp.com/us-en/ontap-automation/rest/rbac_overview.html["aquí."]
+Para obtener más información, inicie chttps://docs.netapp.com/us-en/ontap-automation/rest/rbac_overview.html[here.]
 
 
 

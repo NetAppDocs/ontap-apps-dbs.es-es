@@ -1,10 +1,10 @@
 ---
 permalink: oracle/oracle-dr-smbc-failure-scenarios.html 
 sidebar: sidebar 
-keywords: SM-BC, smbc, failover 
-summary: Escenarios de fallos de Oracle SM-BC 
+keywords: SnapMirror active sync, smbc, failover 
+summary: Situaciones de fallo de sincronización activa de SnapMirror y bases de datos de Oracle 
 ---
-= Escenarios de fallos de Oracle SM-BC
+= Situaciones de fallo de sincronización activa de SnapMirror y bases de datos de Oracle
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,7 +14,7 @@ summary: Escenarios de fallos de Oracle SM-BC
 
 
 [role="lead"]
-Existen varios escenarios de fallos de continuidad del negocio de SnapMirror (SM-BC) con resultados diferentes cada uno.
+Hay varios escenarios de fallos de la sincronización activa de SnapMirror (SM-AS) con resultados diferentes cada uno.
 
 [cols="1,1"]
 |===
@@ -43,7 +43,7 @@ Hay una resincronización automática cuando el sitio está en línea.
 | Pérdida de discos | I/O continúa en casos de fallos de disco consecutivos. Esto es parte de RAID-TEC. 
 
 
-| Pérdida de todo el sitio en una puesta en marcha típica | Obviamente, los servidores en el sitio fallido ya no estarán disponibles. Las aplicaciones que admiten clustering se pueden configurar para que se ejecuten en ambos sitios y continúen con las operaciones en el sitio alternativo, aunque la mayoría de estas aplicaciones requieren un desempate de sitio 3rd de forma similar a como SM-BC requiere el mediador.
+| Pérdida de todo el sitio en una puesta en marcha típica | Obviamente, los servidores en el sitio fallido ya no estarán disponibles. Las aplicaciones que admiten clustering se pueden configurar para que se ejecuten en ambos sitios y continúen con las operaciones en el sitio alternativo, aunque la mayoría de estas aplicaciones requieren un desempate de sitio 3rd de manera similar al modo en que SM-AS requiere el mediador.
 
 Sin clusters de nivel de aplicación, las aplicaciones deberán iniciarse en el sitio superviviente. Esto afectaría a la disponibilidad, pero se mantiene el objetivo de punto de recuperación=0. No se perderían datos. 
 |===

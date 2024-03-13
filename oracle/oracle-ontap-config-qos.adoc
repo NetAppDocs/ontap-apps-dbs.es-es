@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-ontap-config-qos.html 
 keywords: qos, bandwidth, minimum, guaranteed 
-summary: Gestión del rendimiento de Oracle con QoS 
+summary: Gestión del rendimiento de bases de datos de Oracle con calidad de servicio de ONTAP 
 ---
-= Calidad de servicio con bases de datos de Oracle
+= Gestión del rendimiento de bases de datos de Oracle con calidad de servicio de ONTAP
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

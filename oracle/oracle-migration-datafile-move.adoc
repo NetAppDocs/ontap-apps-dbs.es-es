@@ -4,7 +4,7 @@ permalink: oracle/oracle-migration-datafile-move.html
 keywords: migration, oracle, move datafile 
 summary: Migrando archivos de datos de Oracle individuales 
 ---
-= Movimiento del archivo de datos
+= Migración de archivos de datos de Oracle
 :allow-uri-read: 
 
 

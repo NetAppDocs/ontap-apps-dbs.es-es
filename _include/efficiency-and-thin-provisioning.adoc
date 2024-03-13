@@ -1,0 +1,15 @@
+= Eficiencia y thin provisioning
+:allow-uri-read: 
+
+
+
+
+== Eficiencia y thin provisioning
+
+Las funciones de eficiencia son formas de thin provisioning. Por ejemplo, una LUN de 100GB GB que ocupa un volumen de 100GB GB podría comprimirse hasta 50GB 000. Todavía no hay ahorros reales realizados porque el volumen sigue siendo de 100GB GB. Primero se debe reducir el volumen para que el espacio ahorrado se pueda usar en cualquier otro lugar del sistema. Si los cambios realizados en la LUN de 100GB TB más adelante hacen que los datos se puedan comprimir menos, el tamaño de la LUN aumentará y el volumen podría llenarse.
+
+Se recomienda encarecidamente el aprovisionamiento ligero porque puede simplificar la gestión y, al mismo tiempo, proporcionar una mejora considerable en la capacidad utilizable con un ahorro de costes asociado. La razón es simple: Los entornos de bases de datos suelen incluir una gran cantidad de espacio vacío, un gran número de volúmenes y LUN, y datos comprimibles. El aprovisionamiento grueso provoca la reserva de espacio en el almacenamiento para volúmenes y LUN por si en algún momento llegan a estar llenos un 100 % y contienen un 100 % de datos que no se pueden comprimir. Es poco probable que esto ocurra. El thin provisioning permite reclamar y utilizar ese espacio en otra parte, y permite que la gestión de la capacidad se base en el propio sistema de almacenamiento en lugar de muchos volúmenes y LUN más pequeños.
+
+Algunos clientes prefieren utilizar el aprovisionamiento pesado, ya sea para cargas de trabajo específicas o, por lo general, basándose en prácticas operativas y de adquisición establecidas.
+
+*Precaución:* Si un volumen está pesado, se debe tener cuidado para desactivar completamente todas las características de eficiencia para ese volumen, incluida la descompresión y la eliminación de la deduplicación mediante el `sis undo` comando. El volumen no debe aparecer en `volume efficiency show` salida. Si lo hace, el volumen sigue estando parcialmente configurado para las funciones de eficiencia. Como resultado, la sobrescritura garantiza un funcionamiento diferente, lo que aumenta la posibilidad de que las sobretensiones de la configuración hagan que el volumen se quede sin espacio inesperadamente, lo que producirá errores de I/O de la base de datos.

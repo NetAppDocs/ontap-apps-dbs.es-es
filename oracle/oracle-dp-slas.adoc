@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dp-slas.html 
 keywords: SLA, data protection, RPO, RTO 
-summary: Acuerdos de nivel de servicios de protección de datos de Oracle 
+summary: Acuerdos de nivel de servicio de protección de datos de Oracle 
 ---
-= Objetivo de tiempo de recuperación, objetivo de punto de recuperación y acuerdos de nivel de servicio
+= Planificación del objetivo de tiempo de recuperación, el objetivo de punto de recuperación y los acuerdos de nivel de servicio
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,7 +14,7 @@ summary: Acuerdos de nivel de servicios de protección de datos de Oracle
 
 
 [role="lead"]
-Deben definirse una estrategia de protección de datos por los requisitos del negocio.
+ONTAP le permite adaptar con facilidad una estrategia de protección de datos de base de datos de Oracle a sus requisitos empresariales.
 
 Entre estos requisitos se incluyen factores como la velocidad de recuperación, la pérdida de datos máxima permitida y las necesidades de retención de backup. El plan de protección de datos también debe tener en cuenta varios requisitos normativos para la retención y restauración de datos. Por último, deben tenerse en cuenta diferentes escenarios de recuperación de datos, que van desde la recuperación típica y previsible que se produce por errores de usuarios o aplicaciones hasta escenarios de recuperación de desastres que incluyen la pérdida completa de un sitio.
 

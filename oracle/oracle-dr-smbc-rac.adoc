@@ -2,15 +2,15 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dr-smbc-rac.html 
 keywords: oracle, smbc, sm-bc, RAC 
-summary: Oracle RAC en ONTAP con SM-BC 
+summary: Oracle RAC con sincronización activa de SnapMirror 
 ---
-= Oracle RAC con SM-BC
+= Oracle RAC con sincronización activa de SnapMirror
 :allow-uri-read: 
 
 
 [role="lead"]
-SM-BC ofrece un control granular de la replicación de conjuntos de datos para fines como el equilibrio de carga o la recuperación tras fallos de aplicaciones individuales. La arquitectura general parece un cluster RAC ampliado, pero algunas bases de datos están dedicadas a sitios específicos y la carga general se distribuye.
+La sincronización activa de SnapMirror ofrece un control granular sobre la replicación de conjuntos de datos para fines como el equilibrio de carga o la recuperación tras fallos de aplicaciones individuales. La arquitectura general parece un cluster RAC ampliado, pero algunas bases de datos están dedicadas a sitios específicos y la carga general se distribuye.
 
 Por ejemplo, puede crear un clúster de Oracle RAC que aloje seis bases de datos individuales. El almacenamiento de tres de las bases de datos se alojaría principalmente en el sitio A, y el almacenamiento para las otras tres bases de datos se alojaría en el sitio B. Esta configuración garantiza el mejor rendimiento posible al minimizar el tráfico entre sitios. Además, las aplicaciones se configurarían para utilizar las instancias de base de datos locales en el sistema de almacenamiento con rutas activas. Esto minimiza el tráfico de interconexión RAC. Por último, este diseño general garantiza que todos los recursos informáticos se utilicen de la misma forma. A medida que cambian las cargas de trabajo, se puede conmutar al nodo de respaldo de forma selectiva en todos los sitios para garantizar una carga uniforme.
 
-Aparte de la granularidad, los principios y opciones básicos para Oracle RAC que utiliza SM-BC son los mismos que link:../metrocluster/mcc-rac.html["Oracle RAC en MetroCluster"]
+Además de la granularidad, los principios y opciones básicos para Oracle RAC con SnapMirror active syncare igual que link:../metrocluster/mcc-rac.html["Oracle RAC en MetroCluster"]

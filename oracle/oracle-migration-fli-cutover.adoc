@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-migration-fli-cutover.html 
 keywords: migration, oracle, FLI 
-summary: 'Transición de FLI: Oracle' 
+summary: 'Migración de Oracle con FLI: Transición' 
 ---
-= Transición de FLI: Oracle
+= Migración de Oracle con FLI: Transición
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

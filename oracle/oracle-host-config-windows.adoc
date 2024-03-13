@@ -2,14 +2,14 @@
 sidebar: sidebar 
 permalink: oracle/oracle-host-config-windows.html 
 keywords: oracle, database, ontap, windows 
-summary: Oracle en ONTAP con Microsoft Windows 
+summary: Bases de datos de Oracle con Microsoft Windows 
 ---
-= Microsoft Windows
+= Bases de datos de Oracle con Microsoft Windows
 :allow-uri-read: 
 
 
 [role="lead"]
-Temas de configuración específicos del sistema operativo Microsoft Windows.
+Temas de configuración de bases de datos de Oracle en Microsoft Windows con ONTAP.
 
 
 

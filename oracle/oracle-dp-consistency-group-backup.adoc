@@ -2,14 +2,14 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dp-consistency-group-backup.html 
 keywords: oracle, data, protection, consistency, group, backup, volume, archive, log, redo, controlfiles 
-summary: Backups de grupos de consistencia para Oracle en ONTAP 
+summary: Backups de grupos de coherencia para bases de datos de Oracle en ONTAP 
 ---
-= Backup del grupo de consistencia de Oracle
+= Backups de grupos de coherencia de base de datos de Oracle
 :allow-uri-read: 
 
 
 [role="lead"]
-Para realizar el backup más sencillo posible, sólo coloque toda la base de datos de Oracle en un único volumen.
+Para realizar el backup más sencillo posible, sólo coloque toda la base de datos de Oracle en un único volumen ONTAP
 
 La protección de los archivos de datos, los registros de archivo, los registros de recuperación y los archivos de control con una única snapshot es un método válido de copia de seguridad, restauración y replicación.  Sin embargo, el RPO se limita al punto del propio backup. Es adecuado para un objetivo de punto de recuperación de una hora o superior. Si una base de datos abarca volúmenes, se necesitan cg-snapshots utilizando una de las herramientas descritas anteriormente.
 

@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dr-smbc-si.html 
 keywords: TR-4899, oracle, smbc, sm-bc 
-summary: Instancia única de Oracle en ONTAP con SM-BC 
+summary: Bases de datos de Oracle de instancia única con sincronización activa de SnapMirror 
 ---
-= Oracle de instancia única con SM-BC
+= Bases de datos de Oracle de instancia única con sincronización activa de SnapMirror
 :allow-uri-read: 
 
 
@@ -13,6 +13,6 @@ El siguiente diagrama muestra un modelo de despliegue sencillo en el que se est�
 
 Oracle sólo está configurado en el primario. Este modelo aborda la conmutación al nodo de respaldo de almacenamiento fluida en el caso de desastres en el almacenamiento, por lo que no se pierden datos sin que se produzcan tiempos de inactividad de las aplicaciones. Sin embargo, este modelo no ofrecería alta disponibilidad del entorno de base de datos durante un fallo del sitio. Este tipo de arquitectura resulta útil para los clientes que buscan una solución con cero pérdida de datos con alta disponibilidad de los servicios de almacenamiento, pero aceptan que una pérdida total del cluster de la base de datos requeriría trabajo manual.
 
-image:smbc-si.png["Error: Falta la imagen gráfica"]
+image:smas-si.png["Error: Falta la imagen gráfica"]
 
 Este método también permite ahorrar dinero en costes de licencia de Oracle. La configuración previa de los nodos de la base de datos Oracle en el sitio remoto requeriría que todos los núcleos tengan una licencia bajo la mayoría de los acuerdos de licencia de Oracle. Si se acepta el retraso ocasionado por el tiempo necesario para instalar un servidor de bases de datos Oracle y montar la copia de los datos superviviente, este diseño puede resultar muy rentable.

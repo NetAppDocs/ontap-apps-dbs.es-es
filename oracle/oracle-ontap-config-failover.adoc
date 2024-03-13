@@ -4,7 +4,7 @@ permalink: oracle/oracle-ontap-config-failover.html
 keywords: failover, switchover 
 summary: Se requiere comprender las funciones de toma de control y conmutación de sitios de almacenamiento para garantizar que estas operaciones no interrumpan las operaciones de la base de datos de Oracle. Además, los argumentos utilizados por las operaciones de toma de control y conmutación de sitios pueden afectar a la integridad de los datos si se usan incorrectamente. 
 ---
-= Recuperación tras fallos/switchover del controlador de Oracle y ONTAP
+= Recuperación tras fallos y cambio del controlador ONTAP de las bases de datos de Oracle
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

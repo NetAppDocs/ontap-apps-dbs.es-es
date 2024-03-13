@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dp-snaprestore.html 
 keywords: ontap, snaprestore 
-summary: La recuperación rápida de bases de datos de Oracle en ONTAP desde una copia Snapshot se realiza mediante la tecnología NetApp SnapRestore. 
+summary: Recuperación rápida de bases de datos de Oracle con SnapRestore 
 ---
-= SnapRestore
+= Recuperación rápida de bases de datos de Oracle con SnapRestore
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

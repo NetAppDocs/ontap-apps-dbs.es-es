@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-tiering-policies.html 
 keywords: tiering, fabricpool 
-summary: Políticas de organización en niveles de Oracle 
+summary: Políticas de organización en niveles de FabricPool de bases de datos de Oracle 
 ---
-= Políticas de segmentación de bases de datos de Oracle
+= Políticas de organización en niveles de FabricPool de bases de datos de Oracle
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

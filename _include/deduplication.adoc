@@ -1,0 +1,17 @@
+= Deduplicación
+:allow-uri-read: 
+
+
+
+
+== Deduplicación
+
+La deduplicación es eliminar los tamaños de bloques duplicados de un conjunto de datos. Por ejemplo, si existiera el mismo bloque de 4KB KB en 10 archivos diferentes, la deduplicación redirigiría ese bloque de 4KB KB en los 10 archivos al mismo bloque físico de 4KB KB. El resultado sería una mejora de 10:1 veces en eficiencia en esos datos.
+
+Los datos, como las LUN de arranque invitado de VMware, suelen deduplicar muy bien porque constan de varias copias de los mismos archivos del sistema operativo. Se ha observado una eficiencia de 100:1 y mayor.
+
+Algunos datos no contienen datos duplicados. Por ejemplo, un bloque de Oracle contiene una cabecera que es única globalmente para la base de datos y un cola que es casi único. Como resultado, la deduplicación de una base de datos de Oracle rara vez produce un ahorro superior al 1%. La deduplicación con bases de datos de MS SQL es ligeramente mejor, pero los metadatos únicos a nivel de bloque siguen siendo límites.
+
+En pocos casos, se ha observado un ahorro de espacio de hasta un 15 % en bases de datos con 16KB KB y tamaños de bloque grandes. El primer 4KB de cada bloque contiene el encabezado único a nivel mundial, y el último bloque de 4KB contiene el remolque casi único. Los bloques internos pueden optar a la deduplicación, aunque en la práctica esto se atribuye casi por completo a la deduplicación de datos puestos a cero.
+
+Muchas cabinas de la competencia afirman la capacidad de deduplicar bases de datos basándose en la presunción de que una base de datos se copia varias veces. En este sentido, la deduplicación de NetApp también podría utilizarse, pero ONTAP ofrece una opción mejor: La tecnología FlexClone de NetApp. El resultado final es el mismo; se crean varias copias de una base de datos que comparten la mayoría de los bloques físicos subyacentes. El uso de FlexClone es mucho más eficiente que tomarse tiempo para copiar archivos de base de datos y después deduplicarlos. Es, de hecho, la no duplicación en lugar de la deduplicación, porque nunca se crea un duplicado.

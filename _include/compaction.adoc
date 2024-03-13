@@ -1,0 +1,13 @@
+= Compactación de datos
+:allow-uri-read: 
+
+
+
+
+== Compactación de datos
+
+La compactación de datos es una tecnología que mejora la eficiencia de la compresión. Como se ha indicado anteriormente, la compresión adaptativa por sí sola puede proporcionar un ahorro de 2:1 KB, ya que se limita a almacenar una I/O de 8KB KB en un bloque de 4KB WAFL. Los métodos de compresión con tamaños de bloque más grandes ofrecen una mejor eficiencia. Sin embargo, no son adecuados para datos sujetos a sobrescrituras de bloques pequeños. La descompresión de 32KB unidades de datos, la actualización de una parte de 8KB, la recompresión y la escritura en las unidades genera una sobrecarga.
+
+La compactación de datos permite almacenar varios bloques lógicos en bloques físicos. Por ejemplo, una base de datos con datos altamente comprimibles, como texto o bloques parcialmente completos, puede comprimirse de 8KB a 1KB. Sin compactación, esos 1KB TB de datos seguirían ocupando un bloque completo de 4KB KB. La compactación de datos inline permite almacenar 1KB TB de datos comprimidos en solo 1KB GB de espacio físico junto con otros datos comprimidos. No es una tecnología de compresión; simplemente es una forma más eficaz de asignar espacio en las unidades y, por tanto, no debe crear un efecto de rendimiento detectable.
+
+El grado de ahorro obtenido varía. Por lo general, los datos que ya están comprimidos o cifrados no se pueden comprimir aún más y, por lo tanto, estos conjuntos de datos no se benefician de la compactación. Por el contrario, los archivos de datos recién inicializados que contienen poco más que metadatos de bloques y ceros se comprimen hasta 80:1.

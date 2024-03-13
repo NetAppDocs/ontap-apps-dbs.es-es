@@ -2,14 +2,14 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dp-data-integrity.html 
 keywords: checksums, data integrity 
-summary: Checksums y protección de datos de Oracle 
+summary: Sumas de comprobación e integridad de la base de datos de Oracle 
 ---
-= Checksums e integridad de datos de Oracle
+= Sumas de comprobación e integridad de la base de datos de Oracle
 :allow-uri-read: 
 
 
 [role="lead"]
-Una pregunta dirigida comúnmente a NetApp es cómo proteger la integridad de los datos de una base de datos de Oracle.
+ONTAP y sus protocolos admitidos incluyen varias funciones que protegen la integridad de las bases de datos de Oracle, incluidos los datos en reposo y la transmisión de datos a través de la red.
 
 La protección de datos lógicos en ONTAP consta de tres requisitos clave:
 

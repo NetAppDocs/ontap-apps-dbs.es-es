@@ -4,7 +4,7 @@ permalink: oracle/oracle-storage-san-config-lvm-striping.html
 keywords: SAN, ASM, LVM 
 summary: Configuración de franjas de LVM para bases de datos de Oracle 
 ---
-= Segmentación de LVM con bases de datos Oracle
+= Segmentación de LVM con bases de datos de Oracle
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

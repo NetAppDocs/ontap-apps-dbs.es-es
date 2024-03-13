@@ -4,7 +4,7 @@ permalink: oracle/oracle-storage-san-config-lun-resizing.html
 keywords: SAN, ASM, LVM 
 summary: Cambio de tamaño de LUN y LVM con bases de datos de Oracle 
 ---
-= Cambio de tamaño de LUN y cambio de tamaño basado en LVM
+= El cambio de tamaño del LUN de la base de datos de Oracle y el cambio de tamaño basado en LVM
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

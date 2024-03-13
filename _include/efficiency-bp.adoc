@@ -1,0 +1,25 @@
+= Mejores prácticas de eficiencia
+:allow-uri-read: 
+
+
+
+
+== Mejores prácticas de eficiencia
+
+NetApp recomienda lo siguiente:
+
+
+
+=== Valores predeterminados de AFF
+
+Los volúmenes creados en ONTAP en un sistema AFF all-flash son thin provisioning, con todas las funciones de eficiencia inline habilitadas. Aunque por lo general, las bases de datos no se benefician de la deduplicación y pueden incluir datos que no se pueden comprimir, la configuración predeterminada es adecuada para casi todas las cargas de trabajo. ONTAP está diseñado para procesar eficientemente todo tipo de datos y patrones de I/O, independientemente de que generen o no ahorros. Los valores predeterminados solo se deben cambiar si los motivos se entienden por completo y existe un beneficio para desviarse.
+
+
+
+=== Recomendaciones generales
+
+* Si los volúmenes o LUN no son con thin provisioning, debe deshabilitar todas las configuraciones de eficiencia, ya que el uso de estas funciones no proporciona ahorro y la combinación de aprovisionamiento grueso con la eficiencia de espacio habilitada puede provocar un comportamiento inesperado, incluidos errores de falta de espacio.
+* Si los datos no están sujetos a sobrescrituras, como con backups o registros de transacciones de base de datos, puede lograr una mayor eficiencia habilitando TSSE con un bajo período de enfriamiento.
+* Es posible que algunos archivos contengan una cantidad significativa de datos que no se puedan comprimir, por ejemplo, cuando la compresión ya está activada en el nivel de aplicación de los archivos está cifrada. Si se da alguna de estas situaciones, considere la posibilidad de deshabilitar la compresión para permitir un funcionamiento más eficiente en otros volúmenes que contengan datos comprimibles.
+* No utilice la compresión 32KB ni la deduplicación con backups de bases de datos. Consulte la sección <<Compresión adaptativa>> para obtener más detalles.
+

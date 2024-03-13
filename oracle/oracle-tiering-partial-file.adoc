@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-tiering-partial-file.html 
 keywords: tiering, fabricpool 
-summary: Organización parcial en niveles de archivos con FabricPool 
+summary: Organización en niveles parcial de FabricPool de archivos de Oracle 
 ---
-= Organización parcial de archivos en niveles de Oracle
+= Organización en niveles parcial de FabricPool de archivos de Oracle
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

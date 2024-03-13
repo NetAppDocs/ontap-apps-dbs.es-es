@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dp-planning.html 
 keywords: data protection, DR, snapshots, CG 
-summary: Estrategias de protección de datos de ONTAP 
+summary: Planificación de protección de datos para bases de datos de Oracle 
 ---
-= Planificación de la protección de datos
+= Planificación de protección de datos para bases de datos de Oracle
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,7 +14,7 @@ summary: Estrategias de protección de datos de ONTAP
 
 
 [role="lead"]
-La arquitectura de protección de datos empresariales adecuada depende de los requisitos empresariales relacionados con la retención de datos, la capacidad de recuperación y la tolerancia a interrupciones durante diversos eventos.
+La arquitectura correcta de protección de datos de base de datos de Oracle depende de los requisitos empresariales relacionados con la retención de datos, la capacidad de recuperación y la tolerancia a interrupciones durante diversos eventos.
 
 Por ejemplo, piense en el número de aplicaciones, bases de datos y conjuntos de datos importantes. Crear una estrategia de backup para un único conjunto de datos que garantice el cumplimiento de los acuerdos de nivel de servicio típicos es bastante sencillo, ya que no hay muchos objetos que gestionar. A medida que aumenta el número de conjuntos de datos, la supervisión se hace más complicada y los administradores pueden verse forzados a invertir cada vez más tiempo en solucionar los fallos de backup. A medida que un entorno llega al cloud y escala el proveedor de servicios, se necesita un enfoque totalmente diferente.
 
@@ -52,7 +52,7 @@ El enfoque más simple es colocar todos los archivos o LUN en un único grupo de
 
 == Arquitectura de replicación y recuperación ante desastres
 
-En esta sección se aborda la protección de datos remota, para la que los datos se replican en un sitio remoto con el fin de almacenar en una ubicación externa segura y la recuperación ante desastres. Es preciso tener en cuenta que estas tablas no abordan la protección de datos de mirroring síncrono. Para este requisito, consulte la documentación de NetApp MetroCluster, que incluye link:../metrocluster/overview.html["MetroCluster"] y.. link:../smbc/overview.html["Continuidad del negocio de SnapMirror"]
+En esta sección se aborda la protección de datos remota, para la que los datos se replican en un sitio remoto con el fin de almacenar en una ubicación externa segura y la recuperación ante desastres. Es preciso tener en cuenta que estas tablas no abordan la protección de datos de mirroring síncrono. Para este requisito, consulte la documentación de NetApp MetroCluster, que incluye link:../metrocluster/overview.html["MetroCluster"] y.. link:../smbc/overview.html["SnapMirror síncrono activo"]
 
 El objetivo de punto de recuperación de desastres está limitado por el ancho de banda de red disponible y el tamaño total de los datos que se protegen. Una vez creada la transferencia básica, las actualizaciones solo se basan en los datos modificados, que normalmente son un bajo porcentaje de la huella de datos total, aunque existen excepciones.
 

@@ -150,19 +150,19 @@ entries:
       url: "/oracle/oracle-dr-mcc-failover.html"
     - title: NVFAIL
       url: "/oracle/oracle-dr-mcc-nvfail.html"
-    - title: Instancia única en MetroCluster
+    - title: Oracle SI en MetroCluster
       url: "/oracle/oracle-dr-mcc-si.html"
     - title: Oracle RAC en MetroCluster
       url: "/oracle/oracle-dr-mcc-rac.html"
-  - title: Continuidad del negocio de SnapMirror
+  - title: SnapMirror síncrono activo
     entries:
     - title: Arquitectura
       url: "/oracle/oracle-dr-smbc-architecture.html"
     - title: Conmutación al respaldo
       url: "/oracle/oracle-dr-smbc-failover.html"
-    - title: Instancia única en SM-BC
+    - title: Oracle SI con sincronización activa de SnapMirror
       url: "/oracle/oracle-dr-smbc-si.html"
-    - title: Oracle RAC en SM-BC
+    - title: Oracle RAC con sincronización activa de SnapMirror
       url: "/oracle/oracle-dr-smbc-rac.html"
     - title: Escenarios de fallo
       url: "/oracle/oracle-dr-smbc-failure-scenarios.html"

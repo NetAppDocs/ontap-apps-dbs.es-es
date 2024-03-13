@@ -2,14 +2,14 @@
 sidebar: sidebar 
 permalink: oracle/oracle-host-config-hp-ux.html 
 keywords: oracle, database, ontap, hp-ux 
-summary: Oracle en ONTAP usando HP-UX 
+summary: Bases de datos de Oracle con HP-UX 
 ---
-= HP-UX
+= Bases de datos de Oracle con HP-UX
 :allow-uri-read: 
 
 
 [role="lead"]
-Temas de configuración específicos del sistema operativo HP-UX.
+Temas de configuración para bases de datos de Oracle en HP-UX con ONTAP.
 
 
 
