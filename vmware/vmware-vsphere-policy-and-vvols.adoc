@@ -24,13 +24,13 @@ El SCP admite QoS mínimo y/o máximo para los vVols de datos de una VM. La cali
 
 La siguiente figura muestra las herramientas de ONTAP para el panel de vVols de VMware vSphere 9.8.
 
-image:vsphere_ontap_image7.png["Error: Falta la imagen gráfica"]
+image:vsphere_ontap_image7.png["Herramientas de ONTAP para la consola de VMware vSphere 9,8 vVols"]
 
 Una vez definido el perfil de funcionalidad de almacenamiento, puede utilizarse para aprovisionar equipos virtuales mediante la normativa de almacenamiento que identifique sus requisitos. La asignación entre la política de almacenamiento de máquinas virtuales y el perfil de capacidad de almacenamiento de almacenes de datos permite que vCenter muestre una lista de almacenes de datos compatibles que podrá seleccionar. Este enfoque se conoce como gestión basada en políticas de almacenamiento.
 
 VASA proporciona la tecnología para consultar el almacenamiento y devolver un conjunto de funcionalidades de almacenamiento a vCenter. Los proveedores de VASA proporcionan la traducción entre las API y construcciones del sistema de almacenamiento y las API de VMware que comprende vCenter. VASA Provider de NetApp para ONTAP se ofrece como parte de las herramientas de ONTAP para VM del dispositivo VMware vSphere. El complemento de vCenter proporciona la interfaz para aprovisionar y gestionar almacenes de datos VVOL, así como la capacidad para definir perfiles de capacidades de almacenamiento (SCPs).
 
-ONTAP admite almacenes de datos de VVol tanto VMFS como NFS. El uso de vVols con almacenes DE datos SAN aporta algunas de las ventajas de NFS, como la granularidad a nivel de equipo virtual. Aquí encontrará algunas prácticas recomendadas para tener en cuenta y información adicional en http://www.netapp.com/us/media/tr-4400.pdf["CONSULTE TR-4400"^]:
+ONTAP admite almacenes de datos de VVol tanto VMFS como NFS. El uso de vVols con almacenes DE datos SAN aporta algunas de las ventajas de NFS, como la granularidad a nivel de equipo virtual. Aquí encontrará algunas prácticas recomendadas para tener en cuenta y información adicional en link:vmware-vvols-overview.html["CONSULTE TR-4400"^]:
 
 * Un almacén de datos de VVol puede consistir en varios volúmenes de FlexVol en varios nodos de clúster. El método más sencillo es un único almacén de datos, incluso cuando los volúmenes tienen diferentes funcionalidades. SPBM garantiza que se utiliza un volumen compatible para la máquina virtual. Sin embargo, todos los volúmenes deben formar parte de una única SVM de ONTAP y se debe acceder a ellos mediante un único protocolo. Un LIF por nodo para cada protocolo es suficiente. Evite el uso de varias versiones de ONTAP en un único almacén de datos de VVol, ya que las funcionalidades de almacenamiento pueden variar entre las versiones.
 * Utilice las herramientas de ONTAP para el plugin de VMware vSphere para crear y gestionar almacenes de datos de VVol. Además de gestionar el almacén de datos y su perfil, crea automáticamente un extremo de protocolo para acceder a vVols, si es necesario. Si se utilizan LUN, tenga en cuenta que los extremos de protocolo de LUN se asignan mediante los ID de LUN 300 y posteriores. Compruebe que la opción de configuración del sistema avanzado del host ESXi `Disk.MaxLUN` Permite un número de ID de LUN que sea mayor que 300 (el valor predeterminado es 1,024). Para realizar este paso, seleccione el host ESXi en vCenter, después la pestaña Configure y busque `Disk.MaxLUN` En la lista Advanced System Settings.
@@ -40,4 +40,4 @@ ONTAP admite almacenes de datos de VVol tanto VMFS como NFS. El uso de vVols con
 
 La siguiente figura muestra los componentes de vVols.
 
-image:vsphere_ontap_image8.png["Error: Falta la imagen gráfica"]
+image:vsphere_ontap_image8.png["Componentes de vVols"]

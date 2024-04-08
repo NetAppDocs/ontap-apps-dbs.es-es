@@ -1,8 +1,8 @@
 ---
 sidebar: sidebar 
 permalink: vmware/vmware-vsphere-datastores-nfs.html 
-keywords: vSphere, datastore, VMFS, FC, FCoE, NVMe/FC, iSCSI, NFS, vVols 
-summary: Esta página describe las prácticas recomendadas para implementar una solución de almacenamiento ONTAP de NetApp en un entorno de VMware vSphere. 
+keywords: vSphere, datastore, VMFS, FC, FCoE, NVMe/FC, iSCSI, NFS, vVols, NFSv3, NFSv4.1 
+summary: Esta página describe las mejores prácticas para implementar VMware vSphere con ONTAP y almacenes de datos conectados a NFS. 
 ---
 = NFS
 :hardbreaks:
@@ -14,7 +14,7 @@ summary: Esta página describe las prácticas recomendadas para implementar una 
 
 
 [role="lead"]
-VSphere permite a los clientes utilizar cabinas NFS de nivel empresarial para proporcionar acceso simultáneo a los almacenes de datos en todos los nodos de un clúster ESXi. Como hemos mencionado en la sección de almacenes de datos, existen algunas ventajas de facilidad de uso y visibilidad de la eficiencia del almacenamiento al usar NFS con vSphere.
+NetApp ONTAP representa, entre otras cosas, una cabina NAS de escalado horizontal para empresas. ONTAP proporciona acceso concurrente a los almacenes de datos conectados a NFS desde muchos hosts ESXi, lo que supera con creces los límites impuestos en los sistemas de archivos VMFS. El uso de NFS con vSphere proporciona algunas ventajas de facilidad de uso y visibilidad de la eficiencia del almacenamiento, como se menciona en la link:vmware-vsphere-datastores-top.html["almacenes de datos"] sección.
 
 Las siguientes prácticas recomendadas se recomiendan al usar NFS de ONTAP con vSphere:
 
@@ -22,8 +22,8 @@ Las siguientes prácticas recomendadas se recomiendan al usar NFS de ONTAP con v
 * VMware ha sido compatible con NFSv3 desde VMware Infrastructure 3. VSphere 6.0 ha añadido compatibilidad con NFSv4.1, lo cual permite algunas funcionalidades avanzadas, como la seguridad de Kerberos. Donde NFSv3 utiliza el bloqueo del lado del cliente, NFSv4.1 utiliza el bloqueo del lado del servidor. Aunque un volumen ONTAP se puede exportar mediante ambos protocolos, ESXi solo se puede montar a través de un único protocolo. Este montaje de protocolo único no excluye que otros hosts ESXi monten el mismo almacén de datos a través de una versión diferente. Asegúrese de especificar la versión del protocolo que se va a utilizar al montar para que todos los hosts utilicen la misma versión y, por lo tanto, el mismo estilo de bloqueo. No mezcle versiones de NFS entre hosts. Si es posible, utilice perfiles de host para comprobar el cumplimiento.
 +
 ** Dado que no existe ninguna conversión automática de almacenes de datos entre NFSv3 y NFSv4.1, cree un nuevo almacén de datos NFSv4.1 y utilice Storage vMotion para migrar las máquinas virtuales al nuevo almacén de datos.
-** Consulte las notas de la tabla de interoperabilidad de NFS v4.1 en el https://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad de NetApp"^] Para los niveles de parches específicos de ESXi que se requieren para soporte.
-** VMware admite nconnect con NFSv3 desde vSphere 8.0U2. Puede encontrar más información sobre nconnect link:vmware-vsphere-network.html#nfs["aquí"].
+** Consulte las notas de la tabla de interoperabilidad de NFS v4.1 en el link:https://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad de NetApp"^] Para los niveles de parches específicos de ESXi que se requieren para soporte.
+** VMware admite nconnect con NFSv3 desde vSphere 8.0U2. Puede encontrar más información sobre nconnect en la link:https://docs.netapp.com/us-en/netapp-solutions/virtualization/vmware-vsphere8-nfsv3-nconnect.html["NFSv3 Función nConnect con NetApp y VMware"]
 
 
 * Los hosts de vSphere utilizan políticas de exportación de NFS para controlar el acceso. Puede usar una política con varios volúmenes (almacenes de datos). Con NFSv3, ESXi utiliza el estilo de seguridad sys (UNIX) y requiere la opción de montaje raíz para ejecutar las máquinas virtuales. En ONTAP, esta opción se denomina superusuario y cuando se utiliza la opción superusuario, no es necesario especificar el ID de usuario anónimo. Tenga en cuenta que las reglas de política de exportación con valores diferentes para `-anon` y.. `-allow-suid` Puede causar problemas de detección de SVM con las herramientas de ONTAP. He aquí una política de ejemplo:

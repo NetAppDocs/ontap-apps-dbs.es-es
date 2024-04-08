@@ -28,7 +28,7 @@ Puede que los dos primeros pasos no sean necesarios para un entorno vSphere exis
 +
 ** Añada el clúster ONTAP a las herramientas ONTAP en _Storage Systems_
 +
-*** Mientras que las herramientas de ONTAP y el SRA admiten credenciales a nivel de clúster y SVM, VASA Provider solo admite credenciales a nivel de clúster para los sistemas de almacenamiento. Esto es cierto que muchas de las API usadas para vVols solo están disponibles a nivel de cluster. Por lo tanto, si planea utilizar vVols, debe añadir los clústeres de ONTAP con credenciales de ámbito de clúster.
+*** Mientras que las herramientas de ONTAP y el SRA admiten credenciales a nivel de clúster y SVM, VASA Provider solo admite credenciales a nivel de clúster para los sistemas de almacenamiento. Esto se debe a que muchas de las API usadas para vVols solo están disponibles a nivel de clúster. Por lo tanto, si planea utilizar vVols, debe añadir los clústeres de ONTAP con credenciales de ámbito de clúster.
 
 
 ** Si sus LIF de datos de ONTAP se encuentran en subredes diferentes a los de sus adaptadores de VMkernel, debe añadir las subredes del adaptador de VMkernel a la lista de subredes seleccionadas en el menú de configuración de herramientas de ONTAP. De forma predeterminada, las herramientas de ONTAP protegen el tráfico de almacenamiento al permitir solo el acceso a la subred local.

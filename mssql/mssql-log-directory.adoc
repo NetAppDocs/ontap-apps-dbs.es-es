@@ -1,0 +1,37 @@
+---
+sidebar: sidebar 
+permalink: mssql/mssql-log-directory.html 
+keywords: MSSQL,SQL Server, volumes, LUN, SnapCenter 
+summary: Directorio de registro de Microsoft SQL Server 
+---
+= Directorio de registro de Microsoft SQL Server
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+El directorio de registro se especifica en SQL Server para almacenar datos de backup de registros de transacciones en el nivel de host. Si utiliza SnapCenter para realizar backup de archivos de registro, cada host SQL Server que utiliza SnapCenter debe tener un directorio de registro de host configurado para realizar backups de registros. SnapCenter tiene un repositorio de base de datos, por lo que los metadatos relacionados con las operaciones de backup, restauración o clonado se almacenan en un repositorio de base de datos central.
+
+Los tamaños del directorio de registro de host se calculan de la siguiente manera:
+Tamaño del directorio de registro de host = ( (tamaño máximo de LDF de base de datos x tasa de cambio de registro diario %) x (retención de instantánea) ÷ (1: Porcentaje de espacio de sobrecarga de LUN)
+La fórmula de ajuste de tamaño del directorio de registro del host asume una sobrecarga del 10% de las LUN
+
+Coloque el directorio de registro en un volumen o LUN dedicados. La cantidad de datos en el directorio de registro del host depende del tamaño de los backups y de la cantidad de días que se retienen los backups. SnapCenter solo permite un directorio de registro de host por cada host SQL Server. Puede configurar los directorios de registro de host en SnapCenter --> Host --> Configurar el plugin.
+
+[TIP]
+====
+*NetApp recomienda* lo siguiente para un directorio de registro de host:
+
+* Asegúrese de que el directorio de registro de host no esté compartido por ningún otro tipo de datos que pueda dañar los datos de la instantánea de backup.
+* No coloque bases de datos de usuario ni bases de datos del sistema en un LUN que aloje puntos de montaje.
+* Cree el directorio de registro de host en el volumen FlexVol dedicado al cual SnapCenter copia los registros de transacciones.
+* Utilice los asistentes de SnapCenter para migrar bases de datos al almacenamiento NetApp de modo que las bases de datos se almacenen en ubicaciones válidas, lo que permite realizar correctamente las operaciones de backup y restauración de SnapCenter. Tenga en cuenta que el proceso de migración es disruptivo y puede provocar que las bases de datos se desconecten mientras se realiza la migración.
+* Deben establecerse las siguientes condiciones para las instancias de clúster de conmutación por error (FCI) de SQL Server:
++
+** Si va a utilizar una instancia de clúster de conmutación al nodo de respaldo, el LUN del directorio de registro de host debe ser un recurso de disco de clúster en el mismo grupo de clústeres que la instancia de SQL Server que se va a realizar el backup de SnapCenter.
+** Si utiliza una instancia de clúster de conmutación al nodo de respaldo, las bases de datos de usuario deben colocarse en LUN compartidos que sean recursos de clúster de discos físicos asignados al grupo de clústeres asociado con la instancia de SQL Server.
+
+
+
+
+====

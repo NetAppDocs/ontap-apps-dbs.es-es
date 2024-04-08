@@ -14,7 +14,7 @@ summary: 'Con ONTAP, el concepto de las máquinas virtuales de almacenamiento (S
 
 
 [role="lead"]
-En las siguientes secciones se resumen las mejores prácticas de puesta en marcha con VMware y SRM de ONTAP.
+Las siguientes secciones describen las mejores prácticas para la puesta en marcha con ONTAP y VMware SRM.
 
 
 

@@ -1,0 +1,35 @@
+---
+sidebar: sidebar 
+permalink: microsoft/win_deploy_hyperv_lmce.html 
+keywords: Windows,Hyper-V,VHDX,VM,Virtual 
+summary: Este apéndice describe la puesta en marcha de la migración en vivo en un entorno en clúster. 
+---
+= Implemente Hyper-V Live Migration en un entorno en clúster
+:allow-uri-read: 
+
+
+[role="lead"]
+Este apéndice describe la puesta en marcha de la migración en vivo en un entorno en clúster.
+
+
+
+== Requisitos previos
+
+Para implementar la migración dinámica, es necesario tener los servidores de Hyper-V configurados en un cluster de conmutación por error con almacenamiento compartido. Revise la sección link:win_deploy_hyperv.html["Clustering de Hyper-V."] para obtener más detalles.
+
+
+
+== Puesta en marcha
+
+Para utilizar la migración dinámica en un entorno en clúster, complete los siguientes pasos:
+
+. En el Administrador de clústeres de conmutación por error, seleccione y expanda el clúster. Si el clúster no está visible, haga clic en Administrador de clústeres de conmutación por error, haga clic en Connect to Cluster y proporcione el nombre del clúster.
+. Haga clic en Roles, donde se enumeran todas las máquinas virtuales disponibles en un clúster.
+. Haga clic con el botón derecho en la máquina virtual y haga clic en Move. Esto le proporciona tres opciones:
++
+** *Migración en vivo.* Puede seleccionar un nodo manualmente o permitir que el clúster seleccione el mejor nodo. En la migración dinámica, el cluster copia la memoria utilizada por la máquina virtual del nodo actual a otro nodo. Por lo tanto, cuando la máquina virtual se migra a otro nodo, la información de memoria y estado que necesita la máquina virtual ya está puesta para la máquina virtual. Este método de migración es casi instantáneo, pero solo se puede migrar en vivo un equipo virtual cada vez.
+** *Migración rápida.* Puede seleccionar un nodo manualmente o permitir que el clúster seleccione el mejor nodo. En una rápida migración, el clúster copia la memoria utilizada por un equipo virtual a un disco del almacenamiento. Por lo tanto, cuando la máquina virtual se migra a otro nodo, la información de memoria y estado que necesita el equipo virtual se puede leer rápidamente desde el disco en el otro nodo. Con una migración rápida, se pueden migrar varios equipos virtuales de forma simultánea.
+** *Migración de almacenamiento de máquinas virtuales.* Este método utiliza el asistente Mover almacenamiento de máquinas virtuales. Con este asistente, puede seleccionar el disco del equipo virtual junto con otros archivos que se moverán a otra ubicación, que puede ser un recurso compartido CSV o de SMB.
+
+
+

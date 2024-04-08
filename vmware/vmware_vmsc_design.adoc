@@ -47,23 +47,23 @@ Para configurar un clúster de alta disponibilidad, realice los siguientes pasos
 . Haga clic con el botón derecho en el objeto del centro de datos y seleccione New Cluster. En los conceptos básicos, asegúrese de haber habilitado vSphere DRS y vSphere HA. Complete el asistente.
 
 
-image::../media/vmsc_3_1.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,302]
+image::../media/vmsc_3_1.png[Nuevo clúster,624,302]
 
 . Seleccione el clúster y vaya a la pestaña Configure. Seleccione vSphere HA y haga clic en Edit.
 . En Supervisión de host, seleccione la opción Habilitar supervisión de host.
 
 
-image::../media/vmsc_3_2.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,475]
+image::../media/vmsc_3_2.png[Activar la opción Supervisión de host,624,475]
 
 . Mientras todavía está en la pestaña Fallos y Respuestas, en VM Monitoring, seleccione la opción VM Monitoring Only o VM and Application Monitoring.
 
 
-image::../media/vmsc_3_3.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,480]
+image::../media/vmsc_3_3.png[Supervisión de máquinas virtuales,624,480]
 
 . En Control de admisión, establezca la opción de control de admisión de HA en Reserva de recursos de cluster; utilice 50% CPU/MEM.
 
 
-image::../media/vmsc_3_4.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,479]
+image::../media/vmsc_3_4.png[Control de admisión,624,479]
 
 . Se hace clic en «OK».
 . Seleccione DRS y haga clic en EDIT.
@@ -236,22 +236,22 @@ Para configurar un clúster de almacén de datos para cada sitio, complete los s
 * NetApp recomienda configurar el DRS de almacenamiento en modo manual, de modo que el administrador decida y controle cuándo es necesario realizar las migraciones.
 
 
-image::../media/vmsc_3_9.png[Primer plano de un texto Descripción generada automáticamente,528,94]
+image::../media/vmsc_3_9.png[DRS de almacenamiento,528,94]
 
 . Compruebe que la casilla de verificación Activar Métrica de E/S para Recomendaciones de SDRS está activada; los valores de métrica se pueden dejar con los valores predeterminados.
 
 
-image::../media/vmsc_3_10.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,241]
+image::../media/vmsc_3_10.png[Recomendaciones de SDRS,624,241]
 
 . Seleccione el clúster de alta disponibilidad y haga clic en Next.
 
 
-image::../media/vmsc_3_11.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,149]
+image::../media/vmsc_3_11.png[Clúster de ALTA disponibilidad,624,149]
 
 . Seleccione los almacenes de datos que pertenecen al sitio A y haga clic en Next.
 
 
-image::../media/vmsc_3_12.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,134]
+image::../media/vmsc_3_12.png[almacenes de datos,624,134]
 
 . Revise las opciones y haga clic en Finish.
 . Repita estos pasos para crear el clúster de almacenes de datos del sitio B y verifique que solo estén seleccionados los almacenes de datos del sitio B.

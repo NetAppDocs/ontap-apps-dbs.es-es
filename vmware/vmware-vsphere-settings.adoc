@@ -1,8 +1,8 @@
 ---
 sidebar: sidebar 
 permalink: vmware/vmware-vsphere-settings.html 
-keywords:  
-summary:  
+keywords: VMware,vSphere,ESXi,settings,NFS,iSCSI,FC,FCP 
+summary: Este documento categoriza y enumera la configuración de almacenamiento y red recomendada. 
 ---
 = Host ESXi recomendado y otra configuración de ONTAP
 :hardbreaks:
@@ -14,7 +14,11 @@ summary:
 
 
 [role="lead"]
-NetApp ha desarrollado un conjunto de configuraciones de tiempo de espera de HBA y multivía de host ESXi para un comportamiento adecuado con ONTAP según las pruebas de NetApp. Se pueden establecer fácilmente usando las herramientas de ONTAP para VMware vSphere. En la consola Summary, haga clic en Edit Settings en el portlet Host Systems o haga clic con el botón derecho en el host en vCenter y, a continuación, desplácese hasta ONTAP tools > Set recommended Values. Esta es la configuración del host recomendada actualmente con la versión 9.8.
+NetApp ha desarrollado un conjunto de configuraciones óptimas de hosts ESXi tanto para los protocolos NFS como para los protocolos de bloques. También se proporciona orientación específica para configurar el tiempo de espera del adaptador de bus de host y la función multivía para que funcione correctamente con ONTAP basado en pruebas internas de NetApp y VMware.
+
+Estos valores se establecen fácilmente con las herramientas de ONTAP para VMware vSphere: En la consola Summary, haga clic en Edit Settings en el portlet Host Systems o haga clic con el botón derecho en el host en vCenter y, a continuación, desplácese hasta ONTAP tools > Establecer valores recomendados.
+
+Esta es la configuración del host recomendada actualmente con las versiones 9,8-9,13.
 
 |===
 
@@ -48,7 +52,7 @@ Establezca 1024 MB para 6.5U3, 6.7U3 y 7.0 o superior. | Sí
 
 
 | NFS.MaxVolumes | VSphere 6,0 o posterior, configurado en 256
-El resto de configuraciones NFS, establecidas en 64. | No 
+Todas las demás configuraciones NFS están establecidas en 64. | No 
 
 
 | NFS41.MaxVolumes | VSphere 6,0 o posterior, configurado en 256. | No 
@@ -152,7 +156,7 @@ Las herramientas de ONTAP también especifican determinada configuración predet
 Aunque no está configurado actualmente por las herramientas de ONTAP disponibles, NetApp sugiere estas opciones de configuración:
 
 * En entornos de alto rendimiento o al probar el rendimiento con un único almacén de datos LUN, considere la posibilidad de cambiar la configuración del equilibrio de carga de la normativa de selección de rutas (PSP_RR_VMW) por turnos desde la configuración predeterminada de IOPS de 1000 a un valor de 1. Consulte la base de conocimientos de VMware https://kb.vmware.com/s/article/2069356["2069356"^] para obtener más información.
-* En vSphere 6.7 Update 1, VMware introdujo un nuevo mecanismo de equilibrio de carga de latencia para Round Robin PSP. La nueva opción considera el ancho de banda de I/o y la latencia de ruta al seleccionar la ruta óptima para I/O. Puede que se beneficie de utilizarlo en entornos con conectividad de ruta no equivalente, como casos en los que haya más saltos de red en una ruta que otra o cuando se utilice un sistema de cabinas All SAN de NetApp. Consulte https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.storage.doc/GUID-B7AD0CA0-CBE2-4DB4-A22C-AD323226A257.html?hWord=N4IghgNiBcIA4Gc4AIJgC4FMB2BjAniAL5A["Complementos y políticas de selección de rutas"^] si quiere más información.
+* En vSphere 6.7 Update 1, VMware introdujo un nuevo mecanismo de equilibrio de carga de latencia para Round Robin PSP. La nueva opción considera el ancho de banda de I/o y la latencia de ruta al seleccionar la ruta óptima para I/O. Puede beneficiarse de utilizarla en entornos con conectividad de ruta no equivalente, como casos con más saltos de red en una ruta que otra, o cuando se utiliza un sistema de cabinas All SAN de NetApp. Consulte https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.storage.doc/GUID-B7AD0CA0-CBE2-4DB4-A22C-AD323226A257.html?hWord=N4IghgNiBcIA4Gc4AIJgC4FMB2BjAniAL5A["Complementos y políticas de selección de rutas"^] si quiere más información.
 
 
 

@@ -1,47 +1,9 @@
 ---
 sidebar: sidebar 
 permalink: mssql/mssql-workloads.html 
-keywords: MS-SQL,mssql,SQL Server 
-summary: Microsoft SQL Server en ONTAP 
+redirect: ontap-apps-dbs/mssql/mssql-overview.html 
 ---
-= Cargas de trabajo de Microsoft SQL Server
-:hardbreaks:
+= 
 :allow-uri-read: 
-:nofooter: 
-:icons: font
-:linkattrs: 
-:imagesdir: ../media/
 
 
-[role="lead"]
-La plataforma de bases de datos de SQL Server puede ser compatible con muchas aplicaciones.
-
-Antes de implementar SQL Server, debe comprender los requisitos de carga de trabajo de base de datos de las aplicaciones que admiten las instancias de SQL Server. Cada aplicación tiene requisitos distintos en cuanto a capacidad, rendimiento y disponibilidad, por lo que cada base de datos debería estar diseñada para satisfacer de forma óptima dichos requisitos. Muchas organizaciones clasifican las bases de datos en varios niveles de gestión utilizando los requisitos de las aplicaciones para definir acuerdos de nivel de servicios. Las cargas de trabajo de SQL Server se pueden describir de la siguiente manera:
-
-* Las bases de datos OLTP suelen ser también las más cruciales de una organización. Estas bases de datos, por lo general, generan aplicaciones orientadas al cliente y se consideran esenciales para las operaciones principales de la compañía. Las bases de datos OLTP críticas para la misión y las aplicaciones a las que dan soporte a menudo tienen SLA que requieren altos niveles de rendimiento y son sensibles a la degradación del rendimiento y a la disponibilidad. También pueden ser candidatos para Always On Failover Clusters o Always On Availability Groups. La combinación de I/O de estos tipos de bases de datos suele caracterizarse por un 75 % a un 90 % de las lecturas aleatorias y entre un 25 % y un 10 % de las escrituras.
-* Las bases de datos de sistema de soporte para la toma de decisiones (DSS) también se pueden denominar almacenes de datos. Estas bases de datos son cruciales en muchas organizaciones que dependen de los análisis para sus empresas. Estas bases de datos son sensibles al uso de la CPU y a las operaciones de lectura del disco cuando se ejecutan consultas. En muchas organizaciones, las bases de datos de DSS son las más críticas durante el mes, el trimestre y el final del año Por lo general, esta carga de trabajo tiene una combinación de I/O de lectura al 100 %.
-
-
-
-
-== Pruebas de rendimiento
-
-El Transaction Process Council (TPC) es una sociedad sin ánimo de lucro fundada para definir las pruebas de rendimiento de las bases de datos y el procesamiento de transacciones, y para difundir a la industria los datos de rendimiento TPC objetivos y verificables. Las pruebas TPC simulan entornos informáticos completos en los que un grupo de usuarios ejecuta transacciones con respecto a bases de datos.
-
-[cols="1,1,1"]
-|===
-| Tipo de carga de trabajo | Situación | Proporción de lectura/escritura (porcentajes) 
-
-
-| OLTP | TPC-C | ~75/25 
-
-
-|  | OLTP | TPC-E 
-
-
-| ~90/10 |  | DSS 
-
-
-| TPC-H | ~100/0 |  
-|===
-Aunque existen diversas opciones de generación de cargas de trabajo disponibles, generalmente nos centramos en medir el rendimiento de las bases de datos de SQL Server cuando gestionamos cargas de trabajo transaccionales, y utilizamos las herramientas TPC-E de Microsoft o TPC-H mediante HammerDB (link:http://www.hammerdb.com/document.html["HammerDB.com"]^). Las instrucciones detalladas sobre cómo utilizar estas pruebas de rendimiento específicas no están incluidas en el alcance de este documento.

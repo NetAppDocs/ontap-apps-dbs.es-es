@@ -1,0 +1,70 @@
+---
+sidebar: sidebar 
+permalink: microsoft/win_deploy_hyperv.html 
+keywords: Windows,Hyper-V,VHDX,VM,Virtual 
+summary: Este apéndice describe la puesta en marcha de un clúster Hyper-V de alta disponibilidad en el almacenamiento de NetApp. 
+---
+= Implemente el cluster Hyper-V
+:allow-uri-read: 
+
+
+[role="lead"]
+En este apéndice se describe la puesta en marcha de un clúster Hyper-V.
+
+
+
+== Requisitos previos
+
+* Existen al menos dos servidores de Hyper-V conectados entre sí.
+* Hay al menos un switch virtual configurado en cada servidor de Hyper-V.
+* La función de cluster de conmutación por error está activada en cada servidor de Hyper-V.
+* Los recursos compartidos de SMB o volúmenes compartidos en cluster se utilizan como almacenamiento compartido para almacenar equipos virtuales y sus discos para la agrupación en cluster de Hyper-V.
+* El almacenamiento no se debe compartir entre clústeres diferentes. Solo debe tener un recurso compartido CSV/CIFS por clúster.
+* Si el recurso compartido de SMB se utiliza como almacenamiento compartido, se deben configurar los permisos en el recurso compartido de SMB para otorgar acceso a las cuentas de equipo de todos los servidores de Hyper-V del clúster.
+
+
+
+
+== Puesta en marcha
+
+. Inicie sesión en uno de los servidores de Windows Hyper-V como miembro del grupo de administradores.
+. Inicie Server Manager**.**
+. En la sección Herramientas, haga clic en Administrador de clústeres de conmutación por error.
+. Haga clic en el menú Create Cluster from Actions.
+. Proporcione los detalles del servidor Hyper-V que forma parte de este cluster.
+. Valide la configuración del clúster. Seleccione Yes when prompted for cluster configuration validation y seleccione las pruebas necesarias para validar si los servidores de Hyper-V cumplen los requisitos previos para formar parte del cluster.
+. Una vez que la validación se realiza correctamente, se inicia el asistente Create Cluster. En el asistente, proporcione el nombre del clúster y la dirección IP del clúster para el nuevo clúster. A continuación, se crea un nuevo cluster de recuperación tras fallos para el servidor de Hyper-V.
+. Haga clic en el clúster recién creado en el Administrador de clústeres de conmutación al nodo de respaldo y gestiónelo.
+. Defina almacenamiento compartido para que utilice el clúster. Puede ser un recurso compartido de SMB o un volumen compartido en clúster.
+. Si se utiliza un recurso compartido de SMB como almacenamiento compartido, no es necesario realizar pasos especiales.
++
+** Configurar un recurso compartido de CIFS en una controladora de almacenamiento de NetApp. Para ello, consulte la sección «link:win_smb.html["Aprovisionamiento en entornos SMB"]".
+
+
+. Para usar un CSV como almacenamiento compartido, complete los siguientes pasos:
++
+.. Configure LUN en una controladora de almacenamiento de NetApp. Para ello, consulte la sección «Provisionamiento en entornos SAN».
+.. Asegúrese de que todos los servidores Hyper-V del cluster de recuperación tras fallos pueden ver las LUN de NetApp. Para hacerlo con todos los servidores de Hyper-V que forman parte del cluster de recuperación tras fallos, asegúrese de que sus iniciadores se hayan añadido al iGroup en el almacenamiento de NetApp. También asegúrese de que se detectan sus LUN y asegúrese de que MPIO está habilitado.
+.. En cualquiera de los servidores de Hyper-V del cluster, realice los siguientes pasos:
++
+... Ponga el LUN en línea, inicialice el disco, cree un nuevo volumen sencillo y formatee con NTFS o ReFS.
+... En el Administrador de clústeres de conmutación por error, expanda el clúster, expanda Almacenamiento, haga clic con el botón derecho en Discos y, a continuación, haga clic en Agregar discos. Al hacerlo, se abre el asistente para agregar discos a un clúster mostrando la LUN como un disco. Haga clic en OK para añadir la LUN como disco.
+... Ahora el LUN se denomina Clustered Disk y se muestra como Almacenamiento disponible en Discos.
+
+
+.. Haga clic con el botón derecho en LUN (Clustered Disk) y haga clic en Add to Cluster Shared Volumes. Ahora la LUN se muestra como un volumen compartido en clúster.
+.. El CSV es visible y accesible simultáneamente desde todos los servidores Hyper-V del cluster de conmutación por error en su ubicación local C:\ClusterStorage\.
+
+
+. Crear un equipo virtual de alta disponibilidad:
++
+.. En el Administrador de clústeres de conmutación por error, seleccione y expanda el clúster que creó anteriormente.
+.. Haga clic en Roles y, a continuación, en Máquinas virtuales en Acciones. Haga clic en New Virtual Machine.
+.. Seleccione el nodo del clúster donde debe residir la máquina virtual.
+.. En el asistente Virtual Machine Creation, proporcione el almacenamiento compartido (recurso compartido de SMB o CSV) como la ruta para almacenar la máquina virtual y sus discos.
+.. Utilice Hyper-V Manager para establecer el almacenamiento compartido (recurso compartido de SMB o CSV) como ruta predeterminada para almacenar el equipo virtual y sus discos para un servidor de Hyper-V.
+
+
+. Probar la conmutación al respaldo planificada. Mueva máquinas virtuales a otro nodo mediante una migración dinámica, una migración rápida o una migración de almacenamiento (movimiento). Revise la sección “link:\win_deploy_hyperv_lmce.html["Migración activa en un entorno en cluster"]para más detalles.
+. Probar la recuperación tras fallos no planificada. Detenga el servicio de clúster en el servidor propietario de la máquina virtual.
+

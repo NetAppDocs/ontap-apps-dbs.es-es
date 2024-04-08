@@ -1,0 +1,376 @@
+---
+sidebar: sidebar 
+permalink: microsoft/win_san.html 
+keywords: Windows,Hyper-V,VHDX,VM,Virtual,SAN,LUN,NVMe 
+summary: Aprovisione almacenamiento ONTAP para Windows y Hyper-V en entornos SAN 
+---
+= Aprovisionamiento en entornos SAN
+:allow-uri-read: 
+
+
+[role="lead"]
+Las SVM de ONTAP admiten los protocolos de bloque iSCSI y FC. Cuando se crea una SVM con el protocolo de bloque iSCSI o FC, la SVM obtiene un nombre completo de iSCSI (IQN) o un nombre FC Worldwide (WWN), respectivamente. Este identificador presenta un destino SCSI para los hosts que acceden al almacenamiento en bloques de NetApp.
+
+
+
+== Aprovisionar LUN de NetApp en Windows Server
+
+
+
+=== Requisitos previos
+
+El uso del almacenamiento de NetApp en entornos SAN en Windows Server tiene los siguientes requisitos:
+
+* Se configura un clúster de NetApp con una o más controladoras de almacenamiento NetApp.
+* El clúster de NetApp o las controladoras de almacenamiento tienen una licencia iSCSI válida.
+* Hay disponibles los puertos configurados iSCSI y/o FC.
+* La división en zonas de FC se realiza en un switch de FC para FC.
+* Se crea al menos un agregado.
+* Una SVM debería tener un LIF por red Ethernet o una estructura de Fibre Channel en cada controladora de almacenamiento que vaya a servir datos con iSCSI o Fibre Channel.
+
+
+
+
+=== Puesta en marcha
+
+. Cree una nueva SVM con el protocolo de bloque iSCSI y/o FC habilitado. Una SVM nueva se puede crear con cualquiera de los siguientes métodos:
++
+** Comandos de la CLI en almacenamiento de NetApp
+** System Manager de ONTAP
+** Kit de herramientas PowerShell de NetApp
+
+
+
+
+. Configure el protocolo iSCSI y/o FC.
+. Asigne la SVM con LIF en cada nodo del clúster.
+. Inicie el servicio iSCSI y/o FC en la SVM.
++
+.
+
+. Cree conjuntos de puertos iSCSI y/o FC usando los LIF de SVM.
+. Cree un iGroup iSCSI y/o FC para Windows mediante el conjunto de puertos creado.
+. Añada un iniciador al iGroup. El iniciador es el IQN para iSCSI y WWPN para FC. Pueden consultarse desde Windows Server ejecutando el cmdlet de PowerShell Get-InitiatorPort.
+
+
+
+
+= Obtenga el IQN para iSCSI +
+
+Get-InitiatorPort | where \{$_.ConnectionType -eq 'iSCSi'} | Select-Object -Property NodeAddress
+
+
+
+= Obtenga el WWPN para FC +
+
+Get-InitiatorPort | where \{$_.ConnectionType -eq 'Fibre Channel'} | Select-Object -Property PortAddress +
+ +
+# Al agregar un iniciador al iGroup en caso de FC, asegúrese de proporcionar el iniciador (PortAddress) en el formato WWPN estándar
+
+El IQN para iSCSI en Windows Server también se puede comprobar en la configuración de las propiedades del iniciador iSCSI.
+
+* Cree una LUN usando el asistente Crear LUN y asócielo con el iGroup creado.
+
+
+
+
+=== Integración de host
+
+Windows Server utiliza la extensión MPIO de acceso asimétrico a unidad lógica (ALUA) para determinar las rutas directas e indirectas para los LUN. Aunque todas las LIF que son propiedad de una SVM aceptan solicitudes de lectura/escritura para sus LUN, solo uno de los nodos del clúster posee los discos que respaldan ese LUN en un momento dado. Esto divide las rutas disponibles a una LUN en dos tipos, directa o indirecta, tal y como se muestra en la siguiente figura.
+
+Una ruta directa para una LUN es una ruta en la que las LIF de una SVM y la LUN a la que se accede residen en el mismo nodo. Para pasar de un puerto de destino físico a un disco, no es necesario atravesar la red de clúster.
+
+Las rutas indirectas son rutas de datos en las que los LIF de una SVM y la LUN a la que se accede residen en nodos diferentes. Los datos deben atravesar la red de clúster para pasar de un puerto de destino físico al disco.
+
+image:win_image3.png["Múltiples rutas en el entorno SAN,width=624,height=232"]
+
+
+
+=== MPIO
+
+NetApp ONTAP proporciona un almacenamiento de alta disponibilidad en el que pueden existir varias rutas desde la controladora de almacenamiento al servidor de Windows. La multivía es la capacidad de tener varias rutas de datos desde un servidor hasta una cabina de almacenamiento. El multivía protege frente a fallos de hardware (cortes de cable, fallos de switch y adaptador de bus de host [HBA], etc.) y puede proporcionar límites de rendimiento superiores al utilizar el rendimiento agregado de múltiples conexiones. Cuando una ruta o conexión deja de estar disponible, el software de rutas múltiples cambia automáticamente la carga a una de las otras rutas disponibles. La función MPIO combina las distintas rutas físicas del almacenamiento como una única ruta lógica que se utiliza para el acceso a los datos con el fin de ofrecer resiliencia al almacenamiento y balanceo de carga. Para utilizar esta función, la función MPIO debe estar habilitada en Windows Server.
+
+
+
+=== Habilite MPIO
+
+Para activar MPIO en Windows Server, lleve a cabo los siguientes pasos:
+
+. Inicie sesión en Windows Server como miembro del grupo de administradores.
+
+
+. Inicie Server Manager.
+. En la sección Administrar, haga clic en Agregar funciones y características.
+. En la página Seleccionar operaciones, seleccione E/S multirruta
+
+
+
+
+=== Configurar MPIO
+
+Cuando utiliza el protocolo iSCSI, debe indicar a Windows Server que aplique soporte multivía a los dispositivos iSCSI en las propiedades de MPIO.
+
+Para configurar MPIO en Windows Server, lleve a cabo los siguientes pasos:
+
+. Inicie sesión en Windows Server como miembro del grupo de administradores.
+
+
+. Inicie Server Manager.
+. En la sección Herramientas, haga clic en MPIO.
+. En MPIO Properties on Discover Multi-paths, seleccione Add Support for iSCSI Devices y haga clic en Add. A continuación, se le pedirá que reinicie el equipo.
+. Reinicie Windows Server para ver el dispositivo MPIO que aparece en la sección Dispositivos MPIO de Propiedades de MPIO.
+
+
+
+
+=== Configure iSCSI
+
+Para detectar el almacenamiento en bloques iSCSI en Windows Server, lleve a cabo los siguientes pasos:
+
+. Inicie sesión en Windows Server como miembro del grupo de administradores.
+
+
+. Inicie Server Manager.
+. En la sección Herramientas, haga clic en Iniciador iSCSI.
+. En la pestaña Discovery, haga clic en Discover Portal.
+. Proporcione la dirección IP de las LIF asociadas con la SVM creada para el almacenamiento de NetApp para el protocolo SAN. Haga clic en Avanzado, configure la información en la ficha General y haga clic en Aceptar.
+. El iniciador iSCSI detecta automáticamente el destino iSCSI y lo muestra en la pestaña Destinos.
+. Seleccione el destino iSCSI en los destinos detectados. Haga clic en Conectar para abrir la ventana Conectar con destino.
+. Debe crear varias sesiones desde el host de Windows Server a los LIF iSCSI de destino en el clúster de almacenamiento de NetApp. Para ello, lleve a cabo los siguientes pasos:
+
+
+. En la ventana Conectar a destino, seleccione Habilitar MPIO y haga clic en Avanzado.
+. En Configuración avanzada, en la pestaña General, seleccione el adaptador local como iniciador iSCSI de Microsoft y seleccione la IP de iniciador y la IP de portal de destino.
+. También debe conectarse mediante la segunda ruta. Por lo tanto, repita el paso 5 al paso 8, pero esta vez seleccione la IP del iniciador y la IP del portal de destino para la segunda ruta.
+. Seleccione el destino iSCSI en Discovered Targets en la ventana principal de iSCSI Properties y haga clic en Properties.
+. La ventana Propiedades muestra que se han detectado varias sesiones. Seleccione la sesión, haga clic en Devices y, a continuación, haga clic en MPIO para configurar la política de equilibrio de carga. Se muestran todas las rutas configuradas para el dispositivo y se admiten todas las políticas de equilibrio de carga. NetApp recomienda generalmente round robin con subconjunto, y esta configuración es la predeterminada para las cabinas con ALUA habilitado. Round robin es el valor predeterminado para cabinas activo-activo que no admiten ALUA.
+
+
+
+
+=== Detectar almacenamiento de bloques
+
+Para detectar el almacenamiento en bloques iSCSI o FC en Windows Server, lleve a cabo los siguientes pasos:
+
+. Haga clic en Administración de equipos en la sección Herramientas del Administrador de servidores.
+. En Administración de equipos, haga clic en la sección Administración de discos en almacenamiento y, a continuación, haga clic en Más acciones y Volver a analizar discos. Al hacerlo se muestran las LUN iSCSI sin configurar.
+. Haga clic en la LUN detectada y conéctela. A continuación, seleccione Inicializar disco con la partición MBR o GPT. Cree un nuevo volumen simple proporcionando el tamaño del volumen y la letra de la unidad y formatéelo usando FAT, FAT32, NTFS o el sistema de archivos resistente (ReFS).
+
+
+
+
+=== Mejores prácticas
+
+* NetApp recomienda habilitar thin provisioning en los volúmenes que alojan las LUN.
+* Para evitar problemas con la multivía, NetApp recomienda usar las 10Gb sesiones o las 1GB sesiones en una LUN determinada.
+* NetApp recomienda confirmar que ALUA está habilitado en el sistema de almacenamiento. De forma predeterminada, ALUA está habilitado en ONTAP.
+* En el host de Windows Server al que se asigna el LUN de NetApp, habilite el servicio iSCSI (TCP-in) para el servicio entrante y el servicio iSCSI (TCP-out) para saliente en la configuración del firewall. Estos ajustes permiten que el tráfico iSCSI pase hacia y desde el host de Hyper-V y la controladora NetApp.
+
+
+
+
+== Aprovisionamiento de LUN de NetApp en Nano Server
+
+
+
+=== Requisitos previos
+
+Además de los requisitos previos mencionados en la sección anterior, el rol de almacenamiento debe estar habilitado desde el lado de Nano Server. Por ejemplo, Nano Server debe implementarse utilizando la opción -Storage. Para implementar Nano Server, consulte la sección “link:win_deploy_nano.html["Implemente Nano Server."]"
+
+
+
+=== Puesta en marcha
+
+Para aprovisionar LUN de NetApp en un servidor Nano, realice los siguientes pasos:
+
+. Conéctese al Nano Server remotamente usando las instrucciones en la sección “link:win_deploy_nano.html["Conéctese a Nano Server"]."
+. Para configurar iSCSI, ejecute los siguientes cmdlets de PowerShell en Nano Server:
++
+....
+# Start iSCSI service, if it is not already running
+Start-Service msiscsi
+....
++
+....
+# Create a new iSCSI target portal
+New-IscsiTargetPortal â€“TargetPortalAddress <SVM LIF>
+....
++
+....
+# View the available iSCSI targets and their node address
+Get-IscsiTarget
+....
++
+....
+# Connect to iSCSI target
+Connect-IscsiTarget -NodeAddress <NodeAddress>
+....
++
+....
+# NodeAddress is retrived in above cmdlet Get-IscsiTarget
+# OR
+Get-IscsiTarget | Connect-IscsiTarget
+....
++
+....
+# View the established iSCSI session
+Get-IscsiSession
+....
++
+ # Note the InitiatorNodeAddress retrieved in the above cmdlet Get-IscsiSession. This is the IQN for Nano server and this needs to be added in the Initiator group on NetApp Storage
++
+....
+# Rescan the disks
+Update-HostStorageCache
+....
+
+
+. Añada un iniciador al iGroup.
++
+ Add the InitiatorNodeAddress retrieved from the cmdlet Get-IscsiSession to the Initiator Group on NetApp Controller
+
+
+. Configurar MPIO.
++
+....
+# Enable MPIO Feature
+Enable-WindowsOptionalFeature -Online -FeatureName MultipathIo
+....
++
+....
+# Get the Network adapters and their IPs
+Get-NetIPAddress â€“AddressFamily IPv4 â€“PrefixOrigin <Dhcp or Manual>
+....
++
+....
+# Create one MPIO-enabled iSCSI connection per network adapter
+Connect-IscsiTarget -NodeAddress <NodeAddress> -IsPersistent $True â€“IsMultipathEnabled $True â€“InitiatorPortalAddress <IP Address of ethernet adapter>
+....
++
+....
+# NodeAddress is retrieved from the cmdlet Get-IscsiTarget
+# IPs are retrieved in above cmdlet Get-NetIPAddress
+....
++
+....
+# View the connections
+Get-IscsiConnection
+....
+
+
+. Detectar almacenamiento basado en bloques.
++
+....
+# Rescan disks
+Update-HostStorageCache
+....
++
+....
+# Get details of disks
+Get-Disk
+....
++
+....
+# Initialize disk
+Initialize-Disk -Number <DiskNumber> -PartitionStyle <GPT or MBR>
+....
++
+....
+# DiskNumber is retrived in the above cmdlet Get-Disk
+# Bring the disk online
+Set-Disk -Number <DiskNumber> -IsOffline $false
+....
++
+....
+# Create a volume with maximum size and default drive letter
+New-Partition -DiskNumber <DiskNumber> -UseMaximumSize -AssignDriveLetter
+....
++
+....
+# To choose the size and drive letter use -Size and -DriveLetter parameters
+# Format the volume
+Format-Volume -DriveLetter <DriveLetter> -FileSystem <FAT32 or NTFS or REFS>
+....
+
+
+
+
+== Arranque desde SAN
+
+Un host físico (servidor) o un equipo virtual Hyper-V puede arrancar el SO de Windows Server directamente desde un LUN de NetApp en lugar de su disco duro interno. En el enfoque de arranque desde SAN, la imagen del SO desde la que se arranca reside en una LUN de NetApp conectada a un host físico o equipo virtual. En el caso de un host físico, el HBA del host físico está configurado para usar la LUN de NetApp para arrancar. Para una máquina virtual, la LUN de NetApp se conecta como disco en modo de paso para el arranque.
+
+
+
+=== Enfoque de FlexClone de NetApp
+
+Con la tecnología FlexClone de NetApp, las LUN de arranque con una imagen de SO pueden clonarse al instante y conectarse a los servidores y máquinas virtuales para proporcionar rápidamente imágenes de sistemas operativos limpios, como se muestra en la siguiente figura.
+
+image:win_image4.png["Arranque las LUN con FlexClone de NetApp,width=561,height=357"]
+
+
+
+=== Arranque desde SAN para host físico
+
+
+
+==== Requisitos previos
+
+* El host físico (servidor) tiene un iSCSI o FC HBA adecuados.
+* Ha descargado un controlador de dispositivo HBA adecuado para el servidor compatible con Windows Server.
+* El servidor tiene una unidad de CD/DVD o un medio virtual adecuado para insertar la imagen ISO de Windows Server y se ha descargado el controlador del dispositivo HBA.
+* Se aprovisiona un iSCSI o un LUN FC de NetApp en la controladora de almacenamiento de NetApp.
+
+
+
+
+==== Puesta en marcha
+
+Para configurar el arranque desde SAN para un host físico, realice los siguientes pasos:
+
+. Active BootBIOS en el HBA del servidor.
+. Para los HBA iSCSI, configure la IP de iniciador, el nombre del nodo iSCSI y el modo de inicio del adaptador en los ajustes del BIOS de inicio.
+. Al crear un iGroup para iSCSI y/o FC en una controladora de almacenamiento de NetApp, agregue el iniciador de HBA del servidor al grupo. El iniciador de HBA del servidor es el WWPN para el HBA de FC o el nombre del nodo iSCSI de iSCSI HBA.
+. Cree una LUN en la controladora de almacenamiento de NetApp con un ID de LUN de 0 y asócielo con el iGroup creado en el paso anterior. Esta LUN actúa como LUN de arranque.
+. Restrinja el HBA a una ruta única al LUN de arranque. Se pueden añadir rutas adicionales después de instalar Windows Server en el LUN de arranque para aprovechar la función de rutas múltiples.
+. Utilice la utilidad BootBIOS del HBA para configurar el LUN como dispositivo de arranque.
+. Reinicie el host e introduzca la utilidad BIOS del host.
+. Configure el BIOS del host para que el LUN de inicio sea el primer dispositivo en el orden de inicio.
+. Desde la ISO de Windows Server, inicie la configuración de instalación.
+. Cuando la instalación le pregunte ¿Dónde desea instalar Windows?, haga clic en Cargar controlador en la parte inferior de la pantalla de instalación para iniciar la página Seleccionar controlador para instalar. Proporcione la ruta del controlador del dispositivo HBA descargado anteriormente y finalice la instalación del controlador.
+. Ahora la LUN de inicio creada anteriormente debe estar visible en la página de instalación de Windows. Seleccione el LUN de inicio para la instalación de Windows Server en el LUN de arranque y finalice la instalación.
+
+
+
+
+=== Arranque desde SAN para máquina virtual
+
+Para configurar el arranque desde SAN para una máquina virtual, lleve a cabo los siguientes pasos:
+
+
+
+==== Puesta en marcha
+
+. Al crear un iGroup para iSCSI o FC en una controladora de almacenamiento de NetApp, agregue el IQN para iSCSI o el WWN para FC del servidor de Hyper-V a la controladora.
+. Cree LUN o clones de LUN en la controladora de almacenamiento de NetApp y asócielo con el iGroup creado en el paso anterior. Estas LUN actúan como LUN de arranque para las máquinas virtuales.
+. Detectar las LUN en el servidor de Hyper-V, conectarlas e inicializarlas.
+. Desconectar las LUN.
+. Cree VM con la opción Adjuntar un Disco Duro Virtual más adelante en la página Conectar Disco Duro Virtual.
+. Añada una LUN como disco en modo de paso a una máquina virtual.
++
+.. Abra la configuración de la máquina virtual.
+.. Haga clic en Controlador IDE 0, seleccione Disco duro y haga clic en Agregar. Al seleccionar IDE Controller 0, este disco se convierte en el primer dispositivo de inicio para la máquina virtual.
+.. Seleccione Disco duro físico en las opciones de Disco duro y seleccione un disco de la lista como disco de paso. Los discos son LUN configuradas en los pasos anteriores.
+
+
+. Instale Windows Server en el disco de paso.
+
+
+
+
+=== Mejores prácticas
+
+* Asegúrese de que las LUN estén sin conexión. De lo contrario, no se puede agregar el disco como disco en modo de paso a una máquina virtual.
+* Cuando haya varias LUN, asegúrese de anotar el número de disco de la LUN en la gestión de discos. Es necesario porque los discos de la máquina virtual aparecen con el número de disco. Además, la selección del disco como disco en modo de paso para la máquina virtual se basa en este número de disco.
+* NetApp recomienda evitar la agrupación de NIC para los NIC iSCSI.
+* NetApp recomienda usar ONTAP MPIO configurado en el host con fines de almacenamiento.
+

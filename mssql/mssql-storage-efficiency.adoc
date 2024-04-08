@@ -1,18 +1,18 @@
 ---
 sidebar: sidebar 
 permalink: mssql/mssql-storage-efficiency.html 
-keywords: MS-SQL,mssql,SQL Server 
-summary: Microsoft SQL Server en ONTAP 
+keywords: MSSQL,SQL Server, efficiency, compression, deduplication 
+summary: Microsoft SQL Server y la eficiencia del almacenamiento de ONTAP 
 ---
-= Eficiencia del almacenamiento de ONTAP con Microsoft SQL Server
+= Microsoft SQL Server y la eficiencia del almacenamiento
 :allow-uri-read: 
 :imagesdir: ../media/
 
 
 [role="lead"]
-La eficiencia del almacenamiento es la capacidad para almacenar y gestionar datos de SQL Server de una manera que consuma la menor cantidad de espacio de almacenamiento con poco o ningún efecto en el rendimiento general del sistema.
+La eficiencia del almacenamiento de ONTAP está optimizada para almacenar y gestionar datos de SQL Server de una manera que consuma la menor cantidad de espacio de almacenamiento con poco o ningún efecto en el rendimiento general del sistema.
 
-La eficiencia del almacenamiento es una combinación de RAID, aprovisionamiento (distribución y utilización generales), mirroring y otras tecnologías de protección de datos. Las tecnologías de NetApp como las copias Snapshot, Thin Provisioning, FlexClone ayudan a crear beneficios de costos, al optimizar el almacenamiento existente en la infraestructura y aplazar o evitar los gastos futuros de almacenamiento. Cuanto más use estas tecnologías conjuntamente, mayor será el ahorro.
+La eficiencia del almacenamiento es una combinación de RAID, aprovisionamiento (distribución y utilización generales), mirroring y otras tecnologías de protección de datos. Las tecnologías de NetApp, incluidas las snapshots, thin provisioning y clonado, optimizan el almacenamiento existente en la infraestructura y aplazan o evitan gastos futuros en almacenamiento. Cuanto más use estas tecnologías conjuntamente, mayor será el ahorro.
 
 
 
@@ -96,7 +96,7 @@ En un nivel superior, la compresión es un proceso matemático por el cual los p
 
 NOTE: Consulte las siguientes secciones sobre thin provisioning para obtener una explicación de la interacción entre la eficiencia del almacenamiento y la reserva fraccionaria.
 
-SQL Server también tiene la característica de comprimir y gestionar los datos de forma eficiente. SQL Server soporta actualmente dos tipos de compresión de datos: Compresión de filas y compresión de páginas.
+SQL Server en sí también tiene funciones para comprimir y gestionar datos de forma eficiente. SQL Server soporta actualmente dos tipos de compresión de datos: Compresión de filas y compresión de páginas.
 
 La compresión de filas cambia el formato de almacenamiento de datos. Por ejemplo, cambia los enteros y decimales al formato de longitud variable en lugar de su formato nativo de longitud fija. También cambia las cadenas de caracteres de longitud fija al formato de longitud variable eliminando espacios en blanco. La compresión de páginas implementa la compresión de filas y otras dos estrategias de compresión (compresión de prefijo y compresión de diccionario). Puede encontrar más detalles sobre la compresión de páginas en link:https://learn.microsoft.com/en-us/sql/relational-databases/data-compression/page-compression-implementation?view=sql-server-ver16&redirectedfrom=MSDN["Implantación de Compresión de Página"^].
 

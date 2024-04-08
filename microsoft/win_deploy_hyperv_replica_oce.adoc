@@ -1,0 +1,84 @@
+---
+sidebar: sidebar 
+permalink: microsoft/win_deploy_hyperv_replica_oce.html 
+keywords: Windows,Hyper-V,VHDX,VM,Virtual 
+summary: Este apéndice describe la implementación de la réplica de Hyper-V fuera de un entorno en clúster. 
+---
+= Implemente la réplica de Hyper-V fuera de un entorno en clúster
+:allow-uri-read: 
+
+
+[role="lead"]
+Este apéndice describe la implementación de la réplica de Hyper-V fuera de un entorno en clúster.
+
+
+
+== Requisitos previos
+
+* Necesita servidores Hyper-V independientes ubicados en las mismas ubicaciones geográficas o independientes que sirvan de servidores primarios y de réplica.
+* Si se utilizan sitios separados, el firewall de cada sitio debe configurarse para permitir la comunicación entre los servidores primario y de réplica.
+* El servidor de réplica debe tener espacio suficiente para almacenar las cargas de trabajo replicadas.
+
+
+
+
+== Puesta en marcha
+
+. Configure el servidor de réplicas.
++
+.. Para que las reglas del firewall entrante permitan el tráfico de replicación entrante, ejecute el siguiente cmdlet de PowerShell:
++
+ Enable-Netfirewallrule -displayname "Hyper-V Replica HTTP Listener (TCP-In)"
+.. Abra Hyper-V Manager en la sección Herramientas del Administrador de servidores.
+.. Haga clic en Configuración de Hyper-V en Acciones.
+.. Haga clic en Configuración de Replicación y seleccione Habilitar este equipo como servidor de réplica.
+.. En la sección Autenticación y puertos, seleccione el método de autenticación y el puerto.
+.. En la sección Autorización y almacenamiento, especifique la ubicación en la que se almacenarán los equipos virtuales y los archivos replicados.
+
+
+. Activar la replicación de equipos virtuales para equipos virtuales en el servidor primario. La replicación de VM se habilita por VM y no para todo el servidor de Hyper-V.
++
+.. En Hyper-V Manager, haga clic con el botón derecho en una máquina virtual y haga clic en Enable Replication para abrir el asistente Enable Replication.
+.. Proporcione el nombre del servidor de réplica en el que se debe replicar la máquina virtual.
+.. Proporcione el tipo de autenticación y el puerto del servidor de réplica que se configuró para recibir tráfico de replicación en el servidor de réplica.
+.. Seleccione los discos duros virtuales que desea replicar.
+.. Seleccione la frecuencia (duración) a la que se envían los cambios al servidor de réplica.
+.. Configure los puntos de recuperación para especificar el número de puntos de recuperación que se deben mantener en el servidor de réplica.
+.. Seleccione Initial Replication Method para especificar el método para transferir la copia inicial de los datos del equipo virtual al servidor de réplica.
+.. Revise el resumen y haga clic en Finish.
+.. Este proceso crea una réplica de VM en el servidor de réplica.
+
+
+
+
+
+
+== Replicación
+
+. Ejecute una conmutación por error de prueba para asegurarse de que la VM de réplica funciona correctamente en el servidor de réplica. La prueba crea una VM temporal en el servidor de réplica.
++
+.. Inicie sesión en el servidor de réplicas.
+.. En Hyper-V Manager, haga clic con el botón derecho en una VM de réplica, haga clic en Replicación y, a continuación, en Probar conmutación por error.
+.. Elija el punto de recuperación que desea utilizar.
+.. Este proceso crea una VM con el mismo nombre que se agrega con -Test.
+.. Verificar la máquina virtual para asegurarse de que todo funciona bien.
+.. Después de la conmutación por error, la VM de prueba de réplica se elimina si selecciona Detener failover de prueba para ella.
+
+
+. Ejecute una conmutación al respaldo planificada para replicar los cambios más recientes del equipo virtual principal al equipo virtual de réplica.
++
+.. Inicie sesión en el servidor primario.
+.. Apague el equipo virtual para que se conmute al nodo de respaldo.
+.. En Hyper-V Manager, haga clic con el botón derecho en la máquina virtual desactivada, haga clic en Replication y, a continuación, en Planned Failover.
+.. Haga clic en Failover para transferir los últimos cambios de VM al servidor de réplica.
+
+
+. Ejecute una conmutación al respaldo no planificada en caso de un fallo del equipo virtual principal.
++
+.. Inicie sesión en el servidor de réplicas.
+.. En Hyper-V Manager, haga clic con el botón derecho en una réplica de VM, haga clic en Replication y, a continuación, haga clic en Failover.
+.. Elija el punto de recuperación que desea utilizar.
+.. Haga clic en Failover para conmutar la máquina virtual al nodo de respaldo.
+
+
+

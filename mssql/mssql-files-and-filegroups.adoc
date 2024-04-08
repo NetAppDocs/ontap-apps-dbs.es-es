@@ -1,8 +1,8 @@
 ---
 sidebar: sidebar 
 permalink: mssql/mssql-files-and-filegroups.html 
-keywords: MS-SQL,mssql,SQL Server 
-summary: Microsoft SQL Server en ONTAP 
+keywords: MSSQL,SQL Server, backup, recovery, database file management 
+summary: Ubicación del archivo de base de datos de Microsoft SQL Server 
 ---
 = Archivos y grupos de archivos de bases de datos de Microsoft SQL Server
 :allow-uri-read: 
@@ -10,7 +10,7 @@ summary: Microsoft SQL Server en ONTAP
 
 
 [role="lead"]
-Una base de datos de SQL Server es una colección de objetos que permite almacenar y manipular datos.
+La ubicación correcta del archivo de la base de datos de SQL Server en ONTAP es crítica durante la etapa de la implementación inicial. Esto garantiza un rendimiento óptimo, gestión del espacio, tiempos de backup y restauración que pueden configurarse para que se ajusten a sus necesidades empresariales.
 
 En teoría, SQL Server (64 bits) admite 32.767 bases de datos por instancia y 524.272TB GB de tamaño de base de datos, aunque la instalación típica suele tener varias bases de datos. Sin embargo, el número de bases de datos que SQL Server puede manejar depende de la carga y el hardware. No es raro ver instancias de SQL Server que alojan docenas, cientos o incluso miles de pequeñas bases de datos.
 
@@ -34,7 +34,7 @@ Puede especificar el tamaño inicial del archivo y los parámetros de crecimient
 
 TIP: *NetApp recomienda* que todos los archivos en un solo grupo de archivos tengan los mismos parámetros iniciales de tamaño y crecimiento automático, con el tamaño de crecimiento definido en megabytes en lugar de porcentajes. Esto ayuda al algoritmo de relleno proporcional a equilibrar de forma uniforme las actividades de escritura en los archivos de datos.
 
-Cada vez que SQL Server crece los archivos, llena el espacio recién asignado en los archivos con ceros. Este proceso bloquea todas las sesiones que necesitan escribir en el archivo correspondiente o, en caso de crecimiento del log de transacciones, generar registros de log de transacciones.
+Cada vez que SQL Server crece archivos, llena el espacio recién asignado con ceros. Este proceso bloquea todas las sesiones que necesitan escribir en el archivo correspondiente o, en caso de crecimiento del log de transacciones, generar registros de log de transacciones.
 
 SQL Server siempre pone a cero el registro de transacciones y ese comportamiento no se puede cambiar. Sin embargo, puede controlar si los archivos de datos están a cero habilitando o deshabilitando la inicialización instantánea de archivos. La activación de la inicialización instantánea de archivos ayuda a acelerar el crecimiento de los archivos de datos y reduce el tiempo necesario para crear o restaurar la base de datos.
 
@@ -48,23 +48,14 @@ Para comprobar si el permiso está habilitado, puede utilizar el código del sig
 
 ....
 DBCC TRACEON(3004,3605,-1)
-
 GO
-
 CREATE DATABASE DelMe
-
 GO
-
 EXECUTE sp_readerrorlog
-
 GO
-
 DROP DATABASE DelMe
-
 GO
-
 DBCC TRACEOFF(3004,3605,-1)
-
 GO
 ....
 Cuando la inicialización instantánea de archivos no está activada, el registro de errores de SQL Server muestra que SQL Server pone a cero el archivo de datos de mdf además de poner a cero el archivo log ldf, como se muestra en el siguiente ejemplo. Cuando se activa la inicialización instantánea del archivo, sólo se muestra la puesta a cero del archivo log.

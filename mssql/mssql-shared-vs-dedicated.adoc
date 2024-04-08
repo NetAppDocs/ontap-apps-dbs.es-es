@@ -1,8 +1,8 @@
 ---
 sidebar: sidebar 
 permalink: mssql/mssql-shared-vs-dedicated.html 
-keywords: MS-SQL,mssql,SQL Server 
-summary: Microsoft SQL Server en ONTAP 
+keywords: MSSQL,SQL Server, multiple instances, dedicated instance, ONTAP 
+summary: Puesta en marcha de instancias de Microsoft SQL Server 
 ---
 = Instancia compartida de Microsoft SQL Server frente a instancia dedicada
 :allow-uri-read: 
@@ -10,9 +10,9 @@ summary: Microsoft SQL Server en ONTAP
 
 
 [role="lead"]
-Si una aplicación tiene muchos esquemas y procedimientos almacenados, podría afectar a otras aplicaciones que comparten una instancia de SQL Server.
+Se pueden configurar varios SQL Server como una única instancia por servidor o como varias instancias. La decisión correcta generalmente depende de factores como si el servidor se va a utilizar para la producción o el desarrollo, si la instancia se considera crítica para las operaciones de negocio y los objetivos de rendimiento.
 
-Los recursos de la instancia pueden estar potencialmente divididos o bloqueados, lo que a su vez provoca problemas de rendimiento para otras aplicaciones que tienen bases de datos alojadas en la instancia compartida de SQL Server.
+Las configuraciones de instancias compartidas pueden ser inicialmente más fáciles de configurar, pero pueden provocar problemas en los que los recursos se dividen o bloquean, lo que a su vez provoca problemas de rendimiento para otras aplicaciones que tienen bases de datos alojadas en la instancia compartida de SQL Server.
 
 La solución de problemas de rendimiento puede ser complicada porque debe averiguar qué instancia es la causa raíz. Esta pregunta se compara con los costes de las licencias del sistema operativo y de las licencias de SQL Server. Si el rendimiento de las aplicaciones es primordial, se recomienda encarecidamente utilizar una instancia dedicada.
 

@@ -1,8 +1,8 @@
 ---
 sidebar: sidebar 
 permalink: mssql/mssql-memory-configuration.html 
-keywords: MS-SQL,mssql,SQL Server 
-summary: Microsoft SQL Server en ONTAP 
+keywords: MSSQL,SQL Server, memory 
+summary: Configuración de memoria de Microsoft SQL Server 
 ---
 = Configuración de memoria de Microsoft SQL Server
 :allow-uri-read: 
@@ -10,7 +10,7 @@ summary: Microsoft SQL Server en ONTAP
 
 
 [role="lead"]
-En las siguientes secciones se explican algunos de los ajustes de configuración de memoria crítica.
+En la siguiente sección se explica la configuración de los valores de memoria de SQL Server para optimizar el rendimiento de la base de datos.
 
 
 
@@ -37,17 +37,11 @@ El uso de SQL Server Management Studio para ajustar la memoria mínima o máxima
 
 ....
 EXECUTE sp_configure 'show advanced options', 1
-
 GO
-
 EXECUTE sp_configure 'min server memory (MB)', 2048
-
 GO
-
 EXEC sp_configure 'max server memory (MB)', 120832
-
 GO
-
 RECONFIGURE WITH OVERRIDE
 ....
 
@@ -70,9 +64,9 @@ Controla la cantidad máxima de RAM asignada inicialmente para crear índices. E
 
 == Memoria mínima por consulta
 
-Cuando se ejecuta una consulta, SQL Server intenta asignar la cantidad óptima de memoria para que se ejecute de forma eficaz.
+Cuando se ejecuta una consulta, SQL Server intenta asignar la cantidad óptima de memoria para que se ejecute de forma eficiente.
 
-De forma predeterminada, la configuración de memoria mínima por consulta asigna > o = a 1024KB para cada consulta que se ejecute. Es recomendable dejar este valor en el valor por defecto de 0 para permitir que SQL Server gestione dinámicamente la cantidad de memoria asignada para las operaciones de creación de índices. Sin embargo, si SQL Server tiene más RAM de la que necesita para ejecutarse de manera eficiente, el rendimiento de algunas consultas se puede aumentar si aumenta este valor. Por lo tanto, siempre y cuando la memoria esté disponible en el servidor que no esté utilizando SQL Server, ninguna otra aplicación o el sistema operativo, aumentar esta configuración puede ayudar en general al rendimiento de SQL Server. Si no hay memoria libre disponible, aumentar esta configuración puede afectar al rendimiento general.
+De forma predeterminada, el valor de memoria mínima por consulta asigna >= a 1024KB para cada consulta que se ejecute. Es recomendable dejar este valor en el valor por defecto de 0 para permitir que SQL Server gestione dinámicamente la cantidad de memoria asignada para las operaciones de creación de índices. Sin embargo, si SQL Server tiene más RAM de la que necesita para ejecutarse de manera eficiente, el rendimiento de algunas consultas se puede aumentar si aumenta este valor. Por lo tanto, siempre y cuando la memoria esté disponible en el servidor que no esté utilizando SQL Server, ninguna otra aplicación o el sistema operativo, aumentar esta configuración puede ayudar en general al rendimiento de SQL Server. Si no hay memoria libre disponible, aumentar esta configuración puede afectar al rendimiento general.
 
 image:mssql-min-memory-per-query.png["Error: Falta la imagen gráfica"]
 
@@ -108,14 +102,9 @@ El siguiente ejemplo muestra un comando T-SQL para configurar una extensión de 
 
 ....
 USE master
-
 GO
-
 ALTER SERVER CONFIGURATION
-
 SET BUFFER POOL EXTENSION ON
-
   (FILENAME = ‘P:\BUFFER POOL EXTENSION\SQLServerCache.BUFFER POOL EXTENSION', SIZE = 32 GB);
-
 GO
 ....

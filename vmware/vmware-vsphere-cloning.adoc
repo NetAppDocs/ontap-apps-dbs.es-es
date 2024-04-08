@@ -22,7 +22,7 @@ Los clones enlazados son excelentes para ahorrar espacio, pero aumentan la canti
 
 La siguiente figura muestra la clonación de ONTAP.
 
-image:vsphere_ontap_image5.png["Error: Falta la imagen gráfica"]
+image:vsphere_ontap_image5.png["Clonado de ONTAP"]
 
 Es posible descargar la clonado en sistemas que ejecutan software ONTAP mediante varios mecanismos, normalmente a nivel de máquina virtual, VVol o almacén de datos. Entre ellos se incluyen los siguientes:
 

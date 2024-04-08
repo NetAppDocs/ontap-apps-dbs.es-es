@@ -14,7 +14,7 @@ summary: En este documento se trata la seguridad de productos de las herramienta
 
 
 [role="lead"]
-El departamento de ingeniería de software con herramientas de ONTAP de NetApp para VMware vSphere realiza las siguientes actividades de desarrollo seguro:
+La ingeniería de software con Herramientas de ONTAP para VMware vSphere emplea las siguientes actividades de desarrollo seguro:
 
 * *Modelado de amenazas.* el propósito del modelado de amenazas es descubrir defectos de seguridad en una característica, componente o producto al principio del ciclo de vida del desarrollo del software. Un modelo de amenaza es una representación estructurada de toda la información que afecta la seguridad de una aplicación. En esencia, es una visión de la aplicación y su entorno a través del objetivo de la seguridad.
 * *Pruebas de seguridad de aplicaciones dinámicas (DAST).* esta tecnología está diseñada para detectar condiciones vulnerables en aplicaciones en su estado de funcionamiento. DAST prueba las interfaces HTTP y HTML expuestas de las aplicaciones web.
@@ -27,7 +27,7 @@ El departamento de ingeniería de software con herramientas de ONTAP de NetApp p
 
 == Funciones de seguridad de los productos
 
-Las herramientas de NetApp ONTAP para VMware vSphere incluyen las siguientes funciones de seguridad en cada versión.
+Las herramientas de ONTAP para VMware vSphere incluyen las siguientes funciones de seguridad en cada versión.
 
 * *Banner de inicio de sesión.* SSH está desactivado de forma predeterminada y sólo permite inicios de sesión de una vez si está activado desde la consola de VM. Se muestra el siguiente banner de inicio de sesión una vez que el usuario introduce un nombre de usuario en la solicitud de inicio de sesión:
 +

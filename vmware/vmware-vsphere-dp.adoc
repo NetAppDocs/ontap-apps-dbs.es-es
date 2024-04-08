@@ -24,7 +24,7 @@ Estos complementos ofrecen funcionalidades ampliadas para proteger las bases de 
 
 En la siguiente figura se muestra un ejemplo de la instalación de SnapCenter.
 
-image:vsphere_ontap_image4.png["Error: Falta la imagen gráfica"]
+image:vsphere_ontap_image4.png["Puesta en marcha de SnapCenter"]
 
 Para obtener mejores funcionalidades de recuperación ante desastres, considere el uso del SRA de NetApp para ONTAP con el administrador de recuperación del sitio de VMware. Además de admitir la replicación de almacenes de datos en un sitio de recuperación ante desastres, también permite realizar pruebas no disruptivas en el entorno de recuperación ante desastres mediante la clonación de los almacenes de datos replicados. La recuperación de un desastre y la reprotección de la producción después de resolver la interrupción del servicio también son fáciles mediante la automatización incorporada en el SRA.
 

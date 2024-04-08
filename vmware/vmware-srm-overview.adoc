@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: vmware/vmware-srm-overview.html 
 keywords: ontap, vsphere, srm, srm, hybrid, cloud, migration, vmware, site, recovery manager, vsrm 
-summary: ONTAP de NetApp es una solución de almacenamiento líder para entornos VMware vSphere desde su introducción al centro de datos moderno en 2002, y continúa agregando funcionalidades innovadoras para simplificar la gestión y reducir costes. 
+summary: 'La solución de ONTAP para Site Recovery Manager de VMware (SRM)' 
 ---
-= VMware Site Recovery Manager con NetApp ONTAP
+= VMware Site Recovery Manager con ONTAP
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,7 +14,7 @@ summary: ONTAP de NetApp es una solución de almacenamiento líder para entornos
 
 
 [role="lead"]
-ONTAP de NetApp es una solución de almacenamiento líder para entornos VMware vSphere desde su introducción al centro de datos moderno en 2002, y continúa agregando funcionalidades innovadoras para simplificar la gestión y reducir costes.
+ONTAP ha sido una solución de almacenamiento líder para entornos VMware vSphere desde su introducción en el centro de datos moderno en 2002, y continúa añadiendo funcionalidades innovadoras para simplificar la gestión y reducir los costes.
 
 Este documento presenta la solución ONTAP para VMware Site Recovery Manager (SRM), el software de recuperación ante desastres (DR) líder en el sector de VMware, que incluye la información de producto más reciente y las mejores prácticas para simplificar la puesta en marcha, reducir el riesgo y simplificar la gestión continua.
 

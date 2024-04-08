@@ -129,7 +129,7 @@ Mediante el uso de reglas de afinidad de host de VM en VMware DRS, se puede tene
 
 A continuación se muestra un ejemplo de los grupos de hosts y las reglas de afinidad de las máquinas virtuales.
 
-image::../media/vmsc_2_2.png[Un diagrama de un servidor informático Descripción generada automáticamente,528,369]
+image::../media/vmsc_2_2.png[Grupos de hosts de VM y reglas de afinidad,528,369]
 
 
 

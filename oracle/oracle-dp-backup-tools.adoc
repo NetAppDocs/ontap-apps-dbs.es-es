@@ -24,7 +24,7 @@ En algunos casos, la simple configuración de estas funciones básicas directame
 
 SnapCenter es el producto estrella de protección de datos de NetApp. A un nivel muy bajo, es similar a los productos de SnapManager en cuanto a cómo se ejecutan backups de bases de datos, pero se creó desde cero para proporcionar un panel único para la gestión de la protección de datos en sistemas de almacenamiento de NetApp.
 
-SnapCenter incluye las funciones básicas como los backups y restauraciones basados en copias Snapshot, la replicación de SnapMirror y SnapVault, y otras funciones necesarias para funcionar a escala para grandes empresas. Estas funciones avanzadas incluyen una funcionalidad ampliada de control de acceso basado en roles (RBAC), API RESTful para integrarse con productos de orquestación de terceros, gestión central no disruptiva de complementos de SnapCenter en hosts de bases de datos y una interfaz de usuario diseñada para entornos a escala de cloud.
+SnapCenter incluye las funciones básicas, como los backups y restauraciones basados en Snapshot, la replicación de SnapMirror y SnapVault, y otras funciones necesarias para funcionar a escala para grandes empresas. Estas funciones avanzadas incluyen una funcionalidad ampliada de control de acceso basado en roles (RBAC), API RESTful para integrarse con productos de orquestación de terceros, gestión central no disruptiva de complementos de SnapCenter en hosts de bases de datos y una interfaz de usuario diseñada para entornos a escala de cloud.
 
 
 

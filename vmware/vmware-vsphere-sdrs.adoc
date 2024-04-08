@@ -18,7 +18,7 @@ El planificador de recursos distribuidos de almacenamiento (SDRS) de VMware es u
 
 A continuación, mueve la máquina virtual o los VMDK de forma no disruptiva entre los almacenes de datos de un clúster de almacenes de datos (también conocido como "pod"), seleccionando el mejor almacén de datos en el que colocar la máquina virtual o los VMDK en el clúster de almacenes de datos. Un clúster de almacenes de datos es una colección de almacenes de datos similares que se agregan en una única unidad de consumo desde la perspectiva del administrador de vSphere.
 
-Cuando se usan SDRS con las herramientas de ONTAP de NetApp para VMware vSphere, primero es necesario crear un almacén de datos con el plugin, utilizar vCenter para crear el clúster de almacenes de datos y, a continuación, añadir el almacén de datos. Una vez creado el clúster de almacenes de datos, es posible añadir almacenes de datos adicionales al clúster de almacenes de datos directamente desde el asistente de aprovisionamiento de la página Details.
+Cuando se usan SDRS con herramientas de ONTAP para VMware vSphere, primero debe crear un almacén de datos con el plugin, utilizar vCenter para crear el clúster de almacén de datos y, a continuación, añadir el almacén de datos. Una vez creado el clúster de almacenes de datos, es posible añadir almacenes de datos adicionales al clúster de almacenes de datos directamente desde el asistente de aprovisionamiento de la página Details.
 
 Otras prácticas recomendadas de ONTAP para SDRS incluyen lo siguiente:
 

@@ -2,7 +2,7 @@
 sidebar: sidebar 
 permalink: vmware/vmware-vsphere-datastores-top.html 
 keywords: vSphere, datastore, VMFS, FC, FCoE, NVMe/FC, iSCSI, NFS, vVols 
-summary: Esta página describe las prácticas recomendadas para implementar una solución de almacenamiento ONTAP de NetApp en un entorno de VMware vSphere. 
+summary: Esta página describe las mejores prácticas para implementar una solución de almacenamiento de ONTAP en un entorno de VMware vSphere. 
 ---
 = Información general sobre las funciones de protocolo y almacenes de datos de vSphere
 :hardbreaks:
@@ -46,7 +46,7 @@ NFS predeterminado. MaxVolumes tiene 8 años. Utilice las herramientas de ONTAP 
 | Tamaño máximo de archivo del almacén de datos | 62 TB | 62 TB | 62 TB | 62TB con ONTAP 9.12.1P2 y posterior 
 
 
-| Profundidad de cola óptima por LUN o sistema de archivos | 64-256 | 64-256 | Autonegociar | Consulte NFS.MaxQueueDepth en https://docs.netapp.com/us-en/netapp-solutions/virtualization/vsphere_ontap_recommended_esxi_host_and_other_ontap_settings.html["Host ESXi recomendado y otra configuración de ONTAP"^]. 
+| Profundidad de cola óptima por LUN o sistema de archivos | 64-256 | 64-256 | Autonegociar | Consulte NFS.MaxQueueDepth en link:vmware-vsphere-settings.html["Host ESXi recomendado y otra configuración de ONTAP"^]. 
 |===
 En la siguiente tabla se enumeran las funcionalidades relacionadas con el almacenamiento de VMware admitidas.
 

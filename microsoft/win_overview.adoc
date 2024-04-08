@@ -1,0 +1,52 @@
+---
+sidebar: sidebar 
+permalink: microsoft/win_overview.html 
+keywords: Windows,Hyper-V,VHDX,VM,Virtual 
+summary: Descripción general de la virtualización de Microsoft Windows y Hyper-V con ONTAP 
+---
+= Descripción general
+:allow-uri-read: 
+
+
+[role="lead"]
+Microsoft Windows Server es un sistema operativo (SO) de clase empresarial que cubre redes, seguridad, virtualización, cloud privado, cloud híbrido, infraestructura de puestos de trabajo virtuales, protección de acceso, protección de información, servicios web, infraestructura de plataforma de aplicaciones, y mucho más.
+
+
+NOTE: *Esta documentación sustituye a los informes técnicos publicados anteriormente _TR-4568: Directrices de puesta en funcionamiento de NetApp y mejores prácticas de almacenamiento para Windows Server_*
+
+.El software de gestión ONTAP(R) de NetApp se ejecuta en las controladoras de almacenamiento de NetApp. Está disponible en múltiples formatos.
+* Arquitectura unificada que admite protocolos de archivos, objetos y bloques. Esto permite a las controladoras de almacenamiento actuar tanto como dispositivos NAS como SAN, así como almacenes de objetos
+* Una cabina All SAN (ASA) que se centra únicamente en protocolos de bloque y optimiza los tiempos de reanudación de I/O (IORT) añadiendo accesos múltiples activo-activo simétricos para los hosts de conexión
+* Una arquitectura unificada definida por software
++
+** ONTAP Select ejecutándose en VMware vSphere o KVM
+** Cloud Volumes ONTAP se ejecuta como instancia de cloud nativo
+
+
+* Primeras ofertas de proveedores de cloud a hiperescala
++
+** Amazon FSX para ONTAP de NetApp
+** Azure NetApp Files
+** NetApp Volumes para Google Cloud
+
+
+
+
+ONTAP proporciona funciones de eficiencia del almacenamiento de NetApp, como la tecnología Snapshot(R) de NetApp, clonado, deduplicación, thin provisioning, thin replication compresión, almacenamiento virtual por niveles y mucho más con un rendimiento y una eficiencia mejorados.
+
+Juntos, Windows Server y ONTAP pueden funcionar en entornos de gran tamaño y aportar un gran valor a la consolidación de centros de datos y las implementaciones de cloud privado o híbrido. Esta combinación también proporciona cargas de trabajo no disruptivas de forma eficiente y admite una escalabilidad fluida.
+
+
+
+== Audiencia de destino
+
+Este documento está destinado a arquitectos de sistemas y almacenamiento que diseñan soluciones de almacenamiento de NetApp para Windows Server.
+
+En este documento hacemos las siguientes suposiciones:
+
+* El lector tiene un conocimiento general de las soluciones de hardware y software de NetApp. Consulte https://docs.netapp.com/us-en/ontap/cluster-admin/index.html["Guía de administración del sistema para administradores de clústeres"] para obtener más detalles.
+* El lector tiene conocimientos generales de protocolos de acceso en bloque, como iSCSI, FC y el protocolo de acceso a archivos SMB/CIFS. Consulte https://docs.netapp.com/us-en/ontap/san-management/index.html["Gestión de SAN Clustered Data ONTAP"] Para obtener información relacionada con SAN. Consulte https://docs.netapp.com/us-en/ontap/nas-management/index.html["Gestión de NAS"] Para información relacionada con CIFS/SMB.
+* El lector posee conocimientos generales sobre el sistema operativo Windows Server y Hyper-V.
+
+
+Si quiere obtener una matriz completa y actualizada regularmente de configuraciones SAN y NAS probadas y compatibles, consulte la http://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad (IMT)"] En el sitio de soporte de NetApp. Con IMT, puede determinar las versiones exactas de producto y funciones compatibles con su entorno concreto. El NetApp IMT define los componentes y las versiones del producto que son compatibles con las configuraciones compatibles con NetApp. Los resultados específicos dependen de la instalación que realice cada cliente de acuerdo con las especificaciones publicadas.

@@ -36,7 +36,7 @@ El primer paso es crear una copia de seguridad de la base de datos. En concreto,
 
 === Entorno Oracle
 
-En este ejemplo, la base de datos de origen se encuentra en un sistema ONTAP. El método más sencillo para crear un backup de una base de datos es mediante una copia Snapshot. La base de datos se coloca en modo de backup dinámico durante unos segundos mientras a. `snapshot create` la operación se ejecuta en el volumen que aloja los archivos de datos.
+En este ejemplo, la base de datos de origen se encuentra en un sistema ONTAP. El método más sencillo para crear un backup de una base de datos es mediante una instantánea. La base de datos se coloca en modo de backup dinámico durante unos segundos mientras a. `snapshot create` la operación se ejecuta en el volumen que aloja los archivos de datos.
 
 ....
 SQL> alter database begin backup;
@@ -50,7 +50,7 @@ Cluster01::*>
 SQL> alter database end backup;
 Database altered.
 ....
-El resultado es una copia Snapshot en disco llamada `hotbackup` que contiene una imagen de los archivos de datos mientras se encuentra en modo de copia de seguridad activa. Si se combinan con los archive logs adecuados para que los archivos de datos sean coherentes, los datos de esta copia snapshot se pueden utilizar como base para la restauración o el clon. En este caso, se replica en el nuevo servidor.
+El resultado es una instantánea en disco llamada `hotbackup` que contiene una imagen de los archivos de datos mientras se encuentra en modo de copia de seguridad activa. Si se combinan con los archive logs adecuados para que los archivos de datos sean coherentes, se pueden utilizar los datos de esta copia Snapshot como base de la restauración o el clon. En este caso, se replica en el nuevo servidor.
 
 
 
@@ -58,7 +58,7 @@ El resultado es una copia Snapshot en disco llamada `hotbackup` que contiene una
 
 La copia de seguridad se debe restaurar ahora en el nuevo entorno. Esto puede realizarse de varias maneras, incluida Oracle RMAN, restauración desde una aplicación de backup como NetBackup o una operación de copia sencilla de archivos de datos ubicados en modo de backup dinámico.
 
-En este ejemplo, SnapMirror se usa para replicar la copia Snapshot denominada backup en caliente en una nueva ubicación.
+En este ejemplo, se usa SnapMirror para replicar el backup en caliente de la copia Snapshot en una nueva ubicación.
 
 . Cree un volumen nuevo para recibir los datos de las snapshots. Inicialice el mirroring a partir de `jfsc1_oradata` para `vol_oradata`.
 +

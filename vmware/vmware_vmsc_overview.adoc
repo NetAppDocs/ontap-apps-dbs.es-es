@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: vmware/vmware_vmsc_overview.html 
 keywords: VMware, Data protection, MetroCluster, SMBC, SnapMirror active sync, vMSC 
-summary: Clúster de almacenamiento vSphere Metro con NetApp ONTAP 
+summary: Clúster de almacenamiento vSphere Metro con ONTAP 
 ---
-= Clúster de almacenamiento vSphere Metro con NetApp ONTAP
+= Clúster de almacenamiento vSphere Metro con ONTAP
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -22,7 +22,7 @@ Las soluciones VMSC son compatibles con NetApp® MetroCluster™ y SnapMirror Ac
 
 == Soluciones de disponibilidad continua para entornos vSphere
 
-La arquitectura NetApp ONTAP es una plataforma de almacenamiento flexible y escalable que proporciona servicios SAN (FCP, iSCSI y NVMe-oF) y NAS (NFS v3 y v4,1) para almacenes de datos. Los sistemas de almacenamiento NetApp AFF, ASA y FAS utilizan el sistema operativo ONTAP para ofrecer protocolos adicionales para acceso al almacenamiento invitado, como S3 y SMB/CIFS.
+La arquitectura ONTAP es una plataforma de almacenamiento flexible y escalable que proporciona servicios SAN (FCP, iSCSI y NVMe-oF) y NAS (NFS v3 y v4,1) para almacenes de datos. Los sistemas de almacenamiento NetApp AFF, ASA y FAS utilizan el sistema operativo ONTAP para ofrecer protocolos adicionales para acceso al almacenamiento invitado, como S3 y SMB/CIFS.
 
 NetApp MetroCluster utiliza la función de alta disponibilidad (conmutación por error de controladora o director financiero) de NetApp para proteger frente a fallos de controladora. También incluye tecnología SyncMirror local, recuperación tras fallos en clúster en caso de desastre (conmutación por error de controladora bajo demanda o CFOD), redundancia de hardware y separación geográfica para lograr altos niveles de disponibilidad. SyncMirror refleja de forma síncrona los datos en las dos mitades de la configuración de MetroCluster mediante la escritura de los datos en dos plexes: El plex local (en la bandeja local) que sirve los datos de forma activa y el plex remoto (en la bandeja remota) normalmente no ofrece datos. La redundancia de hardware se pone en marcha para todos los componentes de MetroCluster, como las controladoras, el almacenamiento, los cables, los switches (utilizados con Fabric MetroCluster) y los adaptadores.
 

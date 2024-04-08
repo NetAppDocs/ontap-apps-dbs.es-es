@@ -1,0 +1,63 @@
+---
+sidebar: sidebar 
+permalink: microsoft/win_efficiency.html 
+keywords: Windows,Hyper-V,VHDX,VM,Virtual 
+summary: Eficiencia del almacenamiento de ONTAP con Microsoft Hyper-V 
+---
+= Eficiencia del almacenamiento
+:allow-uri-read: 
+
+
+[role="lead"]
+ONTAP proporciona eficiencia de almacenamiento líder del sector para entornos virtualizados incluido Microsoft Hyper-V. NetApp también ofrece programas de garantía de eficiencia del almacenamiento.
+
+
+
+== Deduplicación de NetApp
+
+La deduplicación de NetApp funciona eliminando bloques duplicados en el volumen de almacenamiento, almacenando solo una copia física, independientemente del número de copias lógicas presentes. Por lo tanto, la deduplicación crea la ilusión de que existen numerosas copias de dicho bloque. La deduplicación elimina automáticamente bloques de datos duplicados en bloques de 4KB KB en todo el volumen. Este proceso recupera el almacenamiento para alcanzar ahorros de espacio y rendimiento potencial al reducir el número de escrituras físicas en el disco. La deduplicación puede proporcionar un ahorro de espacio superior al 70% en entornos Hyper-V.
+
+
+
+== Aprovisionamiento ligero
+
+Thin provisioning es una manera eficiente de aprovisionar almacenamiento, ya que el almacenamiento no se asigna previamente. Es decir, cuando se crea un volumen o LUN mediante thin provisioning, el espacio del sistema de almacenamiento no se utiliza. El espacio sigue sin utilizar hasta que se escriben los datos en la LUN o el volumen y solo se utiliza el espacio necesario para almacenar dichos datos. NetApp recomienda habilitar thin provisioning en el volumen y deshabilitar la reserva de LUN.
+
+
+
+== Calidad de servicio
+
+La calidad de servicio del almacenamiento en Clustered ONTAP le permite agrupar objetos de almacenamiento y establecer límites de rendimiento en el grupo. La calidad de servicio de almacenamiento puede utilizarse para limitar el rendimiento a las cargas de trabajo y supervisar el rendimiento de las cargas de trabajo. Con esta capacidad, un administrador de almacenamiento puede separar las cargas de trabajo por organización, aplicación, unidad empresarial o entornos de producción o desarrollo.
+
+En entornos empresariales, la calidad de servicio del almacenamiento ayuda a conseguir lo siguiente:
+
+* Impide que las cargas de trabajo de los usuarios se afecten entre sí.
+* Protege aplicaciones cruciales con tiempos de respuesta específicos que deben satisfacerse en entornos de TECNOLOGÍA como servicio (ITaaS).
+* Evita que los clientes se afecten entre sí.
+* Evita la degradación del rendimiento con la adición de cada nuevo inquilino.
+
+
+La calidad de servicio le permite limitar la cantidad de I/O enviada a una SVM, un volumen flexible, una LUN o un archivo. El número de operaciones o el rendimiento bruto pueden limitar las I/O.
+
+La siguiente figura ilustra la SVM con su propia política de calidad de servicio, que aplica un límite máximo de rendimiento.
+
+image:win_image13.png["Máquina virtual de almacenamiento con su propia política de calidad de servicio,width=319,height=341"]
+
+Para configurar una SVM con su propia política de calidad de servicio y su grupo de políticas de supervisión, ejecute los siguientes comandos en el clúster de ONTAP:
+
+....
+# create a new policy group pg1 with a maximum throughput of 5,000 IOPS
+cluster::> qos policy-group create pg1 -vserver vs1 -max-throughput 5000iops
+....
+....
+# create a new policy group pg2 without a maximum throughput
+cluster::> qos policy-group create pg2 -vserver vs2
+....
+....
+# monitor policy group performance
+cluster::> qos statistics performance show
+....
+....
+# monitor workload performance
+cluster::> qos statistics workload performance show
+....
