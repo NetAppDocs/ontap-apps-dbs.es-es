@@ -15,7 +15,7 @@ Aprenda a implementar y configurar la réplica de Hyper-V con el clúster de con
 
 == Requisitos previos
 
-* Necesita que haya clústeres de Hyper-V ubicados en la misma ubicación geográfica o en diferentes ubicaciones geográficas que funcionen como clústeres primarios y de réplica. Revise la sección “link:\l["Clustering de Hyper-V."]para más detalles.
+* Necesita que haya clústeres de Hyper-V ubicados en la misma ubicación geográfica o en diferentes ubicaciones geográficas que funcionen como clústeres primarios y de réplica. Revisar link:win_deploy_hyperv.html["Implemente el cluster Hyper-V"] para obtener más detalles.
 * Si se utilizan sitios separados, se debe configurar el firewall de cada sitio para permitir la comunicación entre los clústeres primario y de réplica.
 * El clúster de réplica debe tener suficiente espacio para almacenar las cargas de trabajo replicadas.
 

@@ -15,7 +15,7 @@ Este apéndice describe la puesta en marcha de la migración en vivo en un entor
 
 == Requisitos previos
 
-Para implementar la migración dinámica, es necesario tener los servidores de Hyper-V configurados en un cluster de conmutación por error con almacenamiento compartido. Revise la sección link:win_deploy_hyperv.html["Clustering de Hyper-V."] para obtener más detalles.
+Para implementar la migración dinámica, es necesario tener los servidores de Hyper-V configurados en un cluster de conmutación por error con almacenamiento compartido. Revisar link:win_deploy_hyperv.html["Implemente el cluster Hyper-V"] para obtener más detalles.
 
 
 
