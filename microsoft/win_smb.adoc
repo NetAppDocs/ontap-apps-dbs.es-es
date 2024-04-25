@@ -5,7 +5,12 @@ keywords: Windows,Hyper-V,VHDX,VM,Virtual
 summary: Almacenamiento NAS de ONTAP para Hyper-V usando SMB3 
 ---
 = Aprovisionamiento en entornos SMB
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]
@@ -23,7 +28,7 @@ Cuando se crea una SVM con el protocolo CIFS, un servidor CIFS se ejecuta sobre 
 
 
 
-== Aprovisionamiento del recurso compartido de SMB en Windows Server
+== Aprovisionamiento de recursos compartidos SMB en Windows Server
 
 
 

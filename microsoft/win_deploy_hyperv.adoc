@@ -4,8 +4,13 @@ permalink: microsoft/win_deploy_hyperv.html
 keywords: Windows,Hyper-V,VHDX,VM,Virtual 
 summary: Este apéndice describe la puesta en marcha de un clúster Hyper-V de alta disponibilidad en el almacenamiento de NetApp. 
 ---
-= Implemente el cluster Hyper-V
+= Implemente el cluster de Hyper-V.
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]

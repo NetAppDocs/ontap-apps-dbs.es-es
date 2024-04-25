@@ -5,7 +5,12 @@ keywords: Windows,Hyper-V,VHDX,VM,Virtual
 summary: Recursos adicionales para Microsoft Windows y Hyper-V. 
 ---
 = Dónde encontrar información adicional
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]

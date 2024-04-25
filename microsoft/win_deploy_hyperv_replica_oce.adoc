@@ -5,7 +5,12 @@ keywords: Windows,Hyper-V,VHDX,VM,Virtual
 summary: Este apéndice describe la implementación de la réplica de Hyper-V fuera de un entorno en clúster. 
 ---
 = Implemente la réplica de Hyper-V fuera de un entorno en clúster
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]

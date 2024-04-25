@@ -4,8 +4,13 @@ permalink: microsoft/win_hyperv_infra.html
 keywords: Windows,Hyper-V,VHDX,VM,Virtual 
 summary: Infraestructura de almacenamiento de Hyper-V con ONTAP 
 ---
-= Infraestructura de almacenamiento de Hyper-V en NetApp
+= La infraestructura de almacenamiento de Hyper-V en NetApp
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]
@@ -25,7 +30,7 @@ image:win_image5.png["Infraestructura de almacenamiento de Hyper-V en NetApp,wid
 
 
 
-== Almacenamiento Hyper-V en recurso compartido CIFS de NetApp
+== Almacenamiento de Hyper-V en CIFS de NetApp
 
 Antes de comenzar los pasos enumerados en esta sección, revise la sección “link:win_smb.html["Aprovisionamiento en entornos SMB"].». Para configurar el almacenamiento de Hyper-V en el recurso compartido de CIFS de NetApp, lleve a cabo los siguientes pasos:
 
@@ -63,7 +68,7 @@ Cada equipo virtual en Hyper-V puede, a su vez, proporcionarse con los LUN de Ne
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 * Para obtener información sobre los HBA de FC, consulte http://mysupport.netapp.com/matrix/["Matriz de interoperabilidad de NetApp"].
 * Para obtener más información acerca de Fibre Channel virtual, consulte Microsoft https://technet.microsoft.com/en-us/library/hh831413.aspx["Descripción general de Fibre Channel virtual para Hyper-V"] página.
@@ -119,7 +124,7 @@ cluster::> set privilege admin
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 Para obtener más información acerca de ODX, consulte https://docs.netapp.com/us-en/ontap/smb-admin/improve-microsoft-remote-copy-performance-concept.html["Mejora del rendimiento de Microsoft Remote Copy"] y.. https://docs.netapp.com/us-en/ontap/san-admin/microsoft-offloaded-data-transfer-odx-concept.html["Transferencias de datos descargados de Microsoft"] .
 
@@ -157,7 +162,7 @@ image:win_image6.png["Cluster de recuperación tras fallos de Hyper-V y NetApp, 
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 Si desea obtener información sobre la implantación de un cluster de Hyper-V, consulte el apéndice B: link:win_deploy_hyperv.html["Implemente el cluster Hyper-V"].
 
@@ -169,7 +174,7 @@ A veces, es necesario durante la vida útil de las máquinas virtuales para move
 
 
 
-=== Migración activa en un entorno en cluster
+=== Migración en vivo en un entorno en clúster
 
 Las máquinas virtuales pueden moverse sin problemas entre los nodos de un clúster. La migración de VM es instantánea porque todos los nodos del clúster comparten el mismo almacenamiento y tienen acceso a la máquina virtual y a su disco. La siguiente figura muestra la migración activa en un entorno en cluster.
 
@@ -185,13 +190,13 @@ image:win_image7.png["Migración dinámica en un entorno en clúster,width=580,h
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 Para obtener más información sobre la puesta en marcha de la migración en vivo en un entorno en clúster, consulte link:win_deploy_hyperv_lmce.html["Apéndice C: Implementación de la migración en vivo de Hyper-V en un entorno en cluster"].
 
 
 
-=== Migración dinámica fuera de un entorno en clúster
+=== Migración en vivo fuera de un entorno en clúster
 
 Puede migrar en vivo una máquina virtual entre dos servidores de Hyper-V independientes y no agrupados en clúster. Este proceso puede utilizar una migración dinámica sin uso compartido o sin uso compartido.
 
@@ -209,7 +214,7 @@ image:win_image10.png["Migración activa sin elementos compartidos en un entorno
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 Para obtener más información sobre la puesta en marcha de la migración en vivo fuera de un entorno en clúster, consulte link:win_deploy_hyperv_lmoce.html["Apéndice D: Implemente Hyper-V Live Migration fuera de un entorno en cluster"].
 
@@ -252,7 +257,7 @@ image:win_image11.png["Migración activa del almacenamiento Hyper-V, width=339, 
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 Para obtener más información sobre la implementación de una migración activa de almacenamiento, consulte link:win_deploy_hyperv_slm.html["Apéndice E: Implemente Hyper-V Storage Live Migration"].
 
@@ -295,7 +300,7 @@ Al configurar la replicación para una máquina virtual, puede especificar el n�
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 * Para obtener información sobre la implementación de la réplica de Hyper-V fuera de un entorno en clúster, consulte la sección «link:win_deploy_hyperv_replica_oce.html["Implemente la réplica de Hyper-V fuera de un entorno en clúster"]."
 * Para obtener información sobre la implementación de la réplica de Hyper-V en un entorno en clúster, consulte la sección «link:win_deploy_hyperv_replica_ce.html["Implementar la réplica de Hyper-V en un entorno en clúster"]."

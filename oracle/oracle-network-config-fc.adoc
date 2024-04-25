@@ -16,7 +16,7 @@ summary: Configuración de red FC para bases de datos de Oracle
 [role="lead"]
 La configuración de SAN FC para bases de datos de Oracle consiste principalmente en seguir prácticas recomendadas diarias de SAN.
 
-Esto incluye medidas de planificación típicas, como asegurar que exista suficiente ancho de banda en la SAN entre el host y el sistema de almacenamiento, comprobar que existan todas las rutas de SAN entre todos los dispositivos requeridos, mediante la configuración de puertos FC requerida por el proveedor de switches FC, evitando la contención de ISL, y con una supervisión adecuada del tejido SAN.
+Esto incluye medidas de planificación típicas, como asegurar que exista suficiente ancho de banda en la SAN entre el host y el sistema de almacenamiento, comprobar que existan todas las rutas de SAN entre todos los dispositivos requeridos, mediante la configuración de puertos FC requerida por el proveedor de switches FC, para evitar la contención de ISL, y con una supervisión adecuada del tejido SAN.
 
 
 

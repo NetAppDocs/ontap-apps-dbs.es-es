@@ -5,7 +5,12 @@ keywords: Windows,Hyper-V,VHDX,VM,Virtual
 summary: Seguridad de almacenamiento de ONTAP con Hyper-V. 
 ---
 = Seguridad
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]
@@ -19,7 +24,7 @@ Windows Defender es un software antimalware instalado y habilitado en Windows Se
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 Para obtener más información, consulte https://technet.microsoft.com/windows-server-docs/security/windows-defender/windows-defender-overview-windows-server?f=255&MSPPError=-2147217396["Descripción general de Windows Defender"].
 

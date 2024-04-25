@@ -5,7 +5,12 @@ keywords: Windows,Hyper-V,VHDX,VM,Virtual
 summary: Descripción general de la virtualización de Microsoft Windows y Hyper-V con ONTAP 
 ---
 = Descripción general
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]

@@ -4,8 +4,13 @@ permalink: microsoft/win_environment.html
 keywords: Windows,Hyper-V,VHDX,VM,Virtual 
 summary: Obtenga información sobre el almacenamiento de NetApp y el entorno de Windows Server 
 ---
-= Entorno de almacenamiento de NetApp y servidor de Windows
+= Almacenamiento de NetApp y entorno de Windows Server
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]
@@ -46,7 +51,7 @@ image:win_image2.png["Máquina virtual de almacenamiento de ONTAP, width=572, he
 
 
 
-== Provisionar el almacenamiento de NetApp para Windows Server
+== Aprovisionar almacenamiento NetApp para Windows Server
 
 El almacenamiento puede aprovisionarse a Windows Server tanto en entornos SAN como NAS. En un entorno SAN, el almacenamiento se proporciona como discos de las LUN del volumen de NetApp como almacenamiento basado en bloques. En un entorno NAS, el almacenamiento se proporciona como recursos compartidos CIFS/SMB en volúmenes NetApp como almacenamiento de archivos. Estos discos y recursos compartidos se pueden aplicar en Windows Server de la siguiente manera:
 
@@ -86,7 +91,7 @@ El kit de herramientas PowerShell de NetApp (PSTK) es un módulo PowerShell que 
 
 
 
-=== Lecturas adicionales
+=== Más información
 
 * Para obtener más información acerca del kit de herramientas PowerShell de NetApp, visite la https://mysupport.netapp.com/site/tools/tool-eula/ontap-powershell-toolkit["Sitio de soporte de NetApp"].
 * Para obtener información acerca de las prácticas recomendadas del kit de herramientas PowerShell de NetApp, consulte https://www.netapp.com/media/16861-tr-4475.pdf?v=93202073432AM["TR-4475: Guía de prácticas recomendadas del kit de herramientas PowerShell para NetApp"].
@@ -94,7 +99,7 @@ El kit de herramientas PowerShell de NetApp (PSTK) es un módulo PowerShell que 
 
 
 
-== Mejores prácticas de conexión en red
+== Mejores prácticas en red
 
 Las redes Ethernet se pueden separar ampliamente en los siguientes grupos:
 

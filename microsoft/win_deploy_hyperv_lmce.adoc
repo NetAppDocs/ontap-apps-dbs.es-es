@@ -5,7 +5,12 @@ keywords: Windows,Hyper-V,VHDX,VM,Virtual
 summary: Este apéndice describe la puesta en marcha de la migración en vivo en un entorno en clúster. 
 ---
 = Implemente Hyper-V Live Migration en un entorno en clúster
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]

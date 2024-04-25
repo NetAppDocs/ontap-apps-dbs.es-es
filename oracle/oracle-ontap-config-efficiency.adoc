@@ -81,7 +81,7 @@ La deduplicación es eliminar los tamaños de bloques duplicados de un conjunto 
 
 Los datos, como las LUN de arranque invitado de VMware, suelen deduplicar muy bien porque constan de varias copias de los mismos archivos del sistema operativo. Se ha observado una eficiencia de 100:1 y mayor.
 
-Algunos datos no contienen datos duplicados. Por ejemplo, un bloque de Oracle contiene una cabecera que es única globalmente para la base de datos y un cola que es casi único. Como resultado, la deduplicación de una base de datos de Oracle rara vez produce un ahorro superior al 1%. La deduplicación con bases de datos de MS SQL es ligeramente mejor, pero los metadatos únicos a nivel de bloque siguen siendo límites.
+Algunos datos no contienen datos duplicados. Por ejemplo, un bloque de Oracle contiene una cabecera que es única globalmente para la base de datos y un cola que es casi único. Como resultado, la deduplicación de una base de datos de Oracle rara vez produce un ahorro superior al 1%. La deduplicación con bases de datos de MS SQL es ligeramente mejor, pero los metadatos únicos a nivel de bloque siguen siendo una limitación.
 
 En pocos casos, se ha observado un ahorro de espacio de hasta un 15 % en bases de datos con 16KB KB y tamaños de bloque grandes. El primer 4KB de cada bloque contiene el encabezado único a nivel mundial, y el último bloque de 4KB contiene el remolque casi único. Los bloques internos pueden optar a la deduplicación, aunque en la práctica esto se atribuye casi por completo a la deduplicación de datos puestos a cero.
 

@@ -5,7 +5,12 @@ keywords: Windows,Hyper-V,VHDX,VM,Virtual,SAN,LUN,NVMe
 summary: Aprovisione almacenamiento ONTAP para Windows y Hyper-V en entornos SAN 
 ---
 = Aprovisionamiento en entornos SAN
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]
@@ -51,21 +56,19 @@ El uso del almacenamiento de NetApp en entornos SAN en Windows Server tiene los 
 . Cree conjuntos de puertos iSCSI y/o FC usando los LIF de SVM.
 . Cree un iGroup iSCSI y/o FC para Windows mediante el conjunto de puertos creado.
 . Añada un iniciador al iGroup. El iniciador es el IQN para iSCSI y WWPN para FC. Pueden consultarse desde Windows Server ejecutando el cmdlet de PowerShell Get-InitiatorPort.
++
+....
+# Get the IQN for iSCSI
+Get-InitiatorPort | Where \{$_.ConnectionType -eq 'iSCSI'} | Select-Object -Property NodeAddress
+....
++
+....
+# Get the WWPN for FC
+Get-InitiatorPort | Where \{$_.ConnectionType -eq 'Fibre Channel'} | Select-Object -Property PortAddress
+....
++
+ # While adding initiator to the initiator group in case of FC, make sure to provide the initiator(PortAddress) in the standard WWPN format
 
-
-
-
-= Obtenga el IQN para iSCSI +
-
-Get-InitiatorPort | where \{$_.ConnectionType -eq 'iSCSi'} | Select-Object -Property NodeAddress
-
-
-
-= Obtenga el WWPN para FC +
-
-Get-InitiatorPort | where \{$_.ConnectionType -eq 'Fibre Channel'} | Select-Object -Property PortAddress +
- +
-# Al agregar un iniciador al iGroup en caso de FC, asegúrese de proporcionar el iniciador (PortAddress) en el formato WWPN estándar
 
 El IQN para iSCSI en Windows Server también se puede comprobar en la configuración de las propiedades del iniciador iSCSI.
 
@@ -148,7 +151,7 @@ Para detectar el almacenamiento en bloques iSCSI en Windows Server, lleve a cabo
 
 
 
-=== Detectar almacenamiento de bloques
+=== Detectar almacenamiento basado en bloques
 
 Para detectar el almacenamiento en bloques iSCSI o FC en Windows Server, lleve a cabo los siguientes pasos:
 
@@ -342,7 +345,7 @@ Para configurar el arranque desde SAN para un host físico, realice los siguient
 
 
 
-=== Arranque desde SAN para máquina virtual
+=== Arranque desde SAN para equipos virtuales
 
 Para configurar el arranque desde SAN para una máquina virtual, lleve a cabo los siguientes pasos:
 

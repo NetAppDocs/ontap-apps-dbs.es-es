@@ -26,7 +26,7 @@ En la práctica, es similar a una versión granular de MetroCluster porque permi
 
 == Acceso a la ruta
 
-Con SnapMirror, la sincronización activa hace que los dispositivos de almacenamiento sean visibles para los sistemas operativos host tanto de las cabinas de almacenamiento principal como remota. Las rutas se gestionan a través del acceso asimétrico de unidad lógica (ALUA), que es un protocolo estándar del sector para identificar rutas optimizadas entre un sistema de almacenamiento y un host.
+Con la sincronización activa SnapMirror hace que los dispositivos de almacenamiento sean visibles para los sistemas operativos host tanto en las cabinas de almacenamiento principal como remota. Las rutas se gestionan a través del acceso asimétrico de unidad lógica (ALUA), que es un protocolo estándar del sector para identificar rutas optimizadas entre un sistema de almacenamiento y un host.
 
 La ruta de dispositivo que es la más corta para acceder a I/O se considera como rutas activas/optimizadas y el resto de las rutas se consideran rutas activas/no optimizadas.
 

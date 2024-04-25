@@ -35,4 +35,4 @@ La mayoría de los clientes operan un SVM principal para la mayoría de sus requ
 * Una máquina virtual de almacenamiento SVM para datos empresariales confidenciales, como datos de recursos humanos o informes financieros, a los que debe limitarse el equipo administrativo
 
 
-En un entorno multitenant, los datos de cada inquilino pueden recibir una SVM dedicada. El límite del número de SVM y LIF por clúster, pareja de alta disponibilidad y nodo dependen del protocolo que se utilice, del modelo de nodo y de la versión de ONTAP.  Consulte la link:https://hwu.netapp.com/["Hardware Universe de NetApp"^] para estos límites.
+En un entorno multi-tenant, los datos de cada inquilino pueden recibir una SVM dedicada. El límite del número de SVM y LIF por clúster, pareja de alta disponibilidad y nodo dependen del protocolo que se utilice, del modelo de nodo y de la versión de ONTAP.  Consulte la link:https://hwu.netapp.com/["Hardware Universe de NetApp"^] para estos límites.

@@ -66,7 +66,7 @@ Para obtener más información sobre el control de acceso administrativo, haga c
 
 == Autenticación multifactor
 
-ONTAP y otros productos de NetApp ahora admiten la autenticación multifactorial mediante diversos métodos. El resultado es que un nombre de usuario / contraseña comprometido por sí solo no es un hilo de seguridad sin los datos del segundo factor, como un FOB o una aplicación para teléfonos inteligentes.
+ONTAP y otros productos de NetApp ahora admiten la autenticación multifactor (MFA) mediante diversos métodos. El resultado es que un nombre de usuario / contraseña comprometido por sí solo no es un hilo de seguridad sin los datos del segundo factor, como un FOB o una aplicación para teléfonos inteligentes.
 
 Para obtener más información, haga clic en link:https://docs.netapp.com/us-en/ontap/authentication/mfa-overview.html["aquí."]
 
@@ -80,7 +80,7 @@ Para obtener más información, inicie chttps://docs.netapp.com/us-en/ontap-auto
 
 
 
-== Verificación de varios administradores
+== Verificación multi-admin (MAV)
 
 La autenticación de múltiples factores puede ser llevada aún más lejos al requerir que dos administradores diferentes, cada uno con sus propias credenciales, aprueben ciertas actividades. Esto incluye cambiar los permisos de inicio de sesión, ejecutar comandos de diagnóstico y eliminar datos.
 

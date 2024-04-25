@@ -5,7 +5,12 @@ keywords: Windows,Hyper-V,VHDX,VM,Virtual
 summary: Eficiencia del almacenamiento de ONTAP con Microsoft Hyper-V 
 ---
 = Eficiencia del almacenamiento
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media
 
 
 [role="lead"]
@@ -13,7 +18,7 @@ ONTAP proporciona eficiencia de almacenamiento líder del sector para entornos v
 
 
 
-== Deduplicación de NetApp
+== Deduplicación NetApp
 
 La deduplicación de NetApp funciona eliminando bloques duplicados en el volumen de almacenamiento, almacenando solo una copia física, independientemente del número de copias lógicas presentes. Por lo tanto, la deduplicación crea la ilusión de que existen numerosas copias de dicho bloque. La deduplicación elimina automáticamente bloques de datos duplicados en bloques de 4KB KB en todo el volumen. Este proceso recupera el almacenamiento para alcanzar ahorros de espacio y rendimiento potencial al reducir el número de escrituras físicas en el disco. La deduplicación puede proporcionar un ahorro de espacio superior al 70% en entornos Hyper-V.
 
