@@ -6,6 +6,10 @@ summary: 'Esta es una descripción general de VMware vSphere Virtual Volumes (vV
 ---
 = Descripción general
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
 
 
 [role="lead"]

@@ -5,7 +5,12 @@ keywords: tr-4400, vvols, ontap
 summary: En este documento se trata la seguridad de productos de las herramientas de ONTAP para VMware vSphere. 
 ---
 = Usar vVols con ONTAP
+:hardbreaks:
 :allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
 
 
 [role="lead"]

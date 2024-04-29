@@ -49,7 +49,7 @@ Actualmente, VMware SRM es la única solución de recuperación ante desastres y
 
 === Replicación de vVols con SRM
 
-image:vvols-image17.png["Replicación de vVols con SRM,300"]
+image:vvols-image17.png["Replicación de vVols con SRM"]
 
 
 
@@ -91,7 +91,7 @@ El complemento de SnapCenter para VMware vSphere se pone en marcha como disposit
 
 === Arquitectura SnapCenter
 
-image:vvols-image18.png["Arquitectura de SnapCenter, 300"]
+image:snapcenter_arch.png["Arquitectura SnapCenter"]
 
 Como los otros complementos de SnapCenter aún no admiten vVols en el momento de escribir este documento, nos centraremos en el modelo de implementación independiente de este documento.
 
@@ -155,7 +155,7 @@ Las siguientes mejores prácticas pueden ayudarle a sacar el máximo partido de 
 
 === Opciones de notificación para el grupo de recursos
 
-image:vvols-image19.png["Opciones de notificación de grupo de recursos,300"]
+image:vvols-image19.png["Opciones de notificación para el grupo de recursos"]
 
 
 
