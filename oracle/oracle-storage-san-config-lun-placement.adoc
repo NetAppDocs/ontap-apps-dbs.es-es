@@ -1,0 +1,77 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-storage-san-config-lun-placement.html 
+keywords: SAN, ASM, LVM 
+summary: Volumen de Oracle y ONTAP y ubicación de LUN 
+---
+= Ubicación del LUN de base de datos de Oracle
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La colocación óptima de los LUN de bases de datos en volúmenes de ONTAP depende principalmente de cómo se utilicen varias funciones de ONTAP.
+
+
+
+== Volúmenes
+
+Un punto común de confusión con los clientes que empiezan a utilizar ONTAP es el uso de FlexVols, conocido normalmente como «volúmenes».
+
+Un volumen no es una LUN. Estos términos se usan sinónimos con muchos otros productos de proveedores, incluidos los proveedores de cloud. Los volúmenes de ONTAP son simplemente contenedores de gestión. No sirven datos por sí mismas, ni ocupan el espacio. Son contenedores para archivos o LUN y existen para mejorar y simplificar la capacidad de gestión, especialmente a escala.
+
+
+
+== Volúmenes y LUN
+
+Normalmente, los LUN relacionados se ubican en un único volumen. Por ejemplo, una base de datos que requiere 10 LUN suele tener 10 LUN colocadas en el mismo volumen.
+
+[CAUTION]
+====
+* Usar una proporción 1:1 de LUN y volúmenes, lo que significa una LUN por volumen, no es * una práctica recomendada formal.
+* En su lugar, los volúmenes deben verse como contenedores para las cargas de trabajo o conjuntos de datos. Puede que haya una única LUN por volumen, o que haya muchos. La respuesta correcta depende de los requisitos de capacidad de gestión.
+* La dispersión de LUN por un número innecesario de volúmenes puede provocar problemas de sobrecarga adicionales y programación para operaciones como las operaciones de snapshot, el número excesivo de objetos que se muestran en la interfaz de usuario y que pueda alcanzar los límites de volúmenes de plataforma antes de alcanzar el límite de LUN.
+
+
+====
+
+
+== Volúmenes, LUN y snapshots
+
+Las políticas y las programaciones de Snapshot se colocan en el volumen, no en la LUN. Un conjunto de datos formado por 10 LUN solo requeriría una única política de Snapshot cuando esas LUN se ubiquen en el mismo volumen.
+
+Además, la coubicación de todas las LUN relacionadas para un conjunto de datos determinado en un único volumen proporciona operaciones de instantánea atómica. Por ejemplo, una base de datos que residía en 10 LUN o un entorno de aplicación basado en VMware formado por 10 sistemas operativos diferentes podría protegerse como un único objeto consistente si las LUN subyacentes se colocan en un único volumen. Si se colocan en diferentes volúmenes, las instantáneas pueden o no estar sincronizadas al 100%, incluso si se programan al mismo tiempo.
+
+En algunos casos, podría haber que dividir un conjunto relacionado de LUN en dos volúmenes distintos debido a los requisitos de recuperación. Por ejemplo, una base de datos podría tener cuatro LUN para archivos de datos y dos LUN para registros. En este caso, un volumen de archivo de datos con 4 LUN y un volumen de registro con 2 LUN podrían ser la mejor opción. La razón es la capacidad de recuperación independiente. Por ejemplo, el volumen de archivos de datos se podría restaurar de forma selectiva a un estado anterior, lo que significa que las cuatro LUN se revertirían al estado de la snapshot, mientras que el volumen de registro con sus datos cruciales no se vería afectado.
+
+
+
+== Volúmenes, LUN y SnapMirror
+
+Las políticas y las operaciones de SnapMirror son, como las operaciones de Snapshot, realizadas en el volumen, no en la LUN.
+
+Ubicar conjuntamente LUN relacionadas en un único volumen le permite crear una única relación de SnapMirror y actualizar todos los datos contenidos con una única actualización. Al igual que con las instantáneas, la actualización también será una operación atómica. Se garantizaría que el destino de SnapMirror tendrá una única réplica puntual de los LUN de origen. Si las LUN se distribuyeron entre varios volúmenes, las réplicas pueden o no ser coherentes entre sí.
+
+
+
+== Volúmenes, LUN y calidad de servicio
+
+Aunque la calidad de servicio se puede aplicar de forma selectiva a LUN individuales, normalmente es más fácil configurarla en el nivel de volumen. Por ejemplo, todas las LUN utilizadas por los invitados de un servidor ESX determinado podrían colocarse en un solo volumen y, a continuación, podría aplicarse una política de calidad de servicio adaptable de ONTAP. El resultado es un límite IOPS por TB con escala automática que se aplica a todas las LUN.
+
+Del mismo modo, si una base de datos necesitara 100K 000 IOPS y ocupase 10 LUN, sería más fácil establecer un único límite de 100K IOPS en un único volumen que establecer 10 límites individuales de 10K IOPS, uno en cada LUN.
+
+
+
+== Diseños de varios volúmenes
+
+Hay algunos casos en los que distribuir las LUN en varios volúmenes puede ser beneficioso. El motivo primario es la segmentación de la controladora. Por ejemplo, un sistema de almacenamiento de alta disponibilidad podría estar alojando una única base de datos donde se requiera todo el potencial de procesamiento y almacenamiento en caché de cada controladora. En este caso, un diseño típico sería colocar la mitad de las LUN de un único volumen de la controladora 1 y la otra mitad de los LUN de un único volumen en la controladora 2.
+
+Del mismo modo, la segmentación de la controladora puede utilizarse para equilibrar la carga. Un sistema de alta disponibilidad que alojara 100 bases de datos de 10 LUN cada una se podría diseñar donde cada base de datos reciba un volumen de 5 LUN en cada una de las dos controladoras. El resultado es una carga simétrica garantizada de cada controladora a medida que se aprovisionan las bases de datos adicionales.
+
+Sin embargo, ninguno de estos ejemplos implica una relación de volumen/LUN de 1:1 GB. El objetivo sigue siendo optimizar la gestión mediante la colocalización de LUN relacionadas en volúmenes.
+
+Un ejemplo donde tiene sentido la relación de 1:1 LUN con volumen es la colocación en contenedores, donde cada LUN podría representar realmente una única carga de trabajo y cada una de ellas debería gestionarse de forma individual. En tales casos, una relación 1:1 puede ser óptima.
