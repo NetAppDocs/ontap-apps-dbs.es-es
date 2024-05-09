@@ -55,7 +55,7 @@ indexpage:
     - title: VMware vSphere con ONTAP
       url: "/vmware/vmware-vsphere-overview.html"
     - title: Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere
-      url: "/vmware/vmware-otv-hardening-overview.html.html"
+      url: "/vmware/vmware-otv-hardening-overview.html"
     - title: Virtual Volumes (vVols) con ONTAP
       url: "/vmware/vmware-vvols-overview.html"
     - title: VMware Site Recovery Manager con ONTAP
