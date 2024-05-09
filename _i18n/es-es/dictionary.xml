@@ -5175,9 +5175,6 @@ Se utiliza para conexiones SOAP a través de HTTPS</block>
   <block id="90ab4fc7a1c530bceac36bda71efbc5f" category="paragraph">De forma predeterminada, el servicio para NTP es ntpd. Este es un servicio heredado y no funciona bien para máquinas virtuales en ciertos casos.</block>
   <block id="6801ecdb823d018c7370042d27b5ee2c" category="section-title">*Debian*</block>
   <block id="dc3bb5166d38d2aec53765aca7c0d24c" category="paragraph">En Debian, el usuario puede acceder al archivo /etc/ntp.conf para obtener los detalles del servidor ntp.</block>
-  <block id="08fe6a0b481c7eba55985eb19ee19e1e" category="summary">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, descripción general e introducción.</block>
-  <block id="baecfb438214487bb004e49d325c66bf" category="doc">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere</block>
-  <block id="8d1618af2c6a6379783e2978ba4a551c" category="paragraph">La Guía de seguridad reforzada de ONTAP Tools para VMware vSphere ofrece un conjunto completo de instrucciones para configurar los ajustes más seguros.</block>
   <block id="fec65f0c33739368ce5845fadb6cb880" category="paragraph">Estas guías se aplican tanto a las aplicaciones como al sistema operativo «guest» del propio dispositivo.</block>
   <block id="5aaf8fc9424d7872cf500fb7adcb3b97" category="summary">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, configuración de políticas de contraseña.</block>
   <block id="ca80b83fb98de16af35b38476df589c3" category="doc">Políticas de contraseñas</block>
@@ -5210,4 +5207,7 @@ Se utiliza para conexiones SOAP a través de HTTPS</block>
   <block id="cb197b06aa92a742d01e256d58d3e34b" category="sidebar">Ataque DOS</block>
   <block id="d870a4bd29f74339732a958574d2c4eb" category="sidebar">Configuración de NTP</block>
   <block id="339ce1d4220ba7045e3a35ef35279ad3" category="sidebar">Políticas de contraseñas</block>
+  <block id="3698338a95ad1801e25ed154adaf1a70" category="summary">Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, información general e introducción.</block>
+  <block id="47d29daaa26fbfa9c9a069d4cd023ac1" category="doc">Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere</block>
+  <block id="fe0e23a929284a636c245a362ada6472" category="paragraph">La guía de refuerzo de la seguridad para herramientas de ONTAP para VMware vSphere proporciona un conjunto completo de instrucciones para configurar los ajustes más seguros.</block>
 </blocks>
