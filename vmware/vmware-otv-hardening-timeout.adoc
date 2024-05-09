@@ -1,0 +1,21 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-otv-hardening-timeout.html 
+keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
+summary: Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere. 
+---
+= Tiempo de espera de inactividad
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Para evitar el acceso no autorizado, se configura un tiempo de espera de inactividad, que cierra automáticamente la sesión de los usuarios inactivos durante un cierto período mientras se utilizan los recursos autorizados. Esto garantiza que solo los usuarios autorizados puedan acceder a los recursos y ayuda a mantener la seguridad.
+
+* De forma predeterminada, las sesiones de vSphere Client se cierran tras 120 minutos de tiempo inactivo, lo cual requiere que el usuario inicie sesión nuevamente para reanudarse usando el cliente. Puede cambiar el valor de tiempo de espera editando el archivo webclient.properties. Puede configurar el tiempo de espera de vSphere Client https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.vcenterhost.doc/GUID-975412DE-CDCB-49A1-8E2A-0965325D33A5.html["Configure el valor de tiempo de espera del cliente de vSphere"]
+* Las herramientas de ONTAP tienen un tiempo de cierre de sesión de la cli web de 30 minutos.
+

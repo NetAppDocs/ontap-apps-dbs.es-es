@@ -1,0 +1,68 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-otv-hardening-integrity.html 
+keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
+summary: Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, verificación de integridad. 
+---
+= Verificación de la integridad de las herramientas de ONTAP para los paquetes de instalación de VMware vSphere
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Existen dos métodos disponibles para que los clientes verifiquen la integridad de sus paquetes de instalación de herramientas de ONTAP.
+
+. Verificando las sumas de comprobación
+. Verificando la firma
+
+
+Las sumas de comprobación se proporcionan en las páginas de descarga de los paquetes de instalación de OTV. Los usuarios deben verificar las sumas de comprobación de los paquetes descargados con la suma de comprobación proporcionada en la página de descarga.
+
+
+
+== Verificación de la firma del OVA de herramientas de ONTAP
+
+El paquete de instalación de vApp se entrega en forma de tarball. Este tarball contiene certificados intermedios y raíz para el dispositivo virtual junto con un archivo README y un paquete OVA. El archivo README guía a los usuarios sobre cómo verificar la integridad del paquete OVA vApp.
+
+Los clientes también deben cargar el certificado raíz e intermedio proporcionado en la versión 7.0U3E de vCenter y versiones posteriores.  Para versiones de vCenter entre 7.0.1 y 7,0.U3E, la funcionalidad de verificación del certificado no es compatible con VMware. Los clientes no deberán cargar ningún certificado para las versiones de vCenter 6.x.
+
+
+
+=== Cargar el certificado raíz de confianza en vCenter
+
+. Inicie sesión con VMware vSphere Client en vCenter Server.
+. Especifique el nombre de usuario y la contraseña de administrator@vsphere.local u otro miembro del grupo Administradores de inicio de sesión único de vCenter. Si especificó un dominio diferente durante la instalación, inicie sesión como administrator@mydomain.
+. Desplácese hasta la interfaz de usuario de Certificate Management: a. En el menú Inicio, seleccione Administración. b. En Certificados, haga clic en Gestión de certificados.
+. Si el sistema le solicita, introduzca las credenciales de vCenter Server.
+. En Certificados raíz de confianza, haga clic en Agregar.
+. Haga clic en Examinar y seleccione la ubicación del archivo .pem del certificado (OTV_OVA_INTER_ROOT_CERT_CHAIN.pem).
+. Haga clic en Añadir. El certificado se agrega a la tienda.
+
+
+Consulte link:https://docs.vmware.com/en/VMware-vSphere/7.0/com.vmware.vsphere.authentication.doc/GUID-B635BDD9-4F8A-4FD8-A4FE-7526272FC87D.html["Agregue un certificado raíz de confianza al almacén de certificados"] si quiere más información. Al implementar una vApp (mediante el archivo OVA), la firma digital del paquete vApp se puede verificar en la página 'Detalles de revisión'. Si el paquete vApp descargado es genuino, la columna 'Publisher' muestra 'Trusted Certificate' (Certificado de confianza) (como en la siguiente captura de pantalla).
+
+image:vmware-otv-hardening-trusted-publisher.png["Certificado de confianza"]
+
+
+
+== Verificación de la firma de las herramientas de ONTAP ISO y SRA tar.gz
+
+NetApp comparte su certificado de firma de código con los clientes en la página de descarga del producto, junto con los archivos zip del producto para OTV-iso y sra.tgz.
+
+Del certificado de firma de código, los usuarios pueden extraer la clave pública de la siguiente manera:
+
+ #> openssl x509 -in <code-sign-cert, pem file> -pubkey -noout > <public-key name>
+A continuación, se debe utilizar la clave pública para verificar la firma para iso y el zip del producto tgz como se muestra a continuación:
+
+ #> openssl dgst -sha256 -verify <public-key> -signature <signature-file>  <binary-name>
+Ejemplo:
+
+....
+#> openssl x509 -in OTV_ISO_CERT.pem -pubkey -noout > OTV_ISO.pub
+#> openssl dgst -sha256 -verify OTV_ISO.pub -signature netapp-ontap-tools-for-vmware-vsphere-9.12-upgrade-iso.sig netapp-ontap-tools-for-vmware-vsphere-9.12-upgrade.iso
+Verified OK  => response
+....

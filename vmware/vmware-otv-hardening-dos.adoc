@@ -1,0 +1,38 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-otv-hardening-dos.html 
+keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
+summary: Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, protección de seguridad de red contra ataques DoS. 
+---
+= Máximo de solicitudes simultáneas por usuario (Protección de seguridad de red :: Ataque DoS)
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Por defecto, el Núm. Máximo de solicitudes simultáneas por usuario es 48. El usuario root en las herramientas de ONTAP puede cambiar este valor en función de los requisitos de su entorno. *Este valor no debe establecerse en un valor muy alto, ya que proporciona un mecanismo contra ataques de denegación de servicio (DoS).*
+
+Los usuarios pueden modificar el número máximo de sesiones simultáneas y otros parámetros admitidos en el archivo *_/opt/netapp/vscserver/etc/dosfilterParams.json_*.
+
+Podemos configurar el filtro con los siguientes parámetros:
+
+* *_delayMs_*: El retraso en milisegundos dado a todas las solicitudes por encima del límite de tasa antes de que sean consideradas. Dar -1 para rechazar la solicitud.
+* *_throttleMs_*: Cuánto tiempo esperar el semáforo de forma asíncrona.
+* *_maxRequestMs_*: Cuánto tiempo se debe permitir que se ejecute esta solicitud.
+* *_ipWhitelist_*: Una lista separada por comas de direcciones IP que no se limitará la tasa. (Pueden ser IP de vCenter, ESXi y SRA)
+* *_maxRequestsPerSec_*: El número máximo de solicitudes de una conexión por segundo.
+
+
+*Valores predeterminados en el archivo _dosfilterParams_:*
+
+....
+{"delayMs":"-1",
+"throttleMs":"1800000",
+"maxRequestMs":"300000",
+"ipWhitelist":"10.224.58.52",
+"maxRequestsPerSec":"48"}
+....

@@ -1,0 +1,24 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-otv-hardening-https-cert.html 
+keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
+summary: Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, gestión de certificados HTTPS. 
+---
+= Certificado HTTPS de herramientas de ONTAP
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+De manera predeterminada, las herramientas de ONTAP utilizan un certificado autofirmado que se crea automáticamente durante la instalación para proteger el acceso HTTPS a la interfaz de usuario web. Las herramientas de ONTAP ofrecen las siguientes funciones:
+
+. Regenerar certificado HTTPS
+
+
+Durante la instalación de las herramientas de ONTAP, se instala un certificado de CA HTTPS y el certificado se almacena en el almacén de claves. El usuario tiene la opción de regenerar el certificado HTTPS a través de la consola de mantenimiento.
+
+Se puede acceder a las opciones anteriores en la consola _maint_ navegando a _'Configuración de la aplicación' → 'Volver a generar certificados'._

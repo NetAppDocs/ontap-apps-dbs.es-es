@@ -1,0 +1,31 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-otv-hardening-ntp.html 
+keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
+summary: Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, configuración de NTP. 
+---
+= Configuración del Protocolo de hora de red (NTP)
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+A veces, pueden producirse problemas de seguridad debido a discrepancias en las configuraciones de tiempo de red. Es importante asegurarse de que todos los dispositivos dentro de una red tengan una configuración de tiempo precisa para evitar tales problemas.
+
+
+
+== *Dispositivo virtual*
+
+Puede configurar los servidores NTP desde la consola de mantenimiento del dispositivo virtual.  Los usuarios pueden agregar los detalles del servidor NTP en _Configuración del sistema_ => _Agregar nuevo servidor NTP_ opción
+
+De forma predeterminada, el servicio para NTP es ntpd. Este es un servicio heredado y no funciona bien para máquinas virtuales en ciertos casos.
+
+
+
+== *Debian*
+
+En Debian, el usuario puede acceder al archivo /etc/ntp.conf para obtener los detalles del servidor ntp.

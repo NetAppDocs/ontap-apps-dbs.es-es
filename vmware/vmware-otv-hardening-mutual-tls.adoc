@@ -1,0 +1,59 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-otv-hardening-mutual-tls.html 
+keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
+summary: Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, cifrado TLS mutuo para conexiones de gestión del almacenamiento. 
+---
+= TLS mutuo (autenticación basada en certificados)
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las versiones 9,7 y posteriores de ONTAP admiten la comunicación TLS mutua. A partir de ONTAP Tools para VMware y vSphere 9,12, el TLS mutuo se utiliza para la comunicación con clústeres recién añadidos (según la versión de ONTAP).
+
+
+
+== ONTAP
+
+Para todos los sistemas de almacenamiento añadidos anteriormente: Durante una actualización, todos los sistemas de almacenamiento añadidos se volverán de confianza automáticamente y se configurarán los mecanismos de autenticación basados en certificados.
+
+Como en la siguiente captura de pantalla, la página de configuración del clúster mostrará el estado de TLS mutuo (autenticación basada en certificado), configurado para cada clúster.
+
+image:vmware-otv-hardening-mutual-tls-image2.png["image2, ancho=468, altura=158"]
+
+
+
+=== *Cluster Add*
+
+Durante el flujo de trabajo de agregación de clústeres, si el clúster que se agrega admite MTLS, MTLS se configurará de forma predeterminada. El usuario no necesita realizar ninguna configuración para esto. La siguiente captura de pantalla muestra la pantalla presentada al usuario durante la adición del clúster.
+
+image:vmware-otv-hardening-mutual-tls-image3.png["Añadir sistema de almacenamiento,width=450,height=400"]
+
+image:vmware-otv-hardening-mutual-tls-image4.png["Añadir sistema de almacenamiento,width=468,height=416"]
+
+image:vmware-otv-hardening-mutual-tls-image5.png["Añadir sistema de almacenamiento,width=450,height=400"]
+
+image:vmware-otv-hardening-mutual-tls-image6.png["Añadir sistema de almacenamiento,width=468,height=516"]
+
+
+
+=== Edición de clúster
+
+Durante la operación de edición del clúster, existen dos situaciones:
+
+* Si el certificado ONTAP caduca, el usuario tendrá que obtener el nuevo certificado y cargarlo.
+* Si el certificado OTV caduca, el usuario puede regenerarlo marcando la casilla de verificación.
++
+** _Generar un nuevo certificado de cliente para ONTAP._
+
+
+
+
+image:vmware-otv-hardening-mutual-tls-image7.png["Modifique el sistema de almacenamiento,width=468,height=461"]
+
+image:vmware-otv-hardening-mutual-tls-image8.png["Modifique el sistema de almacenamiento,width=468,height=461"]

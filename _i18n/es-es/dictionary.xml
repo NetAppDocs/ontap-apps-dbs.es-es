@@ -2797,7 +2797,6 @@ Para NVMe-oF con vSphere 8, encontrará más información en<block ref="030788e4
   <block id="636da39a2033c6179a718983c5ce1222" category="inline-link">Guía de configuración de hosts ONTAP NVMe/FC</block>
   <block id="81ef6507a13da5635951bc5b533deb59" category="inline-link">CONSULTE TR-4684</block>
   <block id="15483b0826bb9a4b11d1c89af2029c5c" category="list-text">Para obtener más información sobre cómo usar NVMe/FC con vSphere 7.0, consulte este tema<block ref="6b4ed262d14e47ef641cd57b65c32c38" category="inline-link-rx"></block> y..<block ref="7a29b2f31035a451d5b068728d2b79a7" category="inline-link-rx"></block>.En la siguiente figura, se muestra la conectividad multivía de un host de vSphere a un LUN de ONTAP.</block>
-  <block id="f9fd9ea22ea7a2e8ec9e95254a449831" category="paragraph"><block ref="f9fd9ea22ea7a2e8ec9e95254a449831" category="inline-image-macro-rx" type="image"></block></block>
   <block id="f2a693e1f056b96566c4551fcab418f2" category="paragraph">VSphere permite a los clientes utilizar cabinas NFS de nivel empresarial para proporcionar acceso simultáneo a los almacenes de datos en todos los nodos de un clúster ESXi. Como hemos mencionado en la sección de almacenes de datos, existen algunas ventajas de facilidad de uso y visibilidad de la eficiencia del almacenamiento al usar NFS con vSphere.</block>
   <block id="743fa5a7bc7d4ba215b096e34779d298" category="paragraph">Las siguientes prácticas recomendadas se recomiendan al usar NFS de ONTAP con vSphere:</block>
   <block id="c05061b6d3055b83136fa96cb38f0f9a" category="list-text">Utilice una sola interfaz lógica (LIF) para cada SVM en cada nodo del clúster de ONTAP. Ya no son necesarias las recomendaciones anteriores de una LIF por almacén de datos. Aunque el acceso directo (LIF y almacén de datos en el mismo nodo) es el mejor, no se preocupe por el acceso indirecto, ya que el efecto sobre el rendimiento suele ser mínimo (microsegundos).</block>
@@ -5052,4 +5051,163 @@ Todas las demás configuraciones NFS están establecidas en 64.</block>
   <block id="0724b56ced27e0a66fb4692a57fb1436" category="doc">Ubicación del LUN de base de datos de Oracle</block>
   <block id="f595bf3bf71ab0c91a5503ba4efb8ea4" category="paragraph">La colocación óptima de los LUN de bases de datos en volúmenes de ONTAP depende principalmente de cómo se utilicen varias funciones de ONTAP.</block>
   <block id="05a1ffdb277b8c7ac1dca78adae0017e" category="sidebar">Ubicación de LUN</block>
+  <block id="9d5c13d45bbf74999764cfe8d4798562" category="summary">Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, gestión de certificados HTTPS.</block>
+  <block id="0f464051d2b3e2c46fd57cb0c7edb4a9" category="doc">Certificado HTTPS de herramientas de ONTAP</block>
+  <block id="d6a1787b51b08315bfcc44f3a9bb4b2f" category="paragraph">De manera predeterminada, las herramientas de ONTAP utilizan un certificado autofirmado que se crea automáticamente durante la instalación para proteger el acceso HTTPS a la interfaz de usuario web. Las herramientas de ONTAP ofrecen las siguientes funciones:</block>
+  <block id="1eddd0f3479da31541c39e5ddddfa930" category="list-text">Regenerar certificado HTTPS</block>
+  <block id="61bf3033b18d202012951f5bf7be4fa9" category="paragraph">Durante la instalación de las herramientas de ONTAP, se instala un certificado de CA HTTPS y el certificado se almacena en el almacén de claves. El usuario tiene la opción de regenerar el certificado HTTPS a través de la consola de mantenimiento.</block>
+  <block id="b363a018e3596ec66080579ce5bd4c2d" category="paragraph">Se puede acceder a las opciones anteriores en la consola _maint_ navegando a _'Configuración de la aplicación' → 'Volver a generar certificados'._</block>
+  <block id="43d609906e5ac2fd9406eddd67d6f82a" category="summary">Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, puntos de acceso de usuarios.</block>
+  <block id="3562b87b566382dc56e8b6fb2b849126" category="doc">Herramientas de ONTAP para puntos de acceso de VMware vSphere (Usuarios)</block>
+  <block id="c015e2af845448c5e88873c4e51c8cac" category="paragraph">La instalación de ONTAP Tools para VMware vSphere crea y utiliza tres tipos de usuarios:</block>
+  <block id="6399e228248ba3e1f084750197938b67" category="list-text">Usuario del sistema: La cuenta de usuario raíz</block>
+  <block id="2a408bd40a0a3130a390340955a699ef" category="list-text">Usuario de la aplicación: El usuario administrador, el usuario de mantenimiento y las cuentas de usuario de base de datos</block>
+  <block id="5d212a60c02bc59306c8863b31342276" category="list-text">Usuario de soporte: La cuenta de usuario diag</block>
+  <block id="3c2b7b0ce42bb5eb8141643a9729f4ee" category="section-title">1. Usuario del sistema</block>
+  <block id="b277c4882e7365ab0ac88d56cd6154b3" category="paragraph">El usuario System(root) se crea mediante la instalación de herramientas de ONTAP en el sistema operativo subyacente (Debian).</block>
+  <block id="155b9191864da17a7eaaf07b64d596d8" category="list-text">Un usuario predeterminado del sistema “root” se crea en Debian mediante la instalación de herramientas de ONTAP. Su valor predeterminado está desactivado y se puede activar de forma ad hoc a través de la consola 'antigua'.</block>
+  <block id="159efbffccd1957bc8c4c78b2a74c085" category="section-title">2. Usuario de la aplicación</block>
+  <block id="170cab8b15d5b37a17e43144afe7308d" category="paragraph">El usuario de la aplicación se denomina usuario local en las herramientas de ONTAP. Se trata de usuarios creados en la aplicación de herramientas de ONTAP. La siguiente tabla muestra los tipos de usuarios de la aplicación:</block>
+  <block id="e01ca242f9b1bef82800de4c209149c7" category="cell">*Usuario*</block>
+  <block id="f14c276c07197ebef1394a5a219087a1" category="cell">*Descripción*</block>
+  <block id="9eb92414db7b53ac16645af9b0f64e58" category="cell">Usuario administrador</block>
+  <block id="ccf6887baccb4288ae3579b56fac8d2a" category="cell">Se crea durante la instalación de las herramientas de ONTAP y el usuario proporciona las credenciales al implementar las herramientas de ONTAP. Los usuarios tienen la opción de cambiar la 'contraseña' en 'consola antigua'. La contraseña caducará en 90 días y se espera que los usuarios cambien la misma.</block>
+  <block id="55df75b800db0f96de770b3c38f676b4" category="cell">Usuario de mantenimiento</block>
+  <block id="a2bc121b09cae43d6c478870f5298ae5" category="cell">Se crea durante la instalación de las herramientas de ONTAP y el usuario proporciona las credenciales al implementar las herramientas de ONTAP. Los usuarios tienen la opción de cambiar la 'contraseña' en 'consola antigua'. Se trata de un usuario de mantenimiento y se crea para ejecutar las operaciones de la consola de mantenimiento.</block>
+  <block id="b124032a093d41b9efbb43f40c538bcb" category="cell">Usuario de base de datos</block>
+  <block id="86a670227d3e81e8fa34eb4aede3129a" category="section-title">3. Usuario de apoyo (usuario diag)</block>
+  <block id="e482d8f0e37161e7916c7a78d2cf7210" category="paragraph">Durante la instalación de las herramientas de ONTAP, se crea un usuario de soporte. Este usuario se puede utilizar para acceder a las herramientas de ONTAP en caso de cualquier problema o interrupción en el servidor y para recopilar registros. De forma predeterminada, este usuario está desactivado, pero se puede activar de forma específica a través de la consola 'antigua'. Es importante tener en cuenta que este usuario se desactivará automáticamente después de un período de tiempo determinado.</block>
+  <block id="562596399deefc1e2a6cc32eb489976c" category="summary">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere.</block>
+  <block id="1bc8028b63c10101b776e8b8ff907571" category="doc">Puertos y protocolos</block>
+  <block id="80dd7fd00106118cf9c10abf911b7111" category="paragraph">A continuación se muestran los puertos y protocolos necesarios que permiten la comunicación entre herramientas de ONTAP para el servidor VMware vSphere y otras entidades como sistemas de almacenamiento gestionados, servidores y otros componentes.</block>
+  <block id="d40dfcfdaecc4e8015535acd5de00398" category="section-title">Puertos de entrada y salida necesarios para OTV</block>
+  <block id="834b74ce890c61455ad330759d44eff2" category="paragraph">Tenga en cuenta la siguiente tabla en la que se enumeran los puertos de entrada y salida necesarios para el correcto funcionamiento de las herramientas de ONTAP. Es importante asegurarse de que solo los puertos mencionados en la tabla estén abiertos para las conexiones de máquinas remotas, mientras que todos los demás puertos deben estar bloqueados para las conexiones de máquinas remotas. Esto ayudará a garantizar la seguridad de su sistema.</block>
+  <block id="5732d3577c35dfcce968ba967a9a6149" category="cell">*Puerto TCP v4/v6 #*</block>
+  <block id="e71a4b7488a97c0e5d8b3ab3efe619e4" category="cell">*Dirección*</block>
+  <block id="bc437eb0df24b836c84a74f47b391093" category="cell">*Función*</block>
+  <block id="576fe92cf4e45714b61ed10e5c856aa5" category="cell">Conexiones HTTPS +
+Se utiliza para conexiones SOAP a través de HTTPS +
+Este puerto se debe abrir para permitir que un cliente se conecte al servidor API de herramientas de ONTAP.</block>
+  <block id="4e31bd5bdc8239bb7c98471d3500d951" category="cell">Conexiones HTTPS - VP y SRA +
+Se utiliza para conexiones SOAP a través de HTTPS</block>
+  <block id="7e6b20d014d1c659e4eaf20dc2dcd7eb" category="cell">8443</block>
+  <block id="aaa2d7fe63bee55de8ffca52cb61fbd5" category="cell">Complemento remoto</block>
+  <block id="25fa62922a9b3c1c2763bbf88014e217" category="cell">Puerto de base de datos Derby, solo entre este equipo y él mismo, conexiones externas no aceptadas — Solo conexiones internas</block>
+  <block id="c68bd9055776bf38d8fc43c0ed283678" category="cell">8150</block>
+  <block id="b482bc4bf0e383b0858c5d9eb0e96ba9" category="cell">El servicio de integridad de log se ejecuta en el puerto</block>
+  <block id="9956361dfa33899fc0efed6ee3946512" category="section-title">Control del acceso remoto a la base de datos Derby</block>
+  <block id="58b7326b56820f4b18dfd73dc9707831" category="paragraph">Los administradores pueden acceder a la base de datos derby con los siguientes comandos. Se puede acceder a él a través de las herramientas de ONTAP VM local, así como a un servidor remoto con los siguientes pasos:</block>
+  <block id="296068c08046bbf197300e38c4e851cb" category="paragraph">*[.Underline]#Ejemplo:#*</block>
+  <block id="10046bc1eb8463e6ca6ae51bd3b7a574" category="inline-image-macro">Derby,width=468,height=136</block>
+  <block id="36434da35edb72a1f85cbbcc1ff2b197" category="paragraph"><block ref="36434da35edb72a1f85cbbcc1ff2b197" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="f21dd7ffc271f1301878c3078a59692d" category="summary">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, banner de inicio de sesión.</block>
+  <block id="8bea3b588d20824cc56c9e5629943f1a" category="doc">Banner de inicio de sesión</block>
+  <block id="67f78f0bab8fe81a2b6971543c716d3d" category="paragraph">Se muestra el siguiente banner de inicio de sesión después de que el usuario introduce un nombre de usuario en la pantalla de inicio de sesión. Tenga en cuenta que SSH está deshabilitado de forma predeterminada y solo permite inicios de sesión de una vez cuando se habilita desde la consola de VM.</block>
+  <block id="ae20daf991a940f9de7033ff0a1af410" category="paragraph">Una vez que el usuario completa el inicio de sesión a través del canal SSH, se muestra el siguiente texto:</block>
+  <block id="8f1b6f904292913013b1f6e578d7b074" category="summary">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, verificación de integridad.</block>
+  <block id="cedd87fff2ad5101cd8565e33950e1fb" category="doc">Verificación de la integridad de las herramientas de ONTAP para los paquetes de instalación de VMware vSphere</block>
+  <block id="aeeb9f5277554716592480db544d25f3" category="paragraph">Existen dos métodos disponibles para que los clientes verifiquen la integridad de sus paquetes de instalación de herramientas de ONTAP.</block>
+  <block id="126ba7383e25522e071a963ddd6f220f" category="list-text">Verificando las sumas de comprobación</block>
+  <block id="deccc645a0c8869a44e645f2f4247dbd" category="list-text">Verificando la firma</block>
+  <block id="e5f3970dd7fabab1726b53d58d636de2" category="paragraph">Las sumas de comprobación se proporcionan en las páginas de descarga de los paquetes de instalación de OTV. Los usuarios deben verificar las sumas de comprobación de los paquetes descargados con la suma de comprobación proporcionada en la página de descarga.</block>
+  <block id="7452fe022f94726684aeea655673eb0f" category="section-title">Verificación de la firma del OVA de herramientas de ONTAP</block>
+  <block id="373d060b52f94a014177952dcca0c4e9" category="paragraph">El paquete de instalación de vApp se entrega en forma de tarball. Este tarball contiene certificados intermedios y raíz para el dispositivo virtual junto con un archivo README y un paquete OVA. El archivo README guía a los usuarios sobre cómo verificar la integridad del paquete OVA vApp.</block>
+  <block id="48fefdb76906b256f183e6f68b23eba1" category="paragraph">Los clientes también deben cargar el certificado raíz e intermedio proporcionado en la versión 7.0U3E de vCenter y versiones posteriores.  Para versiones de vCenter entre 7.0.1 y 7,0.U3E, la funcionalidad de verificación del certificado no es compatible con VMware. Los clientes no deberán cargar ningún certificado para las versiones de vCenter 6.x.</block>
+  <block id="84a005842347a9560b170cfcd79c5203" category="section-title">Cargar el certificado raíz de confianza en vCenter</block>
+  <block id="57f60da4817dc5d71c45890bb182781e" category="list-text">Inicie sesión con VMware vSphere Client en vCenter Server.</block>
+  <block id="72282f16a7aca6b61acfc6fe27ce55c7" category="list-text">Especifique el nombre de usuario y la contraseña de administrator@vsphere.local u otro miembro del grupo Administradores de inicio de sesión único de vCenter. Si especificó un dominio diferente durante la instalación, inicie sesión como administrator@mydomain.</block>
+  <block id="9470c9e64c285d5b66a039ab668ab64a" category="list-text">Desplácese hasta la interfaz de usuario de Certificate Management: a. En el menú Inicio, seleccione Administración. b. En Certificados, haga clic en Gestión de certificados.</block>
+  <block id="43a75b176810226695d2db6f52c87b73" category="list-text">Si el sistema le solicita, introduzca las credenciales de vCenter Server.</block>
+  <block id="5f51c5b3cb2f48fd1d670bf384d1006d" category="list-text">En Certificados raíz de confianza, haga clic en Agregar.</block>
+  <block id="55c3b759c54a437c7ced6432f1c62de0" category="list-text">Haga clic en Examinar y seleccione la ubicación del archivo .pem del certificado (OTV_OVA_INTER_ROOT_CERT_CHAIN.pem).</block>
+  <block id="8acdedaaa4134bb6ae49472b4bc268a7" category="list-text">Haga clic en Añadir. El certificado se agrega a la tienda.</block>
+  <block id="e2200da08ea15bdea0f97dbfc4e9f1c7" category="inline-link-macro">Agregue un certificado raíz de confianza al almacén de certificados</block>
+  <block id="6eeecddd909e7e017ba2732e46dc739c" category="paragraph">Consulte <block ref="b8e45b03638af10d852f253eba7e63e3" category="inline-link-macro-rx"></block> si quiere más información. Al implementar una vApp (mediante el archivo OVA), la firma digital del paquete vApp se puede verificar en la página 'Detalles de revisión'. Si el paquete vApp descargado es genuino, la columna 'Publisher' muestra 'Trusted Certificate' (Certificado de confianza) (como en la siguiente captura de pantalla).</block>
+  <block id="a13b63a149750821fb588cd3cb41c209" category="inline-image-macro">Certificado de confianza</block>
+  <block id="a83d8109f7a0cf9c4a04c65c40ecd354" category="paragraph"><block ref="a83d8109f7a0cf9c4a04c65c40ecd354" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="61dc5ac976a8bd4a8744d8890305d26e" category="section-title">Verificación de la firma de las herramientas de ONTAP ISO y SRA tar.gz</block>
+  <block id="d4f26c1c073b64ba200e3fa71762c256" category="paragraph">NetApp comparte su certificado de firma de código con los clientes en la página de descarga del producto, junto con los archivos zip del producto para OTV-iso y sra.tgz.</block>
+  <block id="a7ac1e7561da5cc70126cfea891de159" category="paragraph">Del certificado de firma de código, los usuarios pueden extraer la clave pública de la siguiente manera:</block>
+  <block id="5f4345a6f62f7a3926b2c3d92f5574f6" category="paragraph">A continuación, se debe utilizar la clave pública para verificar la firma para iso y el zip del producto tgz como se muestra a continuación:</block>
+  <block id="81eeab9506186e2dca8faefa78d54067" category="paragraph">Ejemplo:</block>
+  <block id="c6666237b03fcb86e315a0a06e73b6ef" category="summary">Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, cifrado TLS mutuo para conexiones de gestión del almacenamiento.</block>
+  <block id="a1f873acd76a0948013378ff10927a74" category="doc">TLS mutuo (autenticación basada en certificados)</block>
+  <block id="53893182b7e17fb2da37935ee3ffda55" category="paragraph">Las versiones 9,7 y posteriores de ONTAP admiten la comunicación TLS mutua. A partir de ONTAP Tools para VMware y vSphere 9,12, el TLS mutuo se utiliza para la comunicación con clústeres recién añadidos (según la versión de ONTAP).</block>
+  <block id="1be712dee4c47804142318ffb739e46b" category="paragraph">Para todos los sistemas de almacenamiento añadidos anteriormente: Durante una actualización, todos los sistemas de almacenamiento añadidos se volverán de confianza automáticamente y se configurarán los mecanismos de autenticación basados en certificados.</block>
+  <block id="d39adf53eaace0fbba30d4e13760a974" category="paragraph">Como en la siguiente captura de pantalla, la página de configuración del clúster mostrará el estado de TLS mutuo (autenticación basada en certificado), configurado para cada clúster.</block>
+  <block id="c036889d83926f57571c8b12e4f7fb6f" category="inline-image-macro">image2, ancho=468, altura=158</block>
+  <block id="095064767a4b9cadb4016dfc2788237c" category="paragraph"><block ref="095064767a4b9cadb4016dfc2788237c" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="53f061d401dd80027634ccca2a19cd8d" category="section-title">*Cluster Add*</block>
+  <block id="7ce4b2757e70979f49bcf8f64ba36363" category="paragraph">Durante el flujo de trabajo de agregación de clústeres, si el clúster que se agrega admite MTLS, MTLS se configurará de forma predeterminada. El usuario no necesita realizar ninguna configuración para esto. La siguiente captura de pantalla muestra la pantalla presentada al usuario durante la adición del clúster.</block>
+  <block id="3c1556a297200019d3a0b8045c0956b9" category="inline-image-macro">Añadir sistema de almacenamiento,width=450,height=400</block>
+  <block id="3a225aabc3c5c25670ad0b4d131da24f" category="paragraph"><block ref="3a225aabc3c5c25670ad0b4d131da24f" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="987de6e025f6af1fc4451710295ca76f" category="inline-image-macro">Añadir sistema de almacenamiento,width=468,height=416</block>
+  <block id="576a9128888c73fc82869b3ae173c7d2" category="paragraph"><block ref="576a9128888c73fc82869b3ae173c7d2" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="307eba22b8070bb93e642827620f8588" category="paragraph"><block ref="307eba22b8070bb93e642827620f8588" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="71cfed326a2cabd3b505c6580123a459" category="inline-image-macro">Añadir sistema de almacenamiento,width=468,height=516</block>
+  <block id="a3a8f9da50b3f15d69f3186129f159f6" category="paragraph"><block ref="a3a8f9da50b3f15d69f3186129f159f6" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="3b3ebbeea272602ddec07bb77e34668a" category="section-title">Edición de clúster</block>
+  <block id="d2562e450657937f981a45d9d18ff4ec" category="paragraph">Durante la operación de edición del clúster, existen dos situaciones:</block>
+  <block id="500bcb89776517849e2e07073aad4eca" category="list-text">Si el certificado ONTAP caduca, el usuario tendrá que obtener el nuevo certificado y cargarlo.</block>
+  <block id="edf2227e3378b5b0864ef73e58d39d77" category="list-text">Si el certificado OTV caduca, el usuario puede regenerarlo marcando la casilla de verificación.</block>
+  <block id="6db8cdf80049c7cf629fe6f8f6e3a9c0" category="list-text">_Generar un nuevo certificado de cliente para ONTAP._</block>
+  <block id="acba923a9524c642724d6ff34f5dac93" category="inline-image-macro">Modifique el sistema de almacenamiento,width=468,height=461</block>
+  <block id="6a59df9970674c274e20b1d91be2df8a" category="paragraph"><block ref="6a59df9970674c274e20b1d91be2df8a" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="75545011d3e6abe8a2cd8cd5bc21c6fd" category="paragraph"><block ref="75545011d3e6abe8a2cd8cd5bc21c6fd" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="14a73da2f5fe352620bed1b49a3319ed" category="summary">Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, protección de seguridad de red contra ataques DoS.</block>
+  <block id="7dc9b3603fa2b925d4d44930e25f1afa" category="doc">Máximo de solicitudes simultáneas por usuario (Protección de seguridad de red :: Ataque DoS)</block>
+  <block id="8f7e7bd942f453f0550dc4f907e88810" category="paragraph">Por defecto, el Núm. Máximo de solicitudes simultáneas por usuario es 48. El usuario root en las herramientas de ONTAP puede cambiar este valor en función de los requisitos de su entorno. *Este valor no debe establecerse en un valor muy alto, ya que proporciona un mecanismo contra ataques de denegación de servicio (DoS).*</block>
+  <block id="99c1088ea27d16b42c6b45d794f59d3f" category="paragraph">Los usuarios pueden modificar el número máximo de sesiones simultáneas y otros parámetros admitidos en el archivo *_/opt/netapp/vscserver/etc/dosfilterParams.json_*.</block>
+  <block id="5e7c907630f5a432ac6b39f0b8c04c28" category="paragraph">Podemos configurar el filtro con los siguientes parámetros:</block>
+  <block id="a35f2f4ccb228969a85b8719ea25b047" category="list-text">*_delayMs_*: El retraso en milisegundos dado a todas las solicitudes por encima del límite de tasa antes de que sean consideradas. Dar -1 para rechazar la solicitud.</block>
+  <block id="f1b9d5fde713093a3a80f140d1439d37" category="list-text">*_throttleMs_*: Cuánto tiempo esperar el semáforo de forma asíncrona.</block>
+  <block id="aa363bec6acd7600aedeee5377470bde" category="list-text">*_maxRequestMs_*: Cuánto tiempo se debe permitir que se ejecute esta solicitud.</block>
+  <block id="351b695725caafd647abb749c50a7e6f" category="list-text">*_ipWhitelist_*: Una lista separada por comas de direcciones IP que no se limitará la tasa. (Pueden ser IP de vCenter, ESXi y SRA)</block>
+  <block id="058e1fe7e6afcd3bcff86482a583976b" category="list-text">*_maxRequestsPerSec_*: El número máximo de solicitudes de una conexión por segundo.</block>
+  <block id="1c1496a21f967d57b50fe5ebb0e62125" category="paragraph">*Valores predeterminados en el archivo _dosfilterParams_:*</block>
+  <block id="ca49b2b6b0c4bb4aa0596879eef667f5" category="inline-image-macro">Conectividad multivía</block>
+  <block id="de3698c6b3c2722a1b82c99522519f4f" category="paragraph"><block ref="de3698c6b3c2722a1b82c99522519f4f" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="9afb15056a8bc8b4402d55eba2274dad" category="summary">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, configuración de NTP.</block>
+  <block id="bad9c891abe49e73c2bf4fb95fbe61ba" category="doc">Configuración del Protocolo de hora de red (NTP)</block>
+  <block id="48edbd8a951efb0ad617f7868b27a6c0" category="paragraph">A veces, pueden producirse problemas de seguridad debido a discrepancias en las configuraciones de tiempo de red. Es importante asegurarse de que todos los dispositivos dentro de una red tengan una configuración de tiempo precisa para evitar tales problemas.</block>
+  <block id="a55d703ea2930e8e72e94ce11c3297ab" category="section-title">*Dispositivo virtual*</block>
+  <block id="5a65f4c9ca6d99f573528348d36914fa" category="paragraph">Puede configurar los servidores NTP desde la consola de mantenimiento del dispositivo virtual.  Los usuarios pueden agregar los detalles del servidor NTP en _Configuración del sistema_ =&gt; _Agregar nuevo servidor NTP_ opción</block>
+  <block id="90ab4fc7a1c530bceac36bda71efbc5f" category="paragraph">De forma predeterminada, el servicio para NTP es ntpd. Este es un servicio heredado y no funciona bien para máquinas virtuales en ciertos casos.</block>
+  <block id="6801ecdb823d018c7370042d27b5ee2c" category="section-title">*Debian*</block>
+  <block id="dc3bb5166d38d2aec53765aca7c0d24c" category="paragraph">En Debian, el usuario puede acceder al archivo /etc/ntp.conf para obtener los detalles del servidor ntp.</block>
+  <block id="08fe6a0b481c7eba55985eb19ee19e1e" category="summary">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, descripción general e introducción.</block>
+  <block id="baecfb438214487bb004e49d325c66bf" category="doc">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere</block>
+  <block id="8d1618af2c6a6379783e2978ba4a551c" category="paragraph">La Guía de seguridad reforzada de ONTAP Tools para VMware vSphere ofrece un conjunto completo de instrucciones para configurar los ajustes más seguros.</block>
+  <block id="fec65f0c33739368ce5845fadb6cb880" category="paragraph">Estas guías se aplican tanto a las aplicaciones como al sistema operativo «guest» del propio dispositivo.</block>
+  <block id="5aaf8fc9424d7872cf500fb7adcb3b97" category="summary">Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, configuración de políticas de contraseña.</block>
+  <block id="ca80b83fb98de16af35b38476df589c3" category="doc">Políticas de contraseñas</block>
+  <block id="53477738359cebc12d4e01727ee8b5e7" category="paragraph">Los usuarios que implementen las herramientas de ONTAP por primera vez o que actualicen a la versión 9,12 o posterior deberán seguir la política de contraseñas seguras tanto para el administrador como para los usuarios de la base de datos. Durante el proceso de implementación, se solicitará a los nuevos usuarios que introduzcan sus contraseñas. Para los usuarios de brownfield que actualicen a la versión 9,12 o posterior, la opción de seguir la política de contraseñas seguras estará disponible en la consola de mantenimiento.</block>
+  <block id="7afd9be20a239f83f98bdbc7f90512ef" category="list-text">Una vez que el usuario inicia sesión en la consola de mantenimiento, las contraseñas se verificarán con respecto al conjunto de reglas complejo y, si se detecta que no se siguen, se solicitará al usuario que restablezca la misma.</block>
+  <block id="1e048d74f3d9375186833526a00f4309" category="list-text">La validez predeterminada de la contraseña es de 90 días y después de 75 días el usuario comenzará a recibir la notificación para cambiar la contraseña.</block>
+  <block id="dbb73ef3f8e9b61d387a809281a654cc" category="list-text">Es necesario establecer una nueva contraseña en cada ciclo, el sistema no tomará la última contraseña como nueva contraseña.</block>
+  <block id="210b05d5e7375bcb02bcf09a873bbda6" category="list-text">Cada vez que un usuario inicia sesión en la consola de mantenimiento, comprobará las políticas de contraseñas como las siguientes capturas de pantalla antes de cargar el menú principal:</block>
+  <block id="bc66b4fce20ef49b05e4a54f053e65a6" category="inline-image-macro">Menú principal,ancho=468,altura=116</block>
+  <block id="4661acb75237098be364b3c05d7d9b7c" category="paragraph"><block ref="4661acb75237098be364b3c05d7d9b7c" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="8f09c69f731d4d6f2e8d6135082aa8e4" category="list-text">Si no sigue la política de contraseñas o su configuración de actualización desde las herramientas de ONTAP 9,11 o anteriores. A continuación, el usuario verá la siguiente pantalla para restablecer la contraseña:</block>
+  <block id="4499d4bfb9610056781e2e61956dd0ca" category="inline-image-macro">Pantalla de restablecimiento de contraseña, ancho = 468 mm, altura = 116 mm</block>
+  <block id="a84278f7bf3ee281e39e467fca1fe454" category="paragraph"><block ref="a84278f7bf3ee281e39e467fca1fe454" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="47e6664ac0a72e1d719cfc288383b4f8" category="list-text">Si el usuario intenta establecer una contraseña débil o da la última contraseña de nuevo, el usuario verá el siguiente error:</block>
+  <block id="fe04952c38b6a9a7db1a75bbb4905232" category="inline-image-macro">Error de contraseña débil,width=468,height=101</block>
+  <block id="2c59de9ea5183e73d5fa6382fa7f3fc1" category="paragraph"><block ref="2c59de9ea5183e73d5fa6382fa7f3fc1" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="8463a61dd94ff5934036d4c8a8936e32" category="doc">Tiempo de espera de inactividad</block>
+  <block id="704c7fc6c4d40b9af6aafb7cf9b44022" category="paragraph">Para evitar el acceso no autorizado, se configura un tiempo de espera de inactividad, que cierra automáticamente la sesión de los usuarios inactivos durante un cierto período mientras se utilizan los recursos autorizados. Esto garantiza que solo los usuarios autorizados puedan acceder a los recursos y ayuda a mantener la seguridad.</block>
+  <block id="80f9ebebc8f94450338d28bcb4a2164d" category="inline-link">Configure el valor de tiempo de espera del cliente de vSphere</block>
+  <block id="3748702da26b5718f1f7c769ce58b009" category="list-text">De forma predeterminada, las sesiones de vSphere Client se cierran tras 120 minutos de tiempo inactivo, lo cual requiere que el usuario inicie sesión nuevamente para reanudarse usando el cliente. Puede cambiar el valor de tiempo de espera editando el archivo webclient.properties. Puede configurar el tiempo de espera de vSphere Client<block ref="ec8715bde1a929a6f64160d5372f4574" category="inline-link-rx"></block></block>
+  <block id="e4306c4cf124046d8f90518752cd5021" category="list-text">Las herramientas de ONTAP tienen un tiempo de cierre de sesión de la cli web de 30 minutos.</block>
+  <block id="7fb0cadcdae6feac05c7b8274b97b3c7" category="sidebar">Información general sobre cómo reforzar las herramientas de ONTAP</block>
+  <block id="10b486896b1a91f5d38214dfb30c4263" category="sidebar">Verificación de la integridad de los paquetes de instalación de las herramientas de ONTAP</block>
+  <block id="7c7c4cc4771d6114aa8b4d38f5817a85" category="sidebar">Puertos y protocolos</block>
+  <block id="919e26ea009ce7fa2dcc499a27ccc6aa" category="sidebar">Puntos de acceso (usuarios)</block>
+  <block id="333dd505db0523536c6885f47456518c" category="sidebar">TLS mutuo</block>
+  <block id="6a3f3799bc264d32568bb7169ddd515a" category="sidebar">Certificado HTTPS</block>
+  <block id="4b7ad38343c4b2010cf81e6b2933e186" category="sidebar">Banner de inicio de sesión</block>
+  <block id="bfdb89134acf30ff5da790924cefa0ac" category="sidebar">Tiempo de espera de inactividad</block>
+  <block id="cb197b06aa92a742d01e256d58d3e34b" category="sidebar">Ataque DOS</block>
+  <block id="d870a4bd29f74339732a958574d2c4eb" category="sidebar">Configuración de NTP</block>
+  <block id="339ce1d4220ba7045e3a35ef35279ad3" category="sidebar">Políticas de contraseñas</block>
 </blocks>
