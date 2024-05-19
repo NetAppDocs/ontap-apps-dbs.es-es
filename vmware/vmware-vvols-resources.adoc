@@ -25,7 +25,7 @@ https://mysupport.netapp.com/site/products/all/details/otv/docs-tab["_Sitio de s
 
 Aquí se encuentra disponible documentación adicional sobre la solución:
 
-https://docs.netapp.com/us-en/netapp-solutions/virtualization/index.html["_Soluciones de NetApp para la virtualización_"]
+https://docs.netapp.com/us-en/netapp-solutions/vmware/index.html["_Soluciones de NetApp para la virtualización con VMware de Broadcom_"]
 
 
 

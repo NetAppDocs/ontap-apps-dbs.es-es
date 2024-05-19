@@ -1,0 +1,36 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-vsphere-encryption.html 
+keywords: Data protection, Space reclamation, VM and datastore cloning, Storage efficiency, thin provisioning, QoS, SIOC, Storage Distributed Resource Scheduler, DRS, Active IQ Unified Manager, Encryption 
+summary: Existe una mayor demanda de cifrado de datos en reposo, que se extiende más allá de los datos tradicionales hasta todos los tipos de datos almacenados. 
+---
+= Cifrado para datos de vSphere
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Hoy en día, hay cada vez más demandas de protección de los datos en reposo mediante el cifrado. Aunque el foco inicial era la información financiera y de atención sanitaria, existe un creciente interés en proteger toda la información, ya sea en archivos, bases de datos u otros tipos de datos.
+
+Los sistemas que ejecutan el software ONTAP facilitan la protección de cualquier dato con el cifrado en reposo. El cifrado de almacenamiento de NetApp (NSE) utiliza unidades de disco de cifrado automático con ONTAP para proteger datos SAN y NAS. NetApp también ofrece el cifrado de volúmenes de NetApp y el cifrado de agregados de NetApp como un método sencillo basado en software para cifrar volúmenes en cualquier unidad de disco. Este cifrado de software no requiere unidades de disco especiales ni gestores de claves externos y está disponible para los clientes de ONTAP sin coste adicional. Puede realizar una actualización y empezar a utilizarla sin interrupciones en los clientes o las aplicaciones, y ha sido validada según el estándar de nivel 1 de FIPS 140-2-2, incluido el gestor de claves incorporado.
+
+Existen varios métodos para proteger los datos de las aplicaciones virtualizadas que se ejecutan en VMware vSphere. Uno de los métodos consiste en proteger los datos con software dentro de los equipos virtuales a nivel de SO «guest». Los hipervisores más recientes, como vSphere 6.5, ahora admiten el cifrado a nivel de equipo virtual como otra alternativa. Sin embargo, el cifrado del software de NetApp es simple y fácil y tiene estas ventajas:
+
+* *Sin efecto sobre la CPU del servidor virtual.* algunos entornos de servidor virtual necesitan todos los ciclos de CPU disponibles para sus aplicaciones, aunque las pruebas han demostrado que se necesitan hasta 5 veces los recursos de CPU con cifrado a nivel de hipervisor. Incluso si el software de cifrado admite el conjunto de instrucciones AES-NI de Intel para descargar la carga de trabajo de cifrado (como lo hace el cifrado de software NetApp), este enfoque podría no ser factible debido a la necesidad de nuevas CPU que no son compatibles con servidores antiguos.
+* *Incluye el gestor de claves incorporado.* el cifrado de software de NetApp incluye un gestor de claves incorporado sin coste adicional, lo que facilita su introducción sin servidores de gestión de claves de alta disponibilidad complejos de adquirir y usar.
+* *No afecta a la eficiencia del almacenamiento.* las técnicas de eficiencia del almacenamiento como la deduplicación y la compresión se utilizan ampliamente hoy en día y son clave para utilizar medios de disco flash de forma rentable. Sin embargo, por lo general, los datos cifrados no se pueden deduplicar o comprimir. El cifrado de almacenamiento y hardware de NetApp funciona a un nivel inferior y permite el uso completo de funciones de eficiencia del almacenamiento de NetApp, líderes del sector, a diferencia de otros métodos.
+* *Cifrado granular sencillo del almacén de datos.* con el cifrado de volúmenes de NetApp, cada volumen obtiene su propia clave AES de 256 bits. Si necesita cambiarlo, puede hacerlo con un solo comando. Este método es genial si tiene varios clientes o necesita probar el cifrado independiente para diferentes departamentos o aplicaciones. Este cifrado se gestiona a nivel de almacén de datos, lo cual es mucho más fácil que gestionar equipos virtuales individuales.
+
+
+Es fácil empezar a utilizar el cifrado de software. Después de instalar la licencia, solo tiene que configurar el gestor de claves incorporado especificando una frase de acceso y luego crear un volumen nuevo o mover un volumen en el almacenamiento para habilitar el cifrado. NetApp está trabajando para añadir compatibilidad más integrada con funcionalidades de cifrado en futuros lanzamientos de sus herramientas de VMware.
+
+Para obtener una visión más detallada de más temas de seguridad, consulte los siguientes recursos.
+
+* link:https://docs.netapp.com/us-en/ontap-technical-reports/security.html["Informes técnicos de seguridad"]
+* link:https://docs.netapp.com/us-en/ontap-technical-reports/security-hardening-guides.html["Guías de refuerzo de seguridad"]
+* link:https://docs.netapp.com/us-en/ontap/security-encryption/index.html["Documentación de productos de seguridad y cifrado de datos de ONTAP"]
+

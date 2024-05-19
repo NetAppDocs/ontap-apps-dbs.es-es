@@ -1,0 +1,41 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-vsphere-cloud_migration_backup.html 
+keywords: Data protection, Space reclamation, VM and datastore cloning, Storage efficiency, thin provisioning, QoS, SIOC, Storage Distributed Resource Scheduler, DRS, Active IQ Unified Manager, Encryption 
+summary: El software ONTAP cuenta con una amplia compatibilidad con el cloud híbrido. 
+---
+= Migración al cloud y backup
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Otra ventaja de ONTAP es la amplia compatibilidad con el cloud híbrido, al fusionar sistemas en el cloud privado local con funcionalidades de cloud público. Estas son algunas de las soluciones cloud de NetApp que se pueden usar junto con vSphere:
+
+* *Ofertas de primera parte*. Amazon FSx para NetApp ONTAP, Google Cloud NetApp Volumes y Azure NetApp Files para ANF proporcionan servicios de almacenamiento gestionados multiprotocolo y de alto rendimiento en los principales entornos de nube pública. Pueden ser utilizados directamente por VMware Cloud en AWS (VMC en AWS), Azure VMware Solution (AVS) y Google Cloud VMware Engine (GCVE) como almacenes de datos o almacenamiento para sistemas operativos invitados (GOS) e instancias de computación.
+* *Cloud Volumes ONTAP.* el software para la gestión de datos Cloud Volumes ONTAP de NetApp proporciona control, protección, flexibilidad y eficiencia para sus datos en el cloud que elija. Cloud Volumes ONTAP es un software para la gestión de datos nativo en el cloud e integrado en el almacenamiento de ONTAP. Utilícelo con Cloud Manager para poner en marcha y gestionar instancias de Cloud Volumes ONTAP junto con sus sistemas ONTAP locales. Aproveche las funcionalidades avanzadas de NAS e iSCSI SAN junto con la gestión de datos unificada, incluidas copias Snapshot y replicación de SnapMirror.
+* *Servicios en la nube* Utilice la copia de seguridad y recuperación de BlueXP o SnapMirror Cloud para proteger los datos de los sistemas locales mediante el almacenamiento en la nube pública. Cloud Sync le ayuda a migrar y mantener sus datos sincronizados a través de NAS, almacenes de objetos y almacenamiento Cloud Volumes Service. La recuperación ante desastres de BlueXP ofrece una solución rentable y eficiente para aprovechar las tecnologías de NetApp como base para una solución de recuperación ante desastres robusta y capaz para la recuperación de desastres en el cloud, de recuperación de desastres en las instalaciones y de on-premises a on-premises.
+* *FabricPool.* FabricPool ofrece una organización en niveles rápida y fácil para los datos de ONTAP. Los bloques inactivos se pueden migrar a un almacén de objetos en clouds públicos o en un almacén de objetos de StorageGRID privado y se recuerdan automáticamente cuando se vuelve a acceder a los datos de ONTAP. También puede usar el nivel de objeto como un tercer nivel de protección para los datos que ya está gestionado por SnapVault. Este enfoque le permite https://www.linkedin.com/pulse/rethink-vmware-backup-again-keith-aasen/["Almacenar más snapshots de sus máquinas virtuales"^] En sistemas de almacenamiento ONTAP principales o secundarios
+* *ONTAP Select.* Utilice el almacenamiento definido por software de NetApp para ampliar su cloud privado a través de Internet a instalaciones y oficinas remotas, donde puede utilizar ONTAP Select para ofrecer compatibilidad con servicios de bloques y archivos, así como las mismas funcionalidades de gestión de datos vSphere que tiene en su centro de datos empresarial.
+
+
+A la hora de diseñar sus aplicaciones basadas en máquinas virtuales, tenga en cuenta la movilidad del cloud futura. Por ejemplo, en lugar de colocar los archivos de datos y aplicaciones en conjunto, utilizan una exportación de NFS o LUN independiente para los datos. Esto permite migrar la máquina virtual y los datos por separado a los servicios de cloud.
+
+Para obtener una visión más detallada de más temas de seguridad, consulte los siguientes recursos.
+
+* link:https://docs.netapp.com/us-en/bluexp-cloud-volumes-ontap/index.html["Documentación de Cloud Volumes ONTAP"]
+* link:https://docs.netapp.com/us-en/ontap-select/["Documentación de ONTAP Select"]
+* link:https://docs.netapp.com/us-en/bluexp-backup-recovery/index.html["Documentación de backup y recuperación de BlueXP"]
+* link:https://docs.netapp.com/us-en/bluexp-disaster-recovery/index.html["Documentación de la recuperación ante desastres de BlueXP"]
+* link:https://aws.amazon.com/fsx/netapp-ontap/["Amazon FSX para ONTAP de NetApp"]
+* link:https://www.vmware.com/products/vmc-on-aws.html["VMware Cloud en AWS"]
+* link:https://learn.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-introduction["¿Qué es Azure NetApp Files?
+"]
+* link:https://azure.microsoft.com/en-us/products/azure-vmware/["Solución Azure VMware"]
+* link:https://cloud.google.com/vmware-engine["Motor de Google Cloud VMware"]
+* link:https://cloud.google.com/netapp/volumes/docs/discover/overview["¿Qué es Google Cloud NetApp Volumes?"]
+

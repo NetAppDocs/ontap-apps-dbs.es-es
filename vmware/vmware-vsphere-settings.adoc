@@ -33,7 +33,7 @@ Esta es la configuración del host recomendada actualmente con las versiones 9,8
 
 
 | VMFS3.EnableBlockDelete | Mantener el valor predeterminado (0), pero se puede cambiar si es necesario.
-Para obtener más información, consulte link:https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2007427["2007427 de la base de conocimientos de VMware"] | No 
+Para obtener más información, consulte link:https://knowledge.broadcom.com/external/article?legacyId=2007427["2007427 de la base de conocimientos de VMware"] | No 
 
 
 | VMFS3.EnableVMFS6Unmap | Mantener predeterminado (1)
@@ -48,7 +48,7 @@ El resto de configuraciones de NFS se establecen en 30 | Sí
 
 
 | NET.TcpipHeapMax | Configure 512 MB para la mayoría de las versiones de vSphere 6.X.
-Establezca 1024 MB para 6.5U3, 6.7U3 y 7.0 o superior. | Sí 
+Establezca el valor predeterminado (1024MB) para 6.5U3, 6.7U3 y 7,0 o posterior. | Sí 
 
 
 | NFS.MaxVolumes | VSphere 6,0 o posterior, configurado en 256

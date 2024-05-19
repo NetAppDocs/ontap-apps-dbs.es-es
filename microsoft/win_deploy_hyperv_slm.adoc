@@ -4,7 +4,7 @@ permalink: microsoft/win_deploy_hyperv_slm.html
 keywords: Windows,Hyper-V,VHDX,VM,Virtual 
 summary: Cómo configurar la migración dinámica del almacenamiento de Hyper-V. 
 ---
-= Implemente Hyper-V torage Live Migration
+= Implemente Hyper-V Storage Live Migration
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
