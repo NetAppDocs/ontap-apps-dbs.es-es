@@ -2,7 +2,7 @@
 sidebar: sidebar 
 permalink: vmware/vmware-otv-hardening-ports.html 
 keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
-summary: Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere. 
+summary: Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, puertos TCP y protocolos 
 ---
 = Puertos y protocolos
 :hardbreaks:

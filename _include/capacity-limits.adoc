@@ -20,4 +20,4 @@ La recomendación de un 10% de espacio libre es muy conservadora. Los agregados 
 == Agregados de HDD, incluidos los agregados de Flash Pool
 
 
-TIP: *NetApp recomienda* un mínimo de 15% de espacio libre cuando se utilizan unidades giratorias. Esto incluye todo el espacio no utilizado, incluido el espacio libre dentro del agregado o un volumen y cualquier espacio libre que se asigne debido al uso de aprovisionamiento completo, pero que los datos reales no usan. El rendimiento se verá afectado en los enfoques de libertad de expresión al 10%.
+TIP: *NetApp recomienda* un mínimo de 15% de espacio libre cuando se utilizan unidades giratorias. Esto incluye todo el espacio no utilizado, incluido el espacio libre dentro del agregado o un volumen y cualquier espacio libre que se asigne debido al uso de aprovisionamiento completo, pero que los datos reales no usan. El rendimiento se verá afectado cuando el espacio libre se acerque al 10%.
