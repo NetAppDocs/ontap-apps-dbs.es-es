@@ -111,7 +111,7 @@ image::vvols-image4.png[Cumplimiento de la política de almacenamiento de máqui
 
 
 
-== Suppor de NetApp vVols
+== Compatibilidad con NetApp vVols
 
 ONTAP ha admitido la especificación VASA desde su versión inicial en 2012. Aunque otros sistemas de almacenamiento de NetApp son compatibles con VASA, este documento se centra en las versiones compatibles actualmente de ONTAP 9.
 
@@ -143,7 +143,7 @@ Tal como se explica en la sección 1,2, la gestión basada en políticas permite
 * * Provisionamiento más inteligente. * Las capacidades del sistema de almacenamiento se pueden exponer a través de las API de VASA, lo que permite que los flujos de trabajo de aprovisionamiento aprovechen las capacidades avanzadas sin que el administrador de VM tenga que entender cómo administrar el sistema de almacenamiento.
 * * Provisionamiento más rápido.* Se pueden admitir diferentes capacidades de almacenamiento en un único almacén de datos y seleccionarlas automáticamente según sea apropiado para una VM basada en la política de VM.
 * *Evite errores.* Las políticas de almacenamiento y VM se desarrollan con anticipación y se aplican según sea necesario sin tener que personalizar el almacenamiento cada vez que se aprovisiona una VM. Las alarmas de cumplimiento de normativas se generan cuando las funcionalidades de almacenamiento van más allá de las políticas definidas. Como se ha mencionado anteriormente, los SCPs hacen que el aprovisionamiento inicial sea predecible y repetible, mientras que basar las políticas de almacenamiento de los equipos virtuales en los SCPs garantiza una ubicación precisa.
-* * Mejor gestión de la capacidad.* Las herramientas VASA y ONTAP permiten ver la capacidad de almacenamiento hasta el nivel agregado induvial si es necesario y proporcionar múltiples capas de alerta en el caso de que la capacidad comience a agotarse.
+* * Mejor gestión de la capacidad.* Las herramientas VASA y ONTAP permiten ver la capacidad de almacenamiento hasta el nivel de agregado individual si es necesario y proporcionar varias capas de alerta en caso de que la capacidad empiece a ser baja.
 
 
 
