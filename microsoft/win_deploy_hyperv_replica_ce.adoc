@@ -10,7 +10,7 @@ summary: Aprenda a implementar y configurar la réplica de Hyper-V con el clúst
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]

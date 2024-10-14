@@ -1,0 +1,22 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-ontap-scalability.html 
+keywords: epic,cache,iris 
+summary: Escalabilidad de Epic en ONTAP 
+---
+= Escalabilidad de Epic en ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+La Guía de configuración de hardware de Epic representa un crecimiento del ~20 % al año durante 3 años. Sin embargo, los entornos también pueden crecer inesperadamente.
+
+NetApp puede escalar sin problemas el rendimiento y la capacidad hasta 12 nodos para clústeres NAS, SAN y de objetos. Como resultado, puede escalar horizontal y verticalmente sin interrupciones a medida que crece su negocio.
+
+Epic Iris aporta más funciones de escalado. Permite a los clientes de mayor tamaño que tienen varias instancias Epic consolidarse en una única instancia. El link:https://www.netapp.com/media/27905-nva-1159-design.pdf["Arquitectura verificada de NetApp Epic en SAN moderna"^] documento demuestra que Epic puede escalar sin problemas cargas de trabajo consolidadas hasta 720K 000 IOPS en una sola alta disponibilidad y escalar horizontalmente hasta más de 4M 000 IOPS en un clúster. Puede escalar verticalmente de forma no disruptiva actualizando las controladoras o añadiendo discos a los clústeres existentes.
+
+Los datos de NAS, SAN y objetos también pueden moverse de forma no disruptiva entre nodos del clúster. Cada pareja de alta disponibilidad del clúster puede ser cualquier combinación de tipos y tamaños de sistemas ONTAP FAS y AFF. Puede equilibrar sus cargas de trabajo en un único clúster para maximizar su inversión en almacenamiento.
+
+ONTAP también ofrece la opción de utilizar el almacenamiento de objetos en StorageGRID o el cloud como destino de backup o destino automático por niveles de almacenamiento en frío. Esta funcionalidad permite liberar automáticamente en Object discos all-flash, snapshots de nivel y datos inactivos costosos.
+
+Como resultado, Epic simplemente funciona mejor con la cartera de productos de NetApp, aprovechando ONTAP, varios protocolos, StorageGRID y el cloud que elija. Estos productos ofrecen opciones para recuperación ante desastres, archivado, análisis, clasificación por niveles, etc.

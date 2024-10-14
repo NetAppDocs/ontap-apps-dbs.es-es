@@ -14,7 +14,7 @@ summary: Esta página describe las mejores prácticas para implementar VMware vS
 
 
 [role="lead"]
-NetApp ONTAP representa, entre otras cosas, una cabina NAS de escalado horizontal para empresas. ONTAP proporciona acceso concurrente a los almacenes de datos conectados a NFS desde muchos hosts ESXi, lo que supera con creces los límites impuestos en los sistemas de archivos VMFS. El uso de NFS con vSphere proporciona algunas ventajas de facilidad de uso y visibilidad de la eficiencia del almacenamiento, como se menciona en la link:vmware-vsphere-datastores-top.html["almacenes de datos"] sección.
+ONTAP representa, entre otras cosas, una cabina NAS de escalado horizontal para empresas. ONTAP proporciona acceso concurrente a los almacenes de datos conectados a NFS desde muchos hosts ESXi, lo que supera con creces los límites impuestos en los sistemas de archivos VMFS. El uso de NFS con vSphere proporciona cierta facilidad de uso y ventajas de visibilidad de la eficiencia del almacenamiento, como se menciona en link:vmware-vsphere-datastores-top.html["almacenes de datos"]la sección.
 
 Las siguientes prácticas recomendadas se recomiendan al usar NFS de ONTAP con vSphere:
 

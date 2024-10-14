@@ -24,7 +24,7 @@ Coloque el directorio de registro en un volumen o LUN dedicados. La cantidad de 
 
 * Asegúrese de que el directorio de registro de host no esté compartido por ningún otro tipo de datos que pueda dañar los datos de la instantánea de backup.
 * No coloque bases de datos de usuario ni bases de datos del sistema en un LUN que aloje puntos de montaje.
-* Cree el directorio de registro de host en el volumen FlexVol dedicado al cual SnapCenter copia los registros de transacciones.
+* Cree el directorio de registro de host en un volumen dedicado al cual SnapCenter copia los registros de transacciones.
 * Utilice los asistentes de SnapCenter para migrar bases de datos al almacenamiento NetApp de modo que las bases de datos se almacenen en ubicaciones válidas, lo que permite realizar correctamente las operaciones de backup y restauración de SnapCenter. Tenga en cuenta que el proceso de migración es disruptivo y puede provocar que las bases de datos se desconecten mientras se realiza la migración.
 * Deben establecerse las siguientes condiciones para las instancias de clúster de conmutación por error (FCI) de SQL Server:
 +

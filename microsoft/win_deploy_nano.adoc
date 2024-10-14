@@ -10,7 +10,7 @@ summary: Obtenga información sobre la implementación de Microsoft Windows Nano
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]

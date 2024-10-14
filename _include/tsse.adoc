@@ -6,4 +6,4 @@
 
 === Eficiencia de almacenamiento sensible a la temperatura
 
-La eficiencia del almacenamiento sensible a la temperatura (TSSE) es un producto disponible en ONTAP 9,8 y versiones posteriores que se basa en mapas de calor de acceso a bloques para identificar los bloques a los que se accede con poca frecuencia y comprimirlos con mayor eficiencia.
+La eficiencia de almacenamiento sensible a la temperatura (TSSE) está disponible en ONTAP 9, e.8 y posteriores. Se basa en mapas de calor de acceso a bloques para identificar los bloques a los que se accede con poca frecuencia y comprimirlos con mayor eficiencia.

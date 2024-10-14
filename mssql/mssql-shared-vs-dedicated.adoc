@@ -10,7 +10,7 @@ summary: Puesta en marcha de instancias de Microsoft SQL Server
 
 
 [role="lead"]
-Se pueden configurar varios SQL Server como una única instancia por servidor o como varias instancias. La decisión correcta generalmente depende de factores como si el servidor se va a utilizar para la producción o el desarrollo, si la instancia se considera crítica para las operaciones de negocio y los objetivos de rendimiento.
+SQL Server se puede configurar como una única instancia por servidor o como varias instancias. La decisión correcta generalmente depende de factores como si el servidor se va a utilizar para la producción o el desarrollo, si la instancia se considera crítica para las operaciones de negocio y los objetivos de rendimiento.
 
 Las configuraciones de instancias compartidas pueden ser inicialmente más fáciles de configurar, pero pueden provocar problemas en los que los recursos se dividen o bloquean, lo que a su vez provoca problemas de rendimiento para otras aplicaciones que tienen bases de datos alojadas en la instancia compartida de SQL Server.
 

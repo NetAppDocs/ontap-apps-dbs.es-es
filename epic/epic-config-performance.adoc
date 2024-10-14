@@ -1,0 +1,23 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-config-performance.html 
+keywords: epic,cache,iris,QoS 
+summary: Gestión del rendimiento épico 
+---
+= Gestión del rendimiento épico
+:allow-uri-read: 
+
+
+[role="lead"]
+La mayoría de las cabinas all-flash pueden ofrecer el rendimiento necesario para las cargas de trabajo de Epic. El diferenciador de NetApp es su capacidad para establecer políticas de rendimiento a nivel físico y garantizar un rendimiento constante para cada aplicación.
+
+
+
+== Calidad de servicio (QoS)
+
+NetApp recomienda utilizar la calidad de servicio. La ventaja de la calidad de servicio es la capacidad de consolidar todas las cargas de trabajo de Epic. Todos los protocolos y pools de almacenamiento pueden residir en menos hardware. No es necesario separar pools de almacenamiento.
+
+* NetApp recomienda que todas las cargas de trabajo del clúster se asignen a una política de calidad de servicio para gestionar mejor el margen adicional en el clúster.
+* NetApp recomienda equilibrar todas las cargas de trabajo de forma uniforme en toda la pareja de alta disponibilidad.
+* No utilice políticas de QoS al realizar cualquier prueba de E/S; de lo contrario, las pruebas de GENIO fallarán. Analiza las distintas cargas de trabajo de producción durante 2-4 semanas antes de asignar cualquier política de calidad de servicio.
+

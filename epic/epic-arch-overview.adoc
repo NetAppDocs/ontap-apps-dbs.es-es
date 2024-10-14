@@ -1,0 +1,84 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-arch-overview.html 
+keywords: epic,cache,iris 
+summary: Arquitectura épica 
+---
+= Arquitectura épica
+:allow-uri-read: 
+
+
+[role="lead"]
+En esta sección se describe el entorno de software Epic y los componentes clave que requieren almacenamiento. Proporciona consideraciones clave para ayudar a guiar el diseño del almacenamiento.
+
+Epic, con sede en Verona, Wisconsin, fabrica software para medianas y grandes grupos médicos, hospitales y organizaciones integradas de atención médica. Los clientes también incluyen hospitales comunitarios, instalaciones académicas, organizaciones de niños, proveedores de redes de seguridad y sistemas multihospitalarios. El software integrado de Epic abarca funciones clínicas, de acceso e ingresos y se extiende al hogar.
+
+Este documento no cubre el amplio abanico de funciones admitidas por el software Epic. Sin embargo, desde el punto de vista del sistema de almacenamiento, todo el software Epic comparte una única base de datos centrada en el paciente para cada puesta en marcha. Epic está realizando la transición de la base de datos de InterSystems Caché a la nueva base de datos de InterSystems Iris. Debido a que los requisitos de almacenamiento son los mismos para Caché e Iris, nos referiremos a la base de datos como Iris a lo largo del resto de este documento. Iris está disponible para los sistemas operativos AIX y Linux.
+
+
+
+== Iris de InterSystems
+
+InterSystems Iris es la base de datos utilizada por la aplicación Epic. En esta base de datos, el servidor de datos es el punto de acceso para los datos almacenados de forma persistente. El servidor de aplicaciones gestiona las consultas de la base de datos y realiza solicitudes de datos al servidor de datos. En la mayoría de los entornos de software de Epic, el uso de la arquitectura de multiprocesador simétrico (SMP) en un único servidor de base de datos basta para atender las solicitudes de base de datos de aplicaciones de Epic. En implementaciones de gran tamaño, se puede admitir un modelo distribuido mediante el protocolo de caché empresarial (ECP) de InterSystems.
+
+El uso de hardware en clúster habilitado para recuperación tras fallos permite que un servidor de datos en espera acceda al mismo almacenamiento que el servidor de datos primario. También permite que el servidor de datos en espera asuma las responsabilidades de procesamiento durante un fallo de hardware.
+
+InterSystems también proporciona tecnologías para satisfacer los requisitos de replicación de datos, recuperación ante desastres y alta disponibilidad (HA). La tecnología de replicación de InterSystems se utiliza para replicar una base de datos Iris de forma síncrona o asíncrona desde un servidor de datos primario a uno o más servidores de datos secundarios. NetApp SnapMirror se usa para replicar el almacenamiento de WebBLOB o para backup y recuperación ante desastres.
+
+La base de datos Iris actualizada tiene muchas ventajas:
+
+* Mayor escala y permite que las organizaciones de mayor tamaño con varias instancias Epic se consoliden en una instancia más grande.
+* Un período sin licencias en el que los clientes ahora pueden pasar de AIX a Red Hat Enterprise Linux (RHEL) sin tener que pagar por una nueva licencia de plataforma.
+
+
+
+
+== Servidores de base de datos Caché y uso del almacenamiento
+
+* *Producción* En entornos de software Epic, se implementa una única base de datos centrada en el paciente. En los requisitos de hardware de Epic, el servidor físico que aloja el servidor de datos primario de lectura/escritura Iris se denomina servidor de bases de datos de producción. Este servidor requiere un almacenamiento all-flash de alto rendimiento para los archivos que pertenecen a la instancia de base de datos primaria. Para una alta disponibilidad, Epic admite el uso de un servidor de base de datos de conmutación por error que tiene acceso a los mismos archivos. Iris utiliza Epic Mirror para replicar en informes de solo lectura, recuperación ante desastres y compatibilidad con copias de solo lectura. Cada tipo de servidor de base de datos se puede cambiar al modo de lectura/escritura por razones de continuidad del negocio.
+* *Informe* Un servidor de base de datos de réplica de informes proporciona acceso de solo lectura a los datos de producción. Aloja un servidor de datos Iris configurado como una copia de seguridad del servidor de datos de producción Iris. El servidor de base de datos de informes tiene los mismos requisitos de capacidad de almacenamiento que el servidor de base de datos de producción. Los informes de rendimiento de escritura son iguales que los de producción, pero las características de la carga de trabajo de lectura son diferentes y tienen un tamaño diferente.
+* *Soporta solo lectura* Este servidor de base de datos es opcional y no se muestra la figura a continuación. También se puede implementar un servidor de base de datos de réplica para admitir la funcionalidad de solo lectura, en la cual se proporciona acceso a una copia de producción en modo de solo lectura. Este tipo de servidor de base de datos se puede cambiar al modo de lectura/escritura por motivos de continuidad del negocio.
+* *Recuperación de desastres* Para cumplir con los objetivos de continuidad del negocio y recuperación ante desastres, un servidor de base de datos de réplica de recuperación ante desastres se implementa comúnmente en un sitio geográficamente separado de los servidores de base de datos de réplica de producción y/o informes. Un servidor de bases de datos duplicado de recuperación ante desastres también aloja un servidor de datos Iris configurado como una copia de seguridad del servidor de datos Iris de producción. Si la ubicación de producción deja de estar disponible durante un tiempo prolongado, este servidor de base de datos de réplica de copia de seguridad se puede configurar para que actúe como instancia de lectura/escritura de reflejo (SRW). El servidor de bases de datos de duplicación de respaldo tiene los mismos requisitos de almacenamiento de archivos que el servidor de bases de datos de producción. En cambio, el almacenamiento de base de datos de réplica de backup tiene el mismo tamaño que el almacenamiento de producción desde una perspectiva del rendimiento a efectos de continuidad del negocio.
+
+
+image:epic-iris-odb.png["Epic IRIS ODB"]
+
+* *Test* Las organizaciones de atención médica a menudo implementan entornos de desarrollo, pruebas y puesta en escena. Otros servidores de datos Iris para estos entornos también requieren almacenamiento, que se puede alojar mediante el mismo sistema de almacenamiento. Epic tiene requisitos y limitaciones específicos para ofrecer almacenamiento adicional a partir de un sistema de almacenamiento compartido. Estos requisitos específicos se abordan genéricamente mediante las mejores prácticas de este documento.
+
+
+Además de los servidores de datos Iris ODB, los entornos de software Epic suelen incluir otros componentes como los siguientes y como se muestra en la siguiente figura:
+
+* Un servidor de bases de datos de Oracle o Microsoft SQL Server como back-end de las claras herramientas de creación de informes empresariales de Epic
+
+
+
+NOTE: Clarity se utiliza para generar informes sobre los datos extraídos diariamente de la base de datos Iris de informes.
+
+* Servidor WebBLOB (SMB)
+* Servidor de bases de datos multiuso
+* Máquinas virtuales de uso múltiple (VM)
+* Hiperespacio para el acceso de clientes
+
+
+image:epic-databases.png["Base de datos épica"]
+
+Los requisitos de almacenamiento de todas estas diferentes cargas de trabajo, pools, protocolos NAS y SAN se pueden consolidar y alojar en un único clúster de ONTAP. Esta consolidación permite a las organizaciones sanitarias tener una sola estrategia de gestión de datos para todas las cargas de trabajo de Epic y de las que no son de Epic.
+
+
+
+== Cargas de trabajo de bases de datos operativas
+
+Cada servidor de bases de datos de Epic realiza I/O en los siguientes tipos de archivos:
+
+* Archivos de base de datos
+* Archivos de diario
+* Archivos de aplicación
+
+
+La carga de trabajo de un servidor de base de datos individual depende de su papel en el entorno de software de Epic. Por ejemplo, los archivos de la base de datos de producción normalmente conllevan la carga de trabajo más exigente, que consiste en un 100% de solicitudes de I/O aleatorias. La carga de trabajo de cualquier base de datos reflejada suele ser menos exigente y tiene menos solicitudes de lectura. Las cargas de trabajo de archivos de diarios son principalmente secuenciales.
+
+Epic mantiene un modelo de carga de trabajo para las pruebas de rendimiento del almacenamiento y la carga de trabajo del cliente. Para obtener más información acerca del modelo de carga de trabajo de Epic, los resultados de la prueba de rendimiento y las directrices sobre el uso de herramientas de ajuste de tamaño de NetApp para dimensionar correctamente el almacenamiento para entornos Epic, consulte https://fieldportal.netapp.com/content/192412?assetComponentId=192510["TR-3930i: Directrices de configuración de NetApp para Epic"^] (se requiere inicio de sesión en NetApp).
+
+Epic también proporciona a cada cliente una guía de configuración de hardware personalizada que contiene proyecciones de I/O y los requisitos de capacidad de almacenamiento. Los requisitos de almacenamiento finales pueden incluir entornos de desarrollo, prueba o almacenamiento provisional, así como cualquier otra carga de trabajo complementaria que pueda consolidarse. Los clientes pueden utilizar la guía de configuración de hardware para comunicar los requisitos totales de almacenamiento a NetApp. Esta guía contiene todos los datos necesarios para configurar una puesta en marcha de Epic.
+
+Durante la fase de implementación, Epic proporciona una Guía de distribución de almacenamiento de base de datos, que proporciona detalles más granulares a nivel de LUN que pueden usarse para un diseño de almacenamiento avanzado. Tenga en cuenta que la Guía de diseño de almacenamiento de base de datos es una recomendación de almacenamiento general y no específica de NetApp. Utilice esta guía para determinar el mejor diseño de almacenamiento en NetApp.

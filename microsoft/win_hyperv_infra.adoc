@@ -10,7 +10,7 @@ summary: Infraestructura de almacenamiento de Hyper-V con ONTAP
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]
@@ -78,7 +78,7 @@ Cada equipo virtual en Hyper-V puede, a su vez, proporcionarse con los LUN de Ne
 
 == Transferencia de datos descargada
 
-Microsoft ODX, también conocido como copia de datos descargados, habilita transferencias de datos directas dentro del dispositivo de almacenamiento o entre dispositivos de almacenamiento compatibles sin transferir los datos a través de la computadora del host. NetApp ONTAP admite la función ODX para los protocolos CIFS y SAN. ODX puede mejorar el rendimiento potencialmente si las copias se encuentran en el mismo volumen, reducir la utilización de la CPU y la memoria en el cliente y reducir la utilización de ancho de banda de I/O de la red.
+Microsoft ODX, también conocido como copia de datos descargados, habilita transferencias de datos directas dentro del dispositivo de almacenamiento o entre dispositivos de almacenamiento compatibles sin transferir los datos a través de la computadora del host. ONTAP admite la función ODX para los protocolos CIFS y SAN. ODX puede mejorar el rendimiento potencialmente si las copias se encuentran en el mismo volumen, reducir la utilización de la CPU y la memoria en el cliente y reducir la utilización de ancho de banda de I/O de la red.
 
 Con ODX, es más rápido y eficiente copiar archivos dentro de los recursos compartidos SMB, dentro de las LUN y entre los recursos compartidos SMB y las LUN si está en el mismo volumen. Este método es más útil en una situación para la que se necesitan varias copias de la imagen maestra de un sistema operativo (VHD/VHDX) en el mismo volumen. Se pueden realizar varias copias de la misma imagen maestra en un tiempo considerablemente menor si las copias se encuentran en el mismo volumen. ODX también se aplica en almacenamiento de Hyper-V para mover almacenamiento de máquinas virtuales.
 
@@ -134,7 +134,7 @@ Para obtener más información acerca de ODX, consulte https://docs.netapp.com/u
 
 Los clusters de conmutación por error proporcionan alta disponibilidad y escalabilidad a los servidores de Hyper-V. Un cluster de recuperación tras fallos es un grupo de servidores Hyper-V independientes que funcionan conjuntamente para aumentar la disponibilidad y la escalabilidad de los equipos virtuales.
 
-Los servidores en clúster de Hyper-V (denominados nodos) están conectados por la red física y por el software de clúster. Estos nodos utilizan almacenamiento compartido para almacenar los archivos de la máquina virtual, lo que incluye archivos de configuración, archivos de disco duro virtual (VHD) y copias Snapshot. El almacenamiento compartido puede ser un recurso compartido SMB/CIFS de NetApp o un volumen compartido en cluster encima de una LUN de NetApp, como se muestra en la figura 6. Este almacenamiento compartido proporciona un espacio de nombres consistente y distribuido a los que todos los nodos del cluster pueden acceder de forma simultánea. Por lo tanto, si un nodo falla en el clúster, el otro nodo proporciona servicio mediante un proceso llamado conmutación al respaldo. Los clústeres de conmutación por error se pueden gestionar mediante el complemento Administrador de clúster de conmutación por error y los cmdlets de Windows PowerShell de agrupación en clúster de conmutación por error.
+Los servidores en clúster de Hyper-V (denominados nodos) están conectados por la red física y por el software de clúster. Estos nodos utilizan almacenamiento compartido para almacenar los archivos de la máquina virtual, lo que incluye archivos de configuración, archivos de disco duro virtual (VHD) y copias Snapshot. El almacenamiento compartido puede ser un recurso compartido SMB/CIFS de NetApp o un volumen compartido en cluster sobre un LUN de NetApp, como se muestra a continuación. Este almacenamiento compartido proporciona un espacio de nombres consistente y distribuido a los que todos los nodos del cluster pueden acceder de forma simultánea. Por lo tanto, si un nodo falla en el clúster, el otro nodo proporciona servicio mediante un proceso llamado conmutación al respaldo. Los clústeres de conmutación por error se pueden gestionar mediante el complemento Administrador de clúster de conmutación por error y los cmdlets de Windows PowerShell de agrupación en clúster de conmutación por error.
 
 
 
@@ -200,7 +200,7 @@ Para obtener más información sobre la puesta en marcha de la migración en viv
 
 Puede migrar en vivo una máquina virtual entre dos servidores de Hyper-V independientes y no agrupados en clúster. Este proceso puede utilizar una migración dinámica sin uso compartido o sin uso compartido.
 
-* En la migración dinámica compartida, la máquina virtual se almacena en un recurso compartido de SMB. Por lo tanto, cuando migra una máquina virtual en vivo, el almacenamiento de la máquina virtual permanece en el recurso compartido SMB central para que el otro nodo pueda acceder de forma instantánea, como se muestra en la siguiente figura.
+* En la migración dinámica compartida, la máquina virtual se almacena en un recurso compartido de SMB. Por lo tanto, cuando migra una máquina virtual en vivo, el almacenamiento de la máquina virtual permanece en el recurso compartido SMB central para que el otro nodo pueda acceder de forma instantánea, como se muestra a continuación.
 
 
 image:win_image8.png["Migración dinámica compartida en un entorno no agrupado,width=331,height=271"]

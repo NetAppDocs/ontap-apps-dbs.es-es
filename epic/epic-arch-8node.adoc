@@ -1,0 +1,26 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-arch-8node.html 
+keywords: epic,cache,iris 
+summary: Arquitectura épica de ocho nodos 
+---
+= Arquitectura épica de ocho nodos
+:allow-uri-read: 
+
+
+[role="lead"]
+Las siguientes figuras muestran la arquitectura de ocho nodos de escalado horizontal. De nuevo, puede empezar con cuatro nodos y escalar hasta seis nodos, y continuar escalando hasta ocho nodos y superiores. Esta arquitectura ofrece el mejor equilibrio de rendimiento y capacidad en los seis nodos de producción.
+
+Los entornos de prueba se clonan de Report en lugar de Production en este diseño. Esto libera los entornos de prueba y las comprobaciones de integridad de la producción.
+
+
+
+== Arquitectura de ocho nodos
+
+image:epic-8node.png["Arquitectura épica de 4 nodos"]
+
+
+
+== Ubicación de cargas de trabajo en ocho nodos
+
+image:epic-8node-design.png["Ubicación Epic de 8 nodos"]

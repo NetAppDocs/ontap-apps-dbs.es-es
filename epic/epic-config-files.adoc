@@ -1,0 +1,19 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-config-files.html 
+keywords: epic,cache,iris 
+summary: Epic y protocolos de archivo 
+---
+= Epic y protocolos de archivo
+:allow-uri-read: 
+
+
+[role="lead"]
+Es compatible con la combinación de NAS y SAN en la misma cabina all-flash.
+
+[TIP]
+====
+*NetApp recomienda* usar volúmenes FlexGroup para recursos compartidos NAS, como WebBLOB (cuando esté disponible).
+
+====
+WebBLOB es hasta un 95% de datos inactivos. Otra opción es liberar espacio en su cabina all-flash y organizar en niveles los backups y los datos fríos al almacenamiento de objetos en las instalaciones o en el cloud con link:https://docs.netapp.com/us-en/ontap/fabricpool/index.html["FabricPool"^]la función de ONTAP. Todo lo cual se puede lograr sin ningún efecto de rendimiento notable. FabricPool es una función incluida de ONTAP. Los clientes pueden generar un informe de datos fríos (o inactivos) para revisar el beneficio que podría obtener si habilita FabricPool. Puede establecer la antigüedad de los datos en niveles mediante la política. Los clientes de Epic han obtenido ahorros significativos con esta función.

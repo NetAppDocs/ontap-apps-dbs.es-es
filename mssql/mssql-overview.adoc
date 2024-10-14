@@ -17,26 +17,27 @@ NOTE: Esta documentación sustituye al informe técnico publicado previamente _T
 
 NetApp asume que el lector tiene conocimiento práctico de lo siguiente:
 
-* Software ONTAP
+* ONTAP
+* Arquitectura y administración de Microsoft SQL Server
+* Software de backup SnapCenter, incluidos los siguientes componentes:
 * NetApp SnapCenter como software de backup, que incluye:
 +
 ** Plugin de SnapCenter para Microsoft Windows
 ** Plugin de SnapCenter para SQL Server
 
 
-* Arquitectura y administración de Microsoft SQL Server
 
 
-El alcance de esta sección de mejores prácticas se limita al diseño técnico basado en los principios de diseño y estándares preferidos que NetApp recomienda para la infraestructura de almacenamiento. La implementación integral está fuera del alcance.
+El alcance de esta sección de mejores prácticas se limita al diseño técnico basado en los principios y estándares preferidos que NetApp recomienda para la infraestructura de almacenamiento. La implementación integral está fuera del alcance.
 
-Para obtener información sobre la compatibilidad de la configuración en los productos de NetApp, consulte link:https://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad de NetApp (IMT)"^].
+Para obtener información sobre compatibilidad de los productos de NetApp, consulte la link:https://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad de NetApp (IMT)"^].
 
 
 
 == Cargas de trabajo de Microsoft SQL Server
 
-Antes de implementar SQL Server, debe comprender los requisitos de carga de trabajo de base de datos de las aplicaciones que admiten las instancias de SQL Server. Cada aplicación tiene requisitos distintos en cuanto a capacidad, rendimiento y disponibilidad, por lo que cada base de datos debería estar diseñada para satisfacer de forma óptima dichos requisitos. Muchas organizaciones clasifican las bases de datos en varios niveles de gestión utilizando los requisitos de las aplicaciones para definir acuerdos de nivel de servicios. Las cargas de trabajo de SQL Server se pueden describir de la siguiente manera:
+Antes de implementar SQL Server, debe entender los requisitos de la carga de trabajo de las aplicaciones que admiten las instancias de bases de datos de SQL Server. Cada aplicación tiene requisitos distintos en cuanto a capacidad, rendimiento y disponibilidad, por lo que cada base de datos debería estar diseñada para satisfacer de forma óptima dichos requisitos. Muchas organizaciones clasifican las bases de datos en varios niveles de gestión utilizando los requisitos de las aplicaciones para definir acuerdos de nivel de servicios. Las cargas de trabajo de SQL Server a menudo se clasifican como se describen a continuación:
 
-* Las bases de datos OLTP suelen ser también las más cruciales de una organización. Estas bases de datos, por lo general, generan aplicaciones orientadas al cliente y se consideran esenciales para las operaciones principales de la compañía. Las bases de datos OLTP críticas para la misión y las aplicaciones a las que dan soporte a menudo tienen SLA que requieren altos niveles de rendimiento y son sensibles a la degradación del rendimiento y a la disponibilidad. También pueden ser candidatos para Always On Failover Clusters o Always On Availability Groups. La combinación de I/O de estos tipos de bases de datos suele caracterizarse por un 75 % a un 90 % de las lecturas aleatorias y entre un 25 % y un 10 % de las escrituras.
-* Las bases de datos de sistema de soporte para la toma de decisiones (DSS) también se pueden denominar almacenes de datos. Estas bases de datos son cruciales en muchas organizaciones que dependen de los análisis para sus empresas. Estas bases de datos son sensibles al uso de la CPU y a las operaciones de lectura del disco cuando se ejecutan consultas. En muchas organizaciones, las bases de datos de DSS son las más críticas durante el mes, el trimestre y el final del año Por lo general, esta carga de trabajo tiene una combinación de I/O de lectura al 100 %.
+* OLTP, que suelen ser las bases de datos más cruciales de una organización. Estas bases de datos, por lo general, generan aplicaciones orientadas al cliente y se consideran esenciales para las operaciones principales de la compañía. Las bases de datos OLTP críticas para la misión y las aplicaciones a las que dan soporte suelen tener SLA que requieren un alto rendimiento, son sensibles a la degradación del rendimiento y requieren una disponibilidad máxima. También pueden ser candidatos para Always On Failover Clusters o Always On Availability Groups. La combinación de I/O en estos tipos de bases de datos suele caracterizarse por un 75 % a un 90 % de las lecturas aleatorias y entre un 25 % y un 10 % de las escrituras.
+* Bases de datos del sistema de soporte para la toma de decisiones (DSS), a veces denominadas almacenes de datos. Estas bases de datos son cruciales para el negocio de muchas organizaciones que dependen de los análisis de sus empresas. Estas bases de datos son sensibles al uso de la CPU y a las operaciones de lectura del disco cuando se ejecutan consultas. En muchas organizaciones, las bases de datos de DSS son las más críticas durante el mes, el trimestre y el final del año Esta carga de trabajo suele tener una combinación de I/O de lectura de casi el 100 % y el rendimiento de I/O suele ser más importante que IOPS.
 

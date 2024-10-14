@@ -158,16 +158,48 @@ entries:
       url: "/oracle/oracle-dr-mcc-rac.html"
   - title: SnapMirror síncrono activo
     entries:
-    - title: Arquitectura
-      url: "/oracle/oracle-dr-smbc-architecture.html"
-    - title: Conmutación al respaldo
-      url: "/oracle/oracle-dr-smbc-failover.html"
-    - title: Oracle SI con sincronización activa de SnapMirror
-      url: "/oracle/oracle-dr-smbc-si.html"
-    - title: Oracle RAC con sincronización activa de SnapMirror
-      url: "/oracle/oracle-dr-smbc-rac.html"
+    - title: Descripción general
+      url: "/oracle/oracle-dr-smas-overview.html"
+    - title: Mediador ONTAP
+      url: "/oracle/oracle-dr-smas-mediator.html"
+    - title: Sitio preferido
+      url: "/oracle/oracle-dr-smas-preferred-site.html"
+    - title: Topología de red
+      entries:
+      - title: Acceso uniforme
+        url: "/oracle/oracle-dr-smas-uniform.html"
+      - title: Acceso no uniforme
+        url: "/oracle/oracle-dr-smas-nonuniform.html"
+    - title: Configuraciones de Oracle
+      entries:
+      - title: Descripción general
+        url: "/oracle/oracle-dr-smas-arch-overview.html"
+      - title: Instancia única de Oracle
+        url: "/oracle/oracle-dr-smas-arch-si.html"
+      - title: Oracle RAC
+        url: "/oracle/oracle-dr-smas-arch-rac.html"
+      - title: Oracle RAC y tiebreakers
+        url: "/oracle/oracle-dr-smas-arch-tiebreaker.html"
     - title: Escenarios de fallo
-      url: "/oracle/oracle-dr-smbc-failure-scenarios.html"
+      entries:
+      - title: Descripción general
+        url: "/oracle/oracle-dr-smas-fail-overview.html"
+      - title: Arquitectura de ejemplo
+        url: "/oracle/oracle-dr-smas-fail-sample.html"
+      - title: Fallo de interconexión de RAC
+        url: "/oracle/oracle-dr-smas-fail-interconnect.html"
+      - title: Fallo de comunicación de SnapMirror
+        url: "/oracle/oracle-dr-smas-fail-snapmirror.html"
+      - title: Fallo total de interconexión de red
+        url: "/oracle/oracle-dr-smas-fail-repl.html"
+      - title: Error en el centro
+        url: "/oracle/oracle-dr-smas-fail-site.html"
+      - title: Fallo del mediador
+        url: "/oracle/oracle-dr-smas-fail-mediator.html"
+      - title: Restauración del servicio tras un fallo
+        url: "/oracle/oracle-dr-smas-fail-restore.html"
+      - title: Conmutaciones al respaldo manuales
+        url: "/oracle/oracle-dr-smas-fail-manual.html"
 - title: Migración de bases de datos de Oracle
   entries:
   - title: Descripción general

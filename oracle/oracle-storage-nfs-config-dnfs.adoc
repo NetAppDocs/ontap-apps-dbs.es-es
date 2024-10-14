@@ -42,4 +42,4 @@ Cuando se utilizan las opciones de montaje para bases de datos de instancia úni
 Cambie las opciones de montaje solo cuando (a) se utiliza dNFS y (b) se produce un problema debido a un desfase en la visibilidad de los archivos. Si no se utiliza dNFS, el rendimiento se reduce al utilizar las opciones de montaje de Oracle RAC en una base de datos de instancia única.
 
 
-NOTE: Consulte la nota acerca de `nosharecache` pulg link:../host-configuration/linux.html#linux-direct-nfs["Opciones de montaje de Linux NFS"] Para un problema de dNFS específico de Linux que puede producir resultados inusuales.
+NOTE: Consulte la nota `nosharecache` sobre en link:oracle-host-config-linux.html#linux-direct-nfs["Opciones de montaje de Linux NFS"] para ver un problema de dNFS específico de Linux que puede producir resultados inusuales.

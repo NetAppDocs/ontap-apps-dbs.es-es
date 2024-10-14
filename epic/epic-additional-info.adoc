@@ -1,0 +1,34 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-additional-info.html 
+keywords: epic,cache,iris 
+summary: Información adicional sobre Epic en ONTAP 
+---
+= Información adicional sobre Epic en ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+Para obtener más información sobre la información descrita en este documento, consulte los siguientes documentos y/o sitios web:
+
+* link:https://www.netapp.com/us/documentation/index.aspx["Documentación de productos de NetApp"^]
+* link:https://docs.netapp.com/us-en/ontap/index.html["Documentación de ONTAP 9"^]
+* link:https://docs.netapp.com/us-en/ontap/consistency-groups/#learn-about-consistency-groups["Grupos de consistencia"^]
+* link:https://www.netapp.com/us/documentation/ontap-and-oncommand-system-manager.aspx["Recursos de documentación de ONTAP y ONTAP System Manager"^]
+* link:https://fieldportal.netapp.com/content/192412?assetComponentId=192510["TR-3930i: Directrices de configuración de NetApp para Epic"^] (Se requiere inicio de sesión NetApp)
+
+
+
+
+== Documentos de orientación al cliente épica
+
+Epic proporciona a los clientes los siguientes documentos para obtener orientación sobre servidores, almacenamiento y redes. Estos documentos se mencionan en este informe técnico.
+
+* Consideraciones sobre la red de área de almacenamiento
+* Guía de soluciones técnicas para la continuidad del negocio
+* Manual de estrategia de la arquitectura de referencia all-flash
+* Estado de productos de almacenamiento y tecnología
+* Consideraciones de cloud épicas
+* Guía de configuración de hardware (específica del cliente)
+* Recomendaciones sobre distribución de almacenamiento de base de datos (específicas del cliente)
+

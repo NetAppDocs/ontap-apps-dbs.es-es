@@ -10,9 +10,9 @@ summary: Consideración del almacenamiento de Microsoft SQL Server
 
 
 [role="lead"]
-La combinación de las soluciones de almacenamiento de ONTAP y Microsoft SQL Server permite crear diseños de almacenamiento de base de datos de nivel empresarial que satisfacen los requisitos de aplicaciones más exigentes en la actualidad.
+La combinación de las soluciones de almacenamiento de ONTAP y Microsoft SQL Server permite diseñar un almacenamiento de base de datos de nivel empresarial que puede satisfacer los requisitos de aplicaciones más exigentes de hoy en día.
 
-Para optimizar ambas tecnologías, es vital comprender el patrón y las características de E/S de SQL Server. Gracias a una buena distribución de almacenamiento para una base de datos de SQL Server, el rendimiento de SQL Server y la gestión de la infraestructura de SQL Server. Una buena distribución de almacenamiento también permite que la puesta en marcha inicial tenga éxito y que el entorno crezca sin problemas con el tiempo a medida que crece el negocio.
+La optimización de una solución SQL Server en ONTAP requiere comprender el patrón y las características de E/S de SQL Server. Una buena distribución del almacenamiento para una base de datos de SQL Server debe soportar los requisitos de rendimiento de SQL Server y proporcionar la máxima capacidad de gestión de la infraestructura en su conjunto. Una buena distribución de almacenamiento también permite que la puesta en marcha inicial tenga éxito y que el entorno crezca sin problemas con el tiempo a medida que crece el negocio.
 
 
 
@@ -38,7 +38,7 @@ Para alta disponibilidad (HA), colocar la réplica síncrona secundaria de SQL S
 
 == Volúmenes
 
-Los volúmenes NetApp FlexVol se crean y residen dentro de los agregados. Este término a veces provoca confusión porque un volumen ONTAP no es una LUN.  Un volumen ONTAP es un contenedor de gestión para datos. Un volumen puede contener archivos, LUN o incluso objetos S3. Un volumen no ocupa espacio, solo se utiliza para la gestión de los datos contenidos.
+los volúmenes se crean y residen dentro de los agregados. Este término a veces provoca confusión porque un volumen ONTAP no es una LUN. Un volumen ONTAP es un contenedor de gestión para datos. Un volumen puede contener archivos, LUN o incluso objetos S3. Un volumen no ocupa espacio, solo se utiliza para la gestión de los datos contenidos.
 
 
 
@@ -49,12 +49,12 @@ Antes de crear un diseño de volumen de base de datos, es importante comprender 
 * Evite compartir volúmenes entre hosts. Por ejemplo, aunque sería posible crear 2 LUN en un único volumen y compartir cada LUN en un host diferente, esto debe evitarse porque puede complicar la gestión.
 * Utilice puntos de montaje NTFS en lugar de letras de unidad para superar la limitación de 26 unidades en Windows. Cuando se usan puntos de montaje de volumen, se recomienda generalmente asignar a la etiqueta de volumen el mismo nombre que el punto de montaje.
 * Cuando sea necesario, configure una política de tamaño automático de volúmenes para ayudar a evitar condiciones de falta de espacio. 17 Guía de mejores prácticas para Microsoft SQL Server con ONTAP © 2022 NetApp, Inc. Todos los derechos reservados.
-* Si instala SQL Server en un recurso compartido de SMB, asegúrese de que Unicode esté habilitado en los volúmenes SMB/CIFS para crear carpetas.
+* Si instala SQL Server en un recurso compartido de SMB, asegúrese de que Unicode esté habilitado en los volúmenes de SMB para crear carpetas.
 * Establezca el valor de reserva de instantáneas en el volumen en cero para facilitar la supervisión desde una perspectiva operativa.
 * Deshabilite las programaciones de Snapshot y las políticas de retención. En su lugar, utilice SnapCenter para coordinar las copias Snapshot de los volúmenes de datos de SQL Server.
 * Coloque las bases de datos del sistema SQL Server en un volumen dedicado.
 * Tempdb es una base de datos del sistema utilizada por SQL Server como espacio de trabajo temporal, especialmente para operaciones DBCC CHECKDB intensivas en E/S. Por lo tanto, coloque esta base de datos en un volumen dedicado con un conjunto de discos separado. En entornos grandes en los que el número de volúmenes es un reto, puede consolidar tempdb en menos volúmenes y almacenarlo en el mismo volumen que otras bases de datos del sistema tras una planificación cuidadosa. La protección de datos para tempdb no es una prioridad alta porque esta base de datos se vuelve a crear cada vez que se reinicia SQL Server.
-* Coloque los archivos de datos de usuario (.mdf) en volúmenes independientes debido a que son cargas de trabajo de lectura/escritura aleatorias. Es común crear backups de registros de transacciones con más frecuencia que los backups de bases de datos. Por este motivo, coloque los archivos de registro de transacciones (.ldf) en un volumen o VMDK separados de los archivos de datos para poder crear programaciones de backup independientes para cada uno. Esta separación también aísla la E/S de escritura secuencial de los archivos de registro de la E/S de lectura/escritura aleatoria de los archivos de datos y mejora significativamente el rendimiento de SQL Server.
+* Colocar archivos de datos de usuario (`.mdf`) en volúmenes separados porque son cargas de trabajo de lectura/escritura aleatorias. Es común crear backups de registros de transacciones con más frecuencia que los backups de bases de datos. Por este motivo, coloque los archivos de registro de transacciones (`.ldf`) en un volumen o VMDK separados de los archivos de datos para que puedan crearse programaciones de backup independientes para cada uno. Esta separación también aísla la E/S de escritura secuencial de los archivos de registro de la E/S de lectura/escritura aleatoria de los archivos de datos y mejora significativamente el rendimiento de SQL Server.
 
 
 
@@ -62,8 +62,8 @@ Antes de crear un diseño de volumen de base de datos, es importante comprender 
 == LUN
 
 * Asegúrese de que los archivos de la base de datos del usuario y el directorio de registro para almacenar backup de registros se encuentren en volúmenes independientes para evitar que la política de retención sobrescriba las snapshots cuando estas se usen con la tecnología SnapVault.
-* Asegúrese de que las bases de datos de SQL Server residen en LUN independientes de los LUN que tienen archivos que no son de base de datos, como los archivos relacionados con búsqueda de texto completo.
-* La colocación de archivos secundarios de base de datos (como parte de un grupo de archivos) en volúmenes distintos mejora el rendimiento de la base de datos de SQL Server. Esta separación solo es válida si el archivo .mdf de la base de datos no comparte su LUN con ningún otro archivo .mdf.
+* No mezcle archivos de base de datos ni de otro tipo, como archivos relacionados con la búsqueda de texto completo, en el mismo LUN.
+* La colocación de archivos secundarios de base de datos (como parte de un grupo de archivos) en volúmenes distintos mejora el rendimiento de la base de datos de SQL Server. Esta separación solo es válida si el archivo de la base de datos `.mdf`` no comparte su LUN con ningún otro `.mdf` archivo.
 * Si crea LUN con DiskManager u otras herramientas, asegúrese de que el tamaño de unidad de asignación esté establecido en 64K para las particiones al formatear las LUN.
 * Consulte link:https://www.netapp.com/media/10680-tr4080.pdf["Microsoft Windows e MPIO nativo bajo las prácticas recomendadas de ONTAP para SAN moderna"] Para aplicar la compatibilidad con accesos múltiples en Windows a dispositivos iSCSI en las propiedades MPIO.
 

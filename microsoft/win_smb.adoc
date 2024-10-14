@@ -10,7 +10,7 @@ summary: Almacenamiento NAS de ONTAP para Hyper-V usando SMB3
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]
@@ -61,7 +61,7 @@ cluster::> system services ntp server create â€“server $domainControllerIP
 
 . Cree una nueva SVM con el protocolo NAS CIFS habilitado. Una SVM nueva se puede crear con cualquiera de los siguientes métodos:
 +
-** Comandos de la CLI en NetApp ONTAP
+** Comandos de la CLI en ONTAP
 ** System Manager
 ** El kit de herramientas PowerShell de NetApp
 
@@ -84,14 +84,14 @@ cluster::> system services ntp server create â€“server $domainControllerIP
 
 === Integración de host
 
-El protocolo NAS CIFS está integrado de manera nativa en ONTAP. Por lo tanto, Windows Server no requiere ningún software cliente adicional para acceder a los datos en NetApp ONTAP. Aparece una controladora de almacenamiento de NetApp en la red como servidor de archivos nativo y admite la autenticación de Microsoft Active Directory.
+El protocolo NAS CIFS está integrado de manera nativa en ONTAP. Por lo tanto, Windows Server no requiere ningún software cliente adicional para acceder a los datos en ONTAP. Aparece una controladora de almacenamiento de NetApp en la red como servidor de archivos nativo y admite la autenticación de Microsoft Active Directory.
 
 Para detectar el recurso compartido de CIFS creado anteriormente con Windows Server, lleve a cabo los siguientes pasos:
 
 . Inicie sesión en Windows Server como miembro del grupo de administradores.
 . Vaya a run.exe y escriba la ruta completa del recurso compartido CIFS creado para acceder al recurso compartido.
 . Para asignar de forma permanente el recurso compartido en Windows Server, haga clic con el botón derecho en este equipo, haga clic en Asignar unidad de red y proporcione la ruta del recurso compartido CIFS.
-. Algunas tareas de gestión de CIFS pueden realizarse usando Microsoft Management Console (MMC). Antes de realizar estas tareas, debe conectar el MMC al almacenamiento NetApp ONTAP mediante los comandos del menú MMC.
+. Algunas tareas de gestión de CIFS pueden realizarse usando Microsoft Management Console (MMC). Antes de realizar estas tareas, debe conectar el MMC al almacenamiento ONTAP mediante los comandos del menú MMC.
 +
 .. Para abrir MMC en Windows Server, haga clic en Administración de equipos en la sección Herramientas del Administrador del servidor.
 .. Haga clic en Más acciones y Conectarse a otro equipo, lo que abre el cuadro de diálogo Seleccionar equipo.
@@ -108,7 +108,7 @@ Para detectar el recurso compartido de CIFS creado anteriormente con Windows Ser
 * Para confirmar que no hay tiempo de inactividad cuando un volumen se mueve de un nodo a otro o en caso de fallo de un nodo, NetApp recomienda habilitar la opción de disponibilidad continua en el recurso compartido de archivos.
 * Cuando se aprovisionan equipos virtuales para un entorno de Hyper-V a través de SMB, NetApp le recomienda que habilite la copia de datos descargados en el sistema de almacenamiento. De este modo, se reduce el tiempo de aprovisionamiento de las máquinas virtuales.
 * Si el clúster de almacenamiento aloja varias cargas de trabajo de SMB como SQL Server, Hyper-V y CIFS, NetApp recomienda alojar diferentes cargas de trabajo de SMB en SVM separadas en agregados separados. Esta configuración es ventajosa porque cada una de estas cargas de trabajo garantiza distribuciones por volúmenes y redes de almacenamiento únicas.
-* NetApp recomienda conectar los hosts de Hyper-V y el almacenamiento NetApp ONTAP con una red 10GB GbE, si hay alguno disponible. En el caso de la conectividad de red de 1GB GbE, NetApp recomienda crear un grupo de interfaces que consta de varios puertos 1GB GbE.
+* NetApp recomienda conectar los hosts de Hyper-V y el almacenamiento ONTAP con una red 10GB GbE, si hay alguno disponible. En el caso de la conectividad de red de 1GB GbE, NetApp recomienda crear un grupo de interfaces que consta de varios puertos 1GB GbE.
 * Cuando se migran máquinas virtuales de un recurso compartido SMB 3,0 a otro, NetApp recomienda habilitar la funcionalidad de descarga de la copia CIFS en el sistema de almacenamiento para que la migración sea más rápida.
 
 

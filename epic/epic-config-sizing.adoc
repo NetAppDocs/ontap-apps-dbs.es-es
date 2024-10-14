@@ -1,0 +1,17 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-config-sizing.html 
+keywords: epic,cache,iris 
+summary: Ajuste del tamaño del almacenamiento para Epic 
+---
+= Ajuste del tamaño del almacenamiento para Epic
+:allow-uri-read: 
+
+
+[role="lead"]
+Debe colaborar con nuestro equipo de la alianza de Epic para confirmar cualquier diseño de Epic. Puede ponerse en contacto con el equipo en Epic@NetApp.com. Cada puesta en marcha debe adaptarse a las solicitudes de los clientes a la vez que se cumplen las prácticas recomendadas por Epic y NetApp.
+
+Para obtener información sobre cómo utilizar las herramientas de configuración de NetApp para determinar el tamaño de los grupos de RAID y el número correctos de grupos RAID para las necesidades de almacenamiento de entorno de software Epic, consulte link:https://fieldportal.netapp.com/content/192412?assetComponentId=192510["TR-3930i: Directrices de configuración de NetApp para Epic"^] (se requiere inicio de sesión en NetApp).
+
+
+NOTE: Es necesario acceder a Field Portal de NetApp.

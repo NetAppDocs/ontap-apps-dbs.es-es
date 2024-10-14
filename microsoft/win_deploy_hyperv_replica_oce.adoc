@@ -10,7 +10,7 @@ summary: Este apéndice describe la implementación de la réplica de Hyper-V fu
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]

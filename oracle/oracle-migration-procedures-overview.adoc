@@ -24,7 +24,9 @@ No existe una práctica recomendada única para crear una estrategia de migraci�
 
 Por ejemplo, un paso plantea el problema del tamaño total de la base de datos. El siguiente paso depende de si la base de datos es mayor o menor que 1TB. Los pasos recomendados son simplemente eso: Recomendaciones basadas en las prácticas típicas del cliente. La mayoría de los clientes no utilizarían DataGuard para copiar una base de datos pequeña, pero algunos podrían. La mayoría de los clientes no intentarían copiar una base de datos de 50TB GB debido al tiempo necesario, pero algunos pueden tener una ventana de mantenimiento lo suficientemente grande como para permitir dicha operación.
 
-Puede encontrar un diagrama de flujo de los tipos de consideraciones sobre qué ruta de migración es la mejor link:/media/migration-options-flowchart.png["aquí"].
+El siguiente diagrama de flujo muestra los tipos de consideraciones sobre la ruta de migración que es mejor. Puede hacer clic con el botón derecho en la imagen y abrirla en una nueva pestaña para mejorar la legibilidad.
+
+image:migration-options-flowchart.png["Diagrama de flujo de migración"].
 
 
 

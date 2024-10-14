@@ -1,0 +1,61 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-example-overview.html 
+keywords: epic,cache,iris 
+summary: Epic en implementación de ejemplo de ONTAP 
+---
+= Epic en implementación de ejemplo de ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+Esta sección le llevará a través de una configuración avanzada completa de un clúster ONTAP, el aprovisionamiento y la presentación del almacenamiento a un servidor Epic.
+
+Para capturar detalles y facilitar la documentación, se utiliza la línea de comandos. Si la interfaz gráfica de usuario es preferida, puede aprovisionar toda la configuración en System Manager.
+
+Históricamente, la configuración inicial en bloque para proyectos más grandes suele ser más rápida utilizando los comandos que se muestran en la Tabla 1, especialmente si concatena los comandos en una hoja de trabajo. Esta lista de comandos también sirve como excelente documentación de compilación.
+
+Otra opción de aprovisionamiento consiste en utilizar scripts de automatización del día 0 y el día 1 con Ansible. NetApp tiene cientos de playbooks de Ansible disponibles para descargar, incluida la colección Ansible Galaxy a través del comando install NetApp.ONTAP de la colección ansible-galaxy.
+
+La interfaz gráfica de usuario también funciona perfectamente con una LUN de una sola página y un aprovisionamiento compartido. La GUI se utiliza mejor para operaciones al agregar, modificar o eliminar almacenamiento. Cualquiera de las opciones está bien si se aplican los valores de almacenamiento de prácticas recomendadas en la Tabla 1.
+
+La configuración completa del clúster y el aprovisionamiento de almacenamiento/host no deberían demorar más de una hora cuando se preconfiguran.
+
+*Configuración de almacenamiento de mejores prácticas*
+
+[cols="1,1"]
+|===
+
+
+| Ajuste | Valor 
+
+
+| Agregado | Aprovisionamiento automático predeterminado, un agregado de ADP por nodo con RAID DEP 
+
+
+| SVM | Dos SVM al utilizar multiprocol (Block SVM y SMB/NFS SVM). Use la convención de nomenclatura de protocolos y Epic. Utilice un estilo de seguridad adecuado 
+
+
+| Garantía de espacio de volumen | ninguno 
+
+
+| Política de copias de Snapshot de volumen | ninguno 
+
+
+| ajustar tamaño automáticamente del volumen | crezca 
+
+
+| ajuste automático del tamaño máximo del volumen | Un tamaño de 2t u 2 LUN 
+
+
+| eliminación automática de snapshots de volumen | activado 
+
+
+| Tamaño del volumen | 1,5 Tamaño de LUN 
+
+
+| Distribución de volúmenes | Distribuida incluso entre controladoras 
+
+
+| tipo de igroup | Sistema operativo cuando se utiliza con servidores físicos, el tipo VMware se utiliza con ESX. 
+|===

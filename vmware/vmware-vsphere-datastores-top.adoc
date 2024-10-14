@@ -14,7 +14,7 @@ summary: Esta página describe las mejores prácticas para implementar una soluc
 
 
 [role="lead"]
-Se utilizan siete protocolos para conectar VMware vSphere a almacenes de datos en un sistema que ejecuta el software ONTAP:
+Se utilizan siete protocolos para conectar VMware vSphere a almacenes de datos en un sistema que ejecuta ONTAP:
 
 * FCP
 * FCoE
@@ -138,7 +138,7 @@ En la siguiente tabla se enumeran las funciones de backup admitidas.
 
 == Seleccionar un protocolo de almacenamiento
 
-Los sistemas que ejecutan el software ONTAP admiten todos los protocolos de almacenamiento más importantes, por lo que los clientes pueden elegir cuál es la mejor opción para su entorno, en función de la infraestructura de red y la capacidad del personal actuales y planificadas. Por lo general, las pruebas de NetApp han mostrado poca diferencia entre protocolos que se ejecutan a velocidades de línea similares, por lo que es mejor centrarse en su infraestructura de red y en las capacidades del personal sobre el rendimiento del protocolo bruto.
+Los sistemas que se ejecutan en ONTAP son compatibles con los principales protocolos de almacenamiento, de modo que los clientes pueden elegir el que mejor se adapte a su entorno, en función de la infraestructura de red existente y las aptitudes previstas para el personal. Por lo general, las pruebas de NetApp han mostrado poca diferencia entre protocolos que se ejecutan a velocidades de línea similares, por lo que es mejor centrarse en su infraestructura de red y en las capacidades del personal sobre el rendimiento del protocolo bruto.
 
 Los siguientes factores pueden ser útiles a la hora de considerar una opción de protocolo:
 
@@ -174,14 +174,14 @@ Al migrar las máquinas virtuales desde un almacén de datos existente en otro s
 * Use Storage vMotion para mover la mayoría de los equipos virtuales a ONTAP. Este método no solo no es disruptivo para la ejecución de equipos virtuales, sino que también permite funciones de eficiencia del almacenamiento de ONTAP como deduplicación y compresión inline para procesar los datos a medida que migran. Considere usar funcionalidades de vCenter para seleccionar varias máquinas virtuales de la lista de inventario y programar la migración (utilice la tecla Ctrl mientras hace clic en acciones) en un momento adecuado.
 * Aunque podría planificar con cuidado la migración a los almacenes de datos de destino adecuados, a menudo es más sencillo migrar de forma masiva y luego organizarse más tarde, según sea necesario. Puede que desee utilizar este enfoque para guiar la migración a diferentes almacenes de datos si tiene necesidades específicas de protección de datos, como distintas programaciones de Snapshot.
 * La mayoría de los equipos virtuales y su almacenamiento pueden migrarse mientras se están ejecutando (en caliente), pero es posible que la migración de almacenamiento conectado (no en el almacén de datos), como ISO, LUN o volúmenes NFS desde otro sistema de almacenamiento requiera una migración de datos fría.
-* Los equipos virtuales que necesitan una migración más cuidadosa incluyen las bases de datos y las aplicaciones que utilizan almacenamiento conectado. En general, considere el uso de las herramientas de la aplicación para gestionar la migración. Para Oracle, considere la posibilidad de utilizar herramientas de Oracle como RMAN o ASM para migrar los archivos de base de datos. Consulte https://www.netapp.com/us/media/tr-4534.pdf["CONSULTE TR-4534"^] si quiere más información. Del mismo modo, para SQL Server, plantéese utilizar SQL Server Management Studio o herramientas de NetApp, como SnapManager para SQL Server o SnapCenter.
+* Los equipos virtuales que necesitan una migración más cuidadosa incluyen las bases de datos y las aplicaciones que utilizan almacenamiento conectado. En general, considere el uso de las herramientas de la aplicación para gestionar la migración. Para Oracle, considere la posibilidad de utilizar herramientas de Oracle como RMAN o ASM para migrar los archivos de base de datos. Consulte https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-migration-overview.html["Migración de bases de datos de Oracle a sistemas de almacenamiento de ONTAP"^] para obtener más información. Del mismo modo, para SQL Server, plantéese utilizar SQL Server Management Studio o herramientas de NetApp, como SnapManager para SQL Server o SnapCenter.
 
 
 
 
 == Herramientas de ONTAP para VMware vSphere
 
-Las mejores prácticas más importantes cuando se usa vSphere con sistemas que ejecutan el software ONTAP son instalar y utilizar las herramientas de ONTAP para el complemento VMware vSphere (antes llamado Virtual Storage Console). Este complemento de vCenter simplifica la gestión del almacenamiento, mejora la disponibilidad y reduce los costes de almacenamiento y la sobrecarga operativa, ya sea mediante SAN o NAS. Utiliza prácticas recomendadas para el aprovisionamiento de almacenes de datos y optimiza la configuración del host ESXi para los tiempos de espera de multivía y HBA (que se describen en el apéndice B). Dado que es un complemento de vCenter, está disponible para todos los clientes web de vSphere que se conectan al servidor vCenter.
+La mejor práctica más importante cuando se usa vSphere con sistemas que ejecutan ONTAP es instalar y utilizar las herramientas de ONTAP para el complemento VMware vSphere (anteriormente conocido como Virtual Storage Console). Este complemento de vCenter simplifica la gestión del almacenamiento, mejora la disponibilidad y reduce los costes de almacenamiento y la sobrecarga operativa, ya sea mediante SAN o NAS. Utiliza prácticas recomendadas para el aprovisionamiento de almacenes de datos y optimiza la configuración del host ESXi para los tiempos de espera de multivía y HBA (que se describen en el apéndice B). Dado que es un complemento de vCenter, está disponible para todos los clientes web de vSphere que se conectan al servidor vCenter.
 
 El plugin también le ayuda a utilizar otras herramientas ONTAP en entornos de vSphere. Le permite instalar el complemento de NFS para VMware VAAI, que permite realizar copias de datos descargados en ONTAP para las operaciones de clonado de equipos virtuales, reservar espacio para archivos de disco virtual gruesos y descargar la copia Snapshot de ONTAP.
 
@@ -193,11 +193,11 @@ En general, NetApp recomienda el uso de las herramientas de ONTAP para la interf
 
 == Redes generales
 
-La configuración de ajustes de red cuando se usa vSphere con sistemas que ejecutan el software ONTAP es sencilla y similar a la de otra configuración de red. Estas son algunas cosas a tener en cuenta:
+La configuración de los ajustes de red cuando se utiliza vSphere con sistemas que ejecutan ONTAP es sencilla y similar a otra configuración de red. Estas son algunas cosas a tener en cuenta:
 
 * Hay que separar el tráfico de la red de almacenamiento de otras redes. Se puede lograr una red independiente a través de una VLAN dedicada o switches independientes para el almacenamiento. Si la red de almacenamiento comparte rutas físicas como los enlaces ascendentes, puede que necesite calidad de servicio o puertos adicionales para garantizar el ancho de banda suficiente. No conecte los hosts directamente al almacenamiento; utilice switches para que tengan rutas redundantes y permita que VMware HA funcione sin intervención alguna. Consulte link:vmware-vsphere-network.html["Conexión de red directa"] para obtener más información.
 * Las tramas gigantes se pueden utilizar si se desean y admiten en la red, especialmente si se utiliza iSCSI. Si se usan, asegúrese de que estén configurados de la misma forma en todos los dispositivos de red, VLAN, etc., en la ruta entre el almacenamiento y el host ESXi. De lo contrario, puede que observe problemas de rendimiento o conexión. La MTU también debe establecerse de forma idéntica en el switch virtual ESXi, el puerto de VMkernel y, además, en los puertos físicos o los grupos de interfaces de cada nodo ONTAP.
-* NetApp solo recomienda deshabilitar el control de flujo de red en los puertos de red de clúster dentro de un clúster de ONTAP. NetApp no ofrece otras recomendaciones para seguir las prácticas recomendadas para los puertos de red restantes que se usan para el tráfico de datos. Debe activar o desactivar según sea necesario. Consulte http://www.netapp.com/us/media/tr-4182.pdf["CONSULTE TR-4182"^] para obtener más fondo sobre el control de flujo.
+* NetApp solo recomienda deshabilitar el control de flujo de red en los puertos de red de clúster dentro de un clúster de ONTAP. NetApp no ofrece otras recomendaciones para seguir las prácticas recomendadas para los puertos de red restantes que se usan para el tráfico de datos. Debe activar o desactivar según sea necesario. Consulte https://www.netapp.com/pdf.html?item=/media/16885-tr-4182pdf.pdf["CONSULTE TR-4182"^] para obtener más información sobre el control de flujo.
 * Cuando las cabinas de almacenamiento ESXi y ONTAP están conectadas a redes de almacenamiento Ethernet, NetApp recomienda configurar los puertos Ethernet a los que se conectan estos sistemas como puertos periféricos del protocolo de árbol de expansión rápido (RSTP) o mediante la función PortFast de Cisco. NetApp recomienda habilitar la función de enlace troncal Spanning-Tree PortFast en entornos que utilizan la función Cisco PortFast y que tienen la conexión de enlaces VLAN 802.1Q habilitada tanto para el servidor ESXi como para las cabinas de almacenamiento ONTAP.
 * NetApp recomienda las siguientes prácticas recomendadas para la agregación de enlaces:
 +

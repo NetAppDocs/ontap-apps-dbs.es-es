@@ -38,7 +38,8 @@ Hay alguna diferencia en la gestión de una configuración VMSC con sincronizaci
 
 La creación de un clúster de vSphere HA es un proceso de varios pasos que se documenta completamente en https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-vcenter-esxi-management/GUID-F7818000-26E3-4E2A-93D2-FCDCE7114508.html["Cómo se crean y configuran clústeres en vSphere Client en docs.vmware.com"]. En resumen, primero debe crear un clúster vacío y, después, utilizando vCenter, debe añadir hosts y especificar la alta disponibilidad de vSphere y otros ajustes del clúster.
 
-*Nota:* Nada en este documento reemplaza https://core.vmware.com/resource/vmware-vsphere-metro-storage-cluster-recommended-practices["Prácticas recomendadas para VMware vSphere Metro Storage Cluster"]
+
+NOTE: Nada en este documento sustituye https://core.vmware.com/resource/vmware-vsphere-metro-storage-cluster-recommended-practices["Prácticas recomendadas para VMware vSphere Metro Storage Cluster"]
 
 Para configurar un clúster de alta disponibilidad, realice los siguientes pasos:
 
@@ -155,7 +156,10 @@ En esta sección creamos grupos DRS para equipos virtuales y hosts para cada sit
 * NetApp recomienda encarecidamente la especificación *Debe ejecutarse en hosts del grupo* en lugar de la especificación *Debe ejecutarse en hosts del grupo*. En caso de que se produzca un fallo del host del sitio A, es necesario reiniciar las máquinas virtuales del sitio A en los hosts del sitio B a través de vSphere HA, pero la última especificación no permite a HA reiniciar los equipos virtuales en el sitio B, ya que es una regla estricta. La especificación anterior es una regla flexible y se infringirá en caso de alta disponibilidad, lo que permitirá la disponibilidad en lugar de rendimiento.
 
 
-*Nota:* Puede crear una alarma basada en eventos que se activa cuando una máquina virtual viola una regla de afinidad VM-Host. En vSphere Client, agregue una nueva alarma para la máquina virtual y seleccione “VM is Violating VM-Host Affinity Rule” como disparador de eventos. Para obtener más información sobre la creación y edición de alarmas, consulte http://pubs.vmware.com/vsphere-51/topic/com.vmware.ICbase/PDF/vsphere-esxi-vcenter-server-51-monitoring-performance-guide.pdf["Supervisión y rendimiento de vSphere"] documentación.
+*[NOTA]
+
+* Puede crear una alarma basada en eventos que se dispara cuando una máquina virtual viola una regla de afinidad VM-Host. En vSphere Client, agregue una nueva alarma para la máquina virtual y seleccione “VM is Violating VM-Host Affinity Rule” como disparador de eventos. Para obtener más información sobre la creación y edición de alarmas, consulte http://pubs.vmware.com/vsphere-51/topic/com.vmware.ICbase/PDF/vsphere-esxi-vcenter-server-51-monitoring-performance-guide.pdf["Supervisión y rendimiento de vSphere"] la documentación.
+
 
 
 

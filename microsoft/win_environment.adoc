@@ -10,13 +10,13 @@ summary: Obtenga información sobre el almacenamiento de NetApp y el entorno de 
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]
 Como se menciona en la link:win_overview.html["Descripción general"], Las controladoras de almacenamiento NetApp proporcionan una arquitectura realmente unificada que admite protocolos de archivos, bloques y objetos. Esto incluye SMB/CIFS, NFS, NVMe/TCP, NVMe/FC, iSCSI, FC (FCP) y S3, y crean un acceso unificado a clientes y hosts. El mismo controlador de almacenamiento puede ofrecer simultáneamente un servicio de almacenamiento basado en bloques en forma de LUN SAN y servicio de archivos como NFS y SMB/CIFS. ONTAP también está disponible como cabina All SAN (ASA) que optimiza el acceso del host a través de multivía activo-activo simétrico con iSCSI y FCP, mientras que los sistemas ONTAP unificados utilizan accesos múltiples activo-activo asimétrico. En ambos modos, ONTAP utiliza ANA para la gestión multivía de NVMe over Fabrics (NVMe-oF).
 
-Una controladora de almacenamiento de NetApp que ejecute el software ONTAP puede admitir las siguientes cargas de trabajo en un entorno Windows Server:
+Una controladora de almacenamiento de NetApp que ejecuta ONTAP puede admitir las siguientes cargas de trabajo en un entorno de Windows Server:
 
 * Equipos virtuales alojados en recursos compartidos de SMB 3,0 disponibles continuamente
 * Equipos virtuales alojados en LUN de volumen compartido de clúster (CSV) que se ejecutan en iSCSI o FC
@@ -77,7 +77,7 @@ Para conectar, configurar y administrar el almacenamiento de NetApp desde Window
 
 == Kit de herramientas PowerShell de NetApp
 
-El kit de herramientas PowerShell de NetApp (PSTK) es un módulo PowerShell que ofrece automatización integral y permite la administración del almacenamiento de NetApp ONTAP. El módulo ONTAP contiene más de 2.000 cmdlets y ayuda con la administración de FAS, All Flash FAS (AFF) de NetApp, hardware genérico y recursos cloud.
+El kit de herramientas PowerShell de NetApp (PSTK) es un módulo PowerShell que ofrece automatización integral y permite la administración del almacenamiento de ONTAP. El módulo ONTAP contiene más de 2.000 cmdlets y ayuda con la administración de FAS, All Flash FAS (AFF) de NetApp, hardware genérico y recursos cloud.
 
 
 

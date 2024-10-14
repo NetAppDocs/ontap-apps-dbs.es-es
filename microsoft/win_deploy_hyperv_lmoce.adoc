@@ -10,7 +10,7 @@ summary: En este apéndice se describe cómo utilizar la migración dinámica de
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]

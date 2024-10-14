@@ -10,7 +10,7 @@ summary: Aprovisione almacenamiento ONTAP para Windows y Hyper-V en entornos SAN
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]
@@ -91,7 +91,7 @@ image:win_image3.png["Múltiples rutas en el entorno SAN,width=624,height=232"]
 
 === MPIO
 
-NetApp ONTAP proporciona un almacenamiento de alta disponibilidad en el que pueden existir varias rutas desde la controladora de almacenamiento al servidor de Windows. La multivía es la capacidad de tener varias rutas de datos desde un servidor hasta una cabina de almacenamiento. El multivía protege frente a fallos de hardware (cortes de cable, fallos de switch y adaptador de bus de host [HBA], etc.) y puede proporcionar límites de rendimiento superiores al utilizar el rendimiento agregado de múltiples conexiones. Cuando una ruta o conexión deja de estar disponible, el software de rutas múltiples cambia automáticamente la carga a una de las otras rutas disponibles. La función MPIO combina las distintas rutas físicas del almacenamiento como una única ruta lógica que se utiliza para el acceso a los datos con el fin de ofrecer resiliencia al almacenamiento y balanceo de carga. Para utilizar esta función, la función MPIO debe estar habilitada en Windows Server.
+ONTAP proporciona un almacenamiento de alta disponibilidad en el que pueden existir varias rutas desde la controladora de almacenamiento al servidor de Windows. La multivía es la capacidad de tener varias rutas de datos desde un servidor hasta una cabina de almacenamiento. El multivía protege frente a fallos de hardware (cortes de cable, fallos de switch y adaptador de bus de host [HBA], etc.) y puede proporcionar límites de rendimiento superiores al utilizar el rendimiento agregado de múltiples conexiones. Cuando una ruta o conexión deja de estar disponible, el software de rutas múltiples cambia automáticamente la carga a una de las otras rutas disponibles. La función MPIO combina las distintas rutas físicas del almacenamiento como una única ruta lógica que se utiliza para el acceso a los datos con el fin de ofrecer resiliencia al almacenamiento y balanceo de carga. Para utilizar esta función, la función MPIO debe estar habilitada en Windows Server.
 
 
 

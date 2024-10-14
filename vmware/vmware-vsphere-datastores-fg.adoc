@@ -18,8 +18,6 @@ Utilice ONTAP y FlexGroup Volumes con VMware vSphere para obtener almacenes de d
 
 ONTAP 9,8, junto con las herramientas de ONTAP para VMware vSphere 9,8 y el complemento SnapCenter para las versiones VMware 4,4, añadieron compatibilidad con almacenes de datos FlexGroup respaldados por volúmenes en vSphere. Los volúmenes FlexGroup simplifican la creación de grandes almacenes de datos y crean automáticamente los volúmenes constituyentes distribuidos necesarios en el clúster ONTAP para obtener el rendimiento máximo de un sistema ONTAP.
 
-Obtenga más información acerca de FlexGroup Volumes en link:../nas-containers.html["Informes técnicos sobre volúmenes de FlexCache y FlexGroup"].
-
 Utilice FlexGroup Volumes con vSphere si necesita un único almacén de datos de vSphere escalable con la potencia de un clúster ONTAP completo, o si cuenta con cargas de trabajo de clonado muy grandes que pueden beneficiarse del nuevo mecanismo de clonación de FlexGroup.
 
 

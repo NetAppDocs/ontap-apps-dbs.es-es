@@ -1,0 +1,50 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-dr-smas-fail-site.html 
+keywords: Oracle, SnapMirror active sync, SMBC, failover 
+summary: 'Sincronización activa de Oracle y SnapMirror: Pérdida total de conectividad' 
+---
+= Sincronización activa de Oracle y SnapMirror: Pérdida total de conectividad
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+El resultado de un fallo del sistema de almacenamiento o del sitio es casi idéntico al resultado de perder el enlace de replicación. El sitio superviviente debería experimentar una pausa de I/O de aproximadamente 15 segundos en las escrituras. Una vez transcurrido ese período de 15 segundos, IO se reanudará en ese sitio como de costumbre.
+
+Si solo el sistema de almacenamiento se vio afectado, el nodo de Oracle RAC del sitio donde se ha producido el fallo perderá los servicios de almacenamiento e introducirá la misma cuenta atrás con un tiempo de espera de disco de 200 segundos antes de su expulsión y reinicio posterior.
+
+....
+2024-09-11 13:44:38.613 [ONMD(3629)]CRS-1615: No I/O has completed after 50% of the maximum interval. If this persists, voting file /dev/mapper/grid2 will be considered not functional in 99750 milliseconds.
+2024-09-11 13:44:51.202 [ORAAGENT(5437)]CRS-5011: Check of resource "NTAP" failed: details at "(:CLSN00007:)" in "/gridbase/diag/crs/jfs13/crs/trace/crsd_oraagent_oracle.trc"
+2024-09-11 13:44:51.798 [ORAAGENT(75914)]CRS-8500: Oracle Clusterware ORAAGENT process is starting with operating system process ID 75914
+2024-09-11 13:45:28.626 [ONMD(3629)]CRS-1614: No I/O has completed after 75% of the maximum interval. If this persists, voting file /dev/mapper/grid2 will be considered not functional in 49730 milliseconds.
+2024-09-11 13:45:33.339 [ORAAGENT(76328)]CRS-8500: Oracle Clusterware ORAAGENT process is starting with operating system process ID 76328
+2024-09-11 13:45:58.629 [ONMD(3629)]CRS-1613: No I/O has completed after 90% of the maximum interval. If this persists, voting file /dev/mapper/grid2 will be considered not functional in 19730 milliseconds.
+2024-09-11 13:46:18.630 [ONMD(3629)]CRS-1604: CSSD voting file is offline: /dev/mapper/grid2; details at (:CSSNM00058:) in /gridbase/diag/crs/jfs13/crs/trace/onmd.trc.
+2024-09-11 13:46:18.631 [ONMD(3629)]CRS-1606: The number of voting files available, 0, is less than the minimum number of voting files required, 1, resulting in CSSD termination to ensure data integrity; details at (:CSSNM00018:) in /gridbase/diag/crs/jfs13/crs/trace/onmd.trc
+2024-09-11 13:46:18.638 [ONMD(3629)]CRS-1699: The CSS daemon is terminating due to a fatal error from thread: clssnmvDiskPingMonitorThread; Details at (:CSSSC00012:) in /gridbase/diag/crs/jfs13/crs/trace/onmd.trc
+2024-09-11 13:46:18.651 [OCSSD(3631)]CRS-1652: Starting clean up of CRSD resources.
+....
+El estado de la ruta de SAN en el nodo RAC que ha perdido los servicios de almacenamiento se parece a este:
+
+....
+oradata7 (3600a0980383041334a3f55676c697347) dm-20 NETAPP,LUN C-Mode
+size=128G features='3 queue_if_no_path pg_init_retries 50' hwhandler='1 alua' wp=rw
+|-+- policy='service-time 0' prio=0 status=enabled
+| `- 34:0:0:18 sdam 66:96  failed faulty running
+`-+- policy='service-time 0' prio=0 status=enabled
+  `- 33:0:0:18 sdaj 66:48  failed faulty running
+....
+El host linux detectó la pérdida de las rutas mucho más rápido que 200 segundos, pero desde el punto de vista de la base de datos, las conexiones del cliente al host en el sitio con errores se seguirán congelando durante 200 segundos en la configuración predeterminada de Oracle RAC. Las operaciones de base de datos completa solo se reanudarán una vez que se complete el expulsión.
+
+Mientras tanto, el nodo de Oracle RAC en la ubicación opuesta registrará la pérdida del otro nodo de RAC. De lo contrario, sigue funcionando como de costumbre.
+
+....
+2024-09-11 13:46:34.152 [ONMD(3547)]CRS-1612: Network communication with node jfs13 (2) has been missing for 50% of the timeout interval.  If this persists, removal of this node from cluster will occur in 14.020 seconds
+2024-09-11 13:46:41.154 [ONMD(3547)]CRS-1611: Network communication with node jfs13 (2) has been missing for 75% of the timeout interval.  If this persists, removal of this node from cluster will occur in 7.010 seconds
+2024-09-11 13:46:46.155 [ONMD(3547)]CRS-1610: Network communication with node jfs13 (2) has been missing for 90% of the timeout interval.  If this persists, removal of this node from cluster will occur in 2.010 seconds
+2024-09-11 13:46:46.470 [OHASD(1705)]CRS-8011: reboot advisory message from host: jfs13, component: cssmonit, with time stamp: L-2024-09-11-13:46:46.404
+2024-09-11 13:46:46.471 [OHASD(1705)]CRS-8013: reboot advisory message text: At this point node has lost voting file majority access and oracssdmonitor is rebooting the node due to unknown reason as it did not receive local hearbeats for 28180 ms amount of time
+2024-09-11 13:46:48.173 [ONMD(3547)]CRS-1632: Node jfs13 is being removed from the cluster in cluster incarnation 621516934
+....

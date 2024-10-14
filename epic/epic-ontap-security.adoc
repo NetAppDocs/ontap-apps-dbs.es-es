@@ -1,0 +1,20 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-ontap-security.html 
+keywords: epic,cache,iris 
+summary: Épica sobre la seguridad de ONTAP 
+---
+= Épica sobre la seguridad de ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+La seguridad es la principal preocupación para las organizaciones y los ejecutivos de la salud en la actualidad. Nunca ha sido tan difícil gestionar y las organizaciones se enfrentan a retos relacionados con el cumplimiento de normativas, el gobierno de datos, la protección antivirus y ransomware.
+
+Una guía completa sobre Epic y la seguridad del almacenamiento se encuentra fuera del alcance de este documento; sin embargolink:https://docs.netapp.com/us-en/ontap/ontap-security-hardening/security-hardening-overview.html["Guía de seguridad reforzada de ONTAP"^], detalla todas las funciones de seguridad completas y avanzadas disponibles en ONTAP.
+
+NetApp Active IQ Unified Manager supervisa las infracciones de seguridad según la información incluida en la link:https://docs.netapp.com/us-en/ontap/ontap-security-hardening/security-hardening-overview.html["TR-4569"^]consola y las notifica en ella para simplificar la administración de la seguridad. Estas herramientas pueden ayudar a tu organización a cumplir tus objetivos de seguridad para protegerlos, detectarlos y solucionarlos.
+
+NetApp también se ha asociado con proveedores de seguridad para proporcionar integración a través de link:https://docs.netapp.com/us-en/ontap/ontap-security-hardening/create-fpolicy.html["FPolicy de NetApp"^] software para mejorar su oferta de seguridad. Además, link:https://docs.netapp.com/us-en/ontap/authentication/mfa-overview.html["Autenticación multifactor (MFA)"^] se puede agregar para proteger su entorno Epic contra el acceso no autorizado con credenciales filtradas.
+
+Por último, las copias Snapshot nativas de ONTAP y las tecnologías de SnapLock inmutables con link:https://docs.netapp.com/us-en/netapp-solutions/cyber-vault/ontap-cyber-vault-overview.html["Ciberalmacén de ONTAP"^], ofrecen una funcionalidad única de aislamiento interno para proteger los registros de pacientes contra el ransomware. Consulte la documentación de NetApp en link:https://docs.netapp.com/us-en/ontap/ransomware-solutions/ransomware-overview.html["La solución de NetApp para ransomware"^]. Para obtener un enfoque más estratégico de la seguridad, consulte link:https://docs.netapp.com/us-en/ontap/zero-trust/zero-trust-overview.html["NetApp y Zero Trust"^].

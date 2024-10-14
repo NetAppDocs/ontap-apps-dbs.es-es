@@ -10,9 +10,7 @@ summary: Microsoft SQL Server y la eficiencia del almacenamiento de ONTAP
 
 
 [role="lead"]
-La eficiencia del almacenamiento de ONTAP está optimizada para almacenar y gestionar datos de SQL Server de una manera que consuma la menor cantidad de espacio de almacenamiento con poco o ningún efecto en el rendimiento general del sistema.
-
-La eficiencia del almacenamiento es una combinación de RAID, aprovisionamiento (distribución y utilización generales), mirroring y otras tecnologías de protección de datos. Las tecnologías de NetApp, incluidas las snapshots, thin provisioning y clonado, optimizan el almacenamiento existente en la infraestructura y aplazan o evitan gastos futuros en almacenamiento. Cuanto más use estas tecnologías conjuntamente, mayor será el ahorro.
+La eficiencia del almacenamiento de ONTAP está optimizada para almacenar y gestionar datos de SQL Server de una manera que consuma la menor cantidad de espacio de almacenamiento sin que ello afecte al rendimiento.
 
 Las funciones de eficiencia del espacio, como la compresión, la compactación y la deduplicación están diseñadas para aumentar la cantidad de datos lógicos que se adaptan a una determinada cantidad de almacenamiento físico. El resultado es una reducción de los costes y los gastos generales de gestión.
 
@@ -69,7 +67,7 @@ El grado de ahorro obtenido varía. Por lo general, los datos que ya están comp
 
 === Eficiencia de almacenamiento sensible a la temperatura
 
-La eficiencia del almacenamiento sensible a la temperatura (TSSE) es un producto disponible en ONTAP 9,8 y versiones posteriores que se basa en mapas de calor de acceso a bloques para identificar los bloques a los que se accede con poca frecuencia y comprimirlos con mayor eficiencia.
+La eficiencia de almacenamiento sensible a la temperatura (TSSE) está disponible en ONTAP 9, e.8 y posteriores. Se basa en mapas de calor de acceso a bloques para identificar los bloques a los que se accede con poca frecuencia y comprimirlos con mayor eficiencia.
 
 
 
@@ -132,8 +130,11 @@ Actualmente, la compresión de datos es compatible en las ediciones Enterprise, 
 Aquí están las recomendaciones para administrar el espacio para los archivos de datos de SQL Server
 
 * Use thin provisioning en los entornos SQL Server para mejorar el aprovechamiento del espacio y reducir los requisitos generales de almacenamiento cuando se utilice la funcionalidad de garantía de espacio.
-* Use el crecimiento automático para las configuraciones de puesta en marcha más comunes porque el administrador de almacenamiento solo necesita supervisar el uso de espacio en el agregado.
-* Aconseje que no habilite la deduplicación en cualquier volumen que contenga archivos de datos de SQL Server, a menos que se sepa que el volumen contenga varias copias de los mismos datos, como la restauración de la base de datos desde backups en un único volumen.
++
+** Use el crecimiento automático para las configuraciones de puesta en marcha más comunes porque el administrador de almacenamiento solo necesita supervisar el uso de espacio en el agregado.
+
+
+* No active la deduplicación en ningún volumen que contenga archivos de datos de SQL Server a menos que se sepa que el volumen contenga varias copias de los mismos datos, como restaurar la base de datos a partir de backups en un único volumen.
 
 
 

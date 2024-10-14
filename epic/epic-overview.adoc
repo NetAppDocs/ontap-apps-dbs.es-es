@@ -1,0 +1,54 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-overview.html 
+keywords: epic,cache,iris 
+summary: Información general de Epic en ONTAP 
+---
+= Epic en ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+La clave para la transformación digital es hacer más con sus datos.
+
+
+NOTE: Esta documentación sustituye al informe técnico _TR-3923 publicado anteriormente: Mejores prácticas de NetApp para Epic_.
+
+Los hospitales necesitan grandes cantidades de datos para iniciar el camino de la transformación digital. Parte del proceso de tratar a los pacientes, gestionar los horarios del personal y los recursos médicos es que la información se recopila y procesa. Sin embargo, muchas acciones todavía se realizan manualmente o a través de sistemas obsoletos. La constante es que la cantidad de datos sigue creciendo de manera exponencial, por lo que se vuelve cada vez más difícil de gestionar.
+
+La causa principal de este problema es que los datos hospitalarios a menudo se almacenan en silos de datos. Se dedica demasiado tiempo a entradas manuales y actualizaciones que conducen a agotamiento y errores. Este documento es sobre una parte de los datos sanitarios, Epic Electronic Health Records (EHR). Sin embargo, la estrategia de gestión de datos que aquí se cubre puede y debe aplicarse a todos los datos de atención médica. NetApp tiene un historial contrastado de modernización y simplificación de la infraestructura digital. Nuestra infraestructura de datos inteligente constituye la base de la transformación digital.
+
+NetApp ofrece una solución de gestión de datos única para todas las necesidades sanitarias y podemos guiar a los hospitales en su viaje hacia la transformación digital. Al construir una base con estructura y soluciones inteligentes, el cuidado de la salud puede extraer todo el valor de esta valiosa información. Este marco puede ayudar a los proveedores médicos a diagnosticar enfermedades más rápidamente y desarrollar planes de tratamiento individualizados para apoyar mejor los procesos de toma de decisiones en situaciones de emergencia. También podrá crear su propia infraestructura de datos inteligente y permitir que su hospital desbloquee los silos de datos, facilite la interoperabilidad de los datos y proteja la información confidencial de los pacientes.
+
+Utilice este documento como guía para construir e implementar correctamente la EHR de Epic. En lugar de crear varios silos de Epic, crea una única infraestructura de datos de Epic y transforma tu hospital.
+
+
+
+== Específico
+
+Este documento describe las mejores prácticas para integrar el almacenamiento de NetApp en un entorno de software de Epic. Contiene las siguientes secciones:
+
+* Conocimiento técnico del entorno de software Epic y sus requisitos de almacenamiento en varias configuraciones.
+* Consideraciones sobre el almacenamiento épico, que describen factores de toma de decisiones importantes para las soluciones Epic.
+* Recomendaciones de almacenamiento de NetApp, que describen prácticas recomendadas de configuración del almacenamiento de NetApp para satisfacer los requisitos de almacenamiento de Epic.
+
+
+
+
+== Ámbito
+
+Este documento no cubre los siguientes temas:
+
+* Requisitos cuantitativos de rendimiento y directrices sobre tamaño, que se tratan en https://fieldportal.netapp.com/content/192412?assetComponentId=192510["TR-3930i: Directrices de configuración de NetApp para Epic"^] (se requiere inicio de sesión NetApp)
+
+
+
+
+== Destinatarios
+
+NetApp asume que el lector tiene los siguientes conocimientos generales:
+
+* Comprensión sólida de los conceptos DE SAN y NAS
+* Familiaridad técnica con los sistemas de almacenamiento ONTAP
+* Familiaridad técnica con la configuración y administración de ONTAP
+

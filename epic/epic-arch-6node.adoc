@@ -1,0 +1,26 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-arch-6node.html 
+keywords: epic,cache,iris 
+summary: Arquitectura épica de seis nodos 
+---
+= Arquitectura épica de seis nodos
+:allow-uri-read: 
+
+
+[role="lead"]
+Los clientes pueden querer empezar con un diseño de seis nodos o escalar horizontalmente sin problemas de cuatro a seis nodos con una demanda cada vez mayor. Con el escalado horizontal, puede mover cargas de trabajo entre nodos de forma no disruptiva y reequilibrar en todo el clúster.
+
+Esta arquitectura ofrece el mejor equilibrio de rendimiento y capacidad del clúster. Epic Production, Epic Report y Epic Test se ejecutan todos en el primer par de alta disponibilidad. El segundo par de alta disponibilidad se utiliza para claridad, hiperespacio, VMware, NAS1 y las cargas de trabajo de Epic restantes. La recuperación ante desastres es el mismo que la arquitectura de cuatro nodos de la sección anterior.
+
+
+
+== Arquitectura de seis nodos
+
+image:epic-6node.png["Arquitectura épica de 6 nodos"]
+
+
+
+== Ubicación de cargas de trabajo de seis nodos
+
+image:epic-6node-design.png["Ubicación Epic de 6 nodos"]

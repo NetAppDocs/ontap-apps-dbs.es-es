@@ -1,0 +1,45 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-dr-smas-mediator.html 
+keywords: MSSQL,SQL Server, SnapMirror active sync, SMBC, overview 
+summary: Oracle,SM-AS,sincronización activa,mediador 
+---
+= Oracle y el mediador de ONTAP
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+El mediador es necesario para automatizar la conmutación por error de forma segura. Lo ideal sería que se ubicara en un sitio 3rd independiente, pero todavía puede funcionar para la mayoría de las necesidades si se ubicara con uno de los clústeres que participan en la replicación.
+
+El mediador no es realmente un desempate, aunque esa es efectivamente la función que proporciona. No realiza ninguna acción, sino que proporciona un canal de comunicación alternativo para la comunicación del clúster al clúster.
+
+image:smas-mediator.png["Diagrama de sincronización activa de SnapMirror con mediador"]
+
+El desafío #1 con la conmutación automática por error es el problema de cerebro dividido, y ese problema surge si sus dos sitios pierden conectividad entre sí. ¿Qué debería pasar? No desea que dos sitios diferentes se designen a sí mismos como copias supervivientes de los datos, pero ¿cómo puede un solo sitio diferenciar entre la pérdida real del sitio opuesto y la incapacidad de comunicarse con el sitio opuesto?
+
+Aquí es donde el mediador entra en la imagen. Si se coloca en un sitio 3rd y cada sitio tiene una conexión de red independiente con ese sitio, tiene una ruta adicional para que cada sitio valide el estado del otro. Mire la imagen de arriba otra vez y considere los siguientes escenarios.
+
+* ¿Qué sucede si el mediador falla o es inaccesible desde uno o ambos sitios?
++
+** Los dos clústeres pueden comunicarse entre sí a través del mismo enlace utilizado para los servicios de replicación.
+** Los datos se siguen ofreciendo con la protección RPO=0
+
+
+* ¿Qué sucede si falla el sitio A?
++
+** El sitio B verá que ambos canales de comunicación se caen.
+** El sitio B se hará cargo de los servicios de datos, pero sin el mirroring RPO=0
+
+
+* ¿Qué sucede si falla el sitio B?
++
+** El sitio A verá que ambos canales de comunicación se caen.
+** El sitio A se hará cargo de los servicios de datos, pero sin el mirroring RPO=0
+
+
+
+
+Hay otro escenario a considerar: Pérdida del enlace de replicación de datos. Si se pierde el enlace de replicación entre los sitios, obviamente el mirroring RPO=0 se convertirá en imposible. ¿Qué debería pasar entonces?
+
+Esto se controla por el estado de sitio preferido. En una relación SM-AS, uno de los sitios es secundario al otro. Esto no afecta a las operaciones normales y todo el acceso a los datos es simétrico, pero si la replicación se interrumpe, el vínculo tendrá que romperse para reanudar las operaciones. Como resultado, el sitio preferido continuará con las operaciones sin mirroring y el sitio secundario detendrá el procesamiento de I/O hasta que se restaure la comunicación de la replicación.

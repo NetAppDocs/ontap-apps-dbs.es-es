@@ -10,9 +10,9 @@ summary: Ubicación de tempdb de Microsoft SQL Server en ONTAP
 
 
 [role="lead"]
-La base de datos tempdb se puede utilizar en gran medida. Además de la ubicación óptima de los archivos de base de datos de usuario en ONTAP, modifique los archivos de datos tempdb para reducir la contención de asignación
+La base de datos Tempdb se puede utilizar en gran medida. Además de la ubicación óptima de los archivos de base de datos de usuario en ONTAP, la ubicación de los archivos de datos tempdb también es crítica para reducir la contención de asignación
 
-La contención de página se puede producir en las páginas de mapa de asignación de lobal (GAM), mapa de asignación global compartida (SGAM) o espacio libre de página (PFS) cuando SQL Server debe escribir en páginas especiales del sistema para asignar nuevos objetos. Los pestillos protegen (bloquean) estas páginas en la memoria. En una instancia de SQL Server ocupada, puede tardar mucho tiempo en obtener un bloqueo en una página del sistema en tempdb. Esto da como resultado tiempos de ejecución de consultas más lentos y se conoce como contención de bloqueo interno. Consulte las siguientes prácticas recomendadas para crear archivos de datos tempdb:
+La contención de página se puede producir en las páginas de mapa de asignación global (GAM), mapa de asignación global compartida (SGAM) o espacio libre de página (PFS) cuando SQL Server debe escribir en páginas especiales del sistema para asignar nuevos objetos. Los pestillos bloquean estas páginas en la memoria. En una instancia de SQL Server ocupada, puede tardar mucho tiempo en obtener un bloqueo en una página del sistema en tempdb. Esto da como resultado tiempos de ejecución de consultas más lentos y se conoce como contención de bloqueo interno. Consulte las siguientes prácticas recomendadas para crear archivos de datos tempdb:
 
 * Para < or = a 8 núcleos: Archivos de datos tempdb = número de núcleos
 * Para > 8 núcleos: 8 archivos de datos tempdb

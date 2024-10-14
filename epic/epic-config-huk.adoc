@@ -1,0 +1,20 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-config-huk.html 
+keywords: epic,cache,iris 
+summary: Epic en ONTAP - Utilidades de host 
+---
+= Epic en ONTAP - Utilidades de host
+:allow-uri-read: 
+
+
+[role="lead"]
+Las utilidades de host de NetApp son paquetes de software para varios sistemas operativos que contienen utilidades de gestión como el `sanlun` binario de la CLI, controladores multivía y otros archivos importantes necesarios para realizar correctamente las operaciones de SAN.
+
+[TIP]
+====
+*NetApp recomienda* instalar las utilidades de host de NetApp en los hosts que están conectados y accediendo a los sistemas de almacenamiento de NetApp. Para obtener más información, consulte link:https://imt.netapp.com/matrix/["Herramienta de matriz de interoperabilidad"^] y link:https://docs.netapp.com/us-en/ontap-sanhost/["Hosts SAN"^] la documentación.
+
+====
+
+NOTE: Con AIX, es especialmente importante que se instalen las utilidades de host antes de detectar las LUN. Esto garantiza que el comportamiento de las rutas múltiples de LUN está configurado correctamente. Si la detección se realizó sin las utilidades de host, los LUN deberán desconfigurarse del sistema mediante `rmdev -dl` el comando y a continuación se volverán a detectar mediante `cfgmgr` un reinicio o un reinicio.

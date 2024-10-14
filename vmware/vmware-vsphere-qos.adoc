@@ -20,7 +20,7 @@ Los límites de rendimiento son útiles para controlar los niveles de servicio, 
 
 == Compatibilidad con las políticas de calidad de servicio de ONTAP
 
-Los sistemas que ejecutan el software ONTAP pueden utilizar la función de calidad de servicio del almacenamiento para limitar el rendimiento en MBps y/o I/O por segundo (IOPS) para diferentes objetos de almacenamiento, como archivos, LUN, volúmenes o SVM completas.
+Los sistemas que ejecutan ONTAP pueden utilizar la función de calidad de servicio del almacenamiento para limitar el rendimiento en MB/s y/o I/O por segundo (IOPS) para diferentes objetos de almacenamiento, como archivos, LUN, volúmenes o SVM completas.
 
 También admite niveles mínimos de servicio basados en IOPS para proporcionar un rendimiento constante para los objetos SAN en ONTAP 9.2 y para los objetos NAS en ONTAP 9.3.
 
@@ -51,7 +51,8 @@ Una política de calidad de servicio de ONTAP puede aplicarse a todo el almacén
 * El mismo host (esxi-01) está usando vm2.vmdk y está en el mismo volumen.
 * Si vm1.vmdk se acelera, entonces vm2.vmdk también parecerá estar estrangulado ya que comparte la misma cola de IO con vm1.vmdk.
 
-*Nota:* Esto no se aplica a vVols.
+
+NOTE: Esto no se aplica a vVols.
 
 A partir de vSphere 6,5, puede gestionar los límites granulares de archivos en almacenes de datos que no son vVols aprovechando la gestión basada en políticas de almacenamiento (SPBM) con Storage I/O Control (SIOC) v2.
 
@@ -83,13 +84,14 @@ La calidad de servicio mínima o máxima se puede establecer fácilmente en máq
 
 Al crear el perfil de funcionalidad de almacenamiento para el contenedor de VVol, especifique un valor de IOPS máximo y/o mínimo con la funcionalidad de rendimiento y, a continuación, haga referencia a este SCP con la política de almacenamiento de la máquina virtual. Use esta política cuando cree la máquina virtual o aplique la política a una máquina virtual existente.
 
-*Nota:* vVols requiere el uso de herramientas de ONTAP para VMware vSphere que funciona como proveedor VASA para ONTAP. Consulte link:/vmware/vmware-vvols-overview.html["VMware vSphere Virtual Volumes (vVols) con ONTAP"] Para ver las mejores prácticas de vVols.
+
+NOTE: VVols requiere el uso de herramientas de ONTAP para VMware vSphere, que funciona como proveedor VASA para ONTAP. Consulte link:/vmware/vmware-vvols-overview.html["VMware vSphere Virtual Volumes (vVols) con ONTAP"]para ver las prácticas recomendadas de vVols.
 
 
 
 == ONTAP QoS y VMware SIOC
 
-QoS de ONTAP y VMware vSphere Storage I/o Control (SIOC) son tecnologías complementarias que los administradores de vSphere y almacenamiento pueden utilizar juntos para gestionar el rendimiento de máquinas virtuales vSphere alojadas en sistemas que ejecutan el software ONTAP. Cada herramienta tiene sus propias fuerzas, como se muestra en la siguiente tabla. Debido a los distintos ámbitos de VMware vCenter y ONTAP, algunos objetos pueden verse y gestionarse mediante un sistema, no el otro.
+La calidad de servicio de ONTAP y el control de I/O de almacenamiento de VMware vSphere (SIOC) son tecnologías complementarias que los administradores de vSphere y de almacenamiento pueden utilizar conjuntamente para gestionar el rendimiento de las máquinas virtuales de vSphere alojadas en sistemas que ejecutan ONTAP. Cada herramienta tiene sus propias fuerzas, como se muestra en la siguiente tabla. Debido a los distintos ámbitos de VMware vCenter y ONTAP, algunos objetos pueden verse y gestionarse mediante un sistema, no el otro.
 
 |===
 | Propiedad | Calidad de servicio de ONTAP | VMware SIOC 

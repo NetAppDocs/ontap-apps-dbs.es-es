@@ -1,0 +1,42 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-arch-storage.html 
+keywords: epic,cache,iris 
+summary: Requisitos de almacenamiento de Epic 
+---
+= Requisitos de almacenamiento de Epic
+:allow-uri-read: 
+
+
+[role="lead"]
+Por lo general, los recursos de almacenamiento dedicados se proporcionan para la base de datos de producción, mientras que las instancias de bases de datos replicadas comparten recursos de almacenamiento secundario con otros componentes relacionados con el software de Epic, como las herramientas de generación de informes Clarity.
+
+Otros entornos de almacenamiento de software, como los que se utilizan para archivos del sistema y de aplicaciones, también los proporcionan recursos de almacenamiento secundario.
+
+Más allá de las consideraciones de configuración, Epic tiene las siguientes reglas de distribución del almacenamiento adicionales y consideraciones clave:
+
+* Desde 2020, todas las cargas de trabajo de bases de datos operativas (ODB) deben estar en cabinas all-flash.
+* Epic recomienda que cada pool de almacenamiento se encuentre en hardware físico independiente, incluidos pool1, pool2, pool3, NAS1 y NAS2.
+
+
+
+NOTE: Un nodo de un clúster se puede considerar como un pool de almacenamiento. Con ONTAP 9.4 o posterior y AQoS, puede crear pools protegidos mediante directivas.
+
+* Nueva recomendación de backup de Epic 3-2-1.
++
+.. Copia ubicada en ubicaciones remotas (recuperación ante desastres)
+.. Una de las copias debe estar en una plataforma de almacenamiento diferente a la copia primaria
+.. Copias de los datos
+
+
+
+
+
+NOTE: Los clientes que usan NetApp SnapMirror para realizar backups de NetApp no cumplen las recomendaciones 3-2-1. El motivo es que ONTAP to ONTAP no cumple con el segundo requisito que se indica anteriormente. Puede usar SnapMirror directamente desde ONTAP para almacenar objetos en las instalaciones (por ejemplo, a través de StorageGRID) o en el cloud para cumplir los requisitos de Epic.
+
+Para obtener más información sobre los requisitos de almacenamiento, consulte las siguientes guías épicas disponibles en Galaxy:
+
+* Consideraciones sobre la SAN
+* Estado de la tecnología y productos de almacenamiento (SPATS)
+* Guía de configuración de hardware
+

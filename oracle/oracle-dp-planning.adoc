@@ -52,7 +52,7 @@ El enfoque más simple es colocar todos los archivos o LUN en un único grupo de
 
 == Arquitectura de replicación y recuperación ante desastres
 
-En esta sección se aborda la protección de datos remota, para la que los datos se replican en un sitio remoto con el fin de almacenar en una ubicación externa segura y la recuperación ante desastres. Es preciso tener en cuenta que estas tablas no abordan la protección de datos de mirroring síncrono. Para este requisito, consulte la documentación de NetApp MetroCluster, que incluye link:../metrocluster/overview.html["MetroCluster"] y.. link:../smbc/overview.html["SnapMirror síncrono activo"]
+En esta sección se aborda la protección de datos remota, para la que los datos se replican en un sitio remoto con el fin de almacenar en una ubicación externa segura y la recuperación ante desastres. Es preciso tener en cuenta que estas tablas no abordan la protección de datos de mirroring síncrono. Para conocer este requisito, consulte la documentación de NetApp MetroCluster, incluidos link:oracle-dr-mcc-failover.html["MetroCluster"] y. link:oracle-dr-smas-overview.html["SnapMirror síncrono activo"]
 
 El objetivo de punto de recuperación de desastres está limitado por el ancho de banda de red disponible y el tamaño total de los datos que se protegen. Una vez creada la transferencia básica, las actualizaciones solo se basan en los datos modificados, que normalmente son un bajo porcentaje de la huella de datos total, aunque existen excepciones.
 

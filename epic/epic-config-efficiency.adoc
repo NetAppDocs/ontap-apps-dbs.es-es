@@ -1,0 +1,28 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-config-efficiency.html 
+keywords: epic,cache,iris 
+summary: Configuración épica de la eficiencia del almacenamiento 
+---
+= Configuración épica de la eficiencia del almacenamiento
+:allow-uri-read: 
+
+
+[role="lead"]
+Las eficiencias inline de ONTAP son activadas de forma predeterminada y funcionan independientemente del protocolo de almacenamiento, la aplicación o el nivel de almacenamiento.
+
+Las eficiencias reducen la cantidad de datos escritos en almacenamiento flash costoso y el número de unidades necesarias. ONTAP mantiene la eficiencia con la replicación. Cada una de las eficiencias afecta poco o nada al rendimiento, incluso para una aplicación sensible a la latencia como Epic.
+
+[TIP]
+====
+*NetApp recomienda* activar todos los ajustes de eficiencia para maximizar la utilización del disco. Esta configuración está activada de forma predeterminada en los sistemas basados en AFF y ASA.
+
+====
+Las siguientes funciones hacen que esta eficiencia del almacenamiento sea posible:
+
+* La deduplicación ahorra espacio en el almacenamiento primario gracias a la eliminación de las copias redundantes de bloques en un volumen que aloja LUN. Esta opción recomendada está activada de forma predeterminada.
+* La compresión en línea reduce la cantidad de datos que se deben escribir en el disco y se consigue un ahorro de espacio considerable con las cargas de trabajo de Epic. Esta opción recomendada está activada de forma predeterminada.
+* La compactación inline requiere bloques de 4K KB que están menos de la mitad llenos y los combina en un único bloque. Esta opción recomendada está activada de forma predeterminada.
+* Thin replication se encuentra en el centro de la cartera de software de protección de datos de NetApp, que incluye el software NetApp SnapMirror. Thin replication de SnapMirror protege los datos vitales para el negocio a la vez que minimiza los requisitos de capacidad del almacenamiento. *NetApp recomienda* activar esta opción.
+* Deduplicación en los agregados. La deduplicación siempre ha estado a nivel de volumen. Con ONTAP 9.2, se hizo disponible la deduplicación de agregado, lo que permite ahorrar más con la reducción de disco. Se ha añadido la deduplicación agregada postprocesamiento con ONTAP 9.3. *NetApp recomienda* activar esta opción.
+

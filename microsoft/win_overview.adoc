@@ -10,7 +10,7 @@ summary: Descripción general de la virtualización de Microsoft Windows y Hyper
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]
@@ -19,7 +19,7 @@ Microsoft Windows Server es un sistema operativo (SO) de clase empresarial que c
 
 NOTE: *Esta documentación sustituye a los informes técnicos publicados anteriormente _TR-4568: Directrices de puesta en funcionamiento de NetApp y mejores prácticas de almacenamiento para Windows Server_*
 
-.El software de gestión ONTAP(R) de NetApp se ejecuta en las controladoras de almacenamiento de NetApp. Está disponible en múltiples formatos.
+.ONTAP se ejecuta en las controladoras de almacenamiento de NetApp. Está disponible en múltiples formatos.
 * Arquitectura unificada que admite protocolos de archivos, objetos y bloques. Esto permite a las controladoras de almacenamiento actuar tanto como dispositivos NAS como SAN, así como almacenes de objetos
 * Una cabina All SAN (ASA) que se centra únicamente en protocolos de bloque y optimiza los tiempos de reanudación de I/O (IORT) añadiendo accesos múltiples activo-activo simétricos para los hosts de conexión
 * Una arquitectura unificada definida por software

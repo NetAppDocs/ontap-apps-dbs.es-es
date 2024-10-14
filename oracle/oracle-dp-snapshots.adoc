@@ -53,7 +53,7 @@ Existen dos métodos principales para crear una copia Snapshot de un conjunto de
 * Backups para aplicaciones
 
 
-Un backup coherente con los fallos de un conjunto de datos hace referencia a la captura de toda la estructura del conjunto de datos en un único punto de tiempo. Si el conjunto de datos se almacena en un único volumen de NetApp FlexVol, el proceso es sencillo; se puede crear una copia Snapshot en cualquier momento. Si un conjunto de datos abarca volúmenes, es necesario crear una snapshot de grupo de coherencia (CG). Existen varias opciones para crear snapshots de CG, como el software NetApp SnapCenter, funciones nativas del grupo de coherencia ONTAP y scripts que se mantienen por el usuario.
+Un backup coherente con los fallos de un conjunto de datos hace referencia a la captura de toda la estructura del conjunto de datos en un único punto de tiempo. Si el conjunto de datos se almacena en un único volumen, el proceso es sencillo; se puede crear una copia Snapshot en cualquier momento. Si un conjunto de datos abarca volúmenes, es necesario crear una snapshot de grupo de coherencia (CG). Existen varias opciones para crear snapshots de CG, como el software NetApp SnapCenter, funciones nativas del grupo de coherencia ONTAP y scripts que se mantienen por el usuario.
 
 Los backups coherentes con los fallos se utilizan principalmente cuando la recuperación punto del backup es suficiente. Cuando se necesita una recuperación más granular, por lo general se necesitan backups coherentes con las aplicaciones.
 
@@ -111,7 +111,7 @@ Existen dos enfoques principales para los backups basados en Snapshot:
 * Backups activos protegidos de Snapshot
 
 
-Una copia de seguridad coherente con los fallos de una base de datos se refiere a la captura de toda la estructura de la base de datos, incluidos archivos de datos, redo logs y archivos de control, en un único punto en el tiempo. Si la base de datos se almacena en un único volumen de NetApp FlexVol, el proceso es sencillo; se puede crear una copia Snapshot en cualquier momento. Si una base de datos abarca volúmenes, debe crearse una snapshot de grupo de coherencia (CG). Existen varias opciones para crear snapshots de CG, como el software NetApp SnapCenter, funciones nativas del grupo de coherencia ONTAP y scripts que se mantienen por el usuario.
+Una copia de seguridad coherente con los fallos de una base de datos se refiere a la captura de toda la estructura de la base de datos, incluidos archivos de datos, redo logs y archivos de control, en un único punto en el tiempo. Si la base de datos se almacena en un único volumen, el proceso es sencillo; se puede crear una copia Snapshot en cualquier momento. Si una base de datos abarca volúmenes, debe crearse una snapshot de grupo de coherencia (CG). Existen varias opciones para crear snapshots de CG, como el software NetApp SnapCenter, funciones nativas del grupo de coherencia ONTAP y scripts que se mantienen por el usuario.
 
 Los backups de Snapshot coherentes con los fallos se usan principalmente cuando es suficiente con la recuperación punto del backup. Los registros de archivos se pueden aplicar bajo ciertas circunstancias, pero cuando se requiere una recuperación puntual más granular, es preferible un backup online.
 
@@ -138,7 +138,7 @@ El SnapRestore basado en volúmenes permite revertir un volumen casi instantáne
 
 VBSR no se requiere para la restauración. Muchas bases de datos pueden restaurarse utilizando SnapRestore de archivo único (SFSR) basado en archivos o simplemente copiando archivos del snapshot al sistema de archivos activo.
 
-Se prefiere VBSR cuando una base de datos es muy grande o cuando se debe recuperar lo antes posible, y el uso de VBSR requiere aislamiento de los archivos de datos. En un entorno NFS, los archivos de datos de una base de datos determinada deben estar almacenados en volúmenes dedicados que no estén contaminados por ningún otro tipo de archivo. En un entorno SAN, los archivos de datos deben almacenarse en LUN dedicadas en volúmenes de FlexVol dedicados. Si se utiliza un gestor de volúmenes (incluido Oracle Automatic Storage Management [ASM]), el grupo de discos también debe estar dedicado a los archivos de datos.
+Se prefiere VBSR cuando una base de datos es muy grande o cuando se debe recuperar lo antes posible, y el uso de VBSR requiere aislamiento de los archivos de datos. En un entorno NFS, los archivos de datos de una base de datos determinada deben estar almacenados en volúmenes dedicados que no estén contaminados por ningún otro tipo de archivo. En un entorno SAN, los archivos de datos deben almacenarse en LUN dedicadas en volúmenes dedicados. Si se utiliza un gestor de volúmenes (incluido Oracle Automatic Storage Management [ASM]), el grupo de discos también debe estar dedicado a los archivos de datos.
 
 El aislamiento de archivos de datos de esta manera permite que se reviertan a un estado anterior sin dañar otros sistemas de archivos.
 

@@ -10,7 +10,7 @@ summary: Recursos adicionales para Microsoft Windows y Hyper-V.
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]

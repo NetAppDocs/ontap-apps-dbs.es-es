@@ -1,0 +1,38 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-config-cgs.html 
+keywords: epic,cache,iris 
+summary: Configuración de snapshots de almacenamiento épico 
+---
+= Configuración épica de la eficiencia del almacenamiento
+:allow-uri-read: 
+
+
+[role="lead"]
+Las aplicaciones con almacenamiento repartidos por más de un volumen con una o varias LUN de las cantidades adecuadas para la carga de trabajo necesitan que se realice un backup conjunto de contenido que garantice que una protección de datos constante requiera CG.
+
+Los grupos de consistencia (CG para abreviar) ofrecen esta funcionalidad y mucho más. Se pueden utilizar todas las noches para crear copias snapshot coherentes bajo demanda o programadas usando una política. Puede usarlo para restaurar, clonar e incluso replicar datos.
+
+Para obtener información adicional acerca de los CG, consulte la link:https://docs.netapp.com/us-en/ontap/consistency-groups/["Información general sobre los grupos de consistencia"^]
+
+Una vez aprovisionados los volúmenes y las LUN tal y como se detallan en las secciones anteriores de este documento, se pueden configurar en un conjunto de CG. Se recomienda configurarlas como se muestra en la siguiente imagen:
+
+image:epic-cg-layout.png["Distribución del grupo de consistencia épica"]
+
+
+
+== Snapshots de grupo de coherencia
+
+Se debe definir una programación de snapshot de CG nocturna en cada uno de los CG secundarios asociados con los volúmenes que proporcionan almacenamiento para la base de datos de producción. Esto dará como resultado un nuevo conjunto de backups consistentes de estos CG cada noche. Estos pueden utilizarse para clonar la base de datos de producción para utilizarlos en entornos distintos a la producción, como desarrollo y pruebas. NetApp ha desarrollado flujos de trabajo Ansible automatizados basados en el CG propio para Epic con el fin de automatizar el backup de bases de datos de producción, así como los entornos de prueba y actualización.
+
+Las instantáneas de CG pueden utilizarse para admitir las operaciones de restauración de la base de datos de producción de Epic.
+
+Para volúmenes SAN, deshabilite la política de snapshots predeterminada en cada volumen que se utiliza para los CG. Estas copias Snapshot normalmente las gestiona la aplicación de backup que se está utilizando o el servicio de automatización Epic Ansible de NetApp.
+
+Para volúmenes SAN, deshabilite la política de Snapshot predeterminada en cada volumen. Estas copias Snapshot normalmente son gestionadas por una aplicación de backup o por la automatización de Epic Ansible[NS2].
+
+WebBLOB y los conjuntos de datos de VMware deben configurarse como volúmenes, no como asociados con los CG. SnapMirror se puede usar para mantener snapshots en sistemas de almacenamiento independientes de producción.
+
+Cuando termine, la configuración sería la siguiente:
+
+image:epic-cg-snapshots.png["Épica con copias Snapshot de CG"]

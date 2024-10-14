@@ -10,7 +10,7 @@ summary: Este apéndice describe la puesta en marcha de la migración en vivo en
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]

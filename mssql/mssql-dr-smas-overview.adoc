@@ -1,0 +1,35 @@
+---
+sidebar: sidebar 
+permalink: mssql/mssql-dr-smas-overview.html 
+keywords: MSSQL,SQL Server, SnapMirror active sync, SMBC, overview 
+summary: Microsoft SQL Server y sincronización activa de SnapMirror 
+---
+= Sincronización activa de SQL Server y SnapMirror
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La sincronización activa de SnapMirror permite que las aplicaciones y bases de datos individuales de SQL Server continúen las operaciones durante interrupciones de las redes y el almacenamiento, con conmutación al respaldo transparente del almacenamiento sin intervención manual.
+
+A partir de ONTAP 9.15,1, SnapMirror Active Sync admite arquitectura activo-activo simétrica además de la configuración asimétrica existente. La funcionalidad activo-activo simétrica proporciona replicación bidireccional síncrona para la continuidad del negocio y la recuperación ante desastres. Le ayuda a proteger el acceso a los datos para cargas de trabajo SAN críticas con acceso de lectura y escritura simultáneo a los datos en varios dominios de fallo, lo que garantiza operaciones ininterrumpidas y minimiza el tiempo de inactividad durante desastres o fallos del sistema.
+
+Los hosts SQL Server acceden al almacenamiento a través de LUN de Fibre Channel (FC) o iSCSI. Replicación entre cada clúster que aloja una copia de los datos replicados. Dado que esta función es la replicación de nivel de almacenamiento, las instancias de SQL Server que se ejecutan en instancias de clúster de conmutación por error o host independiente pueden realizar operaciones de lectura/escritura en cualquier clúster. Para obtener información sobre los pasos de planificación y configuración, consulte link:https://docs.netapp.com/us-en/ontap/snapmirror-active-sync/["Documentación de ONTAP en sincronización activa de SnapMirror"] .
+
+
+
+== Arquitectura de SnapMirror activo con activo-activo simétrico
+
+image:mssql-smas-architecture.png["Error: Falta la imagen gráfica"]
+
+**Replicación síncrona**
+
+En condiciones de funcionamiento normal, cada copia es una réplica síncrona RPO=0 en todo momento, con una excepción. Si los datos no se pueden replicar, ONTAP liberará el requisito para replicar datos y reanudar el servicio de I/O en un sitio mientras las LUN del otro sitio se desconecten.
+
+**Hardware de almacenamiento**
+
+Al contrario que otras soluciones de recuperación ante desastres del almacenamiento, SnapMirror Active Sync ofrece una flexibilidad de plataforma asimétrica. No es necesario que el hardware de cada sitio sea idéntico. Esta funcionalidad permite ajustar el tamaño adecuado del hardware que se utiliza para dar soporte a SnapMirror de sincronización activa. El sistema de almacenamiento remoto puede ser idéntico al sitio principal si necesita soportar una carga de trabajo de producción completa, pero si un desastre provoca una reducción de I/O, es posible que un sistema más pequeño en el sitio remoto sea más rentable.
+
+**Mediador ONTAP**
+
+ONTAP Mediator es una aplicación de software que se descarga del soporte técnico de NetApp y que normalmente se implementa en una pequeña máquina virtual. El Mediador ONTAP no es un desempate. Es un canal de comunicación alternativo para los dos clústeres que participan en la replicación síncrona activa de SnapMirror. Las operaciones automatizadas son impulsadas por ONTAP en función de las respuestas recibidas del partner a través de conexiones directas y a través del mediador.

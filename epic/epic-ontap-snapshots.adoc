@@ -1,0 +1,29 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-ontap-snapshots.html 
+keywords: epic,cache,iris 
+summary: Clonado y copias Snapshot épicas 
+---
+= Configuración épica de la eficiencia del almacenamiento
+:allow-uri-read: 
+
+
+[role="lead"]
+Una copia de Snapshot es una copia de un momento específico de un volumen de solo lectura.
+
+Una instantánea coloca un bloqueo lógico en todos los bloques del sistema de archivos activo. Las copias de Snapshot de NetApp ONTAP son casi instantáneas y no utilizan almacenamiento adicional.
+
+Write anwhere File Layout, o WAFL, es un sistema de archivos de solo escritura; no realiza E/S adicionales, como copiar los datos de un bloque protegido mediante snapshot antes de sobrescribirlos. Nunca se mueven datos; por lo tanto, las copias Snapshot no afectan a la capacidad de almacenamiento ni al rendimiento. Las copias Snapshot proporcionan un enorme ahorro en almacenamiento, al tiempo que aumentan la solución de backup.
+
+
+
+== FlexClone
+
+Un volumen NetApp ONTAP FlexClone es un clon de un volumen existente o una copia de Snapshot de un volumen existente. Por lo demás, es un volumen de ONTAP como cualquier otro, y puede clonarse, protegerse con copias Snapshot y configurarse mediante una política de calidad de servicio.
+
+Al igual que sucede con las snapshots, un volumen FlexClone no necesita espacio adicional durante la creación. Solo los cambios en el clon requieren capacidad adicional.
+
+Epic requiere de 10 a 30 copias de las bases de datos de producción para varios requisitos operativos como los backups de streaming, las comprobaciones de integridad y el almacenamiento provisional de los entornos de actualización. Se ha aumentado la necesidad de una solución basada en volúmenes FlexClone con el traslado a actualizaciones más frecuentes.
+
+
+NOTE: NetApp proporciona una solución de backup de Epic totalmente automatizada y una solución de actualización de Epic como parte de la solución con las herramientas Ansible y nativas de NetApp.

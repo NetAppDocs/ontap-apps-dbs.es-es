@@ -1,0 +1,20 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-ontap-availability.html 
+keywords: epic,cache,iris 
+summary: Disponibilidad Epic en ONTAP 
+---
+= Disponibilidad Epic en ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+El núcleo de ONTAP son las operaciones no disruptivas que permiten evitar costosas interrupciones en las operaciones empresariales.
+
+NetApp ofrece una disponibilidad superior al 99,999999 %, basada en datos de producción, a los que NetApp Active IQ conoce como «casa». Cada par de alta disponibilidad del clúster no tiene ningún único punto de error. ONTAP se remonta a 1992 y es el software de gestión de datos más instalado en el mundo, con una historia excepcional como proveedor de almacenamiento fiable. Ahora, gracias a la supervisión proactiva de Active IQ y a la resolución automática del 97 % de los problemas, la disponibilidad es mayor y tiene mucho menos casos de soporte.
+
+Epic recomienda utilizar sistemas de almacenamiento de alta disponibilidad para mitigar los fallos de los componentes de hardware. Esta recomendación abarca desde hardware básico (como fuentes de alimentación redundantes) hasta redes (como redes multivía).
+
+Si necesita actualizar el almacenamiento, escalar verticalmente, escalar horizontalmente o reequilibrar cargas de trabajo en todo el clúster, la atención al paciente no se ve afectada. Es posible que mueva datos, pero nunca más tendrá que interrumpir la atención a los pacientes mediante migraciones de datos o renovaciones graduales. Cambie a la tecnología de última generación y prepárese para el futuro y evite los bloqueos del hardware. NetApp ofrece incluso una garantía de disponibilidad escrita del 100 %.
+
+En el  whitepaper encontrará más información sobre las funciones de fiabilidad, disponibilidad, capacidad de servicio y seguridad de NetApplink:https://www.netapp.com/media/67355-wp-7354.pdf["Fiabilidad, disponibilidad, capacidad de servicio y seguridad de NetApp ONTAP"^].

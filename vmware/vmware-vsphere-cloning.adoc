@@ -24,7 +24,7 @@ La siguiente figura muestra la clonación de ONTAP.
 
 image:vsphere_ontap_image5.png["Clonado de ONTAP"]
 
-Es posible descargar la clonado en sistemas que ejecutan software ONTAP mediante varios mecanismos, normalmente a nivel de máquina virtual, VVol o almacén de datos. Entre ellos se incluyen los siguientes:
+La clonado puede descargarse en sistemas que ejecutan ONTAP a través de varios mecanismos, normalmente a nivel de máquina virtual, VVol o almacén de datos. Entre ellos se incluyen los siguientes:
 
 * VVols utiliza el proveedor de API de vSphere para el reconocimiento del almacenamiento (VASA) de NetApp.  Los clones de ONTAP se utilizan para admitir copias Snapshot VVOL gestionadas por vCenter, que gestionan el espacio de forma eficiente y tienen un efecto de I/O mínimo para crearlas y eliminarlas.  Las máquinas virtuales también pueden clonarse mediante vCenter y también se descargan en ONTAP, ya sea en un único almacén de datos/volumen o entre almacenes de datos/volúmenes.
 * Clonado y migración de vSphere mediante API de vSphere: Integración de cabina (VAAI). Es posible descargar las operaciones de clonado de máquinas virtuales en ONTAP tanto en entornos SAN como NAS (NetApp suministra un complemento ESXi para habilitar VAAI para NFS).  VSphere solo descarga las operaciones en máquinas virtuales frías (apagadas) en un almacén de datos NAS, mientras que las operaciones en máquinas virtuales activas (clonado y vMotion de almacenamiento) también se descargan para SAN. ONTAP usa el método más eficaz basado en el origen, el destino y las licencias de productos instaladas. Esta funcionalidad también la utiliza VMware Horizon View.

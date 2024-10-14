@@ -1,0 +1,29 @@
+---
+sidebar: sidebar 
+permalink: mssql/mssql-dr-mcc-sql.html 
+keywords: MSSQL,SQL Server, MetroCluster 
+summary: Microsoft SQL Server con NetApp MetroCluster 
+---
+= Microsoft SQL Server con MetroCluster
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+MetroCluster es una opción para proteger las bases de datos de SQL Server con un objetivo de punto de recuperación cero. MetroCluster es una tecnología de replicación sencilla y de alto rendimiento RPO=0 que le permite replicar fácilmente toda una infraestructura entre sitios.
+
+SQL Server puede ampliar hasta miles de bases de datos en un único sistema MetroCluster. Podría haber instancias independientes de SQL Server o instancias de cluster de conmutación al nodo de respaldo, el sistema MetroCluster no necesariamente agrega o cambia las mejores prácticas para gestionar una base de datos.
+
+Una explicación completa de MetroCluster está más allá del alcance de este documento, pero los principios son simples. MetroCluster puede proporcionar una solución de replicación RPO=0 con una rápida conmutación al respaldo. Lo que construya sobre esta base depende de sus necesidades.
+
+Por ejemplo, un procedimiento básico de DR rápida después de la pérdida repentina del sitio podría seguir los siguientes pasos básicos:
+
+* Forzar una conmutación de MetroCluster
+* Detección de LUN FC/iSCSI (solo SAN)
+* Montaje de sistemas de archivos
+* Inicie SQL Services
+
+
+El requisito principal de este método es un sistema operativo en ejecución instalado en el sitio remoto. Se debe preconfigurar con la configuración de SQL Server y se debe actualizar con una versión de compilación equivalente. Las bases de datos del sistema SQL Server también pueden duplicarse en el sitio remoto y montarse si se declara un desastre.
+
+Si los volúmenes, los sistemas de archivos y el almacén de datos que alojan bases de datos virtualizadas no se utilizan en el sitio de recuperación ante desastres antes de la conmutación de sitios, no es necesario establecer `dr-force- nvfail` en los volúmenes asociados.

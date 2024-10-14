@@ -10,7 +10,7 @@ summary: Protección de bases de datos de Microsoft SQL Server en ONTAP con coma
 
 
 [role="lead"]
-La planificación del backup de la base de datos se basa en los requisitos del negocio. Al combinar la tecnología Snapshot de NetApp de ONTAP y el aprovechamiento de las API de Microsoft SQL Server, puede realizar rápidamente backup consistente con las aplicaciones independientemente del tamaño de las bases de datos del usuario. Para obtener requisitos de gestión de datos más avanzados o de escalado horizontal, NetApp ofrece SnapCenter.
+Las estrategias de backup de bases de datos se deben basar en requisitos del negocio identificados, no en capacidades teóricas. Al combinar la tecnología Snapshot de ONTAP y aprovechar las API de Microsoft SQL Server, puede realizar rápidamente backup consistente con las aplicaciones independientemente del tamaño de las bases de datos del usuario. Para obtener requisitos de gestión de datos más avanzados o de escalado horizontal, NetApp ofrece SnapCenter.
 
 
 
@@ -22,7 +22,7 @@ La instancia de SQL Server puede ser una configuración independiente, una insta
 
 
 TIP: *NetApp recomienda* usar SnapCenter para crear copias snapshot. También funciona el método de T-SQL descrito a continuación, pero SnapCenter ofrece una automatización completa del proceso de backup, restauración y clonación. También realiza una detección para garantizar que se crean las snapshots correctas. No se necesita ninguna configuración previa.
-...
+
 SQL Server también requiere coordinación entre el SO y el almacenamiento para garantizar que los datos correctos están presentes en las snapshots en el momento de la creación. En la mayoría de los casos, el único método seguro para hacerlo es con SnapCenter o T-SQL. Es posible que las instantáneas creadas sin esta coordinación adicional no se puedan recuperar de forma fiable.
 
 Para obtener más detalles sobre el plugin de SQL Server para SnapCenter, consulte link:https://www.netapp.com/pdf.html?item=/media/12400-tr4714.pdf["TR-4714: Guía de mejores prácticas para SQL Server con NetApp SnapCenter"^].

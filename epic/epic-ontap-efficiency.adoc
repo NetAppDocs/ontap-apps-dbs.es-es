@@ -1,0 +1,31 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-ontap-efficiency.html 
+keywords: epic,cache,iris 
+summary: Épica de la eficiencia de ONTAP 
+---
+= Épica de la eficiencia de ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+Epic se ejecuta en cabinas all-flash donde la mayor parte del coste es el disco. Por lo tanto, la eficiencia del almacenamiento es fundamental para reducir los costes.
+
+La eficiencia del almacenamiento inline de NetApp consigue unos ahorros de almacenamiento líderes en el sector sin afectar al rendimiento; además, ofrecemos una garantía de eficiencia escrita con las cabinas all-flash.
+
+Al calcular la eficiencia del almacenamiento, es importante medir la capacidad bruta en utilizable para lograr la capacidad efectiva.
+
+* *Capacidad bruta* antes de aplicar cualquier RAID, tamaño del disco por número de discos.
+* * Capacidad utilizable * Después de aplicar RAID, cuánto almacenamiento utilizable está disponible.
+* * Capacidad efectiva* Cuánto almacenamiento se aprovisiona y se presenta al host o cliente.
+
+
+La figura siguiente es un cálculo de eficiencia de muestra de una puesta en marcha de Epic típica, que incluye todas las cargas de trabajo que requieren 852TB TB de almacenamiento efectivo y con una eficiencia de 5,2:1 que proporciona 1,32PB PB de datos efectivos totales.
+
+
+NOTE: En función del número de discos, la capacidad bruta a utilizable varía ligeramente.
+
+image:epic-efficiency.png["Eficiencia épica del almacenamiento"]
+
+
+NOTE: NetApp no utiliza la tecnología Snapshot ni thin provisioning de NetApp para calcular la eficiencia del programa de garantía. Si lo hace, demostraría una eficiencia poco realista de 30-100:1, lo cual no significa nada al ajustar el tamaño de la capacidad de almacenamiento real.

@@ -1,0 +1,16 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-ontap-consolidation.html 
+keywords: epic,cache,iris 
+summary: Epic en la consolidación de ONTAP 
+---
+= Epic en la consolidación de ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+Uno de los mayores desafíos en la atención sanitaria es la ineficiencia de los entornos aislados.
+
+Varias soluciones puntuales son creadas por varios grupos que impiden el progreso. Tener una estrategia unificada de gestión de datos mejora la eficiencia para acelerar la transformación. Tecnología disruptiva como la digitalización de registros de pacientes, ransomware y la IA generativa son todas las unidades que necesitan una consolidación.
+
+Con ONTAP puede consolidar archivo/bloque/objeto y cada una de sus cargas de trabajo de nivel 0/1/2/3, en las instalaciones y en el cloud, todas ellas ejecutándose en ONTAP.

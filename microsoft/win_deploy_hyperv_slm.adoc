@@ -10,7 +10,7 @@ summary: Cómo configurar la migración dinámica del almacenamiento de Hyper-V.
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]

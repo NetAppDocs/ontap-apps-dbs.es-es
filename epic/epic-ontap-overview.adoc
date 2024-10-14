@@ -1,0 +1,22 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-ontap-overview.html 
+keywords: epic,cache,iris 
+summary: Información general de Epic en ONTAP 
+---
+= EPIC en ONTAP
+:allow-uri-read: 
+
+
+[role="lead"]
+Epic es más fácil con ONTAP.
+
+ONTAP es una plataforma de gestión de datos que le permite consolidar las cargas de trabajo de Epic al tiempo que cumple todos sus requisitos de rendimiento, protección de datos y gestión de datos.
+
+Solo en NetApp puede estandarizar todas sus cargas de trabajo del sector sanitario para SAN, NAS y objetos en una única plataforma de gestión de datos de alta disponibilidad. ONTAP es la plataforma de software de almacenamiento con mayor implementación del mundo y cuenta con casi 30 años de innovación constante. Puede hacer frente a todos los retos de Epic con las herramientas nativas de gestión de datos de ONTAP y la integración de aplicaciones. No es necesario adquirir una multitud de herramientas de terceros para llenar las carencias de la solución.
+
+Muchos proveedores de almacenamiento ofrecen un almacenamiento basado en bloques tradicional, fiable y rápido. Funcionan bien, pero normalmente se ponen en marcha en silos para ejecutar una única carga de trabajo, como producción, informes, claridad, VDI, VMware y NAS. Cada uno de estos silos tiene un hardware y herramientas de gestión diferentes, y generalmente están administrados por diferentes grupos de TI. Este enfoque tradicional se suma al mayor problema con la atención sanitaria actual: La complejidad.
+
+Con NetApp, la gestión de datos es más fácil y eficiente. En lugar de destinar dinero a los problemas con los silos de gran tamaño, ONTAP utiliza la innovación y la tecnología para habilitar un acuerdo de nivel de servicio consistente y garantizado para cada carga de trabajo en una única plataforma mediante cualquier protocolo con protección de datos integrada. Estas funcionalidades y herramientas también se extienden al cloud que elija, tal y como se muestra a continuación.
+
+image:epic-consolidation.png["Escale y Simplicity para el sector sanitario con ONTAP"]

@@ -10,7 +10,7 @@ summary: Eficiencia del almacenamiento de ONTAP con Microsoft Hyper-V
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ../media
+:imagesdir: ../media/
 
 
 [role="lead"]

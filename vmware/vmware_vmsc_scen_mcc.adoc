@@ -22,7 +22,8 @@ En las siguientes secciones se resumen los resultados esperados de varios escena
 
 En esta situación, si se produce un error en componentes como el puerto HBA, el puerto de red, el puerto del switch de datos de interfaz de usuario o un cable FC o Ethernet, esa ruta particular al dispositivo de almacenamiento se marca como muerta por el host ESXi. Si se configuran varias rutas para el dispositivo de almacenamiento proporcionando resiliencia en el puerto de HBA/red/switch, ESXi idealmente ejecuta una conmutación de rutas. Durante este periodo, las máquinas virtuales permanecen en ejecución sin que se vean afectadas, porque se cuida de la disponibilidad del almacenamiento mediante varias rutas al dispositivo de almacenamiento.
 
-*Nota:* No hay cambios en el comportamiento de MetroCluster en este escenario, y todos los almacenes de datos siguen intactos desde sus respectivos sitios.
+
+NOTE: No hay ningún cambio en el comportamiento de MetroCluster en este escenario, y todos los almacenes de datos siguen estando intactos en sus sitios respectivos.
 
 
 
@@ -72,7 +73,10 @@ En esta situación, se produce un fallo de más de dos discos o una bandeja ente
 
 image::../media/vmsc_5_3.png[Fallo de una bandeja de discos única.,624,576]
 
-*Nota:* Durante este período, no hay impacto en las operaciones de E/S de la máquina virtual, pero hay un rendimiento degradado porque se accede a los datos desde la bandeja de discos remotos a través de enlaces ISL.
+*[NOTA]
+
+* Durante este periodo, no se ven afectadas las operaciones de I/O de las máquinas virtuales, pero el rendimiento está degradado porque se accede a los datos desde la bandeja de discos remota a través de enlaces ISL.
+
 
 
 
@@ -96,7 +100,8 @@ image::../media/vmsc_5_5.png[Fallo de enlace entre switches en la red de gestió
 
 En este escenario, si los enlaces ISL en la red de gestión de host de interfaz de usuario producen un error, los hosts ESXi del sitio A no podrán comunicarse con los hosts ESXi del sitio B. Esto dará lugar a una partición de red porque los hosts ESXi de un sitio concreto no podrán enviar los latidos de red al nodo maestro del clúster HA. Como tal, habrá dos segmentos de red debido a la partición y habrá un nodo maestro en cada segmento que protegerá las VM de fallos de host dentro del sitio en particular.
 
-*Nota:* Durante este período, las máquinas virtuales permanecen en ejecución y no hay cambios en el comportamiento de MetroCluster en este escenario. Todos los almacenes de datos siguen estando intactos en sus respectivos sitios.
+
+NOTE: Durante este período, las máquinas virtuales permanecen en ejecución y no hay cambios en el comportamiento de MetroCluster en este escenario. Todos los almacenes de datos siguen estando intactos en sus respectivos sitios.
 
 
 
@@ -152,7 +157,8 @@ En un supuesto de fallo del sitio A completo, los hosts ESXi del sitio B no obte
 
 Si el intento del agente maestro HA de vSphere de reiniciar una máquina virtual (lo que implica registrarla y encenderla) falla, el reinicio se vuelve a intentar después de un retraso. El retardo entre reinicios se puede configurar hasta un máximo de 30 minutos. VSphere HA intenta estos reinicios durante un número máximo de intentos (seis intentos de forma predeterminada).
 
-*Nota:* El maestro HA no inicia los intentos de reinicio hasta que el administrador de colocación encuentre el almacenamiento adecuado, por lo que en el caso de un fallo completo del sitio, eso sería después de que se haya realizado el cambio.
+
+NOTE: El maestro de alta disponibilidad no inicia los intentos de reinicio hasta que el administrador de ubicación encuentra el almacenamiento adecuado, por lo que en caso de un fallo completo del sitio, sería después de que se haya realizado el cambio.
 
 Si el sitio A se ha cambiado, un fallo posterior de uno de los nodos del sitio B superviviente se puede gestionar sin problemas mediante la conmutación al nodo superviviente. En este caso, solo un nodo realiza el trabajo de cuatro nodos. En este caso, la recuperación consistiría en realizar un retorno al nodo local. A continuación, cuando se restaura el sitio A, se realiza una operación de conmutación para restaurar el funcionamiento en estado constante de la configuración.
 

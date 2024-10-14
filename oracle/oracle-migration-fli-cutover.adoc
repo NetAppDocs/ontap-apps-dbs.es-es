@@ -146,7 +146,7 @@ vserver1  800DT$HuVWBn /vol/new_lvm/LUN8 2
 vserver1  800DT$HuVWBo /vol/new_lvm/LUN9 2
 20 entries were displayed.
 ....
-Si necesita un proceso sin conexión, retrase la detección o el reinicio de servicios hasta que el `lun import show` comando indica que toda la migración se ha realizado correctamente y se ha completado. A continuación, puede completar el proceso de migración tal y como se describe en link:../migration/migration_options.html#foreign-lun-import-fli["Importación de LUN externa: Completado"].
+Si necesita un proceso sin conexión, retrase la detección o el reinicio de servicios hasta que el `lun import show` comando indique que toda la migración se ha realizado correctamente y se ha completado. A continuación, puede completar el proceso de migración como se describe en link:oracle-migration-fli-completion.html["Importación de LUN externa: Completado"].
 
 Si necesita una migración en línea, continúe con la detección de las LUN en su nuevo directorio raíz y obtenga los servicios.
 

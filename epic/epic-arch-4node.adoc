@@ -1,0 +1,28 @@
+---
+sidebar: sidebar 
+permalink: epic/epic-arch-4node.html 
+keywords: epic,cache,iris 
+summary: Arquitectura épica con cuatro nodos 
+---
+= Arquitectura épica con cuatro nodos
+:allow-uri-read: 
+
+
+[role="lead"]
+Las siguientes figuras muestran la distribución del almacenamiento para una arquitectura de cuatro nodos: Un par de alta disponibilidad en producción y un par de alta disponibilidad en recuperación ante desastres. El tamaño de las controladoras y la cantidad de discos se basa en la última imagen de tamaño.
+
+NetApp garantiza un rendimiento mínimo a nivel físico al aceptar las políticas de AQoS recomendadas por SLM. Epic admite la consolidación de pools de almacenamiento basados en ONTAP en un hardware considerablemente menor. Para obtener más información, consulte el documento de CUOTAS trimestrales de Epic. Básicamente, pool1, pool2 y NAS1 (enumerados en la guía de configuración de hardware de Epic) pueden ejecutarse en un solo par de alta disponibilidad con las cargas de trabajo distribuidas uniformemente entre las dos controladoras. En la recuperación ante desastres, Epic Pool 3 y NAS 3 también se dividen entre las dos controladoras del par de alta disponibilidad.
+
+Los entornos de copia completa de prueba (como SUP, REL y PJX) se clonan desde Epic Production, Epic Report o Epic Disaster Recovery. Para obtener información acerca de las copias de seguridad y actualización de Epic, consulte la sección titulada, «Gestión de datos».
+
+
+
+== Arquitectura con cuatro nodos
+
+image:epic-4node.png["Arquitectura épica de 4 nodos"]
+
+
+
+== Ubicación de cargas de trabajo en cuatro nodos
+
+image:epic-4node-design.png["Ubicación Epic de 4 nodos"]
