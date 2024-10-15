@@ -1,4 +1,4 @@
-= AFF
+= Ajustes de proximidad
 :allow-uri-read: 
 
 
@@ -6,9 +6,23 @@ Una característica importante de SM-AS es la capacidad de configurar los sistem
 
 
 
+== Ajustes de proximidad
+
+La proximidad se refiere a una configuración por clúster que indica que un ID de iniciador de iSCSI o WWN de host particular pertenece a un host local. Es un segundo paso opcional para configurar el acceso a LUN.
+
+El primer paso es la configuración habitual del igroup. Cada LUN debe asignarse a un igroup que contiene los ID WWN/iSCSI de los hosts que necesitan acceder a ese LUN. Este controla el host que tiene _access_ a una LUN.
+
+El segundo paso opcional es configurar la proximidad del host. Esto no controla el acceso, controla _priority_.
+
+Por ejemplo, se puede configurar un host del sitio A para acceder a una LUN protegida por sincronización activa de SnapMirror y, como la SAN se extiende a través de los sitios, las rutas están disponibles para ese LUN usando el almacenamiento en el sitio A o el almacenamiento del sitio B.
+
+Sin configuración de proximidad, ese host usará ambos sistemas de almacenamiento por igual porque ambos sistemas de almacenamiento anunciarán rutas activas/optimizadas. Si la latencia SAN o el ancho de banda entre los sitios es limitada, es posible que no sea deseable y puede que desee asegurarse de que durante el funcionamiento normal cada host utilice preferentemente rutas hacia el sistema de almacenamiento local. Esto se configura añadiendo el ID de WWN/iSCSI de host al clúster local como un host proximal. Esto se puede hacer en la CLI o en SystemManager.
+
+
+
 == AFF
 
-Con un sistema AFF, las rutas aparecerán como se muestra a continuación.
+Con un sistema AFF, las rutas aparecerían como se muestra a continuación cuando se configura la proximidad del host.
 
 image:smas-uniform-aff.png["Redes uniformes de AFF con sincronización activa de SnapMirror"]
 
