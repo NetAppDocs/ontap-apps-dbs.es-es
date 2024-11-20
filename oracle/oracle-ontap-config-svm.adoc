@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-ontap-config-svm.html 
 keywords: svm 
 summary: Aprovisionamiento de SVM para bases de datos de Oracle 
+searchtitle: Oracle Database y Storage Virtual Machines 
 ---
-= Oracle Database y Storage Virtual Machines
+= Máquinas virtuales de almacenamiento
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

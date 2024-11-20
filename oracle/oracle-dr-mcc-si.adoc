@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-dr-mcc-si.html 
 keywords: oracle, metrocluster, mcc, MCC-IP 
 summary: Instancia única de Oracle en MetroCluster 
+searchtitle: Instancia única de Oracle en MetroCluster 
 ---
-= Instancia única de Oracle en MetroCluster
+= Instancia única de Oracle
 :allow-uri-read: 
 
 

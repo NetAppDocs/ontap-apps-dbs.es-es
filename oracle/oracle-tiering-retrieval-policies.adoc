@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-tiering-retrieval-policies.html 
 keywords: tiering, FabricPool 
 summary: Bases de datos de Oracle y políticas de recuperación de FabricPool 
+searchtitle: Bases de datos de Oracle y políticas de recuperación de FabricPool 
 ---
-= Bases de datos de Oracle y políticas de recuperación de FabricPool
+= Políticas de recuperación
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

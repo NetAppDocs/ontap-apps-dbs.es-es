@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-migration-overview.html 
 keywords: oracle, ontap, migrations, TR-4534 
 summary: Introducción a la migración del almacenamiento de Oracle 
+searchtitle: Migración de bases de datos de Oracle a sistemas de almacenamiento de ONTAP 
 ---
-= Migración de bases de datos de Oracle a sistemas de almacenamiento de ONTAP
+= Descripción general
 :allow-uri-read: 
 
 

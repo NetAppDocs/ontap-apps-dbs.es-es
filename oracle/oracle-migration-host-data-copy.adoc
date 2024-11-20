@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-migration-host-data-copy.html 
 keywords: migration, oracle, data copy, lvm, rebalance, asm 
 summary: Migración de Oracle mediante la pila de almacenamiento del host 
+searchtitle: Copia de datos de host de la base de datos de Oracle 
 ---
-= Copia de datos de host de la base de datos de Oracle
+= Copiado de datos de host
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

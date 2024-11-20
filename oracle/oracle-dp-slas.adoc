@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-dp-slas.html 
 keywords: SLA, data protection, RPO, RTO 
 summary: Acuerdos de nivel de servicio de protección de datos de Oracle 
+searchtitle: Planificación del objetivo de tiempo de recuperación, el objetivo de punto de recuperación y los acuerdos de nivel de servicio 
 ---
-= Planificación del objetivo de tiempo de recuperación, el objetivo de punto de recuperación y los acuerdos de nivel de servicio
+= Planificación de objetivos de tiempo, objetivos de punto de recuperación y acuerdos de nivel de servicio
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

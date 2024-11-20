@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-dr-smas-preferred-site.html 
 keywords: Oracle,SM-as,active sync,preferred 
 summary: Oracle y SM-AS sitio preferido 
+searchtitle: Sitio preferido de Oracle y SnapMirror active sync 
 ---
-= Oracle y SM-AS sitio preferido
+= Sitio preferido de sincronización activa de SnapMirror
 :allow-uri-read: 
 :imagesdir: ../media/
 

@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: mssql/mssql-log-directory.html 
 keywords: MSSQL,SQL Server, volumes, LUN, SnapCenter 
 summary: Directorio de registro de Microsoft SQL Server 
+searchtitle: Directorio de registro de Microsoft SQL Server 
 ---
-= Directorio de registro de Microsoft SQL Server
+= Directorio de registro
 :allow-uri-read: 
 :imagesdir: ../media/
 

@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-migration-procedures-overview.html 
 keywords: migration, oracle 
 summary: Procedimientos de migración de Oracle 
+searchtitle: Descripción general de los procedimientos de migración de Oracle 
 ---
-= Descripción general de los procedimientos de migración de Oracle
+= Descripción general
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: mssql/mssql-files-and-filegroups.html 
 keywords: MSSQL,SQL Server, backup, recovery, database file management 
 summary: Ubicación del archivo de base de datos de Microsoft SQL Server 
+searchtitle: Archivos y grupos de archivos de bases de datos de Microsoft SQL Server 
 ---
-= Archivos y grupos de archivos de bases de datos de Microsoft SQL Server
+= Archivos de base de datos y grupos de archivos
 :allow-uri-read: 
 :imagesdir: ../media/
 

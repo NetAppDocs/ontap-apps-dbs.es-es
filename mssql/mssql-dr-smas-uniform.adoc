@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: mssql/mssql-dr-smas-uniform.html 
 keywords: MSSQL,SQL Server, SnapMirror active sync, SMBC, overview 
 summary: Acceso uniforme de Microsoft SQL Server y SM-AS 
+searchtitle: Acceso uniforme de Microsoft SQL Server y SM-AS 
 ---
-= Acceso uniforme de Microsoft SQL Server y SM-AS
+= Acceso uniforme
 :allow-uri-read: 
 :imagesdir: ../media/
 

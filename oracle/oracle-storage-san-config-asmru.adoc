@@ -4,7 +4,7 @@ permalink: oracle/oracle-storage-san-config-asmru.html
 keywords: ontap, thin provisioning 
 summary: Utilidad de reclamación de ASM con detección de bloques cero de ONTAP 
 ---
-= Utilidad de Reclamación de ASM y detección de bloques cero de ONTAP
+= Utilidad de Reclamación de ASM (ASMRU)
 :allow-uri-read: 
 
 

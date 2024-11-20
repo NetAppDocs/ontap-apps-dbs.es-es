@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-migration-planning.html 
 keywords: migration, oracle 
 summary: Planificación de migración de bases de datos de Oracle 
+searchtitle: Planificación de migración de bases de datos de Oracle 
 ---
-= Planificación de migración de bases de datos de Oracle
+= Planificación de migración
 :allow-uri-read: 
 
 

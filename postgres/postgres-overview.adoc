@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: postgres/postgres-overview.html 
 keywords: PostgreSQL,database,postgres 
 summary: Bases de datos PostgreSQL en ONTAP 
+searchtitle: Bases de datos PostgreSQL en ONTAP 
 ---
-= Bases de datos PostgreSQL en ONTAP
+= Descripción general
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

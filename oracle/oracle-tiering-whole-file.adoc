@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-tiering-whole-file.html 
 keywords: tiering, fabricpool 
 summary: Organización en niveles de FabricPool de archivos completos en bases de datos de Oracle 
+searchtitle: Organización en niveles de FabricPool de archivos completos en bases de datos de Oracle 
 ---
-= Organización en niveles de FabricPool de archivos completos en bases de datos de Oracle
+= Organización en niveles de archivos completa
 :allow-uri-read: 
 
 

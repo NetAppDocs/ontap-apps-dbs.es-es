@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-dr-smas-fail-overview.html 
 keywords: Oracle, SnapMirror active sync, SMBC, failover 
 summary: Recuperación tras fallos de Oracle y SnapMirror Active Sync 
+searchtitle: Recuperación tras fallos de Oracle y SnapMirror Active Sync 
 ---
-= Recuperación tras fallos de Oracle y SnapMirror Active Sync
+= Descripción general
 :allow-uri-read: 
 :imagesdir: ../media/
 

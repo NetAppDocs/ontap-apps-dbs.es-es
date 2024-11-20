@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: mssql/mssql-dr-smas-failure-scenarios.html 
 keywords: MSSQL,SQL Server, SnapMirror active sync, SMBC, failover 
 summary: Situaciones de recuperación tras fallos de Microsoft SQL Server y SM-AS 
+searchtitle: Conmutación al nodo de respaldo de sincronización activa de Microsoft SQL Server y SnapMirror 
 ---
-= Conmutación al nodo de respaldo de sincronización activa de Microsoft SQL Server y SnapMirror
+= Escenarios de fallo
 :allow-uri-read: 
 :imagesdir: ../media/
 

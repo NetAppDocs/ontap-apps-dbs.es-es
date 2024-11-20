@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-dr-mcc-physical.html 
 keywords: metrocluster, MCC, MCC-IP 
 summary: Arquitectura física de MetroCluster y bases de datos Oracle 
+searchtitle: Arquitectura física de MetroCluster y bases de datos Oracle 
 ---
-= Arquitectura física de MetroCluster y bases de datos Oracle
+= Arquitectura física
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

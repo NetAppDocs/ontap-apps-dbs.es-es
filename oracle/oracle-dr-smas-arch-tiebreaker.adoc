@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-dr-smas-arch-tiebreaker.html 
 keywords: oracle, active sync, mcc, MCC-IP 
 summary: Sincronización activa de Oracle SnapMirror 
+searchtitle: 'Oracle y SnapMirror active sync: RAC tiebreaker' 
 ---
-= Oracle y SnapMirror active sync: RAC tiebreaker
+= RAC tiebreaker
 :allow-uri-read: 
 
 

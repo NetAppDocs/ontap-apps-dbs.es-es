@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: postgres/postgres-architecture.html 
 keywords: PostgreSQL,database,postgres 
 summary: Arquitectura PostgreSQL 
+searchtitle: Arquitectura PostgreSQL 
 ---
-= Arquitectura PostgreSQL
+= Arquitectura
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

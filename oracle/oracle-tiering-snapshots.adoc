@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-tiering-snapshots.html 
 keywords: tiering, fabricpool 
 summary: Organización en niveles de copias Snapshot de Oracle y FabricPool 
+searchtitle: Oracle con organización en niveles de copias Snapshot de FabricPool 
 ---
-= Oracle con organización en niveles de copias Snapshot de FabricPool
+= Organización en niveles de Snapshot
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

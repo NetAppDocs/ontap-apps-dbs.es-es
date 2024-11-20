@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-tiering-backups.html 
 keywords: tiering, fabricpool 
 summary: Organización en niveles de backup de Oracle 
+searchtitle: Niveles de backup de bases de datos de Oracle 
 ---
-= Niveles de backup de bases de datos de Oracle
+= Organización en niveles de backup
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

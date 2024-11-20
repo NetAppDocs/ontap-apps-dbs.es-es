@@ -2,9 +2,10 @@
 sidebar: sidebar 
 permalink: oracle/oracle-dr-smas-fail-site.html 
 keywords: Oracle, SnapMirror active sync, SMBC, failover 
-summary: 'Sincronización activa de Oracle y SnapMirror: Pérdida total de conectividad' 
+summary: 'Sincronización activa de Oracle y SnapMirror: Fallo del sitio' 
+searchtitle: 'Sincronización activa de Oracle y SnapMirror: Fallo del sitio' 
 ---
-= Sincronización activa de Oracle y SnapMirror: Pérdida total de conectividad
+= Error en el centro
 :allow-uri-read: 
 :imagesdir: ../media/
 

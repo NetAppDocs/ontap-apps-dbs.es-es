@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-migration-log-shipping.html 
 keywords: migration, oracle, log shipping 
 summary: Migración de Oracle mediante el envío de logs 
+searchtitle: Migración de bases de datos Oracle a través del envío de registros 
 ---
-= Migración de bases de datos Oracle a través del envío de registros
+= Trasvase de registros
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

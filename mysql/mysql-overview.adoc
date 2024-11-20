@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: mysql/mysql-overview.html 
 keywords: MySQL,MariaDB,TR-4722 
 summary: MySQL en ONTAP 
+searchtitle: Bases de datos MySQL en ONTAP 
 ---
-= Bases de datos MySQL en ONTAP
+= Descripción general
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/

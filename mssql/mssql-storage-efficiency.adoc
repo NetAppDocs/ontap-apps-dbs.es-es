@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: mssql/mssql-storage-efficiency.html 
 keywords: MSSQL,SQL Server, efficiency, compression, deduplication 
 summary: Microsoft SQL Server y la eficiencia del almacenamiento de ONTAP 
+searchtitle: Microsoft SQL Server y la eficiencia del almacenamiento 
 ---
-= Microsoft SQL Server y la eficiencia del almacenamiento
+= Eficiencia del almacenamiento
 :allow-uri-read: 
 :imagesdir: ../media/
 

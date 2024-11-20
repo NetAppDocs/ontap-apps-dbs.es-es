@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-storage-san-config-lun-placement.html 
 keywords: SAN, ASM, LVM 
 summary: Volumen de Oracle y ONTAP y ubicación de LUN 
+searchtitle: Ubicación del LUN de base de datos de Oracle 
 ---
-= Ubicación del LUN de base de datos de Oracle
+= Ubicación de LUN
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

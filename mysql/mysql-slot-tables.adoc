@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: mysql/mysql-slot-tables.html 
 keywords: MySQL,MariaDB,TR-4722 
 summary: MySQL y NFSv3 mesas de ranura 
+searchtitle: MySQL y NFSv3 mesas de ranura 
 ---
-= MySQL y NFSv3 mesas de ranura
+= Mesas de NFSv3 ranuras
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/

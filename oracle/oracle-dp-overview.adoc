@@ -3,8 +3,9 @@ sidebar: sidebar
 permalink: oracle/oracle-dp-overview.html 
 keywords: oracle, database, ontap 
 summary: Descripción general de la protección de datos de Oracle 
+searchtitle: Protección de datos de Oracle con ONTAP 
 ---
-= Protección de datos de Oracle con ONTAP
+= Protección de datos con ONTAP
 :allow-uri-read: 
 
 
