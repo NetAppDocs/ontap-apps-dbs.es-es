@@ -13,7 +13,15 @@ El documento de recomendaciones sobre el diseño de bases de datos de Epic propo
 
 Es importante revisar este documento con el soporte de administrador de bases de datos y Epic de Epic, así como finalizar el número de LUN y tamaños de LUN, ya que deben ajustarse. Estas recomendaciones de almacenamiento son importantes para la profundidad de la cola del adaptador HBA, el rendimiento del almacenamiento, la facilidad de operaciones y la facilidad de expansión.
 
-Para considerar la profundidad de cola del SO del servidor, utilice un mínimo de ocho LUN (una LUN por volumen) para una base de datos. Aumente el número de LUN en múltiplos de ocho. Para los entornos más grandes, es posible que se necesiten más LUN; use la misma cantidad de volúmenes (ocho en total, cuatro por nodo) y añada LUN en múltiplos de ocho. Epic recomienda mantener las LUN < 8TB y el número de LUN < 32. Este enfoque le permite escalar fácilmente su entorno Epic.
+Para considerar la profundidad de cola del SO del servidor, utilice un mínimo de ocho LUN (una LUN por volumen) para una base de datos. Aumente el número de LUN en función del número de nodos del clúster ONTAP. Por ejemplo, añada 4 LUN cuando se usa un clúster de 4 nodos (2 pareja de alta disponibilidad). Para entornos más grandes, es posible que se necesiten más LUN, use la misma cantidad de volúmenes (ocho total, distribuidos por el nodo de almacenamiento) y añada LUN en múltiplos de dos en los nodos y los volúmenes del clúster. Este enfoque le permite escalar fácilmente su entorno Epic.
+
+*Ejemplo 1: Clúster ONTAP de 2 Nodos*
+
+2 nodo, 1 parejas de alta disponibilidad, 8 volúmenes, 4 volúmenes por nodo 8 LUN, una LUN por volumen agregando 2 LUN adicionales, una en node01 en volume01, una en node02 en volume02.
+
+*Ejemplo 2: Clúster ONTAP de 4 Nodos*
+
+Nodo, parejas de alta disponibilidad 8 volúmenes, 2 volúmenes por nodo 8 LUN, una LUN por volumen agregando 4 LUN adicionales, una en node01 en volume01, una en node02 en 4, una en node03 en volume03, una en node04 en 2, una en volume02 en volume04.
 
 Para maximizar el rendimiento de una carga de trabajo, como la base de datos de Epic o la claridad, cada diseño funciona mejor también para el almacenamiento NetApp. Al usar ocho volúmenes, las operaciones de I/O de escritura se distribuyen de manera uniforme entre las controladoras, con lo que se maximiza la utilización de CPU. Para la replicación y el backup, lo mejor es limitar la cantidad de volúmenes a ocho para simplificar las operaciones.
 
@@ -21,7 +29,9 @@ Para maximizar el rendimiento de una carga de trabajo, como la base de datos de 
 
 == Opciones de escala
 
-Si el servidor necesita más almacenamiento, la opción más sencilla es hacer crecer las LUN que contienen los volúmenes. La segunda opción es añadir LUN a los grupos de volúmenes en múltiplos de ocho a la vez (uno por volumen existente). Añadir solo una o dos LUN puede crear una zona problemática y afectar al rendimiento.
+Si el servidor necesita más almacenamiento, la opción más sencilla es hacer crecer las LUN que contienen los volúmenes. La segunda opción es añadir LUN a los grupos de volúmenes en múltiplos de dos a la vez (uno por volumen por nodo).
+
+Ejemplo:
 
 
 
@@ -30,30 +40,15 @@ Si el servidor necesita más almacenamiento, la opción más sencilla es hacer c
 image:epic-8lun.png["Distribución épica de 8-LUN"]
 
 
-
-== Distribución de volúmenes y 16 LUN
-
-image:epic-16lun.png["Distribución épica de 16-LUN"]
-
-
-
-== Distribución de volúmenes y 24 LUN
-
-image:epic-24lun.png["Distribución épica de 24-LUN"]
-
-
-
-== Distribución de volúmenes y 32 LUN
-
-image:epic-32lun.png["Distribución épica de 32-LUN"]
+NOTE: Si en un entorno grande requiere más de 4 nodos o 8 LUN, consulte a nuestro equipo de alianza de Epic para confirmar los diseños de la LUN. Puede ponerse en contacto con el equipo en Epic@NetApp.com.
 
 
 
 == Mejores prácticas
 
-* Use 8, 16, 24 o 32 LUN en 8 volúmenes.
+* Use 8 LUN en volúmenes de 8 para comenzar, añadiendo 2 LUN a la vez en todos los nodos del clúster.
 * Equilibre las cargas de trabajo en toda la pareja de alta disponibilidad para maximizar el rendimiento y la eficiencia.
-* Cree LUN con el tamaño que se espera durante 3 años de crecimiento y evite llegar a las limitaciones de ampliación de 10 veces LUN.
+* Cree LUN con el tamaño esperado para 3 años de crecimiento. (Consulte el link:https://docs.netapp.com/us-en/ontap/san-admin/resize-lun-task.html["Documentación de ONTAP"] para obtener el tamaño máximo de LUN.)
 * Utilice volúmenes y LUN con thin provisioning.
 * Utilice un mínimo de ocho LUN de base de datos, dos LUN de diario y dos LUN de aplicaciones. Esta configuración maximiza el rendimiento del almacenamiento y la profundidad de cola del SO. Se puede usar más si se necesita por capacidad u otros motivos.
 * Si necesita añadir LUN a grupos de volúmenes, añada ocho LUN al mismo tiempo.
