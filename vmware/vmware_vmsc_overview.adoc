@@ -66,4 +66,4 @@ SnapMirror Active Sync también se puede poner en marcha de dos formas distintas
 
 image::../media/vmsc_1_2.png[Diagrama VMSC con MCC,624,485]
 
-Consulte https://docs.netapp.com/us-en/ontap/smbc/index.html["Documentos de NetApp"] Para obtener información específica de diseño e puesta en marcha para SnapMirror, sincronización activa.
+Para obtener más información sobre las ventajas del diseño y despliegue simétrico o asimétrico, consulte la https://docs.netapp.com/us-en/ontap/smbc/index.html["Documentación de SnapMirror Active Sync"].
