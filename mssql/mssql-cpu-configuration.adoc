@@ -3,7 +3,7 @@ sidebar: sidebar
 permalink: mssql/mssql-cpu-configuration.html 
 keywords: MSSQL,SQL Server, CPU, ONTAP 
 summary: Configuración de CPU de Microsoft SQL Server 
-searchtitle: = Configuración de CPU de Microsoft SQL Server 
+searchtitle: Configuración de CPU de Microsoft SQL Server 
 ---
 = Configuración de CPU
 :allow-uri-read: 
