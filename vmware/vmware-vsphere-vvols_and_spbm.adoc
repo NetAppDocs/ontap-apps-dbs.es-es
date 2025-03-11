@@ -14,11 +14,36 @@ summary: Esta página describe las mejores prácticas para implementar una soluc
 
 
 [role="lead"]
-NetApp fue un partner de diseño inicial de VMware en el desarrollo de vSphere Virtual Volumes (vVols), que ofrecía información sobre la arquitectura y compatibilidad temprana con vVols y VMware vSphere APIs for Storage Awareness (VASA). Este enfoque no solo llevó la gestión de almacenamiento granular de la máquina virtual a VMFS, sino que también admitió la automatización del aprovisionamiento de almacenamiento a través de la gestión basada en políticas de almacenamiento (SPBM).
+Anunciada por primera vez en 2012, NetApp fue un partner de diseño temprano con VMware en el desarrollo de VMware vSphere APIs for Storage Awareness (VASA), la base de la gestión basada en políticas de almacenamiento (SPBM) con cabinas de almacenamiento empresarial. Este enfoque trajo una gestión granular del almacenamiento de las máquinas virtuales limitada al almacenamiento de VMFS y NFS.
 
-La SPBM proporciona un marco que funciona como capa de abstracción entre los servicios de almacenamiento disponibles para su entorno de virtualización y los elementos de almacenamiento aprovisionados mediante políticas. Este enfoque permite a los arquitectos de almacenamiento diseñar pools de almacenamiento con distintas funcionalidades que pueden consumir fácilmente los administradores de máquinas virtuales. A continuación, los administradores pueden igualar los requisitos de carga de trabajo de las máquinas virtuales con los pools de almacenamiento aprovisionados, lo que permite controlar de forma granular diversos ajustes a nivel de máquinas virtuales o discos virtuales.
+ As a technology design partner, NetApp provided architectural input and in 2015 announced support for vVols. This new technology now enabled the automation of VM-granular and truly array-native storage provisioning through SPBM.
 
-ONTAP es líder en el sector del almacenamiento a escala de vVols, ya que admite cientos de miles de vVols en un único cluster, mientras que las cabinas empresariales y los proveedores de cabinas flash más pequeños admiten hasta varios miles de vVols por cabina. NetApp también impulsa la evolución de la gestión granular de máquinas virtuales con próximas funcionalidades para admitir vVols 3.0.
+
+== Volúmenes virtuales (vVols)
+
+Los vVols son una revolucionaria arquitectura de almacenamiento que permite gestionar el almacenamiento de forma granular de las máquinas virtuales y no solo por equipo virtual (incluidos los metadatos de las máquinas virtuales), sino incluso por VMDK. Los vVols son un componente clave de la estrategia de centro de datos definido por software (SDDC) que forma la base de VMware Cloud Foundation (VCF), lo que proporciona una arquitectura de almacenamiento más eficiente y escalable para entornos virtualizados.
+
+VVols permite que las máquinas virtuales consuman almacenamiento por equipo virtual, ya que cada objeto de almacenamiento de equipo virtual es una entidad única en NetApp ONTAP. En los sistemas ASA R2 que ya no requieren gestión de volúmenes, esto significa que cada objeto de almacenamiento de VM es una única unidad de almacenamiento (SU) en la matriz que se puede controlar de forma independiente. De este modo, se pueden crear normativas de almacenamiento que se pueden aplicar a VMDK o máquinas virtuales individuales (y, por lo tanto, SUS indivudual), lo que proporciona un control granular sobre los servicios de almacenamiento como el rendimiento, la disponibilidad y la protección de datos.
+
+
+
+== Gestión basada en la política de almacenamiento (SPBM)
+
+La SPBM proporciona un marco que funciona como capa de abstracción entre los servicios de almacenamiento disponibles para su entorno de virtualización y los elementos de almacenamiento aprovisionados mediante políticas. Este método permite a los arquitectos de almacenamiento diseñar pools de almacenamiento con diferentes funcionalidades. Los administradores de equipos virtuales pueden consumir fácilmente estos pools. De este modo, los administradores pueden ajustar los requisitos de las cargas de trabajo de las máquinas virtuales con los pools de almacenamiento aprovisionados. Este enfoque simplifica la gestión del almacenamiento y permite usar los recursos de almacenamiento de forma más eficiente.
+
+El SPBM es un componente clave de vVols, que ofrece un marco basado en normativas para gestionar los servicios de almacenamiento. Los administradores de vSphere crean políticas usando reglas y funcionalidades expuestas por el proveedor de VASA (VP) del proveedor. Es posible crear políticas para diferentes servicios de almacenamiento, tales como rendimiento, disponibilidad y protección de datos. Las políticas se pueden asignar a máquinas virtuales o VMDK individuales, lo que proporciona control granular sobre los servicios de almacenamiento.
+
+
+
+== NetApp ONTAP y vVols
+
+NetApp ONTAP lidera la industria del almacenamiento en vVols Scale, que admite cientos de miles de vVols en un único clúster*. Por el contrario, las cabinas empresariales y los proveedores de cabinas Flash más pequeños admiten hasta varios miles de vVols por cabina. ONTAP proporciona una solución de almacenamiento escalable y eficiente para entornos VMware vSphere que admite vVols con un amplio conjunto de servicios de almacenamiento, que incluye deduplicación de datos, compresión, thin provisioning y protección de datos. SPBM permite una integración perfecta con entornos VMware vSphere.
+
+Anteriormente ya hemos mencionado que los administradores de equipos virtuales pueden consumir capacidad como pools de almacenamiento. Esto se realiza mediante el uso de contenedores de almacenamiento que se representan en vSphere como almacenes de datos lógicos.
+
+Los contenedores de almacenamiento los crean los administradores de almacenamiento y se utilizan para agrupar los recursos de almacenamiento que pueden consumir los administradores de las máquinas virtuales. Los contenedores de almacenamiento se pueden crear de forma diferente en función del tipo de sistema ONTAP que use. Con los clústeres 9 de ONTAP tradicionales, se asignan a los contenedores uno o varios FlexVols de backup que, juntos, forman el pool de almacenamiento. Con los sistemas R2 de ASA, el clúster entero es el pool de almacenamiento.
 
 
 NOTE: Para obtener más información sobre VMware vSphere Virtual Volumes, SPBM y ONTAP, consulte link:vmware-vvols-overview.html["TR-4400: VMware vSphere Virtual Volumes con ONTAP"^].
+
+ \* Depending on platform and protocol

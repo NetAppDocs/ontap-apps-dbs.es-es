@@ -14,13 +14,11 @@ summary: Esta página describe las mejores prácticas para implementar una soluc
 
 
 [role="lead"]
-ONTAP proporciona almacenamiento basado en bloques de clase empresarial para VMware vSphere mediante iSCSI, protocolo Fibre Channel (FCP o FC para abreviar) y NVMe over Fabrics (NVMe-oF). A continuación se muestran las mejores prácticas para implementar protocolos de bloques para el almacenamiento de máquinas virtuales con vSphere y ONTAP.
-
 En vSphere hay tres formas de usar LUN de almacenamiento basado en bloques:
 
 * Con almacenes de datos VMFS
 * Con asignación de dispositivos sin formato (RDM)
-* A medida que una LUN accede y está controlada por un iniciador de software desde un SO invitado de máquina virtual
+* Como LUN conectado a iSCSI o espacio de nombres conectado a NVMe/TCP, al que accede y controla un iniciador de software desde un sistema operativo invitado de máquina virtual
 
 
 VMFS es un sistema de archivos en clúster de alto rendimiento que proporciona almacenes de datos que son pools de almacenamiento compartido. Los almacenes de datos VMFS se pueden configurar con LUN a los que se accede mediante espacios de nombres FC, iSCSI, FCoE o NVMe a los que se accede mediante los protocolos NVMe/FC o NVMe/TCP. VMFS permite a cada servidor ESX de un clúster acceder al almacenamiento de forma simultánea. El tamaño máximo de LUN suele ser de 128TB TB a partir de ONTAP 9.12.1P2 (y versiones anteriores con los sistemas ASA). Por lo tanto, es posible crear un almacén de datos VMFS 5 o 6 de tamaño máximo de 64TB TB utilizando una única LUN.
@@ -29,7 +27,10 @@ VSphere incluye compatibilidad incorporada para múltiples rutas a los dispositi
 
 Tanto NMP como ONTAP son compatibles con el acceso asimétrico de unidad lógica (ALUA) para negociar rutas optimizadas y no optimizadas. En ONTAP, una ruta optimizada para ALUA sigue una ruta de datos directa mediante un puerto de destino en el nodo que aloja la LUN a la que se está accediendo. De forma predeterminada, ALUA está activado tanto en vSphere como en ONTAP. El NMP reconoce el clúster ONTAP como ALUA y utiliza el complemento de tipo de cabina de almacenamiento ALUA (`VMW_SATP_ALUA`) y selecciona el complemento de selección de ruta de operación por turnos (`VMW_PSP_RR`).
 
-ESXi 6 admite hasta 256 LUN y hasta 1,024 rutas totales a LUN. ESXi no ve ninguna LUN o ruta más allá de estos límites. Suponiendo el número máximo de LUN, el límite de rutas permite cuatro rutas por LUN. En un clúster de ONTAP mayor, es posible alcanzar el límite de ruta antes del límite de LUN. Para solucionar esta limitación, ONTAP admite una asignación de LUN selectiva (SLM) en la versión 8.3 y posteriores.
+ESXi 6 ha añadido compatibilidad con hasta 256 LUN y hasta 1.024 rutas totales a LUN. ESXi no ve ninguna LUN o ruta más allá de estos límites. Suponiendo el número máximo de LUN, el límite de rutas permite cuatro rutas por LUN. En un clúster de ONTAP mayor, es posible alcanzar el límite de ruta antes del límite de LUN. Para solucionar esta limitación, ONTAP admite una asignación de LUN selectiva (SLM) en la versión 8.3 y posteriores.
+
+
+NOTE: Consulte el link:https://configmax.broadcom.com/guest?vmwareproduct=vSphere&release=vSphere%208.0&categories=2-0["Herramienta VMware Configuration Maximums"^] para obtener los límites admitidos más actualizados en ESXi.
 
 SLM limita los nodos que anuncian rutas a un LUN determinado. NetApp es una práctica recomendada tener al menos un LIF por nodo por SVM y usar SLM para limitar las rutas anunciadas al nodo que aloja la LUN y su partner de alta disponibilidad. Aunque existen otras rutas, no se anuncian por defecto. Es posible modificar las rutas anunciadas con los argumentos de nodo de informes Agregar y quitar dentro de SLM. Tenga en cuenta que las LUN creadas en versiones anteriores a la 8.3 anuncian todas las rutas y necesitan modificarse para anunciar únicamente las rutas a la pareja de alta disponibilidad del host. Para obtener más información sobre SLM, consulte la sección 5,9 de https://www.netapp.com/pdf.html?item=/media/10680-tr4080pdf.pdf["CONSULTE TR-4080"^]. El método anterior de conjuntos de puertos también puede utilizarse para reducir aún más las rutas disponibles para una LUN. Los conjuntos de puertos ayudan a reducir el número de rutas visibles a través de las cuales los iniciadores de un igroup pueden ver LUN.
 
@@ -41,6 +42,7 @@ Los protocolos de bloque (iSCSI, FC y FCoE) acceden a las LUN utilizando los ID 
 
 Otras prácticas recomendadas a tener en cuenta:
 
+* Compruebe link:vmware-vsphere-settings.html["Host ESXi recomendado y otra configuración de ONTAP"^]los ajustes recomendados por NetApp en colaboración con VMware.
 * Asegúrese de que se crea una interfaz lógica (LIF) para cada SVM en cada nodo del clúster de ONTAP para garantizar la máxima disponibilidad y movilidad. La práctica recomendada para SAN de ONTAP es usar dos puertos físicos y LIF por nodo, uno para cada estructura. ALUA se utiliza para analizar las rutas e identificar las rutas activas optimizadas (directas) en comparación con las rutas activas no optimizadas. ALUA se utiliza para FC, FCoE e iSCSI.
 * En el caso de las redes iSCSI, utilice varias interfaces de red de VMkernel en distintas subredes de la red con la agrupación de NIC cuando haya varios switches virtuales. También puede utilizar varias NIC físicas conectadas a varios switches físicos para proporcionar alta disponibilidad y mayor rendimiento. En la figura siguiente se proporciona un ejemplo de conectividad multivía. En ONTAP, configure un grupo de interfaces de un único modo para realizar la conmutación al nodo de respaldo con dos o más enlaces conectados a dos o más switches, o bien utilice LACP u otra tecnología de agregación de enlaces con grupos de interfaces multimodo para proporcionar alta disponibilidad y las ventajas de la agregación de enlaces.
 * Si el protocolo de autenticación por desafío mutuo (CHAP) se utiliza en ESXi para la autenticación de destino, también debe configurarse en ONTAP mediante la CLI (`vserver iscsi security create`) O con System Manager (edite Initiator Security en almacenamiento > SVM > SVM Settings > Protocols > iSCSI).

@@ -42,10 +42,12 @@ entries:
     url: "/vmware/vmware-vsphere-sdrs.html"
   - title: Configuración recomendada
     url: "/vmware/vmware-vsphere-settings.html"
-- title: Virtual Volumes (vVols) con ONTAP
+- title: Virtual Volumes (vVols) con herramientas de ONTAP 10
   entries:
   - title: Descripción general
     url: "/vmware/vmware-vvols-overview.html"
+  - title: Lista de comprobación para la instalación de herramientas de ONTAP
+    url: "/vmware/vmware-vvols-checklist.html"
   - title: Usar vVols con ONTAP
     url: "/vmware/vmware-vvols-ontap.html"
   - title: Implementar el almacenamiento de vVols

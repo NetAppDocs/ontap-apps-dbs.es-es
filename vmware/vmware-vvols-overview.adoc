@@ -23,35 +23,32 @@ NOTE: Esta documentación sustituye a los informes técnicos _TR-4400 publicados
 Las prácticas recomendadas complementan otros documentos, como guías y listas de compatibilidad. Se desarrollan según pruebas de laboratorio y una amplia experiencia de campo por parte de ingenieros y clientes de NetApp. Puede que no sean las únicas prácticas que funcionan o son compatibles, pero generalmente son las soluciones más simples que satisfacen las necesidades de la mayoría de los clientes.
 
 
-TIP: Este documento se ha actualizado para incluir las nuevas funciones de vVols que se encuentran en vSphere 8,0 update 1 que son compatibles con la versión ONTAP tools 9,12.
+TIP: Este documento se ha actualizado para incluir las nuevas características de vVols que se encuentran en vSphere 8,0 update 3 y la versión de ONTAP tools 10,3.
 
 
 
 == Información general sobre Virtual Volumes (vVols)
 
-NetApp comenzó trabajando con VMware para dar soporte a las API vSphere de Storage Awareness (VASA) para vSphere 5 en 2012. Este primer proveedor de VASA permitía definir las capacidades de almacenamiento en un perfil que podía utilizarse para filtrar almacenes de datos al aprovisionar y comprobar después el cumplimiento de la política. Con el tiempo, esta evolución evolucionó y se añadieron nuevas funcionalidades que permitían una mayor automatización en el aprovisionamiento, y nuevos volúmenes virtuales o vVols, donde se utilizan objetos de almacenamiento individuales para archivos de máquinas virtuales y discos virtuales. Estos objetos podrían ser LUN y archivos y ahora con vSphere 8. NVMe namespaces.NetApp trabajó estrechamente con VMware como partner de referencia de vVols lanzado con vSphere 6 en 2015 y de nuevo como partner de diseño de vVols utilizando NVMe over Fabrics en vSphere 8. NetApp sigue mejorando vVols para aprovechar las últimas funcionalidades de ONTAP.
+NetApp comenzó trabajando con VMware para dar soporte a las API vSphere de Storage Awareness (VASA) para vSphere 5 en 2012. Este primer proveedor de VASA permitía definir las capacidades de almacenamiento en un perfil que podía utilizarse para filtrar almacenes de datos al aprovisionar y comprobar después el cumplimiento de la política. Con el tiempo, esta evolución evolucionó y se añadieron nuevas funcionalidades que permitían una mayor automatización en el aprovisionamiento, y nuevos volúmenes virtuales o vVols, donde se utilizan objetos de almacenamiento individuales para archivos de máquinas virtuales y discos virtuales. Estos objetos podrían ser LUN, archivos y ahora con espacios de nombres vSphere 8 - NVMe. NetApp colaboró estrechamente con VMware como partner de referencia para vVols lanzado con vSphere 6 en 2015 y de nuevo como partner de diseño para vVols utilizando NVMe over Fabrics en vSphere 8. NetApp sigue mejorando vVols para aprovechar las últimas funcionalidades de ONTAP.
 
 Hay varios componentes a tener en cuenta:
 
-|===
 
 
-| *Proveedor VASA* 
+=== Proveedor de VASA
+
+Este es el componente de software que gestiona la comunicación entre VMware vSphere y el sistema de almacenamiento. Para ONTAP, VASA Provider se ejecuta en un dispositivo conocido como herramientas de ONTAP para VMware vSphere (herramientas de ONTAP para abreviar). Las herramientas de ONTAP también incluyen un complemento para vCenter, un adaptador de replicación de almacenamiento (SRA) para el administrador de recuperación de sitio de VMware y un servidor API de REST para crear su propia automatización. Una vez que las herramientas de ONTAP se han configurado y registrado con vCenter, ya no es necesario interactuar directamente con el sistema ONTAP, ya que casi todas sus necesidades de almacenamiento pueden gestionarse desde la interfaz de usuario de vCenter o mediante la automatización de la API de REST.
 
 
-| Este es el componente de software que gestiona la comunicación entre VMware vSphere y el sistema de almacenamiento. Para ONTAP, VASA Provider se ejecuta en un dispositivo conocido como herramientas de ONTAP para VMware vSphere (herramientas de ONTAP para abreviar). Las herramientas de ONTAP también incluyen un complemento para vCenter, un adaptador de replicación de almacenamiento (SRA) para el administrador de recuperación de sitio de VMware y un servidor API de REST para crear su propia automatización. Una vez que las herramientas de ONTAP se han configurado y registrado con vCenter, ya no es necesario interactuar directamente con el sistema ONTAP, ya que casi todas sus necesidades de almacenamiento pueden gestionarse desde la interfaz de usuario de vCenter o mediante la automatización de la API de REST. 
+
+=== Extremo de protocolo (PE)
+
+El extremo de protocolo es un proxy para I/O entre los hosts ESXi y el almacén de datos vVols. El proveedor VASA de ONTAP crea estos automáticamente, ya sea un LUN de extremo de protocolo (4MB TB de tamaño) por volumen FlexVol del almacén de datos vVols, o un punto de montaje de NFS por interfaz NFS (LIF) en el nodo de almacenamiento que aloja un volumen FlexVol en el almacén de datos. El host ESXi monta estos extremos de protocolo de forma directa en lugar de LUN VVol individuales y archivos de disco virtual. No es necesario gestionar los extremos de protocolo, ya que el proveedor VASA los crea, monta, desmonta y elimina automáticamente, junto con los grupos de interfaces necesarios o las políticas de exportación.
 
 
-| *Punto final del protocolo (PE)* 
 
+=== Extremo de protocolo virtual (VPE)
 
-| El extremo de protocolo es un proxy para I/O entre los hosts ESXi y el almacén de datos vVols. El proveedor VASA de ONTAP crea estos automáticamente, ya sea un LUN de extremo de protocolo (4MB TB de tamaño) por volumen FlexVol del almacén de datos vVols, o un punto de montaje de NFS por interfaz NFS (LIF) en el nodo de almacenamiento que aloja un volumen FlexVol en el almacén de datos. El host ESXi monta estos extremos de protocolo de forma directa en lugar de LUN VVol individuales y archivos de disco virtual. No es necesario gestionar los extremos de protocolo, ya que el proveedor VASA los crea, monta, desmonta y elimina automáticamente, junto con los grupos de interfaces necesarios o las políticas de exportación. 
-
-
-| *Punto final de protocolo virtual (VPE)* 
-
-
- a| 
 Como novedad en vSphere 8, cuando se usa NVMe over Fabrics (NVMe-oF) con vVols, el concepto de extremo de protocolo ya no es relevante en ONTAP. En su lugar, el host ESXi crea una instancia de PE virtual automáticamente para cada grupo ANA en cuanto se enciende la primera máquina virtual. ONTAP crea automáticamente grupos ANA para cada volumen de FlexVol que usa el almacén de datos.
 
 Otra ventaja de usar NVMe-oF para vVols es que no hay solicitudes de enlace requeridas del proveedor VASA. En su lugar, el host ESXi gestiona la funcionalidad de vinculación de VVol internamente según VPE. Esto reduce la posibilidad de que un enlace masivo de VVOL afecte al servicio.
@@ -60,40 +57,29 @@ Para obtener más información, consulte https://docs.vmware.com/en/VMware-vSphe
 
 
 
-| *Almacén de datos de volumen virtual* 
+=== Almacén de datos de volúmenes virtuales
+
+| El almacén de datos de volumen virtual es una representación lógica de un contenedor de vVols que crea y mantiene un proveedor de VASA. El contenedor representa un pool de capacidad de almacenamiento aprovisionado a partir de los sistemas de almacenamiento gestionados por el proveedor VASA. Las herramientas de ONTAP admiten la asignación de varios volúmenes de FlexVol (conocidos como volúmenes de backup) a un único almacén de datos vVols, y estos almacenes de datos de vVols pueden abarcar varios nodos de un clúster de ONTAP, que combina sistemas flash e híbridos con distintas funcionalidades. El administrador puede crear nuevos volúmenes de FlexVol con el asistente de aprovisionamiento o la API DE REST, o bien seleccionar volúmenes de FlexVol creados previamente para respaldar el almacenamiento si están disponibles.
 
 
-| El almacén de datos del volumen virtual es una representación lógica del almacén de datos de un contenedor de vVols que crea y mantiene un proveedor de VASA. El contenedor representa un pool de capacidad de almacenamiento aprovisionado a partir de los sistemas de almacenamiento gestionados por el proveedor VASA. Las herramientas de ONTAP admiten la asignación de varios volúmenes de FlexVol (conocidos como volúmenes de backup) a un único almacén de datos vVols, y estos almacenes de datos de vVols pueden abarcar varios nodos de un clúster de ONTAP, que combina sistemas flash e híbridos con distintas funcionalidades. El administrador puede crear nuevos volúmenes de FlexVol con el asistente de aprovisionamiento o la API DE REST, o bien seleccionar volúmenes de FlexVol creados previamente para respaldar el almacenamiento si están disponibles. 
 
+=== Volúmenes virtuales (vVols)
 
-| *Volúmenes virtuales (vVols)* 
+VVols son los archivos y discos de máquina virtual reales almacenados en el almacén de datos vVols. El uso del término VVol (singular) está haciendo referencia a un archivo, LUN o espacio de nombres específico. ONTAP crea espacios de nombres, LUN o archivos de NVMe según el protocolo que utiliza el almacén de datos. Existen varios tipos distintos de vVols; los más comunes son Config (archivos de metadatos), Data (disco virtual o VMDK) e Swap (creado cuando el equipo virtual está encendido). Los vVols protegidos por el cifrado de VM de VMware serán de otro tipo. El cifrado de equipos virtuales de VMware no se debe confundir con el cifrado de volúmenes de ONTAP o agregados.
 
-
-| VVols son los archivos y discos de máquina virtual reales almacenados en el almacén de datos vVols. El uso del término VVol (singular) está haciendo referencia a un archivo, LUN o espacio de nombres específico. ONTAP crea espacios de nombres, LUN o archivos de NVMe según el protocolo que utiliza el almacén de datos. Existen varios tipos distintos de vVols; los más comunes son Config (archivos de metadatos), Data (disco virtual o VMDK) e Swap (creado cuando el equipo virtual está encendido). Los vVols protegidos por el cifrado de VM de VMware serán de otro tipo. El cifrado de equipos virtuales de VMware no se debe confundir con el cifrado de volúmenes de ONTAP o agregados. 
-|===
 
 
 == Gestión basada en políticas
 
-Las API de VMware vSphere para Storage Awareness (VASA) facilitan que un administrador de VM utilice cualquier capacidad de almacenamiento necesaria para aprovisionar máquinas virtuales sin tener que interactuar con su equipo de almacenamiento. Antes de VASA, los administradores de máquinas virtuales podían definir políticas de almacenamiento de máquinas virtuales, pero debían trabajar con sus administradores de almacenamiento para identificar los almacenes de datos adecuados, a menudo mediante la documentación o las convenciones de nomenclatura. Con VASA, los administradores de vCenter con los permisos adecuados pueden definir una serie de funcionalidades de almacenamiento que los usuarios de vCenter pueden usar luego para aprovisionar máquinas virtuales. La asignación entre la política de almacenamiento de las máquinas virtuales y el perfil de funcionalidades de almacenamiento de almacenes de datos permite a vCenter mostrar una lista de almacenes de datos compatibles para su selección, además de permitir que otras tecnologías, como Aria (antes conocida como vRealize) Automation o Tanzu Kubernetes Grid, seleccionen automáticamente el almacenamiento de una política asignada. Este enfoque se conoce como gestión basada en políticas de almacenamiento. Si bien las políticas y perfiles de la capacidad de almacenamiento también se pueden utilizar con almacenes de datos tradicionales, nuestro enfoque se centra en los almacenes de datos vVols.
-
-Hay dos elementos:
-
-|===
+Las API de VMware vSphere para Storage Awareness (VASA) facilitan que un administrador de VM utilice cualquier capacidad de almacenamiento necesaria para aprovisionar máquinas virtuales sin tener que interactuar con su equipo de almacenamiento. Antes de VASA, los administradores de máquinas virtuales podían definir políticas de almacenamiento de máquinas virtuales, pero debían trabajar con sus administradores de almacenamiento para identificar los almacenes de datos adecuados, a menudo mediante la documentación o las convenciones de nomenclatura. Con VASA, los administradores de vCenter con los permisos adecuados pueden definir una serie de funcionalidades de almacenamiento que los usuarios de vCenter pueden usar luego para aprovisionar máquinas virtuales. La asignación entre la política de almacenamiento de las máquinas virtuales y las capacidades de almacenes de datos permite a vCenter mostrar una lista de almacenes de datos compatibles para su selección, además de permitir que otras tecnologías como Aria (antes conocida como vRealize) Automation o Tanzu Kubernetes Grid seleccionen automáticamente el almacenamiento de una política asignada. Este enfoque se conoce como gestión basada en políticas de almacenamiento. Si bien las reglas del proveedor VASA y las políticas de almacenamiento de máquinas virtuales también pueden usarse con almacenes de datos tradicionales, nuestro enfoque se centra en los almacenes de datos vVols.
 
 
-| *Perfil de capacidad de almacenamiento (SCP)* 
 
+=== Políticas de almacenamiento de máquinas virtuales
 
-| Un perfil de funcionalidad de almacenamiento (SCP) es una forma de plantilla de almacenamiento que permite que el administrador de vCenter defina qué funciones de almacenamiento necesitan sin necesidad de comprender cómo gestionar esas funciones en ONTAP. Al adoptar el enfoque de estilo de plantilla, permite al administrador prestar servicios de almacenamiento de forma coherente y previsible. Las funcionalidades descritas en un SCP incluyen rendimiento, protocolo, eficiencia de almacenamiento y otras características. Las características específicas varían según la versión. Se crean mediante el menú de las herramientas de ONTAP para VMware vSphere dentro de la interfaz de usuario de vCenter. También puede utilizar las API REST para crear SCPs. Se pueden crear manualmente seleccionando funcionalidades individuales o se pueden generar automáticamente a partir de almacenes de datos existentes (tradicionales). 
+Las políticas de almacenamiento de máquinas virtuales se crean en vCenter en Políticas y perfiles. Para vVols, cree un conjunto de reglas mediante reglas del proveedor de tipo de almacenamiento de NetApp vVols. Las herramientas de ONTAP 10.X ofrecen ahora un método más sencillo que las herramientas de ONTAP 9.X, ya que le permiten especificar directamente los atributos de almacenamiento en la normativa de almacenamiento de las máquinas virtuales misma.
 
-
-| *VM Storage Policy* 
-
-
-| Las políticas de almacenamiento de máquinas virtuales se crean en vCenter en Políticas y perfiles. Para vVols, cree un conjunto de reglas mediante reglas del proveedor de tipo de almacenamiento de NetApp vVols. Las herramientas de ONTAP proporcionan un enfoque simplificado al permitirle simplemente seleccionar un SCP en lugar de obligarlo a especificar reglas individuales. 
-|===
-Tal como se ha mencionado anteriormente, el uso de políticas puede ayudar a simplificar la tarea de aprovisionar un volumen. Solo tiene que seleccionar una política adecuada y el proveedor VASA mostrará los almacenes de datos de vVols compatibles con esa política y colocará el VVOL en un volumen FlexVol individual conforme a la normativa (figura 1).
+Tal como se ha mencionado anteriormente, el uso de políticas puede ayudar a simplificar la tarea de aprovisionar un volumen. Solo tiene que seleccionar una política adecuada y VASA Provider mostrará los almacenes de datos de vVols compatibles con esa política y colocará el VVOL en una FlexVol volume individual que cumpla las normativas.
 
 
 
@@ -101,7 +87,7 @@ Tal como se ha mencionado anteriormente, el uso de políticas puede ayudar a sim
 
 image::vvols-image3.png[Ponga en marcha equipos virtuales mediante la normativa de almacenamiento,800,480]
 
-Una vez que se aprovisiona una máquina virtual, el proveedor VASA seguirá comprobando el cumplimiento de normativas y alertará al administrador de máquinas virtuales con una alarma en vCenter cuando el volumen de respaldo ya no cumpla con la política (figura 2).
+Una vez que se aprovisiona una máquina virtual, el proveedor VASA seguirá comprobando el cumplimiento de normativas y alertará al administrador de máquinas virtuales con una alarma en vCenter cuando el volumen de respaldo ya no cumpla con la política.
 
 
 

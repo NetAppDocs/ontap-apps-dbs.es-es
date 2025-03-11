@@ -57,6 +57,9 @@ SRM puede probar su plan de recuperación ante desastres sin interrupciones con 
 En caso de verdadero desastre o incluso de una migración planificada, SRM permite enviar cualquier cambio de última hora al conjunto de datos mediante una actualización final de SnapMirror (si lo decide). A continuación, interrumpe el reflejo y monta el almacén de datos en los hosts de recuperación ante desastres. En ese momento, las máquinas virtuales pueden encenderse automáticamente en cualquier orden de acuerdo con la estrategia planificada previamente.
 
 
+NOTE: Aunque los sistemas ONTAP le permitirán emparejar SVM en el mismo clúster para la replicación de SnapMirror, ese escenario no se ha probado ni certificado con SRM. Por lo tanto, se recomienda usar solo SVM de diferentes clústeres cuando se utilice SRM.
+
+
 
 == SRM con ONTAP y otros casos de uso: Cloud híbrido y migración
 

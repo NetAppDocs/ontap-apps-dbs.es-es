@@ -45,12 +45,11 @@ En un clúster de alta disponibilidad de vSphere se detectan tres tipos de fallo
 
 El host maestro supervisa los hosts esclavos del cluster. Esta comunicación se realiza a través del intercambio de latidos de la red cada segundo. Cuando el host maestro deja de recibir estos latidos de un host esclavo, comprueba si hay vida activa del host antes de declarar que el host ha fallado. La comprobación de vida que realiza el host maestro es determinar si el host esclavo está intercambiando latidos con uno de los almacenes de datos. Además, el host maestro comprueba si el host responde a los ping ICMP enviados a sus direcciones IP de gestión para detectar si simplemente está aislado de su nodo maestro o completamente aislado de la red. Para ello, haga ping en la puerta de enlace predeterminada. Se pueden especificar manualmente una o varias direcciones de aislamiento para mejorar la fiabilidad de la validación de aislamiento.
 
-
-
-=== _Best Practice_
-
+[TIP]
+====
 NetApp recomienda especificar un mínimo de dos direcciones de aislamiento adicionales, y que cada una de estas direcciones sea local de sitio. Esto mejorará la fiabilidad de la validación del aislamiento.
 
+====
 
 
 == Respuesta de aislamiento del host
@@ -61,12 +60,11 @@ Isolation Response es una configuración de vSphere HA que determina la acción 
 
 Antes de que HA inicie la respuesta de aislamiento, primero comprueba si el agente maestro HA de vSphere posee el almacén de datos que contiene los archivos de configuración de la máquina virtual. Si no es así, el host no activará la respuesta de aislamiento, porque no hay ningún maestro para reiniciar las máquinas virtuales. El host comprobará periódicamente el estado del almacén de datos para determinar si un agente de alta disponibilidad de vSphere que posee el rol maestro.
 
-
-
-=== _Best Practice_
-
+[TIP]
+====
 NetApp recomienda establecer la “Respuesta de aislamiento del host” en Desactivado.
 
+====
 Se puede producir una condición de cerebro dividido si un host se aísla o particiona desde el host maestro HA de vSphere y el maestro no puede comunicarse a través de los almacenes de datos de latido o mediante ping. El maestro declara que el host aislado está muerto y reinicia los equipos virtuales en otros hosts del cluster. Ahora existe una condición de cerebro dividido porque hay dos instancias de la máquina virtual en ejecución, solo una de las cuales puede leer o escribir los discos virtuales. Ahora se pueden evitar las condiciones del cerebro dividido configurando VM Component Protection (VMCP).
 
 
@@ -81,12 +79,11 @@ Una de las mejoras de funciones de vSphere 6, relevante para la alta disponibili
 
 PDL es una condición que ocurre cuando un dispositivo de almacenamiento falla de forma permanente o se elimina de forma administrativa y no se espera que regrese. La cabina de almacenamiento NetApp emite un código de detección SCSI a ESXi que declara la pérdida permanente del dispositivo. En la sección Condiciones de fallo y Respuesta de VM de vSphere HA, puede configurar cuál debe ser la respuesta después de detectar una condición PDL.
 
-
-
-==== _Best Practice_
-
+[TIP]
+====
 NetApp recomienda configurar “Response for Datastore with PDL” en “*Apagar y reiniciar VMs*”. Cuando se detecta esta condición, una máquina virtual se reinicia instantáneamente en un host en buen estado dentro del clúster de alta disponibilidad de vSphere.
 
+====
 
 
 === Todas las rutas hacia abajo (APD)
@@ -95,22 +92,15 @@ APD es una condición que se produce cuando el host vuelve inaccesible a un disp
 
 Cuando se detecta una condición de APD, se inicia un temporizador. Después de 140 segundos, la condición APD se declara oficialmente, y el dispositivo se marca como APD Time Out. Una vez transcurridos los 140 segundos, HA comenzará a contar el número de minutos especificado en el APD de retraso para failover de VM. Cuando transcurra el tiempo especificado, HA reiniciará los equipos virtuales afectados. Puede configurar VMCP para que responda de manera diferente si lo desea (Desactivado, Incidir eventos o Apagar y reiniciar VM).
 
+[TIP]
+====
+* NetApp recomienda configurar “Response for Datastore with APD” en “*Apagar y reiniciar VMs (conservative)*”.
+* Conservative hace referencia a la probabilidad de que la alta disponibilidad pueda reiniciar equipos virtuales. Cuando se establece en Conservador, HA solo reiniciará la VM que se ve afectada por el APD si sabe que otro host puede reiniciarla. En caso de agresividad, HA intentará reiniciar la máquina virtual incluso si no conoce el estado de los otros hosts. Esto puede provocar que las máquinas virtuales no se reinicien si no hay ningún host con acceso al almacén de datos en el que se encuentra.
+* Si el estado APD se resuelve y el acceso al almacenamiento se restaura antes de que se agote el tiempo de espera, HA no reiniciará innecesariamente la máquina virtual a menos que se configure explícitamente para ello. Si se desea una respuesta, incluso cuando el entorno se ha recuperado de la condición APD, la respuesta para la recuperación APD después del tiempo de espera APD debe configurarse para restablecer las máquinas virtuales.
+* NetApp recomienda configurar la respuesta para la recuperación de APD después del tiempo de espera de APD en Desactivado.
 
 
-==== _Best Practice_
-
-NetApp recomienda configurar “Response for Datastore with APD” en “*Apagar y reiniciar VMs (conservative)*”.
-
-Conservative hace referencia a la probabilidad de que la alta disponibilidad pueda reiniciar equipos virtuales. Cuando se establece en Conservador, HA solo reiniciará la VM que se ve afectada por el APD si sabe que otro host puede reiniciarla. En caso de agresividad, HA intentará reiniciar la máquina virtual incluso si no conoce el estado de los otros hosts. Esto puede provocar que las máquinas virtuales no se reinicien si no hay ningún host con acceso al almacén de datos en el que se encuentra.
-
-Si el estado APD se resuelve y el acceso al almacenamiento se restaura antes de que se agote el tiempo de espera, HA no reiniciará innecesariamente la máquina virtual a menos que se configure explícitamente para ello. Si se desea una respuesta, incluso cuando el entorno se ha recuperado de la condición APD, la respuesta para la recuperación APD después del tiempo de espera APD debe configurarse para restablecer las máquinas virtuales.
-
-
-
-==== _Best Practice_
-
-NetApp recomienda configurar la respuesta para la recuperación de APD después del tiempo de espera de APD en Desactivado.
-
+====
 
 
 == Implementación de VMware DRS para NetApp MetroCluster
@@ -143,16 +133,19 @@ La disponibilidad de los servicios debe prevalecer siempre sobre el rendimiento.
 
 == Implementación de VMware Storage DRS con NetApp MetroCluster
 
-La función VMware Storage DRS permite agregar almacenes de datos en una sola unidad y equilibra los discos de máquinas virtuales cuando se superan los umbrales de control de I/O del almacenamiento.
+La función VMware Storage DRS permite agregar almacenes de datos en una sola unidad y equilibra los discos de máquina virtual cuando se superan los umbrales de control de I/O de almacenamiento (SIOC).
 
 El control de la I/O de almacenamiento se habilita de forma predeterminada en los clústeres DRS habilitados para Storage DRS. El control de las operaciones de I/O de almacenamiento permite a un administrador controlar la cantidad de I/O de almacenamiento que se asigna a máquinas virtuales durante periodos de congestión de I/O, lo que permite que las máquinas virtuales más importantes tengan preferencia por máquinas virtuales menos importantes para la asignación de recursos de E/S.
 
 Storage DRS utiliza Storage vMotion para migrar los equipos virtuales a diferentes almacenes de datos dentro de un clúster de almacén de datos. En un entorno NetApp MetroCluster, una migración de máquinas virtuales debe controlarse dentro de los almacenes de datos de ese sitio. Por ejemplo, en condiciones ideales, la máquina virtual A, que se ejecuta en un host en el sitio A, debería migrar dentro de los almacenes de datos de la SVM en el sitio A. Si no lo hace, la máquina virtual continuará funcionando pero con un rendimiento degradado, ya que la lectura/escritura del disco virtual será desde la ubicación B a través de enlaces entre sitios.
 
+[TIP]
+====
+*Cuando se utiliza el almacenamiento ONTAP, se recomienda desactivar el DRS de Almacenamiento.
+
+* Por lo general, los DRS de almacenamiento no son necesarios ni se recomiendan para su uso con sistemas de almacenamiento de ONTAP.
+* ONTAP proporciona sus propias funciones de eficiencia del almacenamiento, como la deduplicación, la compresión y la compactación, que pueden verse afectadas por Storage DRS.
+* Si utiliza copias Snapshot de ONTAP, Storage vMotion dejaría detrás de la copia del equipo virtual en la copia Snapshot, lo que puede aumentar el uso del almacenamiento y puede afectar a las aplicaciones de backup como NetApp SnapCenter, que registran las máquinas virtuales y sus copias Snapshot de ONTAP.
 
 
-=== _Best Practice_
-
-NetApp recomienda crear clústeres de almacenes de datos con respecto a la afinidad del sitio de almacenamiento; es decir, los almacenes de datos con afinidad del sitio A no se deben mezclar con clústeres de almacenes de datos con almacenes de datos con afinidad del sitio B.
-
-Siempre que un equipo virtual se aprovisiona o se migra recientemente mediante Storage vMotion, NetApp recomienda actualizar manualmente todas las reglas de DRS de VMware específicas para dichos equipos virtuales. Esto determinará la afinidad de la máquina virtual en el nivel del sitio tanto para el host como para el almacén de datos y, por lo tanto, reducirá la sobrecarga de red y almacenamiento.
+====

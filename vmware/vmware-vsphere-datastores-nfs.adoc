@@ -18,48 +18,61 @@ ONTAP representa, entre otras cosas, una cabina NAS de escalado horizontal para 
 
 Las siguientes prácticas recomendadas se recomiendan al usar NFS de ONTAP con vSphere:
 
+* Use las herramientas de ONTAP para VMware vSphere (las mejores prácticas más importantes):
++
+** Utilizar herramientas de ONTAP para VMware vSphere para aprovisionar almacenes de datos, ya que simplifica la gestión automática de políticas de exportación.
+** Cuando se crean almacenes de datos para clústeres de VMware con el plugin, seleccione el clúster en lugar de un único servidor ESX. Esta opción la activa para montar automáticamente el almacén de datos en todos los hosts del clúster.
+** Use la función de montaje del plugin para aplicar almacenes de datos existentes a servidores nuevos.
+** Si no se utilizan las herramientas de ONTAP para VMware vSphere, utilice una única política de exportación para todos los servidores o para cada cluster de servidores donde se necesite un control de acceso adicional.
+
+
 * Utilice una sola interfaz lógica (LIF) para cada SVM en cada nodo del clúster de ONTAP. Ya no son necesarias las recomendaciones anteriores de una LIF por almacén de datos. Aunque el acceso directo (LIF y almacén de datos en el mismo nodo) es el mejor, no se preocupe por el acceso indirecto, ya que el efecto sobre el rendimiento suele ser mínimo (microsegundos).
-* VMware ha sido compatible con NFSv3 desde VMware Infrastructure 3. VSphere 6.0 ha añadido compatibilidad con NFSv4.1, lo cual permite algunas funcionalidades avanzadas, como la seguridad de Kerberos. Donde NFSv3 utiliza el bloqueo del lado del cliente, NFSv4.1 utiliza el bloqueo del lado del servidor. Aunque un volumen ONTAP se puede exportar mediante ambos protocolos, ESXi solo se puede montar a través de un único protocolo. Este montaje de protocolo único no excluye que otros hosts ESXi monten el mismo almacén de datos a través de una versión diferente. Asegúrese de especificar la versión del protocolo que se va a utilizar al montar para que todos los hosts utilicen la misma versión y, por lo tanto, el mismo estilo de bloqueo. No mezcle versiones de NFS entre hosts. Si es posible, utilice perfiles de host para comprobar el cumplimiento.
+* Todas las versiones de VMware vSphere compatibles en la actualidad pueden usar NFS v3 y v4,1. La compatibilidad oficial con nconnect se agregó a la actualización 2 de vSphere 8,0 para NFS v3 y a la actualización 3 para NFS v4,1. Para NFS v4,1, vSphere sigue admitiendo el truncado de sesión, la autenticación Kerberos y la autenticación Kerberos con integridad. Es importante tener en cuenta que el trunking de sesión requiere ONTAP 9.14.1 o una versión posterior. Puede obtener más información sobre la función nconnect y cómo mejora el rendimiento en link:https://docs.netapp.com/us-en/netapp-solutions/virtualization/vmware-vsphere8-nfsv3-nconnect.html["La función de NFSv3 nconnect con NetApp y VMware"].
+
+
+[TIP]
+====
+* El valor máximo para nconnect en vSphere 8 es 4 y el valor predeterminado es 1. El límite de valor máximo en vSphere se puede aumentar por host a través de una configuración avanzada, sin embargo, por lo general no es necesario.
+* Se recomienda un valor de 4 para los entornos que requieren más rendimiento del que puede proporcionar una única conexión TCP.
+* Tenga en cuenta que ESXi tiene un límite de 256 conexiones NFS y cada conexión nconnect cuenta para ese total. Por ejemplo, dos almacenes de datos con nconnect=4 contarían como ocho conexiones totales.
+* Es importante probar el impacto de nconnect en el rendimiento en su entorno antes de implementar cambios a gran escala en los entornos de producción.
+
+
+====
+* Vale la pena señalar que NFSv3 y NFSv4,1 utilizan diferentes mecanismos de bloqueo. NFSv3 utiliza bloqueo del lado del cliente, mientras que NFSv4,1 utiliza bloqueo del lado del servidor. Aunque un volumen ONTAP se puede exportar mediante ambos protocolos, ESXi solo puede montar un almacén de datos a través de un protocolo. Sin embargo, esto no significa que otros hosts ESXi no puedan montar el mismo almacén de datos mediante una versión diferente. Para evitar cualquier problema, es esencial especificar la versión del protocolo que se debe utilizar al montar, asegurándose de que todos los hosts utilicen la misma versión y, por lo tanto, el mismo estilo de bloqueo. Es crucial evitar mezclar versiones de NFS entre hosts. Si es posible, utilice perfiles de host para comprobar el cumplimiento.
 +
 ** Dado que no existe ninguna conversión automática de almacenes de datos entre NFSv3 y NFSv4.1, cree un nuevo almacén de datos NFSv4.1 y utilice Storage vMotion para migrar las máquinas virtuales al nuevo almacén de datos.
 ** Consulte las notas de la tabla de interoperabilidad de NFS v4.1 en el link:https://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad de NetApp"^] Para los niveles de parches específicos de ESXi que se requieren para soporte.
-** VMware admite nconnect con NFSv3 desde vSphere 8.0U2. Puede encontrar más información sobre nconnect en la link:https://docs.netapp.com/us-en/netapp-solutions/virtualization/vmware-vsphere8-nfsv3-nconnect.html["NFSv3 Función nConnect con NetApp y VMware"]
 
 
-* Los hosts de vSphere utilizan políticas de exportación de NFS para controlar el acceso. Puede usar una política con varios volúmenes (almacenes de datos). Con NFSv3, ESXi utiliza el estilo de seguridad sys (UNIX) y requiere la opción de montaje raíz para ejecutar las máquinas virtuales. En ONTAP, esta opción se denomina superusuario y cuando se utiliza la opción superusuario, no es necesario especificar el ID de usuario anónimo. Tenga en cuenta que las reglas de política de exportación con valores diferentes para `-anon` y.. `-allow-suid` Puede causar problemas de detección de SVM con las herramientas de ONTAP. He aquí una política de ejemplo:
+* Las reglas de políticas de exportación de NFS se usan para controlar el acceso de los hosts vSphere. Puede usar una política con varios volúmenes (almacenes de datos). Con NFS, ESXi utiliza el estilo de seguridad sys (UNIX) y requiere la opción de montaje root para ejecutar equipos virtuales. En ONTAP, esta opción se denomina superusuario y cuando se utiliza la opción superusuario, no es necesario especificar el ID de usuario anónimo. Tenga en cuenta que reglas de políticas de exportación con diferentes valores para `-anon` y `-allow-suid` pueden causar problemas de detección de SVM con las herramientas de ONTAP. Las direcciones IP deben ser una lista separada por comas sin espacios de las direcciones de puertos de vmkernel que montan los almacenes de datos. He aquí una regla de política de ejemplo:
 +
 ** Protocolo de acceso: nfs (que incluye nfs3 y nfs4)
-** Especificación de coincidencia de cliente: 192.168.42.21
-** Regla DE ACCESO DE RO: Sys
-** Regla de acceso RW: Sys
-** UID anónimo
-** Superusuario: Sys
+** Lista de nombres de host, direcciones IP, grupos de red o dominios de coincidencia de cliente: 192.168.42.21,192.168.42.22
+** Regla de acceso de RO: Cualquiera
+** Regla de acceso RW: Cualquiera
+** ID de usuario al que se asignan los usuarios anónimos: 65534
+** Tipos de seguridad de superusuario: Cualquiera
+** Honor setuid Bits en SETATTR: True
+** Permitir la creación de dispositivos: True
 
 
-* Si se utiliza el plugin de NetApp NFS para VMware VAAI, se debe establecer el protocolo como `nfs` en lugar de `nfs3` cuando se crea o se modifica la regla de política de exportación. La función de copia de descarga de VAAI requiere que funcione el protocolo NFSv4, aunque el protocolo de datos sea de NFSv3 GbE. Especificando el protocolo como `nfs` Incluye versiones NFSv3 y NFSv4.
+* Si se utiliza el plugin de NFS de NetApp para VMware VAAI, el protocolo se debe establecer `nfs` como cuando se crea o se modifica la regla de política de exportación. El protocolo NFSv4 se requiere para que la copia de VAAI descargue el trabajo y especificando el protocolo como `nfs` automáticamente incluye las versiones NFSv3 y NFSv4. Esto es necesario incluso si el tipo de almacén de datos se crea como NFS v3.
 * Los volúmenes de almacenes de datos NFS se unen desde el volumen raíz de la SVM; por lo tanto, ESXi también debe tener acceso al volumen raíz para navegar y montar volúmenes de almacenes de datos. La política de exportación del volumen raíz y para cualquier otro volumen en el que esté anidada la unión del volumen de almacenes de datos, debe incluir una regla o reglas para los servidores ESXi que les otorgan acceso de solo lectura. A continuación, se muestra una política de ejemplo para el volumen raíz, que también utiliza el complemento VAAI:
 +
-** Protocolo de acceso: nfs (que incluye nfs3 y nfs4)
-** Especificación de coincidencia de cliente: 192.168.42.21
+** Protocolo de acceso: nfs
+** Client Match Spec: 192.168.42.21,192.168.42.22
 ** Regla DE ACCESO DE RO: Sys
 ** Regla de acceso RW: Nunca (mejor seguridad para el volumen raíz)
 ** UID anónimo
 ** Superusuario: Sys (también necesario para el volumen raíz con VAAI)
 
 
-* Use las herramientas de ONTAP para VMware vSphere (las mejores prácticas más importantes):
-+
-** Utilice herramientas de ONTAP para VMware vSphere para aprovisionar almacenes de datos, ya que simplifica la gestión de políticas de exportación de forma automática.
-** Cuando se crean almacenes de datos para clústeres de VMware con el plugin, seleccione el clúster en lugar de un único servidor ESX. Esta opción la activa para montar automáticamente el almacén de datos en todos los hosts del clúster.
-** Utilice la función de montaje de plugins para aplicar almacenes de datos existentes a servidores nuevos.
-** Si no se utilizan las herramientas de ONTAP para VMware vSphere, utilice una única política de exportación para todos los servidores o para cada cluster de servidores donde se necesite un control de acceso adicional.
-
-
 * Aunque ONTAP ofrece una estructura de espacio de nombres de volúmenes flexibles para organizar los volúmenes en un árbol mediante uniones, este enfoque no tiene valor para vSphere. Crea un directorio para cada equipo virtual en la raíz del almacén de datos, independientemente de la jerarquía de espacio de nombres del almacenamiento. Por lo tanto, la práctica recomendada es simplemente montar la ruta de unión para volúmenes para vSphere en el volumen raíz de la SVM, que es la forma en que las herramientas de ONTAP para VMware vSphere aprovisiona almacenes de datos. No tener rutas de unión anidadas también significa que ningún volumen depende de ningún otro volumen que no sea el volumen raíz y que el hecho de desconectar un volumen o destruirlo, incluso intencionalmente, no afecta la ruta a otros volúmenes.
 * El tamaño de bloque de 4K se ajusta a las particiones NTFS en almacenes de datos NFS. En la siguiente figura, se muestra la conectividad de un host vSphere a un almacén de datos NFS de ONTAP.
 
 
-image:vsphere_ontap_image3.png["Error: Falta la imagen gráfica"]
+image:vsphere_ontap_image3.png["Conectividad desde un host de vSphere a un almacén de datos NFS de ONTAP"]
 
 En la siguiente tabla, se enumeran las versiones de NFS y las funciones compatibles.
 
@@ -100,5 +113,5 @@ En la siguiente tabla, se enumeran las versiones de NFS y las funciones compatib
 | Autenticación Kerberos | No | Sí (mejorada con vSphere 6.5 y versiones posteriores para ser compatible con AES, krb5i) 
 
 
-| Compatibilidad con accesos múltiples | No | Sí 
+| Compatibilidad con accesos múltiples | No | Sí (ONTAP 9.14.1) 
 |===
