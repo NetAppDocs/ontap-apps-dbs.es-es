@@ -35,8 +35,7 @@ Esta es la configuración de host recomendada para todas las versiones de ONTAP 
 | VMFS3.EnableBlockDelete | Mantener el valor predeterminado (0), pero se puede cambiar si es necesario. Para obtener más información, consulte link:https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-storage-8-0/storage-provisioning-and-space-reclamation-in-vsphere/storage-space-reclamation-in-vsphere/space-reclamation-for-guest-operating-systems.html["Recuperación de espacio para VMFS5 equipos virtuales"] | No 
 
 
-| VMFS3.EnableVMFS6Unmap | Mantener predeterminado (1)
-Para obtener más información, consulte link:https://core.vmware.com/resource/vmware-vsphere-apis-array-integration-vaai#sec9426-sub4["API de VMware vSphere: Integración de cabinas (VAAI)"] | No 
+| VMFS3.EnableVMFS6Unmap | Mantener valor predeterminado (1) Para obtener más información, consulte link:https://www.vmware.com/docs/vmw-vmware-vsphere-apis-array-integration-vaai["API de VMware vSphere: Integración de cabinas (VAAI)"] | No 
 
 
 3+| *Ajustes NFS* 

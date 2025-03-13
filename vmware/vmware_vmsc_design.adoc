@@ -137,13 +137,13 @@ image::../media/vmsc_3_6.png[Una captura de pantalla de una descripción de comp
 
 Los eventos de aislamiento se producen cuando los hosts dentro de un clúster de alta disponibilidad pierden la conectividad a la red u otros hosts del clúster. De forma predeterminada, vSphere HA utilizará la puerta de enlace predeterminada para su red de gestión como dirección de aislamiento predeterminada. Sin embargo, puede especificar direcciones de aislamiento adicionales para que el host haga ping para determinar si se debe activar una respuesta de aislamiento. Agregue dos IP de aislamiento que puedan hacer ping, una por sitio. No utilice la IP de la puerta de enlace. La configuración avanzada de HA de vSphere utilizada es das.isolationaddress. Puede utilizar las direcciones IP de ONTAP o Mediator para este fin.
 
-Consulte https://core.vmware.com/resource/vmware-vsphere-metro-storage-cluster-recommended-practices#sec2-sub5["core.vmware.com"] para obtener más información__.__
+Consulte https://www.vmware.com/docs/vmw-vmware-vsphere-metro-storage-cluster-recommended-practices["Prácticas recomendadas para VMware vSphere Metro Storage Cluster"] para obtener más información__.__
 
 image::../media/vmsc_3_7.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,545]
 
 Agregar una configuración avanzada llamada das.heartbeatDsPerHost puede aumentar el número de almacenes de datos de latido. Utilice cuatro almacenes de datos para el corazón (HB DSS): Dos por sitio. Utilice la opción “Seleccionar de la lista pero cumplido”. Esto es necesario porque si un sitio falla, usted todavía necesita dos HB DSS. Sin embargo, esas empresas no tienen que estar protegidas con sincronización activa de SnapMirror o MCC.
 
-Consulte https://core.vmware.com/resource/vmware-vsphere-metro-storage-cluster-recommended-practices#sec2-sub5["core.vmware.com"] para obtener más información__.__
+Consulte https://www.vmware.com/docs/vmw-vmware-vsphere-metro-storage-cluster-recommended-practices["Prácticas recomendadas para VMware vSphere Metro Storage Cluster"] para obtener más información__.__
 
 Afinidad de VMware DRS para NetApp MetroCluster
 
