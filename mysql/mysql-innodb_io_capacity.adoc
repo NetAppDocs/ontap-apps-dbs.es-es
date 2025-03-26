@@ -3,10 +3,13 @@ sidebar: sidebar
 permalink: mysql/mysql-innodb_io_capacity.html 
 keywords: MySQL,MariaDB,innodb_io_capacity 
 summary: MySQL y innodb_io_capacity 
+searchtitle: MySQL y innodb_io_capacity 
 ---
 = innodb_io_capacity
+:hardbreaks:
 :allow-uri-read: 
 :icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 
@@ -26,4 +29,4 @@ CAUTION: No utilice valores extremos como 20.000 o más a menos que haya demostr
 El parámetro InnoDB_IO_CAPACITY regula las tasas de vaciado y la E/S relacionada
 
 
-CAUTION: Puede dañar seriamente el rendimiento si se configura este parámetro o el parámetro innodb_io_capacity_max demasiado alto y se desperdician las operaciones de I/O con vaciado prematuro.
+CAUTION: Puede dañar seriamente el rendimiento configurando este parámetro o el parámetro innodb_io_capacity_max demasiado alto y wastin

@@ -8,10 +8,10 @@
 
 Inicialmente, todos los volúmenes FabricPool se establecen en `default`, que significa que el comportamiento está controlado por la `política de recuperación de nubes. `El comportamiento exacto depende de la política de organización en niveles utilizada.
 
-* `auto`– solo recuperar datos de lectura aleatoria
-* `snapshot-only`– recuperar todos los datos de lectura secuencial o aleatoria
-* `none`– recuperar todos los datos de lectura secuencial o aleatoria
-* `all`– no recuperar datos del nivel de capacidad
+* `auto`- solo recuperar datos de lectura aleatoria
+* `snapshot-only`- recuperar todos los datos de lectura secuencial o aleatoria
+* `none`- recuperar todos los datos de lectura secuencial o aleatoria
+* `all`- no recuperar datos del nivel de capacidad
 
 
 

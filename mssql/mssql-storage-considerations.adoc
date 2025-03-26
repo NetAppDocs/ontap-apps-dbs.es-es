@@ -6,7 +6,10 @@ summary: Consideración del almacenamiento de Microsoft SQL Server
 searchtitle: Consideraciones sobre almacenamiento de Microsoft SQL Server 
 ---
 = Descripción general
+:hardbreaks:
 :allow-uri-read: 
+:icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 

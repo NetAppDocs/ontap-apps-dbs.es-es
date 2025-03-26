@@ -6,7 +6,7 @@
 
 == Mejores prácticas de eficiencia
 
-NetApp recomienda lo siguiente:
+*NetApp recomienda* lo siguiente:
 
 
 

@@ -6,7 +6,10 @@ summary: Microsoft SQL Server en ONTAP
 searchtitle: Microsoft SQL Server en ONTAP 
 ---
 = Descripción general
+:hardbreaks:
 :allow-uri-read: 
+:icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 

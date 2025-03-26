@@ -3,11 +3,13 @@ sidebar: sidebar
 permalink: mysql/mysql-schedulers.html 
 keywords: MySQL,MariaDB,schedulers 
 summary: Programadores MySQL e IO 
-searchtitle: Programadores de I/O y MySQL 
+searchtitle: Programadores MySQL e IO 
 ---
 = Programadores de I/O.
+:hardbreaks:
 :allow-uri-read: 
 :icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 

@@ -1,12 +1,15 @@
 ---
 sidebar: sidebar 
 permalink: mssql/mssql-cpu-configuration.html 
-keywords: MSSQL,SQL Server, CPU, ONTAP 
+keywords: MSSQL, SQL Server, CPU, ONTAP 
 summary: Configuración de CPU de Microsoft SQL Server 
 searchtitle: Configuración de CPU de Microsoft SQL Server 
 ---
 = Configuración de CPU
+:hardbreaks:
 :allow-uri-read: 
+:icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 
@@ -15,11 +18,11 @@ El rendimiento de SQL Server tiene varias dependencias en la configuración de C
 
 
 
-== Hyperthreading
+== Hyper-threading
 
-Hyperthreading se refiere a la implementación simultánea de multithreading (SMT), que mejora la paralelización de los cálculos realizados en procesadores x86. SMT está disponible en procesadores Intel y AMD.
+Hyper-threading se refiere a la implementación simultánea de multithreading (SMT), lo que mejora la paralelización de los cálculos realizados en procesadores x86. SMT está disponible en procesadores Intel y AMD.
 
-Hyperthreading genera CPU lógicas que aparecen como CPU físicas en el sistema operativo. SQL Server ve a continuación esas CPU adicionales y las utiliza como si hubiera más núcleos que los presentes físicamente. Esto puede mejorar sustancialmente el rendimiento al aumentar la paralelización.
+Hyper-threading genera CPU lógicas que aparecen como CPU físicas en el sistema operativo. SQL Server ve a continuación esas CPU adicionales y las utiliza como si hubiera más núcleos que los presentes físicamente. Esto puede mejorar sustancialmente el rendimiento al aumentar la paralelización.
 
 La advertencia aquí es que cada versión de SQL Server tiene sus propias limitaciones en cuanto a la potencia informática que puede utilizar. Para obtener más información, consulte Compute Capacity Limits by Edition of SQL Server.
 
@@ -31,7 +34,7 @@ Hay dos opciones para la licencia de SQL Server. El primero se conoce como model
 
 La imagen siguiente muestra el mensaje de registro de SQL Server después del inicio que indica la aplicación del límite principal.
 
-image:mssql-hyperthreading.png["Error: Falta la imagen gráfica"]
+image:../media/mssql-hyperthreading.png["Mensaje de registro de SQL Server"]
 
 Por lo tanto, para utilizar todas las CPU, debe utilizar la licencia de núcleo por procesador. Para obtener información detallada sobre las licencias de SQL Server, consulte link:https://www.microsoft.com/en-us/sql-server/sql-server-2022-comparison["SQL Server 2022: Su plataforma de datos moderna"^].
 
@@ -57,7 +60,7 @@ La opción de máscara de E/S de afinidad enlaza E/S de disco de SQL Server a un
 
 De forma predeterminada, SQL Server utiliza todas las CPU disponibles durante la ejecución de la consulta si se elige la licencia central por procesador.
 
-Aunque esto es útil para consultas grandes, puede causar problemas de rendimiento y limitar la simultaneidad. Un mejor enfoque es limitar el paralelismo al número de núcleos físicos en un único socket de CPU. Por ejemplo, en un servidor con dos sockets de CPU físicos con 12 núcleos por socket, independientemente de hyperthreading, `MAXDOP` se debe establecer en 12. `MAXDOP` No se puede restringir ni dictar qué CPU se va a utilizar. En su lugar, restringe el número de CPU que puede utilizar una única consulta por lotes.
+Aunque esto es útil para consultas grandes, puede causar problemas de rendimiento y limitar la simultaneidad. Un mejor enfoque es limitar el paralelismo al número de núcleos físicos en un único socket de CPU. Por ejemplo, en un servidor con dos sockets CPU físicos con 12 núcleos por socket, independientemente de hyper-threading, `MAXDOP` se debe establecer en 12. `MAXDOP` No se puede restringir ni dictar qué CPU se va a utilizar. En su lugar, restringe el número de CPU que puede utilizar una única consulta por lotes.
 
 
 TIP: *NetApp recomienda* para DSS, como almacenes de datos, comience con `MAXDOP` 50 y explore el ajuste hacia arriba o hacia abajo si es necesario. Asegúrese de medir las consultas críticas de la aplicación al realizar cambios.
@@ -72,9 +75,9 @@ Normalmente, se crea un thread de sistema operativo independiente para cada cons
 
 El valor por defecto es 0, que permite a SQL Server configurar automáticamente el número de threads de trabajador al iniciar. Esto funciona para la mayoría de los sistemas. Max worker threads es una opción avanzada y no se debe modificar sin la ayuda de un administrador de base de datos experimentado (DBA).
 
-¿Cuándo debe configurar SQL Server para que utilice más threads de trabajo? Si la longitud media de la cola de trabajo de cada programador es superior a 1, puede que se beneficie de agregar más threads al sistema, pero sólo si la carga no está vinculada a la CPU o si experimenta otras esperas pesadas. Si cualquiera de estos ocurre, agregar más hilos no ayuda porque terminan esperando otros cuellos de botella del sistema. Para obtener más información sobre el máximo de threads de trabajo, consulte link:https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/configure-the-max-worker-threads-server-configuration-option?view=sql-server-ver16&redirectedfrom=MSDN["Configure la opción de configuración del servidor de threads de trabajo máx"^].
+¿Cuándo debe configurar SQL Server para que utilice más threads de trabajo? Si la longitud media de la cola de trabajo de cada programador es superior a 1, puede que se beneficie de agregar más threads al sistema, pero sólo si la carga no está vinculada a la CPU o si experimenta otras esperas pesadas. Si cualquiera de estos ocurre, agregar más hilos no ayuda porque terminan esperando otros cuellos de botella del sistema. Para obtener más información sobre el máximo de threads de trabajo, consulte link:https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/configure-the-max-worker-threads-server-configuration-option?view=sql-server-ver16&redirectedfrom=MSDN["Configure la opción de configuración del servidor de threads de trabajo máximo"^].
 
-image:mssql-max-worker-threads.png["Error: Falta la imagen gráfica"]
+image:../media/mssql-max-worker-threads.png["MÁXIMO DE Threads de Trabajador"]
 
 
 

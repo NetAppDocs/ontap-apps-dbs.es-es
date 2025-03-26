@@ -35,4 +35,4 @@ El principal objetivo de una configuración seccionada es garantizar que la I/O 
 
 En la siguiente figura, se muestran tres opciones posibles para el ajuste del tamaño de la franja y el ancho. Se selecciona el número de LUN para satisfacer los requisitos de rendimiento tal como se han descrito anteriormente, pero en todos los casos los datos totales de una sola franja es 1MB.
 
-image:ontap-lvm-striping.png["Error: Falta la imagen gráfica"]
+image:../media/ontap-lvm-striping.png["Segmentación de LVM"]

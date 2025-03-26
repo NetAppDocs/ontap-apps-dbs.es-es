@@ -2,20 +2,23 @@
 sidebar: sidebar 
 permalink: mssql/mssql-dr-smas-mediator.html 
 keywords: MSSQL,SQL Server, SnapMirror active sync, SMBC, overview 
-summary: Microsoft SQL Server y el mediador de ONTAP 
-searchtitle: Microsoft SQL Server y el mediador de ONTAP 
+summary: Microsoft SQL Server y ONTAP Mediator 
+searchtitle: Microsoft SQL Server y ONTAP Mediator 
 ---
 = Mediador ONTAP
+:hardbreaks:
 :allow-uri-read: 
+:icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 
 [role="lead"]
-El mediador es necesario para automatizar la conmutación por error de forma segura. Lo ideal sería que se ubicara en un sitio 3rd independiente, pero todavía puede funcionar para la mayoría de las necesidades si se ubicara con uno de los clústeres que participan en la replicación.
+Mediator es necesario para automatizar la recuperación tras fallos de forma segura. Lo ideal sería que se ubicara en un sitio 3rd independiente, pero todavía puede funcionar para la mayoría de las necesidades si se ubicara con uno de los clústeres que participan en la replicación.
 
 El mediador no es realmente un desempate, aunque esa es efectivamente la función que proporciona. No realiza ninguna acción, sino que proporciona un canal de comunicación alternativo para la comunicación del clúster al clúster.
 
-image:smas-mediator.png["Diagrama de sincronización activa de SnapMirror con mediador"]
+image:../media/smas-mediator.png["Diagrama de sincronización activa de SnapMirror con mediador"]
 
 El desafío #1 con la conmutación automática por error es el problema de cerebro dividido, y ese problema surge si sus dos sitios pierden conectividad entre sí. ¿Qué debería pasar? No desea que dos sitios diferentes se designen a sí mismos como copias supervivientes de los datos, pero ¿cómo puede un solo sitio diferenciar entre la pérdida real del sitio opuesto y la incapacidad de comunicarse con el sitio opuesto?
 

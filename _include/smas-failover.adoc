@@ -14,7 +14,7 @@ En el funcionamiento normal se puede acceder a una LUN desde la réplica local o
 
 La línea verde es una ruta activa, pero supondría más latencia, ya que el I/O de esa ruta debería transmitirse a través de la ruta de sincronización activa de SnapMirror. La latencia adicional dependería de la velocidad de la interconexión entre los sitios que se usa para la sincronización activa de SnapMirror.
 
-image:smas-failover-1.png["Error: Falta la imagen gráfica"]
+image:../media/smas-failover-1.png["Operaciones normales de sincronización activa de SnapMirror"]
 
 
 
@@ -22,7 +22,7 @@ image:smas-failover-1.png["Error: Falta la imagen gráfica"]
 
 Si la copia mirror activa deja de estar disponible, ya sea debido a una conmutación por error planificada o no planificada, obviamente ya no podrá utilizarse. Sin embargo, el sistema remoto posee una réplica síncrona y rutas SAN al sitio remoto ya existen. El sistema remoto puede dar servicio a I/O para esa LUN.
 
-image:smas-failover-2.png["Error: Falta la imagen gráfica"]
+image:../media/smas-failover-2.png["Error de sincronización activa de SnapMirror"]
 
 
 
@@ -30,7 +30,7 @@ image:smas-failover-2.png["Error: Falta la imagen gráfica"]
 
 La conmutación por error hace que la copia remota se convierta en la copia activa. Las rutas se cambian de Activo a Activo/Optimizado y el I/O se sigue prestando servicio sin pérdida de datos.
 
-image:smas-failover-3.png["Error: Falta la imagen gráfica"]
+image:../media/smas-failover-3.png["Conmutación por error de sincronización activa de SnapMirror"]
 
 
 
@@ -38,7 +38,7 @@ image:smas-failover-3.png["Error: Falta la imagen gráfica"]
 
 Una vez que el sistema de origen vuelve al servicio, SnapMirror Active Sync puede volver a sincronizar la replicación pero en dirección contraria. La configuración ahora es esencialmente la misma que el punto de partida, excepto que se han invertido los sitios de reflejo activo.
 
-image:smas-failover-4.png["Error: Falta la imagen gráfica"]
+image:../media/smas-failover-4.png["Reparación de sincronización activa de SnapMirror"]
 
 
 
@@ -46,4 +46,4 @@ image:smas-failover-4.png["Error: Falta la imagen gráfica"]
 
 Si lo desea, un administrador puede realizar una conmutación de retorno tras recuperación y mover la copia activa de las LUN a las controladoras originales.
 
-image:smas-failover-1.png["Error: Falta la imagen gráfica"]
+image:../media/smas-failover-1.png["Conmutación tras recuperación de sincronización activa de SnapMirror"]

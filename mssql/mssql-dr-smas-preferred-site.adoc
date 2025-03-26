@@ -6,7 +6,10 @@ summary: Microsoft SQL Server y SM-AS sitio preferido
 searchtitle: Microsoft SQL Server y SM-AS sitio preferido 
 ---
 = Sitio preferido
+:hardbreaks:
 :allow-uri-read: 
+:icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 
@@ -19,7 +22,7 @@ La `source` designación controla el sitio preferido. Si se pierde el enlace de 
 
 La configuración de origen/destino se puede ver a través de SystemManager:
 
-image:smas-source-systemmanager.png["Captura de pantalla de SM de SM-AS fuente"]
+image:../media/smas-source-systemmanager.png["Captura de pantalla de SM de SM-AS fuente"]
 
 O en la CLI:
 

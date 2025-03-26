@@ -6,7 +6,10 @@ summary: Configuración de memoria de Microsoft SQL Server
 searchtitle: Configuración de memoria de Microsoft SQL Server 
 ---
 = Configuración de memoria
+:hardbreaks:
 :allow-uri-read: 
+:icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 

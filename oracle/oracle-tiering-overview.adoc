@@ -25,7 +25,7 @@ FabricPool es una tecnología de organización en niveles que clasifica los bloq
 
 Existen varias políticas de organización en niveles disponibles que controlan la clasificación de los bloques como activos o inactivos, y las políticas se pueden establecer por volumen y modificar según sea necesario. Solo se mueven los bloques de datos entre los niveles de rendimiento y capacidad. Los metadatos que definen la LUN y la estructura del sistema de archivos siempre permanecen en el nivel de rendimiento. Como resultado, la gestión se centraliza en ONTAP. Los archivos y los LUN no aparecen diferentes de los datos almacenados en cualquier otra configuración de ONTAP. La controladora NetApp AFF o FAS aplica las políticas definidas para mover datos al nivel adecuado.
 
-image:oracle-fp_image1.png["Error: Falta la imagen gráfica"]
+image:../media/oracle-fp_image1.png["Organización en niveles de FabricPool"]
 
 
 

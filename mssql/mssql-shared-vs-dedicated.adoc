@@ -3,10 +3,13 @@ sidebar: sidebar
 permalink: mssql/mssql-shared-vs-dedicated.html 
 keywords: MSSQL,SQL Server, multiple instances, dedicated instance, ONTAP 
 summary: Puesta en marcha de instancias de Microsoft SQL Server 
-searchtitle: Instancia compartida de Microsoft SQL Server frente a instancia dedicada 
+searchtitle: Puesta en marcha de instancias de Microsoft SQL Server 
 ---
 = Instancia compartida frente a instancia dedicada
+:hardbreaks:
 :allow-uri-read: 
+:icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 

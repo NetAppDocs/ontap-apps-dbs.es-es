@@ -98,13 +98,14 @@ Se recomienda encarecidamente el aprovisionamiento ligero porque puede simplific
 
 Algunos clientes prefieren utilizar el aprovisionamiento pesado, ya sea para cargas de trabajo específicas o, por lo general, basándose en prácticas operativas y de adquisición establecidas.
 
-*Precaución:* Si un volumen está pesado, se debe tener cuidado para desactivar completamente todas las características de eficiencia para ese volumen, incluida la descompresión y la eliminación de la deduplicación mediante el `sis undo` comando. El volumen no debe aparecer en `volume efficiency show` salida. Si lo hace, el volumen sigue estando parcialmente configurado para las funciones de eficiencia. Como resultado, la sobrescritura garantiza un funcionamiento diferente, lo que aumenta la posibilidad de que las sobretensiones de la configuración hagan que el volumen se quede sin espacio inesperadamente, lo que producirá errores de I/O de la base de datos.
+
+CAUTION: Si un volumen se aprovisiona en exceso, debe tenerse cuidado desactivar por completo todas las funciones de eficiencia de ese volumen, incluida la descompresión y la eliminación de la deduplicación con `sis undo` el comando. El volumen no debe aparecer en `volume efficiency show` la salida. Si lo hace, el volumen sigue estando parcialmente configurado para las funciones de eficiencia. Como resultado, la sobrescritura garantiza un funcionamiento diferente, lo que aumenta la posibilidad de que las sobretensiones de la configuración hagan que el volumen se quede sin espacio inesperadamente, lo que producirá errores de I/O de la base de datos.
 
 
 
 == Mejores prácticas de eficiencia
 
-NetApp recomienda lo siguiente:
+*NetApp recomienda* lo siguiente:
 
 
 

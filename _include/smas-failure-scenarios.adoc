@@ -12,7 +12,7 @@ Si se interrumpe la replicación de SM-AS, la E/S de escritura no se puede compl
 
 
 
-=== Sitio A (Sitio preferido)
+== Sitio A (Sitio preferido)
 
 El resultado de un fallo del enlace de replicación en el sitio preferido será una pausa de aproximadamente 15 segundos en el procesamiento de I/O de escritura, ya que ONTAP reintenta las operaciones de escritura replicadas antes de que determine que el enlace de replicación es realmente inaccesible. Una vez transcurridos los 15 segundos, el sistema del sitio A reanuda el procesamiento de E/S de lectura y escritura. Las rutas de SAN no se modificarán y los LUN permanecerán en línea.
 

@@ -14,7 +14,7 @@ searchtitle: Estructura de archivos MySQL e InnoDB
 [role="lead"]
 InnoDB actúa como la capa media entre el almacenamiento y el servidor MySQL, almacena los datos en las unidades.
 
-image:mysql-file-structure1.png["Error: No se ha encontrado la imagen gráfica"]
+image:../media/mysql-file-structure1.png["Estructura de archivos de MySQL"]
 
 MySQL I/O se clasifica en dos tipos:
 
@@ -22,7 +22,7 @@ MySQL I/O se clasifica en dos tipos:
 * E/S de archivo secuencial
 
 
-image:mysql-file-structure2.png["Error: No se ha encontrado la imagen gráfica"]
+image:../media/mysql-file-structure2.png["Tipos de I/O."]
 
 Los archivos de datos se leen y se sobrescriben aleatoriamente, lo que da como resultado un elevado número de IOPS. Por lo tanto, se recomienda el almacenamiento SSD.
 

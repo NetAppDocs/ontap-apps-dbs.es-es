@@ -3,9 +3,13 @@ sidebar: sidebar
 permalink: mssql/mssql-dr-mcc-sql.html 
 keywords: MSSQL,SQL Server, MetroCluster 
 summary: Microsoft SQL Server con NetApp MetroCluster 
+searchtitle: Microsoft SQL Server con NetApp MetroCluster 
 ---
 = SQL Server con MetroCluster
+:hardbreaks:
 :allow-uri-read: 
+:icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 
@@ -26,4 +30,4 @@ Por ejemplo, un procedimiento básico de DR rápida después de la pérdida repe
 
 El requisito principal de este método es un sistema operativo en ejecución instalado en el sitio remoto. Se debe preconfigurar con la configuración de SQL Server y se debe actualizar con una versión de compilación equivalente. Las bases de datos del sistema SQL Server también pueden duplicarse en el sitio remoto y montarse si se declara un desastre.
 
-Si los volúmenes, los sistemas de archivos y el almacén de datos que alojan bases de datos virtualizadas no se utilizan en el sitio de recuperación ante desastres antes de la conmutación de sitios, no es necesario establecer `dr-force- nvfail` en los volúmenes asociados.
+Si los volúmenes, los sistemas de archivos y el almacén de datos que alojan bases de datos virtualizadas no se utilizan en el sitio de recuperación ante desastres antes de la conmutación de sitios, no es necesario establecer `dr-force-nvfail` en los volúmenes asociados.

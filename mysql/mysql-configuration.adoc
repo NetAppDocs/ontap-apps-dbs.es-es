@@ -6,8 +6,10 @@ summary: Parámetros de configuración de MySQL
 searchtitle: Parámetros de configuración de MySQL 
 ---
 = Parámetros de configuración
+:hardbreaks:
 :allow-uri-read: 
 :icons: font
+:linkattrs: 
 :imagesdir: ../media/
 
 
