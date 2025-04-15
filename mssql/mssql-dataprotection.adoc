@@ -1,16 +1,5 @@
----
-sidebar: sidebar 
-permalink: mssql/mssql-data-protection.html 
-keywords: MSSQL,SQL Server, SnapCenter, data protection, app-consistent backup, ONTAP 
-summary: Protección de bases de datos de Microsoft SQL Server en ONTAP con comandos SnapCenter y T-SQL. 
-searchtitle: Protección de bases de datos de Microsoft SQL Server en ONTAP con comandos SnapCenter y T-SQL 
----
-= Protección de datos
-:hardbreaks:
+= SnapCenter
 :allow-uri-read: 
-:icons: font
-:linkattrs: 
-:imagesdir: ../media/
 
 
 [role="lead"]
@@ -37,7 +26,8 @@ En SQL Server 2022, Microsoft introdujo las copias Snapshot de T-SQL que ofrecen
 A continuación, se muestra un flujo de trabajo de backup de ejemplo:
 
 . Congelar una base de datos con el comando ALTER. Esto prepara la base de datos para una instantánea coherente en el almacenamiento subyacente. Después de congelar, puede descongelar la base de datos y registrar la instantánea con el comando BACKUP.
-. Realice copias Snapshot de varias bases de datos en los volúmenes de almacenamiento de forma simultánea con los nuevos comandos DEL GRUPO DE BACKUP y DEL SERVIDOR DE BACKUP.
+. Realice copias Snapshot de varias bases de datos en las unidades de almacenamiento de forma simultánea con los nuevos comandos DEL GRUPO DE BACKUP y DEL SERVIDOR DE BACKUP.
+. Si la carga de trabajo de la base de datos se extiende en varias unidades de almacenamiento, cree grupos de coherencia para simplificar la tarea de gestión. El grupo de consistencia es una colección de unidades de almacenamiento que se administran como una sola unidad.
 . Realice copias de seguridad COMPLETAS o copias de seguridad COMPLETAS COPY_ONLY. Estas copias de seguridad también se registran en msdb.
 . Llevar a cabo una recuperación puntual mediante backups de registro realizados con el método de streaming normal después del backup COMPLETO de la instantánea. Las copias de seguridad diferenciales de transmisión también se admiten si se desea.
 
@@ -45,4 +35,4 @@ A continuación, se muestra un flujo de trabajo de backup de ejemplo:
 Para obtener más información, consulte link:https://learn.microsoft.com/en-us/sql/relational-databases/databases/create-a-database-snapshot-transact-sql?view=sql-server-ver16["Documentación de Microsoft para conocer las instantáneas de T-SQL"^].
 
 
-TIP: *NetApp recomienda* usar SnapCenter para crear copias snapshot. También funciona el método T-SQL descrito anteriormente, pero SnapCenter ofrece una automatización completa del proceso de backup, restauración y clonación. También realiza una detección para garantizar que se crean las snapshots correctas. No se necesita ninguna configuración previa.
+TIP: *NetApp recomienda* usar SnapCenter para crear copias snapshot. También funciona el método T-SQL descrito anteriormente, pero SnapCenter ofrece una automatización completa del proceso de backup, restauración y clonación. También realiza una detección para garantizar que se crean las snapshots correctas.

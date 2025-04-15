@@ -1,0 +1,57 @@
+---
+sidebar: sidebar 
+permalink: mssql/mssql-storage-considerations-ASA.html 
+keywords: MSSQL,SQL Server, volumes, LUN, SnapCenter 
+summary: Consideración de almacenamiento Microsoft SQL Server en sistemas ASA 
+searchtitle: Consideraciones sobre almacenamiento de Microsoft SQL Server 
+---
+= Descripción general
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+El sistema NetApp ASA R2 es una potente solución simplificada para clientes solo SAN que ejecutan cargas de trabajo esenciales. La combinación de la plataforma ASA R2 que ejecuta soluciones de almacenamiento de ONTAP y Microsoft SQL Server posibilita diseños de almacenamiento de bases de datos de nivel empresarial que satisfacen los requisitos de las aplicaciones más exigentes actuales.
+
+Las siguientes plataformas ASA se clasifican como sistemas ASA R2 que admiten todos los protocolos SAN (iSCSI, FC, NVMe/FC y NVMe/TCP). Los protocolos iSCSI, FC, NVMe/FC y NVMe/TCP admiten una arquitectura activo-activo simétrica para multivía, de modo que todas las rutas entre los hosts y el almacenamiento estén activas/optimizadas:
+
+* ASA A1K
+* ASA A90
+* ASA A70
+* ASA A50
+* ASA A30
+* ASA A20
+
+
+Para obtener más información, consulte link:https://docs.netapp.com/us-en/asa-r2/index.html["ASA de NetApp"]
+
+La optimización de una solución SQL Server en ONTAP requiere comprender el patrón y las características de E/S de SQL Server. Una buena distribución del almacenamiento para una base de datos de SQL Server debe soportar los requisitos de rendimiento de SQL Server y proporcionar la máxima capacidad de gestión de la infraestructura en su conjunto. Una buena distribución de almacenamiento también permite que la puesta en marcha inicial tenga éxito y que el entorno crezca sin problemas con el tiempo a medida que crece el negocio.
+
+
+
+== Diseño de almacenamiento de datos
+
+Microsoft recomienda colocar los archivos de datos y de registro en unidades separadas. Para las aplicaciones que actualizan y solicitan datos simultáneamente, el archivo de registro tiene un gran consumo de escrituras y el archivo de datos (en función de la aplicación) tiene un gran volumen de lecturas y escrituras. Para la recuperación de datos, el archivo de registro no es necesario. Por lo tanto, las solicitudes de datos pueden satisfacerse desde el archivo de datos ubicado en su propia unidad.
+
+Cuando se crea una nueva base de datos, Microsoft recomienda especificar unidades independientes para los datos y los registros. Para mover archivos después de crear la base de datos, ésta debe desconectarse. Para obtener más recomendaciones de Microsoft, consulte link:https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/place-data-and-log-files-on-separate-drives?view=sql-server-ver15["Coloque los archivos de datos y de registro en unidades separadas"^].
+
+
+
+=== Consideraciones sobre la unidad de almacenamiento
+
+La unidad de almacenamiento en ASA hace referencia a la LUN para hosts SCSI/FC o un espacio de nombres NVMe para hosts NVMe. Según el protocolo compatible, se le pedirá que cree LUN, espacio de nombres NVMe o ambos. Antes de crear una unidad de almacenamiento para la implementación de la base de datos, es importante comprender cómo varían las características y el patrón de I/O de SQL Server en función de la carga de trabajo y de los requisitos de backup y recuperación. Consulte las siguientes recomendaciones NetApp para la unidad de almacenamiento:
+
+* Evite compartir la misma unidad de almacenamiento entre varias instancias de SQL Server que se ejecutan en el mismo host para evitar que la gestión resulte complicada. En el caso de ejecutar varias instancias de SQL Server en el mismo host, a menos que esté cerca del límite de unidades de almacenamiento en un nodo, evite el uso compartido y disponga en su lugar de una unidad de almacenamiento separada por instancia y cada host para facilitar la gestión de datos.
+* Utilice puntos de montaje NTFS en lugar de letras de unidad para superar la limitación de 26 unidades en Windows.
+* Deshabilite las programaciones de Snapshot y las políticas de retención. En su lugar, utilice SnapCenter para coordinar las copias Snapshot de la unidad de almacenamiento de datos de SQL Server.
+* Coloque las bases de datos del sistema de SQL Server en una unidad de almacenamiento dedicada.
+* Tempdb es una base de datos del sistema utilizada por SQL Server como espacio de trabajo temporal, especialmente para operaciones DBCC CHECKDB intensivas en E/S. Por lo tanto, coloque esta base de datos en una unidad de almacenamiento dedicada. En entornos de gran tamaño en los que el recuento de unidades de almacenamiento supone un reto, puede consolidar tempdb con bases de datos del sistema en la misma unidad de almacenamiento después de una planificación cuidadosa. La protección de datos para tempdb no es una prioridad alta porque esta base de datos se vuelve a crear cada vez que se reinicia SQL Server.
+* Colocar archivos de datos de usuario (`.mdf`) en una unidad de almacenamiento separada porque son cargas de trabajo de lectura/escritura aleatorias. Es común crear backups de registros de transacciones con más frecuencia que los backups de bases de datos. Por este motivo, coloque los archivos de registro de transacciones (`.ldf`) en una unidad de almacenamiento o VMDK separados de los archivos de datos para que puedan crearse programaciones de backup independientes para cada uno. Esta separación también aísla la E/S de escritura secuencial de los archivos de registro de la E/S de lectura/escritura aleatoria de los archivos de datos y mejora significativamente el rendimiento de SQL Server.
+* Asegúrese de que los archivos de la base de datos de usuario y el directorio de registro para almacenar la copia de seguridad de registros se encuentran en una unidad de almacenamiento independiente para evitar que la política de retención sobrescriba las instantáneas cuando se utilizan con la función SnapMirror con la política de almacén.
+* No mezcle archivos de base de datos ni archivos que no sean de base de datos, como archivos relacionados con la búsqueda de texto completo, en la misma unidad de almacenamiento.
+* La colocación de archivos secundarios de base de datos (como parte de un grupo de archivos) en una unidad de almacenamiento independiente mejora el rendimiento de la base de datos de SQL Server. Esta separación es válida sólo si el archivo de la base de datos `.mdf` no comparte su unidad de almacenamiento con ningún otro `.mdf` archivo.
+* Al formatear el disco mediante el administrador de discos en el servidor Windows, asegúrese de que el tamaño de la unidad de asignación esté establecido en 64K para la partición.
+* No coloque bases de datos de usuario ni bases de datos del sistema en una unidad de almacenamiento que aloje puntos de montaje.
+* Consulte link:https://www.netapp.com/media/10680-tr4080.pdf["Microsoft Windows e MPIO nativo bajo las prácticas recomendadas de ONTAP para SAN moderna"] Para aplicar la compatibilidad con accesos múltiples en Windows a dispositivos iSCSI en las propiedades MPIO.
+* Si utiliza una instancia de clúster de conmutación al nodo de respaldo Always On, las bases de datos de usuario deben colocarse en una unidad de almacenamiento compartida entre los nodos de clúster de conmutación al nodo de respaldo del servidor Windows y los recursos del clúster de discos físicos se asignan al grupo de clústeres asociado con la instancia de SQL Server.
+

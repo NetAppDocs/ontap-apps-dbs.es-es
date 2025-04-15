@@ -1,0 +1,21 @@
+---
+sidebar: sidebar 
+permalink: mssql/mssql-dr-snapmirror-ASA.html 
+keywords: MSSQL,SQL Server, disaster recovery, snapmirror 
+summary: Recuperación ante desastres de Microsoft SQL Server con ONTAP 
+searchtitle: Recuperación ante desastres de Microsoft SQL Server con SnapMirror 
+---
+= SnapMirror
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las siguientes son recomendaciones para SnapMirror para SQL Server:
+
+* Utilice la replicación síncrona con SnapMirror Active Sync donde la demanda de una recuperación de datos rápida sea mayor y las soluciones asíncronas para obtener flexibilidad en un objetivo de punto de recuperación.
+* Si utiliza SnapCenter para realizar backup de bases de datos y replicar snapshots en un clúster remoto, no programe actualizaciones de SnapMirror desde las controladoras con fines de consistencia. En lugar de eso, habilite las actualizaciones de SnapMirror desde SnapCenter para actualizar SnapMirror después de haber completado el backup completo o de registro.
+* Equilibre las unidades de almacenamiento que contienen datos de SQL Server en diferentes nodos del clúster para permitir que todos los nodos del clúster compartan la actividad de replicación de SnapMirror. Esta distribución optimiza el uso de los recursos de los nodos.
+
+
+Para obtener más información acerca de SnapMirror, consulte link:https://www.netapp.com/us/media/tr-4015.pdf["TR-4015: Guía de configuración de SnapMirror y prácticas recomendadas para ONTAP 9"^].

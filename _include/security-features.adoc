@@ -31,6 +31,9 @@ NOTE: Las instantáneas a prueba de manipulaciones no se pueden organizar en niv
 Para obtener más información sobre las instantáneas a prueba de manipulaciones, consulte link:https://docs.netapp.com/us-en/ontap/snaplock/snapshot-lock-concept.html["Documentación de ONTAP."]
 
 
+NOTE: En la nueva plataforma ASA, replique las instantáneas en un clúster remoto mediante la directiva _vault_ y, a continuación, bloquee el destino para hacer que las instantáneas sean a prueba de manipulaciones.
+
+
 
 == Replicación de SnapMirror
 

@@ -1,0 +1,36 @@
+---
+sidebar: sidebar 
+permalink: mssql/mssql-disaster-recovery-ASA.html 
+keywords: MSSQL,SQL Server, disaster recovery, snapmirror 
+summary: Recuperación ante desastres de Microsoft SQL Server con ONTAP 
+searchtitle: Recuperación ante desastres de Microsoft SQL Server con ONTAP 
+---
+= Recuperación tras siniestros
+:allow-uri-read: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las bases de datos empresariales y las infraestructuras de aplicaciones a menudo requieren la replicación para protegerse de desastres naturales o de la interrupción inesperada del negocio con un tiempo de inactividad mínimo.
+
+La función de replicación de grupos de disponibilidad siempre disponible de SQL Server puede ser una opción excelente, y NetApp ofrece opciones para integrar la protección de datos con disponibilidad permanente. Sin embargo, en algunos casos es posible que desee considerar la tecnología de replicación de ONTAP mediante las siguientes opciones.
+
+
+
+== SnapMirror
+
+La tecnología SnapMirror ofrece una solución empresarial rápida y flexible para replicar datos en LAN y WAN. La tecnología SnapMirror solo transfiere los bloques de datos modificados al destino una vez que se creó el reflejo inicial, lo que reduce considerablemente los requisitos de ancho de banda de la red. Puede configurarse tanto en modo síncrono como asíncrono. La replicación síncrona de SnapMirror en NetApp ASA se configura mediante la sincronización activa de SnapMirror.
+
+
+
+== SnapMirror síncrono activo
+
+Para muchos clientes, la continuidad empresarial requiere algo más que la mera posesión de una copia remota de los datos, requiere la capacidad de utilizar rápidamente los datos, lo que es posible en NetApp ONTAP mediante la sincronización activa de SnapMirror
+
+Con la sincronización activa de SnapMirror, básicamente cuenta con dos sistemas ONTAP diferentes que mantienen copias independientes de los datos de su unidad lógica, pero que cooperan para presentar una única instancia de esa LUN. Desde el punto de vista del host, se trata de una única entidad de LUN. La sincronización activa de SnapMirror es compatible con LUN basado en iSCSI/FC.
+
+La sincronización activa de SnapMirror puede proporcionar replicación RPO=0 y es fácil implementarla entre dos clústeres independientes.Una vez que las dos copias de datos están sincronizadas, los dos clústeres solamente deben reflejar escrituras. Cuando se produce una escritura en un clúster, se replica en otro clúster. La escritura solo se reconoce en el host cuando la escritura se ha completado en ambos sitios. Aparte de este comportamiento de división del protocolo, los dos clústeres son clústeres ONTAP normales.
+
+Un caso de uso clave de SM-AS es la replicación granular. En ocasiones, no desea replicar todos los datos como una sola unidad, o debe poder conmutar al nodo de respaldo de forma selectiva ciertas cargas de trabajo.
+
+Otro caso de uso clave de SM-AS es en las operaciones activo-activo, donde desea que existan copias de datos totalmente utilizables para estar disponibles en dos clústeres diferentes ubicados en dos ubicaciones diferentes con idénticas características de rendimiento y, si lo desea, no es necesario ampliar la SAN entre los sitios. Puede tener sus aplicaciones ya ejecutándose en ambos sitios, siempre que sea compatible con las aplicaciones, lo que reduce el RTO general durante las operaciones de conmutación al respaldo.
