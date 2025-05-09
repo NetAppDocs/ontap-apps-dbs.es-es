@@ -139,7 +139,7 @@ Aquí están las recomendaciones para administrar el espacio para los archivos d
 ** Use el crecimiento automático para las configuraciones de puesta en marcha más comunes porque el administrador de almacenamiento solo necesita supervisar el uso de espacio en el agregado.
 
 
-* No active la deduplicación en ningún volumen que contenga archivos de datos de SQL Server a menos que se sepa que el volumen contenga varias copias de los mismos datos, como restaurar la base de datos a partir de backups en un único volumen.
+* No active la deduplicación en ningún volumen de FAS que contenga archivos de datos de SQL Server, a menos que se sepa que el volumen contenga varias copias de los mismos datos, como la restauración de la base de datos desde backups en un único volumen.
 
 
 

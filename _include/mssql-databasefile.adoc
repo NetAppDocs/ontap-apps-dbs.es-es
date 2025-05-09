@@ -2,11 +2,6 @@
 :allow-uri-read: 
 
 
-[role="lead"]
-La ubicación correcta del archivo de la base de datos de SQL Server en ONTAP es crítica durante la etapa de la implementación inicial. Esto garantiza un rendimiento óptimo, gestión del espacio, tiempos de backup y restauración que pueden configurarse para que se ajusten a sus necesidades empresariales.
-
-En teoría, SQL Server (64 bits) admite 32.767 bases de datos por instancia y 524.272TB GB de tamaño de base de datos, aunque la instalación típica suele tener varias bases de datos. Sin embargo, el número de bases de datos que SQL Server puede manejar depende de la carga y el hardware. No es raro ver instancias de SQL Server que alojan docenas, cientos o incluso miles de pequeñas bases de datos.
-
 
 
 === Archivos y grupo de archivos de bases de datos
