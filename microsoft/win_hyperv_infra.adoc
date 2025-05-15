@@ -52,7 +52,7 @@ Cada equipo virtual en Hyper-V puede, a su vez, proporcionarse con los LUN de Ne
 === Mejores prácticas
 
 * Cuando un equipo virtual y sus datos se almacenan en el almacenamiento de NetApp, NetApp recomienda ejecutar la deduplicación de NetApp a intervalos regulares a nivel de volumen. Esta práctica provoca un ahorro de espacio considerable cuando se alojan equipos virtuales idénticos en un recurso compartido de CSV o SMB. La deduplicación se ejecuta en la controladora de almacenamiento y no afecta al rendimiento del sistema host ni de los equipos virtuales.
-* Cuando utilice LUN iSCSI para Hyper-V, asegúrese de habilitarlo `iSCSI Service (TCP-In) for Inbound` y.. `iSCSI Service (TCP-Out) for Outbound` En la configuración del firewall en el host de Hyper-V. De este modo, se permite que el tráfico iSCSI pase hacia y desde el host de Hyper-V y el controlador de NetApp.
+* Cuando utilice LUN iSCSI para Hyper-V, asegúrese de activar 'Servicio iSCSI (TCP-IN) para entrada' y 'Servicio iSCSI (TCP-OUT) para saliente' en la configuración del firewall en el host de Hyper-V. De este modo, se permite que el tráfico iSCSI pase hacia y desde el host de Hyper-V y el controlador de NetApp.
 * NetApp recomienda desactivar la opción Permitir que el sistema operativo de gestión comparta este adaptador de red para el conmutador virtual de Hyper-V. Al hacerlo, se crea una red dedicada para las máquinas virtuales.
 
 
@@ -60,7 +60,7 @@ Cada equipo virtual en Hyper-V puede, a su vez, proporcionarse con los LUN de Ne
 
 === Puntos que debe recordar
 
-* El aprovisionamiento de un equipo virtual mediante Fibre Channel requiere un N_Port ID Virtualizationâ€“enabled FC HBA. Se admite un máximo de cuatro puertos FC.
+* El aprovisionamiento de un equipo virtual mediante Fibre Channel virtual requiere un HBA FC habilitado para la virtualización N_Port ID. Se admite un máximo de cuatro puertos FC.
 * Si el sistema host se configura con varios puertos FC y se presenta a la máquina virtual, debe instalarse MPIO en la máquina virtual para habilitar el acceso multivía.
 * Los discos de paso a través no se pueden aprovisionar al host si se está utilizando MPIO en ese host, ya que los discos de paso no son compatibles con MPIO.
 * El disco utilizado para los archivos VHD/VHDx debe utilizar el formato 64K para la asignación.
@@ -70,7 +70,7 @@ Cada equipo virtual en Hyper-V puede, a su vez, proporcionarse con los LUN de Ne
 
 === Más información
 
-* Para obtener información sobre los HBA de FC, consulte http://mysupport.netapp.com/matrix/["Matriz de interoperabilidad de NetApp"].
+* Para obtener información sobre los HBA de FC, consulte http://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad (IMT)"] .
 * Para obtener más información acerca de Fibre Channel virtual, consulte Microsoft https://technet.microsoft.com/en-us/library/hh831413.aspx["Descripción general de Fibre Channel virtual para Hyper-V"] página.
 
 
@@ -134,7 +134,7 @@ Para obtener más información acerca de ODX, consulte https://docs.netapp.com/u
 
 Los clusters de conmutación por error proporcionan alta disponibilidad y escalabilidad a los servidores de Hyper-V. Un cluster de recuperación tras fallos es un grupo de servidores Hyper-V independientes que funcionan conjuntamente para aumentar la disponibilidad y la escalabilidad de los equipos virtuales.
 
-Los servidores en clúster de Hyper-V (denominados nodos) están conectados por la red física y por el software de clúster. Estos nodos utilizan almacenamiento compartido para almacenar los archivos de la máquina virtual, lo que incluye archivos de configuración, archivos de disco duro virtual (VHD) y copias Snapshot. El almacenamiento compartido puede ser un recurso compartido SMB/CIFS de NetApp o un volumen compartido en cluster sobre un LUN de NetApp, como se muestra a continuación. Este almacenamiento compartido proporciona un espacio de nombres consistente y distribuido a los que todos los nodos del cluster pueden acceder de forma simultánea. Por lo tanto, si un nodo falla en el clúster, el otro nodo proporciona servicio mediante un proceso llamado conmutación al respaldo. Los clústeres de conmutación por error se pueden gestionar mediante el complemento Administrador de clúster de conmutación por error y los cmdlets de Windows PowerShell de agrupación en clúster de conmutación por error.
+Los servidores en clúster de Hyper-V (denominados nodos) están conectados por la red física y por el software de clúster. Estos nodos utilizan almacenamiento compartido para almacenar los archivos de la máquina virtual, lo que incluye los archivos de configuración, disco duro virtual (VHD) y snapshots. El almacenamiento compartido puede ser un recurso compartido SMB/CIFS de NetApp o un volumen compartido en cluster sobre un LUN de NetApp, como se muestra a continuación. Este almacenamiento compartido proporciona un espacio de nombres consistente y distribuido a los que todos los nodos del cluster pueden acceder de forma simultánea. Por lo tanto, si un nodo falla en el clúster, el otro nodo proporciona servicio mediante un proceso llamado conmutación al respaldo. Los clústeres de conmutación por error se pueden gestionar mediante el complemento Administrador de clúster de conmutación por error y los cmdlets de Windows PowerShell de agrupación en clúster de conmutación por error.
 
 
 

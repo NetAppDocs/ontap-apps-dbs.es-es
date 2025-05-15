@@ -37,7 +37,7 @@ NOTE: *Esta documentación sustituye a los informes técnicos publicados anterio
 
 
 
-ONTAP proporciona funciones de eficiencia del almacenamiento de NetApp, como la tecnología Snapshot(R) de NetApp, clonado, deduplicación, thin provisioning, thin replication compresión, almacenamiento virtual por niveles y mucho más con un rendimiento y una eficiencia mejorados.
+ONTAP proporciona funcionalidades de eficiencia del almacenamiento de NetApp como la tecnología snapshot de NetApp, clonado, deduplicación, thin provisioning, thin replication, compresión, almacenamiento virtual por niveles y mucho más con un rendimiento y una eficiencia mejorados.
 
 Juntos, Windows Server y ONTAP pueden funcionar en entornos de gran tamaño y aportar un gran valor a la consolidación de centros de datos y las implementaciones de cloud privado o híbrido. Esta combinación también proporciona cargas de trabajo no disruptivas de forma eficiente y admite una escalabilidad fluida.
 
@@ -54,4 +54,4 @@ En este documento hacemos las siguientes suposiciones:
 * El lector posee conocimientos generales sobre el sistema operativo Windows Server y Hyper-V.
 
 
-Si quiere obtener una matriz completa y actualizada regularmente de configuraciones SAN y NAS probadas y compatibles, consulte la http://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad (IMT)"] En el sitio de soporte de NetApp. Con IMT, puede determinar las versiones exactas de producto y funciones compatibles con su entorno concreto. El NetApp IMT define los componentes y las versiones del producto que son compatibles con las configuraciones compatibles con NetApp. Los resultados específicos dependen de la instalación que realice cada cliente de acuerdo con las especificaciones publicadas.
+Si quiere obtener una matriz completa y actualizada regularmente de configuraciones SAN y NAS probadas y compatibles, consulte el http://mysupport.netapp.com/matrix/["Herramienta de matriz de interoperabilidad (IMT)"] en el sitio de soporte de NetApp. Con IMT, puede determinar las versiones exactas de producto y funciones compatibles con su entorno concreto. El NetApp IMT define los componentes y las versiones del producto que son compatibles con las configuraciones compatibles con NetApp. Los resultados específicos dependen de la instalación que realice cada cliente de acuerdo con las especificaciones publicadas.

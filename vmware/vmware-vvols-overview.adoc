@@ -23,7 +23,7 @@ NOTE: Esta documentación sustituye a los informes técnicos _TR-4400 publicados
 Las prácticas recomendadas complementan otros documentos, como guías y listas de compatibilidad. Se desarrollan según pruebas de laboratorio y una amplia experiencia de campo por parte de ingenieros y clientes de NetApp. Puede que no sean las únicas prácticas que funcionan o son compatibles, pero generalmente son las soluciones más simples que satisfacen las necesidades de la mayoría de los clientes.
 
 
-TIP: Este documento se ha actualizado para incluir las nuevas características de vVols que se encuentran en vSphere 8,0 update 3 y la versión de ONTAP tools 10,3.
+NOTE: Este documento se ha actualizado para incluir las nuevas funciones de vVols que se encuentran en vSphere 8,0 update 3, el lanzamiento de ONTAP tools 10,4 y los nuevos sistemas NetApp ASA.
 
 
 
@@ -71,7 +71,7 @@ VVols son los archivos y discos de máquina virtual reales almacenados en el alm
 
 == Gestión basada en políticas
 
-Las API de VMware vSphere para Storage Awareness (VASA) facilitan que un administrador de VM utilice cualquier capacidad de almacenamiento necesaria para aprovisionar máquinas virtuales sin tener que interactuar con su equipo de almacenamiento. Antes de VASA, los administradores de máquinas virtuales podían definir políticas de almacenamiento de máquinas virtuales, pero debían trabajar con sus administradores de almacenamiento para identificar los almacenes de datos adecuados, a menudo mediante la documentación o las convenciones de nomenclatura. Con VASA, los administradores de vCenter con los permisos adecuados pueden definir una serie de funcionalidades de almacenamiento que los usuarios de vCenter pueden usar luego para aprovisionar máquinas virtuales. La asignación entre la política de almacenamiento de las máquinas virtuales y las capacidades de almacenes de datos permite a vCenter mostrar una lista de almacenes de datos compatibles para su selección, además de permitir que otras tecnologías como Aria (antes conocida como vRealize) Automation o Tanzu Kubernetes Grid seleccionen automáticamente el almacenamiento de una política asignada. Este enfoque se conoce como gestión basada en políticas de almacenamiento. Si bien las reglas del proveedor VASA y las políticas de almacenamiento de máquinas virtuales también pueden usarse con almacenes de datos tradicionales, nuestro enfoque se centra en los almacenes de datos vVols.
+Las API de VMware vSphere para Storage Awareness (VASA) facilitan que un administrador de VM utilice cualquier capacidad de almacenamiento necesaria para aprovisionar máquinas virtuales sin tener que interactuar con su equipo de almacenamiento. Antes de VASA, los administradores de máquinas virtuales podían definir políticas de almacenamiento de máquinas virtuales, pero tenían que trabajar con sus administradores de almacenamiento para identificar los almacenes de datos adecuados, a menudo usando documentación o convenciones de nomenclatura. Con VASA, los administradores de vCenter con los permisos adecuados pueden definir una serie de funcionalidades de almacenamiento que los usuarios de vCenter pueden usar luego para aprovisionar máquinas virtuales. La asignación entre la política de almacenamiento de las máquinas virtuales y las capacidades de almacenes de datos permite a vCenter mostrar una lista de almacenes de datos compatibles para su selección, además de permitir que otras tecnologías como Aria (antes conocida como vRealize) Automation o Tanzu Kubernetes Grid seleccionen automáticamente el almacenamiento de una política asignada. Este enfoque se conoce como gestión basada en políticas de almacenamiento. Si bien las reglas del proveedor VASA y las políticas de almacenamiento de máquinas virtuales también pueden usarse con almacenes de datos tradicionales, nuestro enfoque se centra en los almacenes de datos vVols.
 
 
 
@@ -155,7 +155,7 @@ Además de estos beneficios, también se observan estos casos de uso comunes par
 * *Provisionamiento bajo demanda de VMs*
 +
 ** Cloud privado o IaaS de proveedor de servicios.
-** Aproveche la automatización y la orquestación mediante la suite Aria (anteriormente vRealize), OpenStack, etc.
+** Aproveche la automatización y la orquestación a través del paquete Aria (anteriormente vRealize), OpenStack, etc.
 
 
 * *Discos de primera clase (FCDs)*

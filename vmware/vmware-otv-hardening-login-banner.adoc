@@ -4,7 +4,7 @@ permalink: vmware/vmware-otv-hardening-login-banner.html
 keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
 summary: Guía de seguridad reforzada de herramientas de ONTAP para VMware vSphere, banner de inicio de sesión. 
 ---
-= Banner de inicio de sesión
+= Banner de inicio de sesión de ONTAP tools 9,13
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

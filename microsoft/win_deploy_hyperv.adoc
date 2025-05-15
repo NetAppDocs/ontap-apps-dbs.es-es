@@ -54,10 +54,10 @@ En este apéndice se describe la puesta en marcha de un clúster Hyper-V.
 +
 ... Ponga el LUN en línea, inicialice el disco, cree un nuevo volumen sencillo y formatee con NTFS o ReFS.
 ... En el Administrador de clústeres de conmutación por error, expanda el clúster, expanda Almacenamiento, haga clic con el botón derecho en Discos y, a continuación, haga clic en Agregar discos. Al hacerlo, se abre el asistente para agregar discos a un clúster mostrando la LUN como un disco. Haga clic en OK para añadir la LUN como disco.
-... Ahora el LUN se denomina Clustered Disk y se muestra como Almacenamiento disponible en Discos.
+... Ahora la LUN se denomina 'Disco en cluster' y se muestra como Almacenamiento disponible en Discos.
 
 
-.. Haga clic con el botón derecho en LUN (Clustered Disk) y haga clic en Add to Cluster Shared Volumes. Ahora la LUN se muestra como un volumen compartido en clúster.
+.. Haga clic con el botón derecho en LUN ('Clustered Disk') y haga clic en Add to Cluster Shared Volumes. Ahora la LUN se muestra como un volumen compartido en clúster.
 .. El CSV es visible y accesible simultáneamente desde todos los servidores Hyper-V del cluster de conmutación por error en su ubicación local C:\ClusterStorage\.
 
 

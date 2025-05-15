@@ -2,7 +2,7 @@
 sidebar: sidebar 
 permalink: vmware/vmware-links-tr-4792.html 
 keywords: design, HCI, computing, vmware, cloud, graphics, virtualization 
-summary: 'El TR-4792 proporciona directrices para el uso de NetApp HCI 615C para cargas de trabajo de gráficos 3D en un entorno VMware Horizon impulsado por las unidades de procesamiento gráfico (GPU) de NVIDIA y el software de virtualización.' 
+summary: 'El TR-4792 proporciona directrices para el uso de NetApp 615C para cargas de trabajo de gráficos 3D en un entorno VMware Horizon impulsado por las unidades de procesamiento gráfico (GPU) y el software de virtualización de NVIDIA.' 
 ---
 = NetApp HCI para la infraestructura de puestos de trabajo virtuales con VMware Horizon 7: Impulse a los usuarios avanzados con gráficos 3D
 :hardbreaks:

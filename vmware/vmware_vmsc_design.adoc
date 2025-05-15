@@ -1,7 +1,7 @@
 ---
 sidebar: sidebar 
 permalink: vmware/vmware_vmsc_design.html 
-keywords: VMware, Data protection, MetroCluster, SMBC, SnapMirror active sync, vMSC 
+keywords: VMware, Data protection, MetroCluster, SMBC, SMas, SnapMirror active sync, vMSC, metro storage cluster, vSphere, vCenter, business continuity, disaster recovery, ONTAP 
 summary: Directrices de implementación y diseño de VMSC. 
 ---
 = Directrices de implementación y diseño de VMSC
@@ -20,15 +20,19 @@ Este documento describe las guías de diseño e implementación para VMSC con si
 
 == Configuración de almacenamiento de NetApp
 
-Las instrucciones de configuración para NetApp MetroCluster (conocidas como configuración de MCC) están disponibles en https://docs.netapp.com/us-en/ontap-metrocluster/["Documentación de MetroCluster"]. Las instrucciones para SnapMirror Active Sync (SMAS) también están disponibles en https://docs.netapp.com/us-en/ontap/smbc/index.html["Información general sobre la continuidad del negocio de SnapMirror"].
+Las instrucciones de configuración para NetApp MetroCluster están disponibles en https://docs.netapp.com/us-en/ontap-metrocluster/["Documentación de MetroCluster"]. Las instrucciones para SnapMirror Active Sync (SMAS) también están disponibles en https://docs.netapp.com/us-en/ontap/smbc/index.html["Información general sobre la continuidad del negocio de SnapMirror"].
 
 Después de configurar MetroCluster, administrarlo es como administrar un entorno ONTAP tradicional. Puede configurar máquinas virtuales de almacenamiento (SVM) con diferentes herramientas, como la interfaz de línea de comandos (CLI), System Manager o Ansible. Una vez que se han configurado las SVM, cree interfaces lógicas (LIF), volúmenes y números de unidad lógica (LUN) en el clúster que se utilizarán para operaciones normales. Estos objetos se replicarán automáticamente en el otro clúster mediante la red de conexión de clústeres.
 
-Si no utiliza MetroCluster, puede usar la sincronización activa de SnapMirror, que proporciona protección granular de almacenes de datos y acceso activo-activo en múltiples clústeres de ONTAP en diferentes dominios de fallo. SMAS utiliza grupos de coherencia (CG) para garantizar la coherencia en orden de escritura entre uno o varios almacenes de datos y puede crear varios CG en función de los requisitos de su aplicación y de su almacén de datos. Los grupos de coherencia son especialmente útiles para aplicaciones que requieren sincronización de datos entre varios almacenes de datos. SMAS también admite asignaciones de dispositivos sin procesar (RDM) y almacenamiento conectado mediante invitado con iniciadores iSCSI en los invitados. Puede obtener más información sobre los grupos de consistencia en https://docs.netapp.com/us-en/ontap/consistency-groups/index.html["Información general sobre los grupos de consistencia"].
+Si no utiliza MetroCluster o tiene sistemas ONTAP que no son compatibles con MetroCluster, como los sistemas ASA R2, puede usar la sincronización activa de SnapMirror que proporciona protección granular de almacenes de datos y acceso activo-activo en varios clústeres de ONTAP de diferentes dominios de fallo. SMAS utiliza grupos de coherencia (CG) para garantizar la coherencia en orden de escritura entre uno o varios almacenes de datos y puede crear varios CG en función de los requisitos de su aplicación y de su almacén de datos. Los grupos de coherencia son especialmente útiles para aplicaciones que requieren sincronización de datos entre varios almacenes de datos. Por ejemplo, LVM invitados distribuidos entre almacenes de datos. SMAS también admite asignaciones de dispositivos sin procesar (RDM) y almacenamiento conectado mediante invitado con iniciadores iSCSI en los invitados. Puede obtener más información sobre los grupos de consistencia en https://docs.netapp.com/us-en/ontap/consistency-groups/index.html["Información general sobre los grupos de consistencia"].
 
-Las herramientas de ONTAP ahora ofrecen una forma sencilla de configurar la sincronización activa de SnapMirror para VMSC. Es posible usar el complemento de herramientas de ONTAP para crear y gestionar relaciones de sincronización activa de SnapMirror entre dos clústeres de ONTAP. El complemento proporciona una interfaz sencilla e intuitiva para crear y gestionar relaciones de sincronización activa de SnapMirror entre dos clústeres de ONTAP. Puede obtener más información sobre el complemento para vCenter de herramientas de ONTAP en https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/index.html["Herramientas de ONTAP para VMware vSphere"], o ir directamente a https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/configure/protect-cluster.html["Proteja mediante la protección del clúster de hosts"].
+Hay alguna diferencia en la gestión de una configuración VMSC con sincronización activa de SnapMirror en comparación con una MetroCluster. En primer lugar, SMAS es una configuración solo SAN, no se puede proteger ningún almacén de datos NFS con sincronización activa de SnapMirror. Segundo, debe asignar ambas copias de las LUN a los hosts ESXi para que accedan a los almacenes de datos replicados en ambos dominios de fallo. Tercero, debe crear uno o varios grupos de coherencia para los almacenes de datos que desea proteger con la sincronización activa de SnapMirror. Por último, debe crear una política de SnapMirror para los grupos de consistencia que creó. Todo esto puede realizarse fácilmente usando el asistente para proteger clúster del complemento vCenter de herramientas de ONTAP, o bien manualmente usando la CLI de ONTAP o System Manager.
 
-Hay alguna diferencia en la gestión de una configuración VMSC con sincronización activa de SnapMirror en comparación con una MetroCluster. En primer lugar, SMAS es una configuración solo SAN, no se puede proteger ningún almacén de datos NFS con sincronización activa de SnapMirror. Segundo, debe asignar ambas copias de las LUN a los hosts ESXi para que accedan a los almacenes de datos replicados en ambos dominios de fallo.
+
+
+== Uso del complemento de herramientas de ONTAP para vCenter para SnapMirror
+
+El complemento para vCenter para herramientas de ONTAP proporciona un método sencillo e intuitivo de configurar la sincronización activa de SnapMirror para VMSC. Es posible usar el complemento de herramientas de ONTAP para crear y gestionar relaciones de sincronización activa de SnapMirror entre dos clústeres de ONTAP. Este plugin proporciona una interfaz fácil de usar para establecer y gestionar estas relaciones de manera eficiente. Puede obtener más información sobre el complemento para vCenter de herramientas de ONTAP en https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/index.html["Herramientas de ONTAP para VMware vSphere"], o ir directamente a https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/configure/protect-cluster.html["Proteja mediante la protección del clúster de hosts"].
 
 
 
@@ -68,7 +72,7 @@ image::../media/vmsc_3_3.png[Supervisión de máquinas virtuales,624,480]
 
 image::../media/vmsc_3_4.png[Control de admisión,624,479]
 
-. Se hace clic en «OK».
+. Haga clic en OK.
 . Seleccione DRS y haga clic en EDIT.
 . Establezca el nivel de automatización en manual a menos que las aplicaciones lo requieran.
 
@@ -76,7 +80,7 @@ image::../media/vmsc_3_4.png[Control de admisión,624,479]
 image::../media/vmsc_3_5.png[vmsc 3 5,624,336]
 
 . Habilite VM Component Protection, consulte https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-availability/GUID-F01F7EB8-FF9D-45E2-A093-5F56A788D027.html["docs.vmware.com"].
-. Se recomiendan las siguientes configuraciones adicionales de alta disponibilidad de vSphere para VMSC con MCC:
+. Se recomiendan las siguientes configuraciones adicionales de alta disponibilidad de vSphere para VMSC con MetroCluster:
 
 
 [cols="50%,50%"]
@@ -141,7 +145,7 @@ Consulte https://www.vmware.com/docs/vmw-vmware-vsphere-metro-storage-cluster-re
 
 image::../media/vmsc_3_7.png[Una captura de pantalla de una descripción de computadora generada automáticamente,624,545]
 
-Agregar una configuración avanzada llamada das.heartbeatDsPerHost puede aumentar el número de almacenes de datos de latido. Utilice cuatro almacenes de datos para el corazón (HB DSS): Dos por sitio. Utilice la opción “Seleccionar de la lista pero cumplido”. Esto es necesario porque si un sitio falla, usted todavía necesita dos HB DSS. Sin embargo, esas empresas no tienen que estar protegidas con sincronización activa de SnapMirror o MCC.
+Agregar una configuración avanzada llamada das.heartbeatDsPerHost puede aumentar el número de almacenes de datos de latido. Utilice cuatro almacenes de datos para el corazón (HB DSS): Dos por sitio. Utilice la opción Seleccionar de la lista pero complementar. Esto es necesario porque si un sitio falla, usted todavía necesita dos HB DSS. Sin embargo, dichas aplicaciones no tienen por qué estar protegidas con MetroCluster o SnapMirror con sincronización activa.
 
 Consulte https://www.vmware.com/docs/vmw-vmware-vsphere-metro-storage-cluster-recommended-practices["Prácticas recomendadas para VMware vSphere Metro Storage Cluster"] para obtener más información__.__
 
@@ -152,7 +156,7 @@ En esta sección creamos grupos DRS para equipos virtuales y hosts para cada sit
 [TIP]
 ====
 * NetApp recomienda encarecidamente la especificación *Debe ejecutarse en hosts del grupo* en lugar de la especificación *Debe ejecutarse en hosts del grupo*. En caso de que se produzca un fallo del host del sitio A, es necesario reiniciar las máquinas virtuales del sitio A en los hosts del sitio B a través de vSphere HA, pero la última especificación no permite a HA reiniciar los equipos virtuales en el sitio B, ya que es una regla estricta. La especificación anterior es una regla flexible y se infringirá en caso de alta disponibilidad, lo que permitirá la disponibilidad en lugar de rendimiento.
-* Puede crear una alarma basada en eventos que se dispara cuando una máquina virtual viola una regla de afinidad VM-Host. En vSphere Client, agregue una nueva alarma para la máquina virtual y seleccione “VM is Violating VM-Host Affinity Rule” como disparador de eventos. Para obtener más información sobre la creación y edición de alarmas, consulte link:https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-monitoring-and-performance-8-0.html["Supervisión y rendimiento de vSphere"^]la documentación.
+* Puede crear una alarma basada en eventos que se dispara cuando una máquina virtual viola una regla de afinidad VM-Host. En vSphere Client, agregue una nueva alarma para la máquina virtual y seleccione VM is Violating VM-Host Affinity Rule como activador de evento. Para obtener más información sobre la creación y edición de alarmas, consulte link:https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-monitoring-and-performance-8-0.html["Supervisión y rendimiento de vSphere"^]la documentación.
 
 
 ====

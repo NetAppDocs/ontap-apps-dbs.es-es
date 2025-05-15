@@ -4,7 +4,7 @@ permalink: vmware/vmware-otv-hardening-overview.html
 keywords: VMware, Data protection, security, OTV, Hardening, ONTAP Tools 
 summary: Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, información general e introducción. 
 ---
-= Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere
+= Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere 9,13
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

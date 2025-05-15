@@ -25,7 +25,7 @@ Una controladora de almacenamiento de NetApp que ejecuta ONTAP puede admitir las
 * Otras cargas de trabajo de aplicaciones
 
 
-Además, las funciones de eficiencia del almacenamiento de NetApp como la deduplicación, las copias FlexClone(R) de NetApp, la tecnología Snapshot de NetApp, thin provisioning, compresión, además, el almacenamiento por niveles aporta un valor significativo para las cargas de trabajo que se ejecutan en Windows Server.
+Además, las funciones de eficiencia del almacenamiento de NetApp como la deduplicación, las copias NetApp FlexClone(R), la tecnología de snapshots de NetApp, thin provisioning, compresión y almacenamiento por niveles aportan un valor importante a las cargas de trabajo que se ejecutan en Windows Server.
 
 
 
@@ -33,9 +33,9 @@ Además, las funciones de eficiencia del almacenamiento de NetApp como la dedupl
 
 ONTAP es un software de gestión que se ejecuta en una controladora de almacenamiento de NetApp. Se conoce como un nodo, una controladora de almacenamiento NetApp es un dispositivo de hardware con un procesador, RAM y NVRAM. El nodo se puede conectar a unidades de disco SATA, SAS o SSD, o a una combinación de dichas unidades.
 
-Varios nodos se agregan en un sistema en clúster. Los nodos del clúster se comunican entre sí continuamente para coordinar las actividades del clúster. Los nodos también pueden mover datos de un nodo a otro de manera transparente utilizando rutas redundantes a una red de clúster dedicada que consta de dos switches Ethernet de 10Gb Gb. Los nodos del clúster pueden sustituirse entre sí para proporcionar alta disponibilidad durante cualquier escenario de conmutación por error. Los clústeres se administran en todo el clúster en lugar de por nodo y los datos se proporcionan desde una o varias máquinas virtuales de almacenamiento (SVM). Un clúster debe tener al menos una SVM para suministrar datos.
+Varios nodos se agregan en un sistema en clúster. Los nodos del clúster se comunican entre sí continuamente para coordinar las actividades del clúster. Los nodos también pueden mover datos de un nodo a otro de manera transparente mediante rutas redundantes a una interconexión de clúster dedicada que consta de dos switches Ethernet de 10Gb Gb. Los nodos del clúster pueden sustituirse entre sí para proporcionar alta disponibilidad durante cualquier escenario de conmutación por error. Los clústeres se administran en todo el clúster en lugar de por nodo y los datos se proporcionan desde una o varias máquinas virtuales de almacenamiento (SVM). Un clúster debe tener al menos una SVM para suministrar datos.
 
-La unidad básica de un clúster es el nodo y los nodos se añaden al clúster como parte de un par de alta disponibilidad (HA). Los pares de ALTA disponibilidad permiten una alta disponibilidad comunicándose entre sí a través de una interconexión de alta disponibilidad (independiente de la red de clúster dedicada) y manteniendo conexiones redundantes a los discos del par de alta disponibilidad. Los discos no se comparten entre pares de alta disponibilidad, aunque las bandejas pueden contener discos que pertenecen a cualquier miembro de una pareja de alta disponibilidad. La siguiente figura muestra una instalación de sistemas de almacenamiento de NetApp en un entorno Windows Server.
+La unidad básica de un clúster es el nodo y los nodos se añaden al clúster como parte de un par de alta disponibilidad (HA). Los pares de ALTA disponibilidad permiten una alta disponibilidad comunicándose entre sí a través de una interconexión de clúster de alta disponibilidad (independiente de la interconexión de clúster dedicada) y al mantener conexiones redundantes a discos del par de alta disponibilidad. Los discos no se comparten entre pares de alta disponibilidad, aunque las bandejas pueden contener discos que pertenecen a cualquier miembro de una pareja de alta disponibilidad. La siguiente figura muestra una instalación de sistemas de almacenamiento de NetApp en un entorno Windows Server.
 
 image:win_image1.png["Implementación de almacenamiento de NetApp en el entorno de Windows Server,width=624,height=479"]
 
@@ -77,7 +77,7 @@ Para conectar, configurar y administrar el almacenamiento de NetApp desde Window
 
 == Kit de herramientas PowerShell de NetApp
 
-El kit de herramientas PowerShell de NetApp (PSTK) es un módulo PowerShell que ofrece automatización integral y permite la administración del almacenamiento de ONTAP. El módulo ONTAP contiene más de 2.000 cmdlets y ayuda con la administración de FAS, All Flash FAS (AFF) de NetApp, hardware genérico y recursos cloud.
+El kit de herramientas PowerShell de NetApp (PSTK) es un módulo PowerShell que ofrece automatización integral y permite la administración del almacenamiento de ONTAP. El módulo ONTAP contiene más de 2.000 cmdlets y ayuda con la administración de NetApp AFF, FAS, hardware genérico y recursos cloud.
 
 
 

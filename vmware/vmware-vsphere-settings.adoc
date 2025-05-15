@@ -16,13 +16,11 @@ summary: Este documento categoriza y enumera la configuración de almacenamiento
 [role="lead"]
 NetApp ha desarrollado un conjunto de configuraciones óptimas de hosts ESXi tanto para los protocolos NFS como para los protocolos de bloques. También se proporciona orientación específica para configurar el tiempo de espera del adaptador de bus de host y la función multivía para que funcione correctamente con ONTAP basado en pruebas internas de NetApp y VMware.
 
-Estos valores se establecen fácilmente con las herramientas de ONTAP para VMware vSphere: En la consola Summary, haga clic en Edit Settings en el portlet Host Systems o haga clic con el botón derecho en el host en vCenter y, a continuación, desplácese hasta ONTAP tools > Establecer valores recomendados.
+Estos valores se establecen fácilmente mediante las herramientas de ONTAP para VMware vSphere: En la página de descripción general de herramientas de ONTAP, desplácese hasta la parte inferior y haga clic en Apply Recommended Settings en el portlet de cumplimiento de normativas de host ESXi.
 
 Esta es la configuración de host recomendada para todas las versiones de ONTAP compatibles actualmente.
 
 |===
-
-
 | *Configuración del host* | *Valor recomendado por NetApp* | *Se requiere reinicio* 
 
 
@@ -39,6 +37,9 @@ Esta es la configuración de host recomendada para todas las versiones de ONTAP 
 
 
 3+| *Ajustes NFS* 
+
+
+| NewSyncInterval | Si no utiliza vSphere CSI para Kubernetes, establezca Por https://knowledge.broadcom.com/external/article/386364/reducing-excessive-vsan-cnssync-warnings.html["VMware KB 386364"^] | No 
 
 
 | NET.TcpipHeapSize | VSphere 6.0 o posterior; establezca esta opción en 32.
@@ -108,7 +109,7 @@ Si configura este valor, se evitan los errores de I/O. | No
 Si configura este valor, se evitan los errores de I/O. | No 
 |===
 
-NOTE: 1: Es posible que la opción de configuración avanzada de NFS MaxQueueDepth no funcione según lo previsto al usar VMware vSphere ESXi 7.0.1 y VMware vSphere ESXi 7.0.2. Consulte link:https://kb.vmware.com/s/article/86331?lang=en_US["86331 de la base de conocimientos de VMware"] si quiere más información.
+NOTE: La opción de configuración avanzada de NFS MaxQueueDepth puede no funcionar según lo previsto si se utiliza VMware vSphere ESXi 7.0.1 y VMware vSphere ESXi 7,0.2. Referencia link:https://kb.vmware.com/s/article/86331?lang=en_US["86331 de la base de conocimientos de VMware"] para más información.
 
 Las herramientas de ONTAP también especifican determinada configuración predeterminada al crear volúmenes de ONTAP FlexVol y LUN:
 

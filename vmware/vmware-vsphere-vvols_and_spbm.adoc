@@ -16,7 +16,8 @@ summary: Esta página describe las mejores prácticas para implementar una soluc
 [role="lead"]
 Anunciada por primera vez en 2012, NetApp fue un partner de diseño temprano con VMware en el desarrollo de VMware vSphere APIs for Storage Awareness (VASA), la base de la gestión basada en políticas de almacenamiento (SPBM) con cabinas de almacenamiento empresarial. Este enfoque trajo una gestión granular del almacenamiento de las máquinas virtuales limitada al almacenamiento de VMFS y NFS.
 
- As a technology design partner, NetApp provided architectural input and in 2015 announced support for vVols. This new technology now enabled the automation of VM-granular and truly array-native storage provisioning through SPBM.
+Como partner de diseño tecnológico, NetApp proporcionó información sobre la arquitectura y en 2015 anunció la compatibilidad con vVols. Esta nueva tecnología ahora permitió la automatización del aprovisionamiento de almacenamiento granular de equipos virtuales y realmente nativo de la cabina a través de SPBM.
+
 
 
 == Volúmenes virtuales (vVols)
@@ -41,9 +42,9 @@ NetApp ONTAP lidera la industria del almacenamiento en vVols Scale, que admite c
 
 Anteriormente ya hemos mencionado que los administradores de equipos virtuales pueden consumir capacidad como pools de almacenamiento. Esto se realiza mediante el uso de contenedores de almacenamiento que se representan en vSphere como almacenes de datos lógicos.
 
-Los contenedores de almacenamiento los crean los administradores de almacenamiento y se utilizan para agrupar los recursos de almacenamiento que pueden consumir los administradores de las máquinas virtuales. Los contenedores de almacenamiento se pueden crear de forma diferente en función del tipo de sistema ONTAP que use. Con los clústeres 9 de ONTAP tradicionales, se asignan a los contenedores uno o varios FlexVols de backup que, juntos, forman el pool de almacenamiento. Con los sistemas R2 de ASA, el clúster entero es el pool de almacenamiento.
+Los contenedores de almacenamiento los crean los administradores de almacenamiento y se utilizan para agrupar los recursos de almacenamiento que pueden consumir los administradores de las máquinas virtuales. Los contenedores de almacenamiento se pueden crear de forma diferente en función del tipo de sistema ONTAP que use. Con los clústeres tradicionales de ONTAP 9, se asignan a los contenedores uno o varios volúmenes FlexVol de respaldo que, juntos, forman el pool de almacenamiento. Con los sistemas R2 de ASA, el clúster entero es el pool de almacenamiento.
 
 
 NOTE: Para obtener más información sobre VMware vSphere Virtual Volumes, SPBM y ONTAP, consulte link:vmware-vvols-overview.html["TR-4400: VMware vSphere Virtual Volumes con ONTAP"^].
 
- \* Depending on platform and protocol
+*Dependiendo de la plataforma y el protocolo

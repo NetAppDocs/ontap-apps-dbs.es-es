@@ -1,7 +1,7 @@
 ---
 sidebar: sidebar 
 permalink: vmware/vmware_vmsc_resiliency.html 
-keywords: VMware, Data protection, MetroCluster, SMBC, SnapMirror active sync, vMSC 
+keywords: VMware, Data protection, MetroCluster, SMBC, SMas, SnapMirror active sync, vMSC, metro storage cluster, vSphere, vCenter, business continuity, disaster recovery, ONTAP 
 summary: Obtenga más información sobre vSphere Metro Storage Cluster con ONTAP 
 ---
 = Resiliencia para eventos planificados y no planificados
@@ -16,7 +16,7 @@ summary: Obtenga más información sobre vSphere Metro Storage Cluster con ONTAP
 [role="lead"]
 NetApp MetroCluster y SnapMirror Active Sync son potentes herramientas que mejoran la alta disponibilidad y las operaciones no disruptivas del hardware de NetApp y del software ONTAP®.
 
-Estas herramientas proporcionan protección en todo el sitio para todo el entorno de almacenamiento, lo que garantiza que los datos están siempre disponibles. Ya sea que utilice servidores independientes, clústeres de servidores de alta disponibilidad, contenedores Docker o servidores virtualizados, la tecnología NetApp mantiene fácilmente la disponibilidad de almacenamiento en caso de interrupción total por pérdida de alimentación, refrigeración o conectividad de red, apagado del array de almacenamiento o error de funcionamiento.
+Estas herramientas proporcionan protección en todo el sitio para todo el entorno de almacenamiento, lo que garantiza que los datos están siempre disponibles. Ya sea que utilice servidores independientes, clústeres de servidores de alta disponibilidad, contenedores o servidores virtualizados, la tecnología NetApp mantiene fácilmente la disponibilidad de almacenamiento en caso de interrupción total por pérdida de alimentación, refrigeración o conectividad de red, apagado del array de almacenamiento o error de funcionamiento.
 
 MetroCluster y SnapMirror de sincronización activa proporcionan tres métodos básicos de continuidad de datos en caso de eventos previstos o no planificados:
 
@@ -31,10 +31,10 @@ Todos los clústeres de ONTAP, excepto los clústeres de un solo nodo (normalmen
 
 La toma de control es un proceso automatizado en el que un nodo asume el almacenamiento del otro para mantener los servicios de datos. Giveback es el proceso inverso que restaura el funcionamiento normal. La toma de control puede planificarse, por ejemplo, al realizar tareas de mantenimiento del hardware o actualizaciones de ONTAP, o no planificadas, resultantes de un error de hardware o de alarma en el nodo.
 
-Durante una toma de control, las interfaces lógicas de almacenamiento conectadas a red (LIF NAS) en configuraciones de MetroCluster conmutan automáticamente al respaldo. Sin embargo, los LIF de red de área de almacenamiento (LIF SAN) no conmutan al nodo de respaldo; seguirán utilizando la ruta directa a los números de unidad lógica (LUN).
+Durante una toma de control, los LIF NAS en configuraciones de MetroCluster conmutan automáticamente al respaldo. Sin embargo, los LIF de SAN no conmutan al nodo de respaldo; seguirán utilizando la ruta directa a los números de unidad lógica (LUN).
 
-Si quiere más información sobre la toma de control y el retorno al nodo primario de alta disponibilidad, consulte la https://docs.netapp.com/us-en/ontap/high-availability/index.html["Información general sobre la gestión de parejas de HA"]. Vale la pena señalar que esta funcionalidad no es específica de la sincronización activa de MetroCluster o SnapMirror.
+Si quiere más información sobre la toma de control y el retorno al nodo primario de alta disponibilidad, consulte el https://docs.netapp.com/us-en/ontap/high-availability/index.html["Información general sobre la gestión de parejas de HA"]. Vale la pena señalar que esta funcionalidad no es específica de la sincronización activa de MetroCluster o SnapMirror.
 
 El cambio de sitio con MetroCluster se produce cuando un sitio está sin conexión o como una actividad planificada para el mantenimiento de todo el sitio. El sitio restante asume la propiedad de los recursos de almacenamiento (discos y agregados) del clúster sin conexión y las SVM del sitio con el que se ha producido el fallo se conectan y se reinician en el sitio de desastre, conservando su identidad completa para el acceso de clientes y host.
 
-Con la sincronización activa de SnapMirror, dado que ambas copias se usan de forma activa a la vez, los hosts existentes seguirán funcionando. El Mediador de NetApp es necesario para garantizar que la conmutación por error del sitio se produce correctamente.
+Con la sincronización activa de SnapMirror, dado que ambas copias se usan de forma activa a la vez, los hosts existentes seguirán funcionando. El Mediador de ONTAP es necesario para garantizar que la conmutación por error del sitio se produce correctamente.

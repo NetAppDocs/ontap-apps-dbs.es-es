@@ -4,7 +4,7 @@ permalink: vmware/vmware-otv-hardening-access.html
 keywords: VMware, Data protection, security, ONTAP tools, Hardening, ONTAP Tools 
 summary: Guía de seguridad reforzada para herramientas de ONTAP para VMware vSphere, puntos de acceso de usuarios. 
 ---
-= Herramientas de ONTAP para puntos de acceso de VMware vSphere (Usuarios)
+= Herramientas de ONTAP para puntos de acceso de VMware vSphere 9,13 (usuarios)
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 

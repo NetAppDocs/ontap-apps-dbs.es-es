@@ -14,7 +14,7 @@ summary: SnapCenter permite crear políticas de backup que se pueden aplicar a v
 
 
 [role="lead"]
-El planificador de recursos distribuidos de almacenamiento (SDRS) de VMware es una función de vSphere que coloca los equipos virtuales en el almacenamiento en función de la latencia de I/o actual y el uso del espacio.
+El planificador de recursos distribuidos (SDRS) de VMware Storage es una función de vSphere que coloca automáticamente los equipos virtuales en un clúster de almacenes de datos en función de la latencia de I/O y el uso del espacio actuales.
 
 A continuación, mueve la máquina virtual o los VMDK de forma no disruptiva entre los almacenes de datos de un clúster de almacenes de datos (también conocido como "pod"), seleccionando el mejor almacén de datos en el que colocar la máquina virtual o los VMDK en el clúster de almacenes de datos. Un clúster de almacenes de datos es una colección de almacenes de datos similares que se agregan en una única unidad de consumo desde la perspectiva del administrador de vSphere.
 
@@ -22,12 +22,25 @@ Cuando se usan SDRS con herramientas de ONTAP para VMware vSphere, primero debe 
 
 Otras prácticas recomendadas de ONTAP para SDRS incluyen lo siguiente:
 
+* No utilice SDR a menos que tenga un requisito específico para hacerlo.
++
+** SDRS no es necesario cuando se utiliza ONTAP. LOS SDRS no son conscientes de las funciones de eficiencia del almacenamiento de ONTAP como la deduplicación y la compresión, por lo que puede tomar decisiones que no sean óptimas para su entorno.
+** LOS SDRS no son conscientes de las políticas de calidad de servicio de ONTAP, por lo que puede tomar decisiones que no sean óptimas para el rendimiento.
+** LOS SDRS no conocen las copias snapshot de ONTAP, por lo que se pueden tomar decisiones que hagan que las snapshots crezcan exponencialmente. Por ejemplo, al mover una máquina virtual a otro almacén de datos, se crean archivos nuevos en el nuevo almacén de datos, lo que hace que la copia Snapshot crezca. Esto se aplica sobre todo en el caso de equipos virtuales con discos de gran tamaño o gran cantidad de snapshots. En caso de que la máquina virtual vuelva a moverse al almacén de datos original, la copia Snapshot del almacén de datos original aumentará aún más.
+
+
+
+
+Si utiliza SDR, tenga en cuenta las siguientes mejores prácticas:
+
 * Todos los almacenes de datos del clúster deben usar el mismo tipo de almacenamiento (como SAS, SATA o SSD), ser todos los almacenes de datos VMFS o NFS y tener la misma configuración de replicación y protección.
 * Considere el uso de SDR en modo predeterminado (manual). Este enfoque permite revisar las recomendaciones y decidir si se aplican o no. Tenga en cuenta los siguientes efectos de las migraciones de VMDK:
 +
-** Cuando SDRS mueve VMDK entre almacenes de datos, se pierde cualquier ahorro de espacio con la clonado o deduplicación de ONTAP. Puede volver a ejecutar la deduplicación para recuperar este ahorro.
+** Cuando SDRS mueve VMDK entre almacenes de datos, se puede reducir el ahorro de espacio obtenido con el clonado o la deduplicación de ONTAP, en función de cómo se deduplique o comprima en el destino.
 ** Después de que SDRS mueva los VMDK, NetApp recomienda volver a crear las snapshots en el almacén de datos de origen porque el espacio se bloqueará por la máquina virtual que se movió.
 ** Mover VMDK entre almacenes de datos en el mismo agregado tiene pocas ventajas y LOS SDRS no tienen visibilidad en otras cargas de trabajo que puedan compartir el agregado.
 
 
 
+
+Puede encontrar más información sobre LOS SDR en la documentación de VMware en https://knowledge.broadcom.com/external/article/320864/storage-drs-faq.html["Preguntas frecuentes sobre el DRS de almacenamiento"^].

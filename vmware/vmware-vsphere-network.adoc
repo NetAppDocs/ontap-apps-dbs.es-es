@@ -18,9 +18,9 @@ La configuración de los ajustes de red cuando se utiliza vSphere con sistemas q
 
 Estas son algunas cosas a tener en cuenta:
 
-* Hay que separar el tráfico de la red de almacenamiento de otras redes. Se puede lograr una red independiente a través de una VLAN dedicada o switches independientes para el almacenamiento. Si la red de almacenamiento comparte rutas físicas como los enlaces ascendentes, puede que necesite calidad de servicio o puertos adicionales para garantizar el ancho de banda suficiente. No conecte los hosts directamente al almacenamiento; utilice switches para que tengan rutas redundantes y permita que VMware HA funcione sin intervención alguna. Consulte link:vmware-vsphere-network.html["Conexión de red directa"] para obtener más información.
-* Las tramas gigantes se pueden utilizar si se desean y admiten en la red, especialmente si se utiliza iSCSI. Si se usan, asegúrese de que estén configurados de la misma forma en todos los dispositivos de red, VLAN, etc., en la ruta entre el almacenamiento y el host ESXi. De lo contrario, puede que observe problemas de rendimiento o conexión. La MTU también debe establecerse de forma idéntica en el switch virtual ESXi, el puerto de VMkernel y, además, en los puertos físicos o los grupos de interfaces de cada nodo ONTAP.
-* NetApp solo recomienda deshabilitar el control de flujo de red en los puertos de red de clúster dentro de un clúster de ONTAP. NetApp no ofrece otras recomendaciones para seguir las prácticas recomendadas para los puertos de red restantes que se usan para el tráfico de datos. Debe habilitarla o deshabilitarla según sea necesario. Consulte https://www.netapp.com/pdf.html?item=/media/16885-tr-4182pdf.pdf["CONSULTE TR-4182"^] para obtener más información sobre el control de flujo.
+* Hay que separar el tráfico de la red de almacenamiento de otras redes. Se puede lograr una red independiente a través de una VLAN dedicada o switches independientes para el almacenamiento. Si la red de almacenamiento comparte rutas físicas como los enlaces ascendentes, puede que necesite calidad de servicio o puertos adicionales para garantizar el ancho de banda suficiente. No conecte los hosts directamente al sistema de almacenamiento a menos que la guía de la solución lo indique específicamente; utilice switches para tener rutas redundantes y permita que VMware HA funcione sin intervención alguna.
+* Se deben utilizar tramas gigantes si la red es compatible. Si se usan, asegúrese de que estén configurados de la misma forma en todos los dispositivos de red, VLAN, etc., en la ruta entre el almacenamiento y el host ESXi. De lo contrario, puede que observe problemas de rendimiento o conexión. La MTU también debe establecerse de forma idéntica en el switch virtual ESXi, el puerto de VMkernel y, además, en los puertos físicos o los grupos de interfaces de cada nodo ONTAP.
+* NetApp solo recomienda deshabilitar el control de flujo de red en los puertos de interconexión del clúster de un clúster de ONTAP. NetApp no hace ninguna otra recomendación en cuanto a las mejores prácticas relativas al control de flujo para los puertos de red restantes que se usan para el tráfico de datos. Debe habilitarla o deshabilitarla según sea necesario. Consulte https://www.netapp.com/pdf.html?item=/media/16885-tr-4182pdf.pdf["CONSULTE TR-4182"^] para obtener más información sobre el control de flujo.
 * Cuando las cabinas de almacenamiento ESXi y ONTAP están conectadas a redes de almacenamiento Ethernet, NetApp recomienda configurar los puertos Ethernet a los que se conectan estos sistemas como puertos periféricos del protocolo de árbol de expansión rápido (RSTP) o mediante la función PortFast de Cisco. NetApp recomienda habilitar la función de enlace troncal Spanning-Tree PortFast en entornos que utilizan la función Cisco PortFast y que tienen la conexión de enlaces VLAN 802.1Q habilitada tanto para el servidor ESXi como para las cabinas de almacenamiento ONTAP.
 * NetApp recomienda las siguientes prácticas recomendadas para la agregación de enlaces:
 +
@@ -64,7 +64,7 @@ En la siguiente tabla se ofrece un resumen de los elementos de configuración de
 
 
 
-== SAN (FC, FCoE, NVMe/FC, iSCSI), RDM
+== SAN (FC, NVMe/FC, iSCSI, NVMe/TCP), RDM
 
 ONTAP ofrece almacenamiento basado en bloques para VMware vSphere utilizando el protocolo iSCSI tradicional y Fibre Channel (FCP) así como el protocolo de bloque de nueva generación altamente eficiente y eficiente, NVMe over Fabrics (NVMe-oF), con soporte para NVMe/FC y NVMe/TCP.
 
@@ -82,7 +82,7 @@ Para conocer las prácticas recomendadas, consulte link:vmware-vsphere-datastore
 
 == Conexión de red directa
 
-A veces, los administradores de almacenamiento prefieren simplificar sus infraestructuras eliminando los switches de red de la configuración. Esto puede ser soportado en algunos escenarios.
+A veces, los administradores de almacenamiento prefieren simplificar sus infraestructuras eliminando los switches de red de la configuración. Esto puede ser soportado en algunos escenarios. Sin embargo, hay algunas limitaciones y advertencias a tener en cuenta.
 
 
 
@@ -100,7 +100,7 @@ El motivo por el que la recuperación tras fallos sin interrupciones se complica
 
 La segunda NIC del SO podría configurarse como 19 2.168.1.2 y sería capaz de comunicarse con la dirección fallida en 192.168.1.50, pero las tablas de enrutamiento locales tendrían un valor predeterminado de usar una dirección *y solo una* para comunicarse con la subred 192.168.1.0/24. Un administrador de sistema podría crear un marco de scripting que detectara una conexión de red fallida y alterara las tablas de enrutamiento locales o activara o desactivara las interfaces. El procedimiento exacto dependerá del sistema operativo en uso.
 
-En la práctica, los clientes de NetApp disponen de NFS conectado directamente, pero normalmente solo para cargas de trabajo en las que se pueden pausar I/O durante las recuperaciones tras fallos. Cuando se utilizan montajes duros, no debe haber ningún error de E/S durante dichas pausas. El I/O se debe bloquear hasta que los servicios se restauren, ya sea mediante una conmutación de retorno tras recuperación o intervención manual para mover las direcciones IP entre las NIC del host.
+En la práctica, los clientes de NetApp disponen de NFS conectado directamente, pero normalmente solo para cargas de trabajo en las que se pueden pausar I/O durante las recuperaciones tras fallos. Cuando se utilizan montajes duros, no debe haber ningún error de E/S durante dichas pausas. El E/S se debe congelar hasta que se restauren los servicios, ya sea mediante una conmutación por recuperación o mediante intervención manual para mover las direcciones IP entre las NIC del host.
 
 
 

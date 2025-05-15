@@ -19,7 +19,7 @@ Existen varios recursos de solución de problemas disponibles con información a
 
 == Sitio de soporte de NetApp
 
-Además de una gran variedad de artículos de la base de conocimientos para los productos de virtualización de NetApp, el sitio de soporte de NetApp también ofrece una página de inicio práctica para el https://mysupport.netapp.com/site/products/all/details/otv/docs-tab["Herramientas de ONTAP para VMware vSphere"] producto. Este portal proporciona enlaces a artículos, descargas, informes técnicos y debates sobre soluciones de VMware sobre la comunidad de NetApp. Está disponible en:
+Además de una variedad de artículos de la base de conocimientos para los productos de virtualización de NetApp, el sitio de soporte de NetApp también ofrece una página de inicio práctica para el https://mysupport.netapp.com/site/products/all/details/otv/docs-tab["Herramientas de ONTAP para VMware vSphere"] producto. Este portal proporciona enlaces a artículos, descargas, informes técnicos y debates sobre soluciones de VMware sobre la comunidad de NetApp. Está disponible en:
 
 https://mysupport.netapp.com/site/products/all/details/otv/docs-tab["_Sitio de soporte de NetApp_"]
 

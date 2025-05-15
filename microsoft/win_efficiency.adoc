@@ -32,7 +32,7 @@ Thin provisioning es una manera eficiente de aprovisionar almacenamiento, ya que
 
 == Calidad de servicio
 
-La calidad de servicio del almacenamiento en Clustered ONTAP le permite agrupar objetos de almacenamiento y establecer límites de rendimiento en el grupo. La calidad de servicio de almacenamiento puede utilizarse para limitar el rendimiento a las cargas de trabajo y supervisar el rendimiento de las cargas de trabajo. Con esta capacidad, un administrador de almacenamiento puede separar las cargas de trabajo por organización, aplicación, unidad empresarial o entornos de producción o desarrollo.
+La calidad de servicio de almacenamiento en NetApp ONTAP permite agrupar objetos de almacenamiento y establecer límites de rendimiento en el grupo. La calidad de servicio de almacenamiento puede utilizarse para limitar el rendimiento a las cargas de trabajo y supervisar el rendimiento de las cargas de trabajo. Con esta capacidad, un administrador de almacenamiento puede separar las cargas de trabajo por organización, aplicación, unidad empresarial o entornos de producción o desarrollo.
 
 En entornos empresariales, la calidad de servicio del almacenamiento ayuda a conseguir lo siguiente:
 

@@ -26,7 +26,7 @@ Para implementar un Nano Server como host de Hyper-V, realice los siguientes pas
 . Copie la carpeta NanoServerImageGenerator de la carpeta \NanoServer de la ISO de Windows Server al disco duro local.
 . Para crear un servidor Nano VHD/VHDX, realice los siguientes pasos:
 +
-.. Inicie Windows PowerShell como administrador, navegue hasta la carpeta NanoServerImageGenerator copiada en el disco duro local y ejecute el siguiente cmdlet:
+.. Inicie Windows PowerShell como administrador, desplácese hasta la carpeta NanoServerImageGenerator copiada en el disco duro local y ejecute el siguiente cmdlet:
 +
 ....
 Set-ExecutionPolicy RemoteSigned
