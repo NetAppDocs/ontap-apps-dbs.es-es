@@ -69,7 +69,7 @@ Todas las demás configuraciones NFS están establecidas en 64. | No
 | NFS.HeartbeatTimeout | Establezca en 5 para todas las configuraciones NFS. | No 
 
 
-| SunRPC.MaxConnPerIP | VSphere 7,0 o posterior, configurado en 128. | No 
+| SunRPC.MaxConnPerIP | vSphere 7.0 a 8.0, establecido en 128.  Esta configuración se ignora en las versiones de ESXi posteriores a 8.0. | No 
 
 
 3+| *Configuración de FC/FCoE* 
@@ -154,8 +154,8 @@ Las herramientas de ONTAP también especifican determinada configuración predet
 
 Aunque no está configurado actualmente por las herramientas de ONTAP disponibles, NetApp sugiere estas opciones de configuración:
 
-* En entornos de alto rendimiento o al probar el rendimiento con un único almacén de datos LUN, considere la posibilidad de cambiar la configuración del equilibrio de carga de la normativa de selección de rutas (PSP_RR_VMW) por turnos desde la configuración predeterminada de IOPS de 1000 a un valor de 1. Consulte link:https://knowledge.broadcom.com/external/article?legacyId=2069356["VMware KB 2069356"^] para obtener más información.
-* En vSphere 6.7 Update 1, VMware introdujo un nuevo mecanismo de equilibrio de carga de latencia para Round Robin PSP. La nueva opción considera el ancho de banda de I/o y la latencia de ruta al seleccionar la ruta óptima para I/O. Puede beneficiarse de su uso en entornos con conectividad de ruta no equivalente, como casos con más saltos de red en una ruta que otra o cuando utiliza un sistema de cabinas All SAN (ASA) de NetApp. Consulte https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-storage-8-0/understanding-multipathing-and-failover-in-the-esxi-environment/viewing-and-managing-storage-paths-on-esxi-hosts.html#GUID-1940AE9E-04CF-40BE-BB71-398621F0642E-en["Cambie los parámetros predeterminados para la rotación de redondeo de latencia"^] para obtener más información.
+* Al utilizar sistemas que no sean ASA en entornos de alto rendimiento o al probar el rendimiento con un único almacén de datos LUN, considere cambiar la configuración de equilibrio de carga de la política de selección de ruta (PSP) round-robin (VMW_PSP_RR) de la configuración de IOPS predeterminada de 1000 a un valor de 1.  Verlink:https://knowledge.broadcom.com/external/article?legacyId=2069356["VMware KB 2069356"^] Para más información.
+* En vSphere 6.7 Update 1, VMware introdujo un nuevo mecanismo de equilibrio de carga de latencia para Round Robin PSP.  La opción de latencia ahora también está disponible cuando se utiliza HPP (complemento de alto rendimiento) con espacios de nombres NVMe y con vSphere 8.0u2 y versiones posteriores, LUN conectados iSCSI y FCP.  La nueva opción considera el ancho de banda de E/S y la latencia de la ruta al seleccionar la ruta óptima para E/S.  NetApp recomienda utilizar la opción de latencia en entornos con conectividad de ruta no equivalente, como casos con más saltos de red en una ruta que en otra, o cuando se utiliza un sistema NetApp ASA .  Ver https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vsphere-storage-8-0/understanding-multipathing-and-failover-in-the-esxi-environment/viewing-and-managing-storage-paths-on-esxi-hosts.html#GUID-1940AE9E-04CF-40BE-BB71-398621F0642E-en["Cambie los parámetros predeterminados para la rotación de redondeo de latencia"^] Para más información.
 
 
 
