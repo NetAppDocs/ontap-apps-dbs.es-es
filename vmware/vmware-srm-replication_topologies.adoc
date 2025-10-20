@@ -16,7 +16,7 @@ summary: Topologías de replicación mediante ONTAP con SnapMirror y VMware VLSR
 [role="lead"]
 En ONTAP 9, los componentes físicos de un clúster son visibles para los administradores del clúster, pero no pueden ver directamente las aplicaciones y los hosts que utilizan el clúster. Los componentes físicos proporcionan un conjunto de recursos compartidos desde los cuales se construyen los recursos del clúster lógicos. Las aplicaciones y los hosts solo acceden a los datos a través de SVM que contienen volúmenes y LIF.
 
-Cada SVM de NetApp se trata como una cabina en VMware vCenter Site Recovery Manager. VLSR admite ciertas distribuciones de replicación de cabina a cabina (o SVM a SVM).
+Cada SVM de NetApp se trata como una matriz única en Site Recovery Manager. VLSR admite ciertos diseños de replicación de matriz a matriz (o de SVM a SVM).
 
 Una sola máquina virtual no puede poseer datos, Virtual Machine Disk (VMDK) o RDM, en más de una cabina de VLSR por los siguientes motivos:
 
@@ -43,6 +43,20 @@ image:vsrm-ontap9_image8.png["Diseño de la relación de SnapMirror"]
 image:vsrm-ontap9_image9.png["Diseño de la relación de SnapMirror"]
 
 image:vsrm-ontap9_image10.png["Diseño de la relación de SnapMirror"]
+
+
+
+== Compatibilidad de VMFS con sincronización activa de SnapMirror
+
+Las herramientas ONTAP 10.3 y posteriores también admiten la protección de sus almacenes de datos VMFS con SnapMirror Active Sync (SMas). Esto permite una conmutación por error transparente para la continuidad del negocio entre dos centros de datos (denominados dominios de falla) que están relativamente cerca uno del otro. La recuperación ante desastres a larga distancia se puede orquestar utilizando SnapMirror de forma asincrónica a través de las herramientas ONTAP SRA con VLSR.
+
+https://docs.netapp.com/us-en/ontap/snapmirror-active-sync/["Obtenga más información sobre la sincronización activa de ONTAP SnapMirror"]
+
+Los almacenes de datos se recopilan juntos en un grupo de consistencia (CG) y las máquinas virtuales en todos los almacenes de datos permanecerán consistentes en el orden de escritura como miembros del mismo CG.
+
+Algunos ejemplos podrían ser tener sitios en Berlín y Hamburgo protegidos por SMas y una tercera réplica del sitio utilizando SnapMirror asincrónico y protegido por VLSR. Otro ejemplo podría ser proteger sitios en Nueva York y Nueva Jersey utilizando SMas, con un tercer sitio en Chicago.
+
+image:https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-104/media/fan-out-protection.png["Diseño de SMas"]
 
 
 
