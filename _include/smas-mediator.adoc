@@ -2,7 +2,7 @@
 :allow-uri-read: 
 
 
-El mediador no es realmente un desempate, aunque esa es efectivamente la función que proporciona. No realiza ninguna acción, sino que proporciona un canal de comunicación alternativo para la comunicación del clúster al clúster.
+El mediador no es realmente un desempate, aunque esa sea, en efecto, la función que cumple. El mediador ayuda a determinar el estado de los nodos del clúster y asiste en el proceso de conmutación automática en caso de fallo del sitio. El mediador no transfiere datos bajo ninguna circunstancia.
 
 image:../media/smas-mediator.png["Diagrama de sincronización activa de SnapMirror con mediador"]
 
