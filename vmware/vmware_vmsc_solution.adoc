@@ -14,7 +14,7 @@ summary: Descripción general de la solución de VMware vSphere
 
 
 [role="lead"]
-VCenter Server Appliance (VCSA) es el potente sistema de gestión centralizada y un panel único para vSphere que permiten a los administradores operar clústeres ESXi de forma eficiente. Facilita funciones clave como el aprovisionamiento de máquinas virtuales, la operación vMotion, alta disponibilidad, planificador de recursos distribuidos (DRS), Tanzu Kubernetes Grid, etc. Es un componente esencial en los entornos cloud de VMware y debe diseñarse teniendo en cuenta la disponibilidad del servicio.
+vCenter Server Appliance (VCSA) es un potente sistema de administración centralizada y un panel único para vSphere que permite a los administradores operar de manera eficaz los clústeres ESXi. Facilita funciones clave como el aprovisionamiento de máquinas virtuales, la operación de vMotion, alta disponibilidad (HA), programador de recursos distribuidos (DRS), VMware vSphere Kubernetes Service (VKS) y más. Es un componente esencial en los entornos de nube de VMware y debe diseñarse teniendo en cuenta la disponibilidad del servicio.
 
 
 
@@ -22,7 +22,7 @@ VCenter Server Appliance (VCSA) es el potente sistema de gestión centralizada y
 
 La tecnología de clúster de VMware agrupa los servidores ESXi en pools de recursos compartidos para máquinas virtuales y proporciona vSphere High Availability (HA). VSphere HA proporciona alta disponibilidad fácil de usar para aplicaciones que se ejecutan en máquinas virtuales. Cuando se habilita la función HA en el clúster, cada servidor ESXi mantiene la comunicación con otros hosts de modo que si algún host ESXi deja de responder o aísla, el clúster de alta disponibilidad puede negociar la recuperación de las máquinas virtuales que se estaban ejecutando en ese host ESXi entre los hosts supervivientes del clúster. En caso de fallo del sistema operativo invitado, la alta disponibilidad de vSphere puede reiniciar la máquina virtual afectada en el mismo servidor físico. VSphere HA permite reducir los tiempos de inactividad planificados, evitar tiempos de inactividad no planificados y recuperarse rápidamente de las interrupciones.
 
-Un clúster de alta disponibilidad de vSphere que recupera las máquinas virtuales del servidor con errores.
+Clúster vSphere HA que recupera máquinas virtuales de un servidor fallido.
 
 image::../media/vmsc_2_1.png[Diagrama de VMSC,624,301]
 
@@ -32,7 +32,7 @@ Es importante entender que VMware vSphere no tiene conocimientos de la sincroniz
 
 == Detección de fallo de host
 
-En cuanto se crea el clúster HA, todos los hosts del clúster participan en sus elecciones y uno de los hosts se convierte en un maestro. Cada esclavo realiza latidos de red al maestro y, a su vez, el maestro realiza latidos de red en todos los hosts esclavos. El host maestro de un clúster de alta disponibilidad de vSphere es responsable de detectar el fallo de hosts esclavos.
+Tan pronto como se crea el clúster HA, todos los hosts del clúster participan en la elección y uno de los hosts se convierte en maestro. Cada esclavo realiza un latido de red al maestro, y el maestro, a su vez, realiza un latido de red en todos los hosts esclavos. El host maestro de un clúster vSphere HA es responsable de detectar la falla de los hosts esclavos.
 
 Según el tipo de error detectado, es posible que las máquinas virtuales que se ejecutan en los hosts deban conmutar al nodo de respaldo.
 
@@ -54,9 +54,9 @@ NetApp recomienda especificar un mínimo de dos direcciones de aislamiento adici
 
 == Respuesta de aislamiento del host
 
-Isolation Response es una configuración de vSphere HA que determina la acción que se activa en máquinas virtuales cuando un host de un clúster de vSphere HA pierde sus conexiones de red de gestión, pero continúa ejecutándose. Hay tres opciones para esta configuración: «Desactivado», «Apagar y reiniciar equipos virtuales» y «Apagar y reiniciar equipos virtuales».
+La respuesta de aislamiento es una configuración en vSphere HA que determina la acción que se activa en las máquinas virtuales cuando un host en un clúster de vSphere HA pierde sus conexiones de red de administración pero continúa ejecutándose. Hay tres opciones para esta configuración: "Deshabilitado", "Apagar y reiniciar máquinas virtuales" y "Apagar y reiniciar máquinas virtuales".
 
-El apagado es mejor que el apagado, que no vacía los cambios más recientes en el disco o las transacciones de confirmación. Si los equipos virtuales no se apagan en 300 segundos, se apagan. Para cambiar el tiempo de espera, utilice la opción avanzada das.isolationshutdowntimeout.
+"Apagar" es mejor que "Apagar", que no borra los cambios más recientes en el disco ni confirma las transacciones. Si las máquinas virtuales no se apagan en 300 segundos, se apagan. Para cambiar el tiempo de espera, utilice la opción avanzada das.isolationshutdowntimeout.
 
 Antes de que HA inicie la respuesta de aislamiento, primero comprueba si el agente maestro HA de vSphere posee el almacén de datos que contiene los archivos de configuración de la máquina virtual. Si no es así, el host no activará la respuesta de aislamiento, porque no hay ningún maestro para reiniciar las máquinas virtuales. El host comprobará periódicamente el estado del almacén de datos para determinar si un agente de alta disponibilidad de vSphere que posee el rol maestro.
 
@@ -77,25 +77,25 @@ Una de las mejoras de funciones de vSphere 6, relevante para la alta disponibili
 
 === Pérdida permanente de dispositivo (PDL)
 
-PDL es una condición que ocurre cuando un dispositivo de almacenamiento falla de forma permanente o se elimina de forma administrativa y no se espera que regrese. La cabina de almacenamiento NetApp emite un código de detección SCSI a ESXi que declara la pérdida permanente del dispositivo. En la sección Condiciones de fallo y Respuesta de VM de vSphere HA, puede configurar cuál debe ser la respuesta después de detectar una condición PDL.
+PDL es una condición que ocurre cuando un dispositivo de almacenamiento falla permanentemente o se elimina administrativamente y no se espera que regrese. La matriz de almacenamiento NetApp emite un código SCSI Sense a ESXi, declarando que el dispositivo se perdió de forma permanente. En la sección Condiciones de falla y respuesta de VM de vSphere HA, puede configurar cuál debe ser la respuesta después de que se detecta una condición PDL.
 
 [TIP]
 ====
-NetApp recomienda establecer «Respuesta para el almacén de datos con PDL» en «*Apagar y reiniciar equipos virtuales*». Cuando se detecta esta condición, una máquina virtual se reinicia instantáneamente en un host en buen estado dentro del clúster de alta disponibilidad de vSphere.
+NetApp recomienda configurar la "Respuesta para almacén de datos con PDL" en "*Apagar y reiniciar las máquinas virtuales*". Cuando se detecta esta condición, una máquina virtual se reiniciará instantáneamente en un host en buen estado dentro del clúster vSphere HA.
 
 ====
 
 
 === Todas las rutas hacia abajo (APD)
 
-APD es una condición que se produce cuando el host vuelve inaccesible a un dispositivo de almacenamiento y no hay rutas disponibles a la cabina. ESXi considera que esto es un problema temporal con el dispositivo y espera que vuelva a estar disponible.
+APD es una condición que ocurre cuando un dispositivo de almacenamiento se vuelve inaccesible para el host y no hay rutas disponibles a la matriz. ESXi considera que se trata de un problema temporal con el dispositivo y espera que vuelva a estar disponible.
 
 Cuando se detecta una condición de APD, se inicia un temporizador. Después de 140 segundos, la condición APD se declara oficialmente, y el dispositivo se marca como APD Time Out. Una vez transcurridos los 140 segundos, HA comenzará a contar el número de minutos especificado en el APD de retraso para failover de VM. Cuando transcurra el tiempo especificado, HA reiniciará los equipos virtuales afectados. Puede configurar VMCP para que responda de manera diferente si lo desea (Desactivado, Incidir eventos o Apagar y reiniciar VM).
 
 [TIP]
 ====
 * NetApp recomienda configurar la respuesta para el almacén de datos con APD en «*Apagar y reiniciar VM (conservador)*».
-* Conservative hace referencia a la probabilidad de que la alta disponibilidad pueda reiniciar equipos virtuales. Cuando se establece en Conservador, HA solo reiniciará la VM que se ve afectada por el APD si sabe que otro host puede reiniciarla. En caso de agresividad, HA intentará reiniciar la máquina virtual incluso si no conoce el estado de los otros hosts. Esto puede provocar que las máquinas virtuales no se reinicien si no hay ningún host con acceso al almacén de datos en el que se encuentra.
+* Conservador se refiere a la probabilidad de que HA pueda reiniciar las máquinas virtuales. Cuando se configura en Conservador, HA solo reiniciará la VM afectada por el APD si sabe que otro host puede reiniciarla. En el caso de Agresivo, HA intentará reiniciar la VM incluso si no conoce el estado de los otros hosts. Esto puede provocar que las máquinas virtuales no se reinicien si no hay ningún host con acceso al almacén de datos donde se encuentran.
 * Si se resuelve el estado de APD y se restaura el acceso al almacenamiento antes de que haya pasado el tiempo de espera, HA no reiniciará innecesariamente la máquina virtual a menos que lo configure explícitamente para hacerlo. Si se desea una respuesta, incluso cuando el entorno se ha recuperado de la condición APD, la respuesta para la recuperación APD después del tiempo de espera APD debe configurarse para restablecer las máquinas virtuales.
 * NetApp recomienda configurar la respuesta para la recuperación de APD después del tiempo de espera de APD en Desactivado.
 
@@ -111,10 +111,10 @@ VMware DRS es una función que agrega los recursos de host en un clúster y se u
 
 == Implementación de VMware DRS para NetApp MetroCluster
 
- To avoid cross-site traffic, NetApp recommends configuring DRS affinity rules to manage a logical separation of VMs. This will ensure that unless there is a complete site failure, HA and DRS will only use local hosts.
+ To avoid cross-site traffic, NetApp recommends configuring DRS affinity rules to manage a logical separation of VMs. This will ensure that, unless there is a complete site failure, HA and DRS will only use local hosts.
 Si crea una regla de afinidad de DRS para su clúster, puede especificar cómo aplica vSphere esa regla durante una conmutación al respaldo de una máquina virtual.
 
-Hay dos tipos de reglas que se pueden especificar el comportamiento de conmutación al nodo de respaldo de alta disponibilidad de vSphere:
+Hay dos tipos de reglas que puede especificar para el comportamiento de conmutación por error de vSphere HA:
 
 * Las reglas de anti-afinidad de equipos virtuales obligan a los equipos virtuales especificados a permanecer separados durante las acciones de recuperación tras fallos.
 * Las reglas de afinidad de host de VM colocan las máquinas virtuales especificadas en un host particular o un miembro de un grupo definido de hosts durante las acciones de conmutación por error.
@@ -132,7 +132,7 @@ image::../media/vmsc_2_2.png[Grupos de hosts de VM y reglas de afinidad,528,369]
 
 NetApp recomienda implementar reglas de «debería» en lugar de reglas de «obligación» porque vSphere HA las infringe en caso de fallo. El uso de reglas «imprescindibles» podría provocar interrupciones del servicio.
 
-La disponibilidad de los servicios debe prevalecer siempre sobre el rendimiento. En el caso en el que falla un centro de datos completo, las reglas “imprescindibles” deben elegir hosts del grupo de afinidad de host de VM y, cuando el centro de datos no esté disponible, las máquinas virtuales no se reiniciarán.
+La disponibilidad de los servicios debe prevalecer siempre sobre el rendimiento. En el escenario en el que falla un centro de datos completo, las reglas "obligatorias" deben elegir hosts del grupo de afinidad de host de VM y, cuando el centro de datos no está disponible, las máquinas virtuales no se reiniciarán.
 
 
 
@@ -150,7 +150,7 @@ Storage DRS utiliza Storage vMotion para migrar los equipos virtuales a diferent
 
 * Por lo general, los DRS de almacenamiento no son necesarios ni se recomiendan para su uso con sistemas de almacenamiento de ONTAP.
 * ONTAP proporciona sus propias funciones de eficiencia del almacenamiento, como la deduplicación, la compresión y la compactación, que pueden verse afectadas por Storage DRS.
-* Si utiliza copias Snapshot de ONTAP, Storage vMotion dejaría detrás de la copia del equipo virtual en la copia Snapshot, lo que puede aumentar el uso del almacenamiento y puede afectar a las aplicaciones de backup como NetApp SnapCenter, que registran las máquinas virtuales y sus copias Snapshot de ONTAP.
+* Si está usando instantáneas de ONTAP , Storage vMotion dejaría atrás la copia de la VM en la instantánea, lo que podría aumentar la utilización del almacenamiento y afectar aplicaciones de respaldo como NetApp SnapCenter, que rastrean las VM y sus instantáneas de ONTAP .
 
 
 ====

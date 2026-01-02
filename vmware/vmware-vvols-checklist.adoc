@@ -103,6 +103,6 @@ Utilice esta lista de comprobación para la instalación para garantizar una pue
 * Si se utiliza alta disponibilidad, los nodos de vMotion de almacenamiento dos y tres para separar almacenes de datos (opcional, pero recomendado).
 * https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/manage/certificate-manage.html["usar administrar certificados"] En el administrador de herramientas de ONTAP, para instalar los certificados requeridos firmados por CA.
 * Si habilitó SRA para SRM/VLSR para proteger almacenes de datos tradicionales, https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/protect/configure-on-srm-appliance.html["Configurar el SRA en el dispositivo VMware Live Site Recovery"].
-* Configurar Copias de Seguridad Nativas para https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/manage/enable-backup.html["RPO casi cero"].
+* Configurar copias de seguridad nativas para https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/manage/backup-settings.html["RPO casi cero"].
 * Configurar copias de seguridad regulares en otros medios de almacenamiento.
 

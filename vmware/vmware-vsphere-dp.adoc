@@ -32,7 +32,7 @@ En almacenes de datos NFS, puede ver fácilmente archivos de máquinas virtuales
 
 Para los almacenes de datos VMFS, se puede crear un FlexClone del almacén de datos a partir de la snapshot que desee. Esto permite crear un nuevo almacén de datos que esté basado en la snapshot, que se puede usar con fines de prueba o desarrollo. La FlexClone solo consumirá espacio para los cambios realizados después de realizar la snapshot, por lo que constituye una forma con gestión eficiente del espacio de crear una copia del almacén de datos. Una vez creada la FlexClone, puede asignar el LUN o el espacio de nombres a un host ESXi, como un almacén de datos normal. Esto no solo permite restaurar archivos específicos de equipos virtuales, sino que también le permite crear rápidamente entornos de prueba o desarrollo basados en datos de producción sin que el rendimiento del entorno de producción se vea afectado.
 
-Para obtener más información sobre las Snapshot, consulte la documentación de ONTAP. Los siguientes enlaces proporcionan información adicional: https://docs.netapp.com/us-en/ontap/data-protection/manage-local-snapshot-copies-concept.html["Copias Snapshot locales de ONTAP"^] https://docs.netapp.com/us-en/ontap/data-protection/manage-snapmirror-replication.html["Replicación de ONTAP SnapMirror"^]
+Para obtener más información sobre las instantáneas, consulte la documentación de ONTAP . Los siguientes enlaces proporcionan detalles adicionales: https://docs.netapp.com/us-en/ontap/data-protection/manage-local-snapshot-copies-concept.html["Copias Snapshot locales de ONTAP"^] https://docs.netapp.com/us-en/ontap/data-protection/snapmirror-replication-workflow-concept.html["Flujo de trabajo de replicación de SnapMirror de ONTAP"^]
 
 
 
