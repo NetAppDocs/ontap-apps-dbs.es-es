@@ -1,0 +1,46 @@
+---
+permalink: oracle/oracle-asar2-app-config-filesystemio_options.html 
+sidebar: sidebar 
+keywords: oracle, database, ASA r2, ontap, filesystemio_options, filesystemio, async, directio 
+summary: 'Parámetros de la base de datos Oracle: filesystemio_options con ASA r2' 
+searchtitle: 'Parámetros de la base de datos Oracle: filesystemio_options con ASA r2' 
+---
+= filesystemio_options
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Parámetro de inicialización de Oracle `filesystemio_options` Controla el uso de la E/S asíncrona y directa
+
+El comportamiento y las recomendaciones para filesystemio_options en ASA r2 son idénticos a los sistemas AFF/ FAS porque el parámetro es específico de Oracle y no depende de la plataforma de almacenamiento. ASA r2 usa ONTAP como AFF/ FAS, por lo que se aplican las mismas prácticas recomendadas.
+
+Contrariamente a la creencia común, las E/S asincrónicas y directas no son mutuamente excluyentes. NetApp ha observado que este parámetro suele estar mal configurado en los entornos del cliente, y esta mala configuración es el responsable directo de muchos problemas de rendimiento.
+
+La E/S asíncrona significa que las operaciones de I/O de Oracle se pueden paralelizar. Antes de la disponibilidad de E/S asíncrona en varios sistemas operativos, los usuarios configuraron numerosos procesos de escritura de base de datos y cambiaron la configuración del proceso del servidor. Con la E/S asíncrona, el propio sistema operativo realiza E/S en nombre del software de base de datos de forma paralela y altamente eficiente. Este proceso no pone los datos en riesgo y las operaciones críticas, como el redo registro de Oracle, se siguen realizando de forma síncrona.
+
+La E/S directa omite la caché de buffers del SO. Las E/S en un sistema UNIX normalmente fluyen a través de la caché de buffers del sistema operativo. Esto es útil para aplicaciones que no mantienen una caché interna, pero Oracle tiene su propia caché de buffers en SGA. En casi todos los casos, es mejor habilitar la E/S directa y asignar la RAM del servidor a la SGA en lugar de confiar en la caché de buffers del SO. Oracle SGA utiliza la memoria de forma más eficaz. Además, cuando la I/O fluye por el búfer del SO, se somete a un procesamiento adicional, lo que aumenta las latencias. El aumento de las latencias es especialmente notable en operaciones pesadas de I/O de escritura cuando un requisito crucial es la baja latencia.
+
+Las opciones para `filesystemio_options` son:
+
+* *Async.* Oracle envía solicitudes de E/S al sistema operativo para su procesamiento. Este proceso permite a Oracle realizar otro trabajo en lugar de esperar la finalización de E/S y, por lo tanto, aumenta la paralelización de E/S.
+* *Directio.* Oracle realiza E/S directamente contra archivos físicos en lugar de enrutar E/S a través de la caché del SO host.
+* *None.* Oracle utiliza E/S síncronas y en buffer En esta configuración, la elección entre los procesos de servidor compartido y dedicado y el número de dbwriters son más importantes.
+* *Setall.* Oracle utiliza E/S tanto asíncrona como directa En casi todos los casos, el uso de `setall` es óptimo.
+
+
+
+NOTE: En entornos ASM, Oracle utiliza automáticamente E/S directa y E/S asincrónica para discos administrados por ASM, por lo que `filesystemio_options` No tiene ningún efecto sobre los grupos de discos ASM. Para implementaciones que no sean ASM (por ejemplo, sistemas de archivos en LUN SAN), configure: `filesystemio_options = setall`. Esto permite E/S directa y asincrónica para un rendimiento óptimo.
+
+Algunos sistemas operativos más antiguos tenían problemas con la E/S asincrónica, lo que dio lugar a recomendaciones obsoletas que sugerían evitarla. Sin embargo, la E/S asincrónica es estable y totalmente compatible con todos los sistemas operativos actuales. No hay razón para desactivarlo a menos que se identifique un error específico del sistema operativo.
+
+Si una base de datos ha estado utilizando E/S en búfer, un cambio a E/S directa también puede justificar un cambio en el tamaño de SGA. Al desactivar las E/S en buffer, se elimina la ventaja de rendimiento que proporciona la caché del SO del host para la base de datos. Al volver a agregar RAM a SGA se soluciona este problema. El resultado neto debe ser una mejora en el rendimiento de E/S.
+
+Aunque casi siempre es mejor utilizar RAM para Oracle SGA que para el almacenamiento en caché de buffers del sistema operativo, puede ser imposible determinar el mejor valor. Por ejemplo, puede ser preferible utilizar E/S en buffer con tamaños SGA muy pequeños en un servidor de bases de datos con muchas instancias de Oracle activas de forma intermitente. Esta disposición permite el uso flexible de la RAM libre restante en el SO por todas las instancias de base de datos en ejecución. Se trata de una situación muy inusual, pero se ha observado en algunos sitios de clientes.
+
+
+TIP: * NetApp recomienda* configuración `filesystemio_options` a `setall`, pero tenga en cuenta que, en algunas circunstancias, la pérdida de la memoria caché del búfer del host puede requerir un aumento en Oracle SGA. Los sistemas ASA r2 están optimizados para cargas de trabajo SAN con baja latencia, por lo que el uso de setall se alinea perfectamente con el diseño de ASA para implementaciones de Oracle de alto rendimiento.

@@ -1,0 +1,33 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-config-capacity-limits.html 
+keywords: capacity, ASA r2, oracle 
+summary: Bases de datos y capacidad de almacenamiento de ASA r2 ONTAP y espacio libre en ASA r2 
+searchtitle: Gestión de bases de datos y capacidad de almacenamiento de Oracle en ASA r2 
+---
+= Gestión de la capacidad
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Gestionar una base de datos u otra aplicación empresarial con almacenamiento empresarial predecible, gestionable y de alto rendimiento requiere cierto espacio libre en las unidades para la gestión de datos y metadatos. La cantidad de espacio libre necesario depende del tipo de unidad utilizada y los procesos empresariales.
+
+ASA r2 utiliza zonas de disponibilidad de almacenamiento (SAZ) en lugar de agregados, pero el principio sigue siendo el mismo: el espacio libre incluye cualquier capacidad física no consumida por datos reales, instantáneas o sobrecarga del sistema. También debe considerarse el aprovisionamiento fino: las asignaciones lógicas no reflejan el uso físico real.
+
+Las recomendaciones de NetApp para los sistemas de almacenamiento ASA r2 utilizados para aplicaciones empresariales son las siguientes:
+
+
+
+== Grupos de SSD en sistemas ASA r2
+
+
+TIP: * NetApp recomienda* mantener un mínimo del 10 % de espacio físico libre en entornos ASA r2. Esta guía se aplica a los grupos exclusivos de SSD utilizados por los sistemas ASA r2 e incluye todo el espacio no utilizado dentro de la SAZ y las unidades de almacenamiento. El espacio lógico no es importante; el enfoque está en el espacio físico libre real disponible para el almacenamiento de datos.
+
+Si bien ASA r2 puede soportar un alto nivel de utilización sin degradación del rendimiento, operar cerca de la capacidad total aumenta el riesgo de agotamiento del espacio y de gastos administrativos al expandir el almacenamiento. Es posible que funcionar con más del 90 % de utilización no afecte el rendimiento, pero puede complicar la administración y retrasar el aprovisionamiento de unidades adicionales.
+
+Los sistemas ASA r2 admiten unidades de almacenamiento de hasta 128 TB y tamaños de SAZ de hasta 2 PB por par HA, y ONTAP equilibra automáticamente la capacidad entre los nodos. Monitorear la utilización a nivel de clúster, SAZ y unidad de almacenamiento es esencial para garantizar suficiente espacio libre para instantáneas, cargas de trabajo con aprovisionamiento fino y crecimiento futuro. Si la capacidad se acerca a los umbrales críticos (~90 % de utilización), se deben agregar SSD adicionales en grupos (mínimo seis unidades) para mantener el rendimiento y la resiliencia.

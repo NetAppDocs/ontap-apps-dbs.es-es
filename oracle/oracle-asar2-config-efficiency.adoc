@@ -1,0 +1,114 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-config-efficiency.html 
+keywords: oracle, efficiency, compression, compaction, deduplication, ASA r2 
+summary: Bases de datos Oracle y eficiencia de almacenamiento con ASA r2 
+searchtitle: Bases de datos Oracle y funciones de eficiencia de ONTAP con ASA r2 
+---
+= Eficiencia
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las funciones de eficiencia espacial de ONTAP son totalmente compatibles y optimizadas para los sistemas ASA r2. En casi todos los casos, el mejor enfoque es dejar los valores predeterminados con todas las funciones de eficiencia habilitadas.
+
+Los sistemas ASA r2 son plataformas SAN totalmente flash, por lo que las tecnologías de eficiencia como la compresión, la compactación y la deduplicación son fundamentales para maximizar la capacidad utilizable y reducir los costos.
+
+
+
+== Compresión
+
+La compresión reduce los requisitos de espacio al codificar patrones en los datos. Con los sistemas ASA r2 basados ​​en SSD, la compresión ofrece ahorros significativos porque flash elimina la necesidad de aprovisionamiento excesivo para mejorar el rendimiento. La compresión adaptativa de ONTAP está habilitada de forma predeterminada y se ha probado exhaustivamente con cargas de trabajo empresariales, incluidas bases de datos Oracle, sin un impacto medible en el rendimiento, incluso en entornos donde la latencia se mide en microsegundos. En algunos casos, el rendimiento mejora porque los datos comprimidos ocupan menos espacio en caché.
+
+
+NOTE: La eficiencia de almacenamiento sensible a la temperatura (TSSE) no se aplica en los sistemas ASA r2. En los sistemas ASA r2, la compresión no se basa en datos activos (a los que se accede con frecuencia) ni en datos inactivos (a los que se accede con poca frecuencia). La compresión comienza sin esperar a que los datos se enfríen.
+
+
+
+== Compresión adaptativa
+
+La compresión adaptativa utiliza un tamaño de bloque de 8 KB de forma predeterminada, que coincide con el tamaño de bloque comúnmente utilizado por las bases de datos relacionales. Los tamaños de bloque más grandes (16 KB o 32 KB) pueden mejorar la eficiencia de los datos secuenciales, como registros de transacciones o copias de seguridad, pero se deben utilizar con precaución en bases de datos activas para evitar sobrecarga durante las sobrescrituras.
+
+
+NOTE: El tamaño del bloque se puede aumentar hasta 32 KB para archivos inactivos, como registros o copias de seguridad. Consulte la guía de NetApp antes de cambiar los valores predeterminados.
+
+
+CAUTION: No utilice compresión de 32 KB con deduplicación para copias de seguridad en streaming. Utilice una compresión de 8 KB para mantener la eficiencia de la deduplicación.
+
+
+
+== Alineación de la compresión
+
+La alineación de la compresión es importante para las sobrescrituras aleatorias. Asegúrese de que el tipo de LUN, el desplazamiento de partición (múltiplo de 8 KB) y el tamaño del bloque del sistema de archivos sean correctos y estén alineados con el tamaño del bloque de la base de datos. Los datos secuenciales, como copias de seguridad o registros, no requieren consideraciones de alineación.
+
+
+
+== Compactación de datos
+
+La compactación complementa la compresión al permitir que varios bloques comprimidos compartan el mismo bloque físico. Por ejemplo, si un bloque de 8 KB se comprime a 1 KB, la compactación garantiza que el espacio restante no se desperdicie. Esta función está en línea y no introduce penalizaciones en el rendimiento.
+
+
+
+== Deduplicación
+
+La deduplicación elimina bloques duplicados en conjuntos de datos. Si bien las bases de datos Oracle generalmente producen ahorros mínimos en la deduplicación debido a los encabezados y finales de bloques únicos, la deduplicación ONTAP aún puede recuperar espacio de bloques en cero y patrones repetidos.
+
+
+
+== Eficiencia y thin provisioning
+
+Los sistemas ASA r2 utilizan aprovisionamiento fino de forma predeterminada. Las características de eficiencia complementan el aprovisionamiento fino para maximizar la capacidad utilizable.
+
+
+NOTE: Las unidades de almacenamiento siempre tienen un aprovisionamiento fino en los sistemas de almacenamiento ASA r2. No se admite el aprovisionamiento grueso.
+
+
+
+== Tecnología QuickAssist (QAT)
+
+En las plataformas NetApp ASA r2, la tecnología Intel QuickAssist (QAT) proporciona una eficiencia acelerada por hardware que difiere significativamente de la eficiencia de almacenamiento sensible a la temperatura (TSSE) basada en software sin QAT.
+
+*QAT con aceleración de hardware:*
+
+* Descarga tareas de compresión y cifrado de los núcleos de la CPU.
+* Permite una eficiencia inmediata y en línea tanto para datos activos (de acceso frecuente) como inactivos (de acceso poco frecuente).
+* Reduce significativamente la sobrecarga de la CPU.
+* Ofrece mayor rendimiento y menor latencia.
+* Mejora la escalabilidad para operaciones sensibles al rendimiento, como el cifrado TLS y VPN.
+
+
+*TSSE sin QAT:*
+
+* Se basa en procesos controlados por CPU para operaciones de eficiencia.
+* Aplica eficiencia sólo a datos fríos después de un retraso.
+* Consume más recursos de la CPU.
+* Limita el rendimiento general en comparación con los sistemas acelerados por QAT.
+
+
+Por lo tanto, los sistemas ASA r2 modernos ofrecen una eficiencia más rápida y acelerada por hardware y una mejor utilización del sistema que las plataformas anteriores que solo utilizaban TSSE.
+
+
+
+== Mejores prácticas de eficiencia para ASA r2
+
+*NetApp recomienda* lo siguiente:
+
+
+
+=== Valores predeterminados de ASA r2
+
+Las unidades de almacenamiento creadas en ONTAP que se ejecutan en sistemas ASA r2 tienen aprovisionamiento fino con todas las funciones de eficiencia en línea habilitadas de manera predeterminada, incluidas la compresión, la compactación y la deduplicación. Aunque las bases de datos Oracle generalmente no se benefician significativamente de la deduplicación y pueden incluir datos no comprimibles, estos valores predeterminados son apropiados para casi todas las cargas de trabajo. ONTAP está diseñado para procesar eficientemente todo tipo de datos y patrones de E/S, independientemente de que resulten en ahorros o no. Los valores predeterminados solo se deben cambiar si se comprenden plenamente los motivos y existe un beneficio claro en desviarse.
+
+
+
+=== Recomendaciones generales
+
+* Deshabilitar la compresión de datos cifrados o comprimidos por la aplicación: si los archivos ya están comprimidos en el nivel de la aplicación o cifrados, deshabilite la compresión para optimizar el rendimiento y permitir un funcionamiento más eficiente en otras unidades de almacenamiento.
+* Evite combinar bloques de compresión grandes con deduplicación: no utilice compresión de 32 KB y deduplicación para las copias de seguridad de bases de datos. Para realizar copias de seguridad en streaming, utilice una compresión de 8 KB para mantener la eficiencia de la deduplicación.
+* Supervise los ahorros de eficiencia: utilice las herramientas ONTAP (System Manager, Active IQ) para realizar un seguimiento de los ahorros de espacio reales y ajustar las políticas si es necesario.
+

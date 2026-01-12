@@ -1,0 +1,68 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-config-thin-provisioning.html 
+keywords: thin provisioning, oracle, ASA r2 
+summary: Aprovisionamiento fino de Oracle y ONTAP con ASA r2 
+searchtitle: Aprovisionamiento fino con bases de datos Oracle en ASA r2 
+---
+= Aprovisionamiento ligero
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+El aprovisionamiento fino para una base de datos Oracle en ASA r2 requiere una planificación cuidadosa porque implica configurar más espacio lógico del que está físicamente disponible. Cuando se implementa correctamente, el aprovisionamiento fino genera importantes ahorros de costos y una mejor capacidad de administración.
+
+El aprovisionamiento fino es parte integral de ASA r2 y está estrechamente relacionado con las tecnologías de eficiencia ONTAP porque ambos permiten almacenar más datos lógicos que la capacidad física del sistema. Los sistemas ASA r2 son solo SAN y el aprovisionamiento fino se aplica a unidades de almacenamiento y LUN dentro de zonas de disponibilidad de almacenamiento (SAZ).
+
+
+NOTE: Las unidades de almacenamiento ASA r2 tienen aprovisionamiento fino de manera predeterminada.
+
+Casi cualquier uso de instantáneas implica aprovisionamiento fino. Por ejemplo, una base de datos típica de 10 TiB con 30 días de instantáneas podría aparecer como 310 TiB de datos lógicos, pero solo se consumen entre 12 TiB y 15 TiB de espacio físico porque las instantáneas solo almacenan bloques modificados.
+
+De manera similar, la clonación es otra forma de aprovisionamiento fino. Un entorno de desarrollo con 40 clones de una base de datos de 80 TiB requeriría 3,2 PiB si estuviera completamente escrito, pero en la práctica consume mucho menos porque solo se almacenan los cambios.
+
+
+
+== Gestión del espacio
+
+Se debe tener cierto cuidado con el aprovisionamiento fino en un entorno de aplicaciones porque las tasas de cambio de datos pueden aumentar inesperadamente. Por ejemplo, el consumo de espacio debido a las instantáneas puede crecer rápidamente si se reindexan las tablas de bases de datos o se aplican parches a gran escala a los invitados de VMware. Una copia de seguridad fuera de lugar puede escribir una gran cantidad de datos en muy poco tiempo. Por último, puede resultar difícil recuperar algunas aplicaciones si un LUN se queda sin espacio libre inesperadamente.
+
+En ASA r2, estos riesgos se mitigan mediante *aprovisionamiento fino*, *monitoreo proactivo* y *políticas de cambio de tamaño de LUN*, en lugar de funciones de ONTAP como crecimiento automático de volúmenes o eliminación automática de instantáneas. Los administradores deben:
+
+* Habilitar el aprovisionamiento fino en LUN (`space-reserve disabled`) - esta es la configuración predeterminada en ASA r2
+* Supervise la capacidad mediante alertas de System Manager o automatización basada en API
+* Utilice el cambio de tamaño de LUN programado o con script para adaptarse al crecimiento
+* Configurar la reserva de instantáneas y la eliminación automática de instantáneas a través del Administrador del sistema (GUI)
+
+
+
+CAUTION: La planificación cuidadosa de los umbrales de espacio y los scripts de automatización es esencial porque ASA r2 no admite el crecimiento automático del volumen ni la eliminación de instantáneas impulsada por CLI.
+
+ASA r2 no utiliza configuraciones de reserva fraccionaria porque es una arquitectura solo SAN que abstrae las opciones de volumen basadas en WAFL. En cambio, la eficiencia del espacio y la protección contra sobrescritura se gestionan a nivel de LUN. Por ejemplo, si tiene un LUN de 250 GiB aprovisionado desde una unidad de almacenamiento, las instantáneas consumen espacio en función de los cambios de bloque reales en lugar de reservar una cantidad igual de espacio por adelantado. Esto elimina la necesidad de grandes reservas estáticas, que eran comunes en los entornos ONTAP tradicionales que utilizaban reserva fraccionaria.
+
+
+NOTE: Si se requiere protección de sobrescritura garantizada y la supervisión no es posible, los administradores deben aprovisionar capacidad suficiente en la unidad de almacenamiento y configurar la reserva de instantáneas de forma adecuada. Sin embargo, el diseño de ASA r2 hace que la reserva fraccionaria sea innecesaria para la mayoría de las cargas de trabajo.
+
+
+
+== Compresión y deduplicación
+
+La compresión y la deduplicación en ASA r2 son tecnologías de eficiencia espacial, no mecanismos tradicionales de aprovisionamiento fino. Estas características reducen el espacio de almacenamiento físico al eliminar datos redundantes y comprimir bloques, lo que permite almacenar más datos lógicos de los que la capacidad bruta permitiría de otro modo.
+
+Por ejemplo, un conjunto de datos de 50 TiB podría comprimirse a 30 TiB, ahorrando 20 TiB de espacio físico. Desde la perspectiva de la aplicación, todavía hay 50 TiB de datos, aunque ocupa solo 30 TiB en el disco.
+
+
+NOTE: La compresibilidad de un conjunto de datos puede cambiar con el tiempo, lo que puede aumentar el consumo de espacio físico. Por lo tanto, la compresión y la deduplicación deben gestionarse de forma proactiva mediante la supervisión y la planificación de la capacidad.
+
+
+
+== Espacio libre y asignación de espacio LVM
+
+El aprovisionamiento fino en entornos ASA r2 puede perder eficiencia con el tiempo si los bloques eliminados no se recuperan. A menos que se libere espacio usando TRIM/UNMAP o se sobrescriba con ceros (a través de ASMRU, Utilidad de recuperación y administración automática de espacio), los datos eliminados continúan consumiendo capacidad física. En muchos entornos de bases de datos Oracle, el aprovisionamiento fino ofrece beneficios limitados porque los archivos de datos generalmente se asignan previamente a su tamaño completo durante la creación.
+
+Una planificación cuidadosa de la configuración de LVM puede mejorar la eficiencia y minimizar la necesidad de aprovisionamiento de almacenamiento y cambio de tamaño de LUN. Cuando se utiliza un LVM como Veritas VxVM u Oracle ASM, los LUN subyacentes se dividen en extensiones que solo se utilizan cuando es necesario. Por ejemplo, si un conjunto de datos comienza con un tamaño de 2 TiB pero podría crecer hasta 10 TiB con el tiempo, este conjunto de datos podría ubicarse en 10 TiB de LUN con aprovisionamiento fino organizados en un grupo de discos LVM. Ocuparía solo 2 TiB de espacio en el momento de la creación y solo reclamaría espacio adicional a medida que se asignen extensiones para acomodar el crecimiento de los datos. Este proceso es seguro siempre que se controle el espacio.

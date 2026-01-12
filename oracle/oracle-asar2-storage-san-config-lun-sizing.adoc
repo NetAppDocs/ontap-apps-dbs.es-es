@@ -1,0 +1,49 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-storage-san-config-lun-sizing.html 
+keywords: SAN, ASM, LVM, oracle, lun, sizing, count, ASA r2 
+summary: Pautas de tamaño y número de LUN de la base de datos Oracle con ASA r2 
+searchtitle: Dimensionamiento y recuento de LUN de la base de datos Oracle con ASA r2 
+---
+= Ajuste de tamaño de LUN y número de LUN
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Seleccionar el tamaño óptimo de LUN y el número de LUN que se utilizarán es fundamental para lograr un rendimiento y una capacidad de gestión óptimos en las bases de datos de Oracle.
+
+Un LUN es un objeto virtualizado en ONTAP que existe en todas las unidades de la zona de disponibilidad de almacenamiento (SAZ) de alojamiento en los sistemas ASA r2. Como resultado, el rendimiento del LUN no se ve afectado por su tamaño porque el LUN aprovecha todo el potencial de rendimiento del SAZ sin importar el tamaño elegido.
+
+Para comodidad, es posible que los clientes deseen usar una LUN de un tamaño determinado. Por ejemplo, si una base de datos se crea en un LVM u un grupo de discos de ASM de Oracle compuesto por dos LUN de 1TB GB cada uno, dicho grupo de discos debe aumentar en incrementos de 1TB TB. Es preferible crear el grupo de discos a partir de ocho LUN de 500GB cada uno para que el grupo de discos se pueda aumentar en incrementos menores.
+
+Se desaconseja la práctica de establecer un tamaño de LUN estándar universal porque, al hacerlo, se puede complicar la capacidad de gestión. Por ejemplo, un tamaño de LUN estándar de 100GB TB puede funcionar bien cuando una base de datos o un almacén de datos está entre 1TB y 2TB TB, pero el tamaño de una base de datos o un almacén de datos de 20TB TB requeriría 200 LUN. Esto significa que los tiempos de reinicio del servidor son más largos, hay más objetos que gestionar en las distintas interfaces de usuario y productos como SnapCenter deben realizar la detección de muchos objetos. Si se usa menos LUN, de mayor tamaño se evitan estos problemas.
+
+* Consideraciones ASA r2: *
+
+* El tamaño máximo de LUN para ASA r2 es 128 TB, lo que permite menos LUN más grandes sin afectar el rendimiento.
+* ASA r2 utiliza zonas de disponibilidad de almacenamiento (SAZ) en lugar de agregados, pero esto no cambia la lógica de tamaño de LUN para las cargas de trabajo de Oracle.
+* El aprovisionamiento fino está habilitado de manera predeterminada; cambiar el tamaño de los LUN no causa interrupciones y no requiere desconectarlos.
+
+
+
+
+== Número de LUN
+
+A diferencia del tamaño de LUN, el número de LUN afecta al rendimiento. El rendimiento de la aplicación depende a menudo de la capacidad para realizar I/O paralelas mediante la capa SCSI. Como resultado, dos LUN ofrecen mejor rendimiento que una única LUN. El uso de LVM como Veritas VxVM, Linux LVM2 u Oracle ASM es el método más sencillo para aumentar el paralelismo.
+
+Con ASA r2, los principios para el conteo de LUN siguen siendo los mismos que en AFF/ FAS porque ONTAP maneja la E/S paralela de manera similar en todas las plataformas. Sin embargo, la arquitectura solo SAN de ASA r2 y las rutas simétricas activas-activas garantizan un rendimiento consistente en todos los LUN.
+
+Los clientes de NetApp suelen experimentar un beneficio mínimo gracias al aumento del número de LUN por encima de dieciséis, aunque, en pruebas de entornos 100% con unidades de estado sólido con I/O aleatorias muy pesadas, se ha demostrado una mejora adicional de hasta 64 000 LUN.
+
+[TIP]
+====
+*NetApp recomienda* lo siguiente:
+
+En general, de cuatro a dieciséis LUN son suficientes para satisfacer las necesidades de E/S de cualquier carga de trabajo de base de datos Oracle. Menos de cuatro LUN pueden crear limitaciones de rendimiento debido a limitaciones en las implementaciones SCSI del host. Aumentar más de dieciséis LUN rara vez mejora el rendimiento, excepto en casos extremos (como cargas de trabajo de SSD de E/S aleatorias muy altas).
+
+====

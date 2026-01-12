@@ -1,0 +1,50 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-host-config-hp-ux.html 
+keywords: oracle, database, ASA r2, ontap, hp-ux 
+summary: Bases de datos Oracle con HP-UX en ASA r2 
+searchtitle: Bases de datos Oracle con HP-UX en ASA r2 
+---
+= HP-UX
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Temas de configuración para la base de datos Oracle en HP-UX con ASA r2 ONTAP.
+
+[NOTE]
+====
+HP-UX es compatible con NetApp ASA r2 para alojar bases de datos Oracle, siempre que:
+
+* La versión de ONTAP es 9.16.x o posterior.
+* Utilice protocolos SAN (FC/iSCSI/NVMe). NAS no es compatible con ASA r2.
+* Aplique las mejores prácticas de montaje y ajuste de E/S específicas de HP-UX.
+
+
+====
+
+
+== Opciones de montaje HP-UX VxFS
+
+Utilice las siguientes opciones de montaje para sistemas de archivos que alojan binarios de Oracle:
+
+....
+delaylog,nodatainlog
+....
+Utilice las siguientes opciones de montaje para sistemas de archivos que contienen archivos de datos, redo logs, archive logs y archivos de control en los que la versión de HP-UX no admite E/S simultáneas:
+
+....
+nodatainlog,mincache=direct,convosync=direct
+....
+Cuando se admiten E/S simultáneas (VxFS 5.0.1 y posteriores, o con ServiceGuard Storage Management Suite), utilice estas opciones de montaje para sistemas de archivos que contengan archivos de datos, redo logs, archive logs y archivos de control:
+
+....
+delaylog,cio
+....
+
+NOTE: El parámetro `db_file_multiblock_read_count` Es especialmente crítico en entornos VxFS. Oracle recomienda que este parámetro permanezca sin definir en Oracle 10g R1 y posteriores a menos que se indique lo contrario específicamente. El valor por defecto con un tamaño de bloque de Oracle 8KB es 128. Si el valor de este parámetro se fuerza a 16 o menos, quite el `convosync=direct` Opción de montaje porque puede dañar el rendimiento de I/O secuencial. Este paso daña otros aspectos del rendimiento y solo debe tomarse si el valor de `db_file_multiblock_read_count` debe cambiarse a partir del valor predeterminado.

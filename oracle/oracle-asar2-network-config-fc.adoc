@@ -1,0 +1,36 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-network-config-fc.html 
+keywords: SAN, zoning, ASA r2 
+summary: Configuración de red FC para bases de datos Oracle con ASA r2 
+searchtitle: Configuración de SAN FC para bases de datos Oracle con ASA r2 
+---
+= Configuración de SAN FC
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La configuración de FC SAN para bases de datos Oracle en sistemas ASA r2 se trata principalmente de seguir las mejores prácticas de SAN estándar.
+
+ASA r2 está optimizado para cargas de trabajo exclusivas de SAN, por lo que los principios siguen siendo los mismos que los de AFF/ FAS, con un enfoque en el rendimiento, la resiliencia y la simplicidad. Esto incluye medidas de planificación típicas, como garantizar que exista suficiente ancho de banda en la SAN entre el host y el sistema de almacenamiento, verificar que existan todas las rutas SAN entre todos los dispositivos requeridos, usar las configuraciones de puerto FC requeridas por su proveedor de conmutador FC, evitar la contención de ISL y usar un monitoreo adecuado de la estructura SAN.
+
+
+
+== División en zonas
+
+Una zona de FC nunca debe contener más de un iniciador. Tal arreglo puede parecer funcionar inicialmente, pero la comunicación entre iniciadores finalmente interfiere con el rendimiento y la estabilidad.
+
+Las zonas multidestino se consideran generalmente seguras, aunque en raras ocasiones el comportamiento de los puertos de destino FC de diferentes proveedores ha causado problemas. Por ejemplo, evite incluir los puertos de destino de una cabina de almacenamiento NetApp y otra que no sea de NetApp en la misma zona. Además, es aún más probable que la ubicación de un sistema de almacenamiento NetApp y un dispositivo de cinta en la misma zona cause problemas.
+
+[NOTE]
+====
+* ASA r2 utiliza zonas de disponibilidad de almacenamiento en lugar de agregados, pero esto no cambia los principios de zonificación de FC.
+* La multirruta (MPIO) sigue siendo el principal mecanismo de resiliencia; sin embargo, para los sistemas ASA r2 que admiten multirruta activa-activa simétrica, todas las rutas a un LUN están activas y se utilizan para E/S simultáneamente.
+
+
+====

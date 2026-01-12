@@ -1,0 +1,34 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-storage-san-config-asru.html 
+keywords: ontap, thin provisioning, oracle, ASRU, ASA r2 
+summary: Utilidad de recuperación de ASM con detección de bloque cero ONTAP en ASA r2 
+searchtitle: 'Utilidad de recuperación de ASM (ASRU) con ONTAP en ASA r2' 
+---
+= Utilidad de recuperación de ASM (ASRU)
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+ONTAP en ASA r2 elimina de manera eficiente los bloques en cero escritos en una LUN (unidad de almacenamiento) cuando la compresión en línea está habilitada. Las utilidades como Oracle ASM Reclamation Utility (ASRU) funcionan escribiendo ceros en las extensiones ASM no utilizadas.
+
+Esto permite que los administradores de bases de datos recuperen espacio en la matriz de almacenamiento después de eliminar los datos. ONTAP intercepta los ceros y desasigna el espacio del LUN. El proceso de recuperación es extremadamente rápido porque no se escriben datos reales dentro del sistema de almacenamiento.
+
+Desde el punto de vista de la base de datos, el grupo de discos de ASM contiene ceros, y leer esas regiones de las LUN daría como resultado un flujo de ceros, pero ONTAP no almacena los ceros en las unidades. En su lugar, se realizan cambios sencillos en los metadatos que marcan internamente las regiones en cero de la LUN como vacías de datos.
+
+Por motivos similares, las pruebas de rendimiento que involucran datos puestos a cero no son válidas porque en realidad los bloques de ceros no se procesan como escrituras en la cabina de almacenamiento.
+
+Consideraciones clave de ASRU con ASA r2 ONTAP:
+
+* Funciona de la misma manera que AFF/ FAS para cargas de trabajo SAN porque ASA r2 es solo de bloque.
+* Se aplica a LUN y espacios de nombres NVMe aprovisionados dentro de SAZ.
+* No existen volúmenes FlexVol , pero el comportamiento de recuperación de bloque cero es idéntico.
+
+
+
+NOTE: Al utilizar ASRU, asegúrese de que todos los parches recomendados por Oracle están instalados.

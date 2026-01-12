@@ -1,0 +1,40 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-dp-nvfail.html 
+keywords: oracle, nvfail, ASA r2 
+summary: Configuración de NVFAIL para proteger bases de datos Oracle en ASA r2 
+searchtitle: Bases de datos Oracle y NVFAIL en ASA r2 
+---
+= NVFAIL
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+NVFAIL es una característica de ONTAP que garantiza la integridad de los datos durante escenarios de conmutación por error catastróficos.
+
+Esta funcionalidad todavía se puede aplicar en los sistemas ASA r2, aunque ASA r2 utiliza una arquitectura SAN simplificada (SAZ y unidades de almacenamiento en lugar de volúmenes).
+
+Las bases de datos son vulnerables a la corrupción durante eventos de conmutación por error de almacenamiento porque mantienen grandes cachés internos. Si un evento catastrófico requiere forzar una conmutación por error de ONTAP , independientemente del estado de la configuración general, el resultado es que los cambios previamente reconocidos pueden descartarse de manera efectiva. El contenido de la matriz de almacenamiento retrocede en el tiempo y el estado de la memoria caché de la base de datos ya no refleja el estado de los datos en el disco. Esta inconsistencia da como resultado corrupción de datos.
+
+El almacenamiento en caché puede ocurrir en la capa de aplicación o de servidor. Por ejemplo, una configuración de Oracle Real Application Cluster (RAC) con servidores activos tanto en un sitio principal como en uno remoto almacena en caché los datos dentro de Oracle SGA. Una operación de conmutación por error forzada que resultara en la pérdida de datos pondría la base de datos en riesgo de corrupción porque los bloques almacenados en el SGA podrían no coincidir con los bloques en el disco.
+
+Un uso menos obvio del almacenamiento en caché es en la capa del sistema de archivos del sistema operativo. Un sistema de archivos agrupado basado en LUN ubicados en el sitio principal podría montarse en servidores en el sitio remoto y, una vez más, los datos podrían almacenarse en caché. Una falla de la NVRAM o una toma de control forzada en estas situaciones podría provocar una corrupción del sistema de archivos.
+
+ONTAP protege las bases de datos y los sistemas operativos contra este escenario utilizando NVFAIL y sus configuraciones asociadas, que indican al host que invalide los datos en caché y vuelva a montar los sistemas de archivos afectados después de la conmutación por error. Este mecanismo se aplica a los LUN y espacios de nombres de ASA r2 tal como lo hace en AFF/ FAS.
+
+[NOTE]
+====
+Consideraciones clave de ASA r2:
+
+* NVFAIL opera en el nivel LUN (unidad de almacenamiento), no en el nivel SAZ.
+* Para las bases de datos Oracle, NVFAIL debe estar habilitado en todos los LUN que alojan componentes críticos (archivos de datos, registros de rehacer, archivos de control).
+* MetroCluster no es compatible con ASA r2, por lo que NVFAIL se aplica principalmente a escenarios de conmutación por error de HA local.
+* NFS no es compatible con ASA r2, por lo que las consideraciones de NVFAIL se aplican solo a cargas de trabajo basadas en SAN (FC/iSCSI/NVMe).
+
+
+====

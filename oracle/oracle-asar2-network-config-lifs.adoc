@@ -1,0 +1,83 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-network-config-lifs.html 
+keywords: LIF, multipath, multipathing, ASA r2, oracle 
+summary: Diseño de interfaz lógica para bases de datos Oracle con ASA r2 
+searchtitle: Diseño de interfaz lógica para bases de datos Oracle con ASA r2 
+---
+= Interfaces lógicas
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Las bases de datos de Oracle necesitan acceder al almacenamiento. Las interfaces lógicas (LIF) son las tuberías de red que conecta una máquina virtual de almacenamiento (SVM) a la red y, por tanto, a la base de datos. Es necesario diseñar un LIF adecuado para garantizar que exista un ancho de banda suficiente para cada carga de trabajo de la base de datos. La conmutación por error no conlleva la pérdida de los servicios de almacenamiento.
+
+Esta sección proporciona una descripción general de los principios de diseño de LIF clave para sistemas ASA r2, que están optimizados para entornos exclusivamente SAN. Para obtener documentación más completa, consulte la link:https://docs.netapp.com/us-en/ontap/network-management/index.html["Documentación de gestión de red de ONTAP"]. Al igual que con otros aspectos de la arquitectura de bases de datos, las mejores opciones para el diseño de máquinas virtuales de almacenamiento (SVM, conocidas como vserver en la CLI) e interfaces lógicas (LIF) dependen en gran medida de los requisitos de escalabilidad y las necesidades comerciales.
+
+Tenga en cuenta los siguientes temas principales al crear una estrategia de LIF:
+
+* *Actuación.* ¿El ancho de banda de la red es suficiente para las cargas de trabajo de Oracle?
+* *Resiliencia.* ¿Hay algún punto de falla en el diseño?
+* *Capacidad de gestión.* ¿Se puede escalar la red de forma no disruptiva?
+
+
+Estos temas se aplican a la solución completa, desde el host, los switches y el sistema de almacenamiento.
+
+
+
+== Tipos de LIF
+
+Hay varios tipos de LIF. link:https://docs.netapp.com/us-en/ontap/networking/lif_compatibility_with_port_types.html["Documentación de ONTAP sobre tipos de LIF"] Puede proporcionar información más completa sobre este tema, pero desde una perspectiva funcional, los LIF se pueden dividir en los siguientes grupos:
+
+* *LIF de administración de clúster y nodos.* LIF utilizadas para administrar el clúster de almacenamiento.
+* *LIF de administración de SVM.* Interfaces que permiten el acceso a una SVM a través de la API REST o ONTAPI (también conocida como ZAPI) para funciones como la creación de instantáneas o el redimensionamiento de volúmenes. Productos como SnapManager para Oracle (SMO) deben tener acceso a una LIF de gestión de SVM.
+* *LIF de datos.* Interfaces solo para protocolos SAN: FC, iSCSI, NVMe/FC, NVMe/TCP. Los protocolos NAS (NFS, SMB/CIFS) no son compatibles con los sistemas ASA r2.
+
+
+
+NOTE: No es posible configurar una interfaz tanto para iSCSI (o NVMe/TCP) como para el tráfico de administración, a pesar de que ambos utilizan un protocolo IP. Se requiere un LIF de administración independiente en entornos iSCSI o NVMe/TCP. Para lograr resiliencia y rendimiento, configure múltiples LIF de datos SAN por protocolo por nodo y distribúyalos entre diferentes puertos físicos y estructuras. A diferencia de los sistemas AFF/ FAS , ASA r2 no permite tráfico NFS o SMB, por lo que no hay opción de reutilizar un LIF de datos NAS para su administración.
+
+
+
+== Diseño de LIF SAN
+
+El diseño de LIF en un entorno SAN es relativamente sencillo por una de las razones: La multivía. Todas las implementaciones de SAN modernas permiten a un cliente acceder a los datos a través de múltiples rutas de red independientes y seleccionar la mejor ruta o las mejores rutas para acceder. Como resultado, el rendimiento con respecto al diseño de las LIF es más sencillo de abordar porque los clientes SAN equilibran automáticamente la carga de I/O en las mejores rutas disponibles.
+
+Si una ruta deja de estar disponible, el cliente selecciona automáticamente una ruta diferente. La simplicidad resultante del diseño hace que los LIF SAN sean generalmente más gestionables. Esto no significa que un entorno SAN siempre se gestione con mayor facilidad, ya que existen otros muchos aspectos del almacenamiento SAN que son mucho más complicados que NFS. Simplemente significa que el diseño de LIF SAN es más sencillo.
+
+
+
+=== Rendimiento
+
+La consideración más importante con el rendimiento de LIF en un entorno SAN es el ancho de banda. Por ejemplo, un clúster ASA r2 de dos nodos con dos puertos FC de 32 Gb por nodo permite hasta 64 Gb de ancho de banda hacia/desde cada nodo. De manera similar, para NVMe/TCP o iSCSI, asegúrese de tener suficiente conectividad de 25 GbE o 100 GbE para las cargas de trabajo de Oracle.
+
+
+
+=== Resiliencia
+
+Los LIF SAN no se conmutan por error de la misma manera que los LIF NAS. Los sistemas ASA r2 dependen de la multirruta de host (MPIO/ALUA) para garantizar su resiliencia. Si un SAN LIF deja de estar disponible debido a una conmutación por error del controlador, el software de múltiples rutas del cliente detecta la pérdida de una ruta y redirige la E/S a una ruta alternativa. ASA r2 puede realizar una reubicación de LIF después de una breve demora para restaurar la disponibilidad total de la ruta, pero esto no interrumpe la E/S porque ya existen rutas activas en el nodo asociado. El proceso de conmutación por error se produce para restaurar el acceso del host en todos los puertos definidos.
+
+
+
+=== Gran capacidad de administración
+
+No es necesario migrar un LIF en un entorno SAN cuando los volúmenes se reubican dentro del par HA. Esto se debe a que, una vez completado el movimiento del volumen, ONTAP envía una notificación a la SAN sobre un cambio en las rutas y los clientes SAN vuelven a optimizar automáticamente. La migración de LIF con SAN se asocia principalmente con cambios importantes de hardware físico. Por ejemplo, si se requiere una actualización no disruptiva de los controladores, se migra una SAN LIF al nuevo hardware. Si se detecta que un puerto FC presenta fallas, se puede migrar un LIF a un puerto no utilizado.
+
+
+
+=== Recomendaciones de diseño
+
+NetApp hace las siguientes recomendaciones para entornos SAN ASA r2:
+
+* No cree más rutas de las necesarias. Un número excesivo de rutas complica la gestión general y puede provocar problemas en la conmutación al nodo de respaldo de rutas en algunos hosts. Además, algunos hosts tienen limitaciones inesperadas de la ruta para configuraciones como el arranque SAN.
+* Muy pocas configuraciones deberían requerir más de cuatro rutas a una LUN. El valor de tener más de dos nodos de rutas de publicidad para los LUN es limitado porque no se puede acceder al agregado que aloja una LUN si se produce un error en el nodo propietario de la LUN y su partner de alta disponibilidad. La creación de rutas en nodos que no sean el par de alta disponibilidad primario no es útil en esta situación.
+* Aunque puede gestionar el número de rutas visibles de LUN si selecciona qué puertos se incluyen en las zonas FC, suele ser más fácil incluir todos los puntos de destino potenciales en la zona FC y controlar la visibilidad de la LUN a nivel de ONTAP.
+* Utilice la función de mapeo selectivo de LUN (SLM), que está habilitada de forma predeterminada. Con SLM, cualquier LUN nuevo se anuncia automáticamente desde el nodo que posee el agregado subyacente y el socio HA del nodo. Esta disposición evita la necesidad de crear conjuntos de puertos o configurar zonificación para limitar la accesibilidad del puerto. Cada LUN está disponible en la cantidad mínima de nodos necesarios para lograr un rendimiento y una resiliencia óptimos.
+* En caso de que se deba migrar un LUN fuera de los dos controladores, se pueden agregar los nodos adicionales con el `lun mapping add-reporting-nodes` comando para que los LUN se anuncien en los nuevos nodos. Al hacerlo, se crean rutas SAN adicionales a los LUN para la migración de LUN. Sin embargo, el host debe realizar una operación de descubrimiento para utilizar las nuevas rutas.
+* No se preocupe demasiado por el tráfico indirecto. Es mejor evitar el tráfico indirecto en un entorno con un gran volumen de I/O para el que cada microsegundo de latencia es crucial, pero el efecto de rendimiento visible es insignificante para las cargas de trabajo típicas.
+

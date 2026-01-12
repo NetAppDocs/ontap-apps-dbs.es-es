@@ -1,0 +1,96 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-storage-san-config-lun-placement.html 
+keywords: SAN, ASM, LVM, oracle, LUN, ASA r2 
+summary: Ubicación de LUN de Oracle y ONTAP con ASA r2 
+searchtitle: Ubicación de LUN de base de datos Oracle con ASA r2 
+---
+= Ubicación de LUN
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La ubicación óptima de los LUN de base de datos dentro de los sistemas ASA r2 depende principalmente de cómo se utilizarán las distintas características de ONTAP .
+
+En los sistemas ASA r2, las unidades de almacenamiento (LUN o espacios de nombres NVMe) se crean a partir de una capa de almacenamiento simplificada denominada Zonas de disponibilidad de almacenamiento (SAZ), que actúan como grupos comunes de almacenamiento para un par de alta disponibilidad.
+
+
+NOTE: Normalmente solo hay una zona de disponibilidad de almacenamiento (SAZ) por par de alta disponibilidad.
+
+
+
+== Zonas de disponibilidad de almacenamiento (SAZ)
+
+En los sistemas ASA r2, los volúmenes siguen estando ahí, pero se crean automáticamente cuando se crean las unidades de almacenamiento. Las unidades de almacenamiento (LUN o espacios de nombres NVMe) se aprovisionan directamente dentro de los volúmenes creados automáticamente en las zonas de disponibilidad de almacenamiento (SAZ). Este diseño elimina la necesidad de gestión manual de volúmenes y hace que el aprovisionamiento sea más directo y optimizado para cargas de trabajo en bloque como las bases de datos Oracle.
+
+
+
+== Zonas de almacenamiento y unidades de almacenamiento
+
+Las unidades de almacenamiento relacionadas (LUN o espacios de nombres NVMe) normalmente se ubican juntas dentro de una única zona de disponibilidad de almacenamiento (SAZ). Por ejemplo, una base de datos que requiere 10 unidades de almacenamiento (LUN) normalmente tendría las 10 unidades ubicadas en la misma SAZ para mayor simplicidad y rendimiento.
+
+[NOTE]
+====
+* El uso de una relación 1:1 de unidades de almacenamiento a volúmenes, es decir, una unidad de almacenamiento (LUN) por volumen, es el comportamiento predeterminado de ASA r2.
+* En caso de que haya más de un par HA en el sistema ASA r2, las unidades de almacenamiento (LUN) para una base de datos determinada se pueden distribuir entre múltiples SAZ para optimizar el uso y el rendimiento del controlador.
+
+
+====
+
+NOTE: En el contexto de FC SAN, aquí la unidad de almacenamiento se refiere a LUN.
+
+
+
+== Grupos de consistencia (CG), LUN e instantáneas
+
+En ASA r2, las políticas y programaciones de instantáneas se aplican en el nivel de grupo de consistencia, que es una construcción lógica que agrupa múltiples LUN o espacios de nombres NVMe para una protección de datos coordinada. Un conjunto de datos que consta de 10 LUN solo requeriría una única política de instantánea cuando esos LUN sean parte del mismo grupo de consistencia.
+
+Los grupos de consistencia garantizan operaciones de instantáneas atómicas en todos los LUN incluidos. Por ejemplo, una base de datos que reside en 10 LUN, o un entorno de aplicación basado en VMware que consta de 10 sistemas operativos diferentes, se puede proteger como un único objeto consistente si los LUN subyacentes se agrupan en el mismo grupo de consistencia. Si se colocan en diferentes grupos de consistencia, las instantáneas pueden o no estar perfectamente sincronizadas, incluso si se programan al mismo tiempo.
+
+En algunos casos, puede ser necesario dividir un conjunto relacionado de LUN en dos grupos de consistencia diferentes debido a los requisitos de recuperación. Por ejemplo, una base de datos podría tener cuatro LUN para archivos de datos y dos LUN para registros. En este caso, un grupo de consistencia de archivos de datos con 4 LUN y un grupo de consistencia de registros con 2 LUN podrían ser la mejor opción. El motivo es la capacidad de recuperación independiente: el grupo de consistencia del archivo de datos podría restaurarse selectivamente a un estado anterior, lo que significa que los cuatro LUN volverían al estado de la instantánea, mientras que el grupo de consistencia del registro con sus datos críticos permanecería inafectado.
+
+
+
+== CG, LUN y SnapMirror
+
+Las políticas y operaciones de SnapMirror se realizan, al igual que las operaciones de instantáneas, en el grupo de consistencia, no en el LUN.
+
+La ubicación conjunta de LUN relacionados en un único grupo de consistencia le permite crear una única relación SnapMirror y actualizar todos los datos contenidos con una única actualización. Al igual que con las instantáneas, la actualización también será una operación atómica. Se garantizaría que el destino SnapMirror tenga una única réplica en un punto en el tiempo de los LUN de origen. Si los LUN se distribuyeron en múltiples grupos de consistencia, las réplicas podrían o no ser consistentes entre sí.
+
+[NOTE]
+====
+La replicación de SnapMirror en sistemas ASA r2 tiene las siguientes limitaciones:
+
+* La replicación síncrona de SnapMirror no es compatible.
+* La sincronización activa de SnapMirror solo es compatible entre dos sistemas ASA r2.
+* La replicación asíncrona de SnapMirror solo es compatible entre dos sistemas ASA r2.
+* La replicación asíncrona de SnapMirror no es compatible entre un sistema ASA r2 y un sistema ASA, AFF o FAS o la nube.
+
+
+Obtenga más información sobre https://docs.netapp.com/us-en/asa-r2/data-protection/pre-defined-protection-policies.html["Políticas de replicación de SnapMirror compatibles con sistemas ASA r2"].
+
+====
+
+
+== CG, LUN y QoS
+
+Si bien la calidad de servicio se puede aplicar de forma selectiva a LUN individuales, generalmente es más fácil configurarla en el nivel del grupo de consistencia. Por ejemplo, todos los LUN utilizados por los invitados en un servidor ESX determinado podrían colocarse en un único grupo de consistencia y luego podría aplicarse una política de QoS adaptativa de ONTAP . El resultado es un límite de IOPS por TiB autoescalable que se aplica a todos los LUN.
+
+De la misma manera, si una base de datos requiere 100 000 IOPS y ocupa 10 LUN, sería más fácil establecer un único límite de 100 000 IOPS en un único grupo de consistencia que establecer 10 límites individuales de 10 000 IOPS, uno en cada LUN.
+
+
+
+== Múltiples diseños CG
+
+Hay algunos casos en los que puede resultar beneficioso distribuir LUN entre múltiples grupos de consistencia. La razón principal es la distribución del controlador. Por ejemplo, un sistema de almacenamiento HA ASA r2 podría alojar una única base de datos Oracle donde se requiere todo el potencial de procesamiento y almacenamiento en caché de cada controlador. En este caso, un diseño típico sería colocar la mitad de los LUN en un solo grupo de consistencia en el controlador 1 y la otra mitad de los LUN en un solo grupo de consistencia en el controlador 2.
+
+De manera similar, para entornos que alojan muchas bases de datos, la distribución de LUN en múltiples grupos de consistencia puede garantizar una utilización equilibrada del controlador. Por ejemplo, un sistema HA que aloja 100 bases de datos de 10 LUN cada una podría asignar 5 LUN a un grupo de consistencia en el controlador 1 y 5 LUN a un grupo de consistencia en el controlador 2 por base de datos. Esto garantiza una carga simétrica a medida que se aprovisionan bases de datos adicionales.
+
+Sin embargo, ninguno de estos ejemplos implica una relación LUN-grupo de consistencia de 1:1. El objetivo sigue siendo optimizar la capacidad de administración agrupando los LUN relacionados de manera lógica en un grupo de consistencia.
+
+Un ejemplo en el que una relación LUN a grupo de consistencia de 1:1 tiene sentido son las cargas de trabajo en contenedores, donde cada LUN puede representar en realidad una única carga de trabajo que requiere políticas de replicación e instantáneas independientes y, por lo tanto, deben gestionarse de forma individual. En tales casos, una proporción de 1:1 puede ser óptima.

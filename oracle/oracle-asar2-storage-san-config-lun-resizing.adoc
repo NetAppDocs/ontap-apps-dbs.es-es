@@ -1,0 +1,41 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-storage-san-config-lun-resizing.html 
+keywords: SAN, ASM, LVM, oracle, LUN, ASA r2 
+summary: Cambio de tamaño de LUN y LVM con bases de datos Oracle en ASA r2 
+searchtitle: Cambio de tamaño de LUN de base de datos Oracle y cambio de tamaño de LVM con ASA r2 
+---
+= Cambio de tamaño de LUN y cambio de tamaño de LVM
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Cuando un sistema de archivos basado en SAN o un grupo de discos Oracle ASM alcanza su límite de capacidad en ASA r2, hay dos opciones para aumentar el espacio disponible:
+
+* Aumentar el tamaño de las LUN existentes (unidades de almacenamiento)
+* Agregue un nuevo LUN a un grupo de discos ASM o un grupo de volúmenes LVM existente y haga crecer el volumen lógico contenido
+
+
+Aunque el cambio de tamaño de LUN es compatible con ASA r2, generalmente es mejor utilizar un administrador de volúmenes lógicos (LVM) como Oracle ASM. Una de las principales razones por las que existen los LVM es evitar la necesidad de cambiar el tamaño de los LUN con frecuencia. Con un LVM, varios LUN se combinan en un grupo virtual de almacenamiento. Los volúmenes lógicos extraídos de este grupo se pueden redimensionar fácilmente sin afectar la configuración de almacenamiento subyacente.
+
+Los beneficios adicionales de usar LVM o ASM incluyen:
+
+* Optimización del rendimiento: distribuye E/S entre múltiples LUN, lo que reduce los puntos críticos.
+* Flexibilidad: agregue nuevos LUN sin interrumpir las cargas de trabajo existentes.
+* Migración transparente: ASM o LVM pueden reubicar extensiones en nuevos LUN para equilibrar o organizar en niveles sin tiempo de inactividad del host.
+
+
+[NOTE]
+====
+Consideraciones clave de ASA r2:
+
+* El cambio de tamaño de LUN se realiza a nivel de unidad de almacenamiento dentro de una máquina virtual de almacenamiento (SVM) utilizando la capacidad de la zona de disponibilidad de almacenamiento (SAZ).
+* Para Oracle, la mejor práctica es agregar LUN a los grupos de discos ASM en lugar de cambiar el tamaño de los LUN existentes, para mantener la distribución y el paralelismo.
+
+
+====

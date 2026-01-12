@@ -1,0 +1,49 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-config-qos.html 
+keywords: qos, bandwidth, minimum, guaranteed, adaptive, ASA r2, oracle 
+summary: Gestión del rendimiento de la base de datos Oracle con ONTAP QoS en ASA r2 
+searchtitle: Gestión del rendimiento de la base de datos Oracle con ONTAP QoS en ASA r2 
+---
+= Gestión del rendimiento con ONTAP QoS en sistemas ASA r2
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Para gestionar de forma segura y eficiente varias bases de datos Oracle en ASA r2 se requiere una estrategia de calidad de servicio eficaz. Esto es especialmente importante porque los sistemas ASA r2 son plataformas SAN totalmente flash diseñadas para un rendimiento extremadamente alto y una consolidación de carga de trabajo.
+
+Una cantidad relativamente pequeña de SSD puede saturar incluso los controladores más potentes, por lo que los controles de QoS son esenciales para garantizar un rendimiento predecible en múltiples cargas de trabajo. Como referencia, los sistemas ASA r2 como ASA A1K o A90 pueden ofrecer de cientos de miles a más de un millón de IOPS con una latencia de submilisegundos. Muy pocas cargas de trabajo individuales consumirían este nivel de rendimiento, por lo que la utilización completa generalmente implica alojar múltiples bases de datos o aplicaciones. Para hacer esto de forma segura se requieren políticas de calidad de servicio para evitar la contención de recursos.
+
+ONTAP QoS en ASA r2 funciona de la misma manera que en los sistemas AFF/ FAS , con dos tipos principales de controles: IOPS y ancho de banda. Los controles de QoS se pueden aplicar a SVM y LUN.
+
+
+
+== Calidad de servicio IOPS
+
+La calidad de servicio basada en IOPS limita la cantidad total de IOPS para un recurso determinado. En ASA r2, las políticas de QoS se pueden aplicar a nivel de SVM y a objetos de almacenamiento individuales, como LUN. Cuando una carga de trabajo alcanza su límite de IOPS, se crean colas de solicitudes de E/S adicionales para obtener tokens, lo que genera latencia. Este es el comportamiento esperado y evita que una sola carga de trabajo monopolice los recursos del sistema.
+
+
+NOTE: Tenga cuidado al aplicar controles de QoS a datos de registros de transacciones/rehacer de bases de datos. Estas cargas de trabajo son intermitentes, y un límite de QoS que parece razonable para una actividad promedio puede ser demasiado bajo para picos de actividad, lo que causa graves problemas de rendimiento. En general, el registro de rehacer y archivar no debería estar limitado por la calidad de servicio.
+
+
+
+== Calidad del ancho de banda
+
+La calidad de servicio basada en ancho de banda limita el rendimiento en Mbps. Esto es útil cuando las cargas de trabajo realizan lecturas o escrituras de bloques grandes, como escaneos de tablas completas u operaciones de respaldo, que consumen un ancho de banda significativo pero relativamente pocas IOPS. La combinación de límites de IOPS y ancho de banda puede proporcionar un control más granular.
+
+
+
+== Calidad de servicio mínima/garantizada
+
+Las políticas de QoS mínimas reservan el rendimiento para cargas de trabajo críticas. Por ejemplo, en un entorno mixto con bases de datos de producción y desarrollo, aplique la máxima QoS a las cargas de trabajo de desarrollo y la mínima QoS a las cargas de trabajo de producción para garantizar un rendimiento predecible.
+
+
+
+== Calidad de servicio adaptativa
+
+La calidad de servicio adaptativa ajusta los límites en función del tamaño del objeto de almacenamiento. Si bien rara vez se utiliza para bases de datos (porque el tamaño no se correlaciona con las necesidades de rendimiento), puede ser útil para cargas de trabajo de virtualización donde los requisitos de rendimiento escalan con la capacidad.

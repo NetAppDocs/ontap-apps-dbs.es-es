@@ -1,0 +1,42 @@
+---
+sidebar: sidebar 
+permalink: oracle/oracle-asar2-storage-san-config-lvm-striping.html 
+keywords: SAN, ASM, LVM, oracle, ASA r2 
+summary: Configuración de franjas LVM para bases de datos Oracle con ASA r2 
+searchtitle: Distribución de LVM con bases de datos Oracle en ASA r2 
+---
+= Segmentación de LVM
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+La segmentación de LVM hace referencia a distribuir datos entre varias LUN. El resultado es una mejora espectacular del rendimiento en muchas bases de datos.
+
+Antes de la era de las unidades flash, se utilizaba la segmentación para ayudar a superar las limitaciones de rendimiento de las unidades giratorias. Por ejemplo, si un sistema operativo necesita realizar una operación de lectura de 1MB KB, para leer que 1MB TB de datos de una sola unidad se requeriría buscar y leer muchos cabezales de unidad ya que 1MB se transfiere lentamente. Si esos 1MB TB de datos se segmentaron en 8 LUN, el sistema operativo podría emitir ocho operaciones de lectura de 128K KB en paralelo y reducir el tiempo necesario para realizar la transferencia de 1MB GB.
+
+La creación de bandas con unidades giratorias era más difícil porque el patrón de E/S debía conocerse de antemano. Si la distribución en franjas no se ajusta correctamente a los patrones de E/S reales, las configuraciones en franjas podrían dañar el rendimiento. Con las bases de datos Oracle, y especialmente con configuraciones de almacenamiento all-flash, la creación de bandas es mucho más fácil de configurar y se ha demostrado que mejora drásticamente el rendimiento.
+
+Los gestores de volúmenes lógicos como Oracle ASM segmentan por defecto, pero el LVM del sistema operativo nativo no lo hacen. Algunos de ellos unen varias LUN como un dispositivo concatenado, lo que da como resultado archivos de datos que existen en un único dispositivo LUN. Esto provoca puntos calientes. Otras implementaciones de LVM toman por defecto extensiones distribuidas. Esto es similar a la segmentación, pero es más grueso. Las LUN del grupo de volúmenes se dividen en partes grandes, denominadas extensiones y normalmente se miden en muchos megabytes, y los volúmenes lógicos se distribuyen por esas extensiones. El resultado es que las operaciones de I/O aleatorias en un archivo se deben distribuir bien entre las LUN, pero las operaciones de I/O secuenciales no son tan eficientes como podrían.
+
+La I/O de aplicaciones con rendimiento intensivo casi siempre es una (a) en unidades del tamaño de bloque básico o (b) un megabyte.
+
+El principal objetivo de una configuración seccionada es garantizar que la I/O de archivo único se pueda realizar como una unidad única y que las I/O de varios bloques, que deben tener un tamaño de 1MB TB, se puedan paralelizar de manera uniforme entre todas las LUN del volumen seccionado. Esto significa que el tamaño de franja no debe ser menor que el tamaño del bloque de la base de datos y el tamaño de franja multiplicado por el número de LUN debe ser 1MB.
+
+[NOTE]
+====
+Práctica recomendada para la creación de bandas LVM con bases de datos Oracle:
+
+* Tamaño de franja ≥ tamaño de bloque de base de datos.
+* Tamaño de franja * número de LUN ≈ 1 MB para un paralelismo óptimo.
+* Utilice varios LUN por grupo de discos ASM para maximizar el rendimiento y evitar puntos críticos.
+
+
+====
+En la siguiente figura, se muestran tres opciones posibles para el ajuste del tamaño de la franja y el ancho. Se selecciona el número de LUN para satisfacer los requisitos de rendimiento tal como se han descrito anteriormente, pero en todos los casos los datos totales de una sola franja es 1MB.
+
+image:../media/ontap-lvm-striping.png["Segmentación de LVM"]
