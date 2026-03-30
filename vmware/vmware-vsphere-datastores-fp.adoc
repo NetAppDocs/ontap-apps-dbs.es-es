@@ -1,0 +1,64 @@
+---
+sidebar: sidebar 
+permalink: vmware/vmware-vsphere-datastores-fp.html 
+keywords: vSphere, datastore, FabricPool 
+summary: Esta página describe las mejores prácticas para implementar FabricPool para datastores de VMware. 
+---
+= FabricPool para datastores de VMware
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+El almacenamiento de máquinas virtuales fluye desde las capas del sistema operativo invitado y del hipervisor hasta ONTAP, donde FabricPool tiering y WAFL ofrecen rendimiento, eficiencia y optimización de costos.
+
+Desde la versión 9.6 de ONTAP en adelante, FabricPool ha sido compatible con cargas de trabajo virtualizadas, incluidos los almacenes de datos de VMware. Ahora puedes clasificar por niveles bloques fríos de volúmenes FlexVol que respaldan almacenes de datos de VMware (plantillas de VM, VMs apagadas, instantáneas, backups, etc.) al almacenamiento de objetos mientras mantienes los datos calientes locales.
+
+Dicho esto, hay algunos matices que tienes que tener en cuenta.
+
+image:vmware-vsphere-datastores-fp-1.png["alt=pila de almacenamiento hipervisor con FabricPool,width=525,height=500"]
+
+
+
+== Capas de computación y disco virtual
+
+El sistema operativo invitado se ejecuta en formatos de disco virtual como VMDK, QCOW2 o VHDX, que crean las capas de computación y dispositivos de bloque accesibles para aplicaciones y usuarios.
+
+Es importante tener en cuenta que el sistema operativo huésped ve los discos virtuales como dispositivos de bloque; por lo tanto, los tiempos de espera de los dispositivos de bloque dentro del huésped deben considerarse al planificar la tolerancia a fallos durante actualizaciones no disruptivas, fallos de hardware u otros eventos no planificados.
+
+
+TIP: Siguiendo el link:https://www.netapp.com/pdf.html?item=/media/17239-tr-4598.pdf["FabricPool mejores prácticas"], deberías tratar los volúmenes FlexVol que alojan almacenes de datos de máquinas virtuales como almacenamiento SAN, incluso cuando usas protocolos NAS, debido a la naturaleza de bloque de los archivos de disco virtual en relación con los sistemas operativos invitados. Por eso, NetApp recomienda usar la política de tiering solo de instantáneas. La política automática se puede usar para datos no críticos, pero ojo: una desconexión del tier de nube puede hacer que las máquinas se bloqueen o pasen a un estado de solo lectura.
+
+
+
+== Rol de hipervisor
+
+El hipervisor media entre sus máquinas virtuales en ejecución y los recursos físicos como CPU, memoria y almacenamiento. En el caso de uso de NAS, el hipervisor monta el recurso compartido de NAS y presenta los archivos de disco virtual a las máquinas virtuales como dispositivos de bloque.
+
+La ruta del sistema de archivos del hipervisor implica el almacenamiento de máquinas virtuales a través de LUNs conectados por iSCSI/FCP o espacios de nombres NVMe formateados por sistemas de archivos específicos del hipervisor como VMFS, NTFS, EXT4, etc.
+
+La ruta del sistema de archivos NAS proporciona acceso directo en el nivel de archivo usando los protocolos NFS o SMB a volúmenes ONTAP para el almacenamiento de máquinas virtuales.
+
+Ambas rutas convergen en la capa WAFL de ONTAP, lo que permite servicios de datos coherentes como snapshots y la gestión de metadatos.
+
+
+
+== FabricPool integración por niveles
+
+FabricPool gestiona de forma inteligente la ubicación de los datos entre el almacenamiento local de alto rendimiento y los niveles de objetos en la nube de menor coste.
+
+FabricPool organiza los datos automáticamente entre el almacenamiento local de alto rendimiento y el almacenamiento escalable de objetos en la nube según la política de organización por niveles de FabricPool aplicada al conjunto de datos.
+
+La integración de FabricPool de ONTAP permite una ubicación de los datos eficiente en entornos de nube híbrida sin sacrificar el rendimiento para las lecturas locales.
+
+
+
+== Eficiencia y gestión del almacenamiento
+
+Es importante entender cómo funciona FabricPool antes de activarlo. Una configuración adecuada te ayuda a mejorar el rendimiento, reducir el riesgo y optimizar el TCO al almacenar los datos correctos en el nivel adecuado.
+
+Las rutas de los protocolos SAN/NVMe y NAS convergen en la capa WAFL. El sistema de archivos WAFL garantiza la coherencia de los metadatos, admite snapshots, clonación y optimiza las escrituras para SSD, HDD y almacenamiento de objetos.
