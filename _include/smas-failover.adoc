@@ -4,7 +4,7 @@
 
 SnapMirror Active Sync admite dos tipos de operaciones de conmutación por error de almacenamiento: Planificadas y no planificadas, que funcionan de formas ligeramente diferentes. El administrador inicia manualmente una conmutación al respaldo planificada para una rápida conmutación a un sitio remoto, mientras que el mediador inicia automáticamente la conmutación al respaldo no planificada en el tercer sitio. El objetivo principal de una conmutación por error planificada es realizar actualizaciones y revisiones incrementales, realizar pruebas de recuperación ante desastres o adoptar una política formal de operaciones de conmutación entre sitios durante todo el año para demostrar su capacidad de sincronización activa completa.
 
-Los diagramas muestran lo que sucede durante las operaciones normales, de conmutación por error y de conmutación tras recuperación. Para facilitar la ilustración, representan una LUN replicada. En una configuración de sincronización activa de SnapMirror real, la replicación se basa en volúmenes, donde cada volumen contiene uno o varios LUN; pero, para simplificar la imagen, se ha eliminado la capa del volumen.
+Los diagramas muestran lo que ocurre durante las operaciones normales, de conmutación por error y de conmutación por recuperación. Para facilitar la ilustración, representan un LUN replicado. En una configuración de sincronización activa real de SnapMirror, la replicación se basa en volúmenes AFF, donde cada volumen contiene uno o más LUN, pero para simplificar la imagen, se ha eliminado la capa de volumen.
 
 
 

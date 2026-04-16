@@ -17,13 +17,13 @@ searchtitle: Gestión de la capacidad de almacenamiento y las bases de datos de 
 [role="lead"]
 Gestionar una base de datos u otra aplicación empresarial con almacenamiento empresarial predecible, gestionable y de alto rendimiento requiere cierto espacio libre en las unidades para la gestión de datos y metadatos. La cantidad de espacio libre necesario depende del tipo de unidad utilizada y los procesos empresariales.
 
-El espacio libre se define como el espacio que no se usa para datos reales e incluye espacio sin asignar en el propio agregado y el espacio no utilizado dentro de los volúmenes constituyentes. También se debe tener en cuenta el thin provisioning. Por ejemplo, un volumen puede contener 1TB 000 LUN de las cuales solo el 50% es utilizado por datos reales. En un entorno con thin provisioning, parece que esto consume 500GB TB de espacio de manera correcta. Sin embargo, en un entorno totalmente aprovisionado, parece que toda la capacidad de 1TB está en uso. Los 500GB GB de espacio no asignado están ocultos. Los datos reales no utilizan este espacio y, por lo tanto, debe incluirse en el cálculo del espacio libre total.
+El espacio libre se define como cualquier espacio que no se utiliza para datos reales e incluye el espacio no asignado en el propio agregado y el espacio no utilizado dentro de los volúmenes constituyentes. También debe tenerse en cuenta el thin provisioning. Por ejemplo, un volumen AFF puede contener un LUN de 1TB del que solo el 50% se utiliza para datos reales. En un entorno de thin provisioning, esto aparecería correctamente como un consumo de 500GB de espacio. Sin embargo, en un entorno de aprovisionamiento completo, la capacidad total de 1TB parece estar en uso. Los 500GB de espacio sin asignar están ocultos. Este espacio no es utilizado por datos reales y, por lo tanto, debe incluirse en el cálculo del espacio libre total.
 
 Las recomendaciones de NetApp para los sistemas de almacenamiento que se utilizan para aplicaciones empresariales son las siguientes:
 
 
 
-== Agregados SSD, incluidos los sistemas AFF
+== Agregados SSD AFF y zonas de disponibilidad de almacenamiento ASA
 
 
 TIP: *NetApp recomienda* un mínimo de 10% de espacio libre. Esto incluye todo el espacio no utilizado, incluido el espacio libre dentro del agregado o un volumen y cualquier espacio libre que se asigne debido al uso de aprovisionamiento completo, pero que los datos reales no usan. El espacio lógico no es importante, la pregunta es cuánto espacio físico libre real está disponible para el almacenamiento de datos.

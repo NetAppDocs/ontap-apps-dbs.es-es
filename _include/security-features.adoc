@@ -21,7 +21,7 @@ Para obtener más información sobre las snapshots, consulte link:https://docs.n
 
 == Snapshots a prueba de manipulación
 
-A partir de ONTAP 9.12.1, las copias Snapshot no solo son de lectura, sino que también se pueden proteger de eliminaciones accidentales o intencionales. La función se denomina instantáneas a prueba de manipulaciones. Un período de retención puede establecerse y aplicarse mediante la política de Snapshot. Las instantáneas resultantes no se pueden eliminar hasta que hayan alcanzado su fecha de caducidad. No hay sustituciones administrativas o de centros de soporte.
+Desde ONTAP 9.12.1, las snapshots no solo son de solo lectura, también pueden protegerse contra el borrado accidental o intencionado. Esta función se llama tamperproof snapshots. Se puede establecer y aplicar un periodo de retención mediante la política de snapshots. Las snapshots resultantes no pueden eliminarse hasta que hayan alcanzado su fecha de caducidad. No hay anulaciones administrativas ni del centro de soporte.
 
 Esto garantiza que un intruso, un intruso malintencionado o incluso un ataque de ransomware no puedan comprometer los backups, incluso si resultaran en acceso al propio sistema ONTAP. Al combinarlo con una programación de copias Snapshot frecuente, el resultado es una protección de datos extremadamente potente con un objetivo de punto de recuperación muy bajo.
 

@@ -18,17 +18,18 @@ Los valores clave son los siguientes:
 * *Eficiencia.* Las instantáneas no requieren espacio en el momento de la creación. El espacio solo se consume cuando se modifican los datos.
 * *Capacidad de gestión.* Una estrategia de copia de seguridad basada en instantáneas es fácil de configurar y administrar porque las instantáneas son una parte nativa del sistema operativo de almacenamiento. Si el sistema de almacenamiento está encendido, está listo para crear backups.
 * *Escalabilidad.* Se pueden conservar hasta 1024 copias de seguridad de un único contenedor de archivos y LUN. En el caso de conjuntos de datos complejos, es posible proteger varios contenedores de datos con un único conjunto coherente de copias Snapshot.
-* El rendimiento no se ve afectado, independientemente de que un volumen contenga 1024 snapshots o ninguna.
+* El rendimiento no se ve afectado, ya sea que los datos estén protegidos por 1024 snapshots o por ninguno.
 
 
 Aunque muchos proveedores de almacenamiento ofrecen tecnología Snapshot, la tecnología Snapshot dentro de ONTAP es única y ofrece beneficios importantes para los entornos de aplicaciones y bases de datos empresariales:
 
 * Las copias Snapshot forman parte del sistema de archivos WAFL (Write-Anywhere File Layout) subyacente. No son una tecnología complementaria ni externa. Esto simplifica la gestión, ya que el sistema de almacenamiento es el sistema de backup.
 * Las copias Snapshot no afectan al rendimiento, a excepción de algunos casos periféricos como cuando se almacenan tantos datos en copias snapshot que el sistema de almacenamiento subyacente llena.
-* El término «grupo de coherencia» se utiliza a menudo para referirse a una agrupación de objetos de almacenamiento que se gestionan como una colección consistente de datos. Una Snapshot de un volumen ONTAP determinado constituye un backup de grupo de coherencia.
+* El término "grupo de consistencia" se utiliza a menudo para referirse a una agrupación de objetos de almacenamiento que se gestionan como una colección consistente de datos. Una instantánea de un volumen AFF en particular constituye backup del grupo de consistencia.
+* Además, varios volúmenes AFF o LUN/espacios de nombres ASA pueden unirse fácilmente como un grupo de coherencia, con políticas de protección de datos aplicadas como una sola unidad.
 
 
-Las copias Snapshot de ONTAP también ofrecen una escalabilidad mejor que la tecnología de la competencia. Los clientes pueden almacenar 5, 50 o 500 copias Snapshot sin que esto afecte al rendimiento. El número máximo de snapshots que se permite actualmente en un volumen es 1024. Si se requiere más retención de instantáneas, existen opciones para configurar las instantáneas en cascada a volúmenes adicionales.
+Las instantáneas de ONTAP también se escalan mejor que la tecnología de la competencia. Los clientes pueden almacenar 5, 50 o 500 instantáneas sin afectar el rendimiento. El número máximo de instantáneas permitido actualmente en un volumen AFF o en un LUN/namespace ASA es 1024. Si se requiere una retención adicional de instantáneas, hay opciones para hacer instantáneas en cascada.
 
 Como resultado, proteger un conjunto de datos alojado en ONTAP es sencillo y altamente escalable. Los backups no requieren el traslado de datos, por lo que puede adaptarse a las necesidades del negocio en lugar de a las limitaciones de las tasas de transferencia de red, un gran número de unidades de cinta o áreas de almacenamiento provisional de discos.
 
@@ -66,33 +67,35 @@ A menudo, la palabra «consistente» en «coherente con las aplicaciones» resul
 
 El término «grupo de coherencia» hace referencia a la capacidad de una cabina de almacenamiento para gestionar varios recursos de almacenamiento como una sola imagen. Por ejemplo, una base de datos puede consistir en 10 LUN. La cabina debe ser capaz de realizar backup, restaurar y replicar esos 10 LUN de forma coherente. La restauración no es posible si las imágenes de las LUN no eran consistentes en el punto de backup. Para replicar estos 10 LUN es necesario que todas las réplicas estén perfectamente sincronizadas entre sí.
 
-El término «grupo de coherencia» no se utiliza con frecuencia cuando se habla de ONTAP, porque la coherencia siempre ha sido una función básica del volumen y de la arquitectura de agregado en ONTAP. Muchas otras cabinas de almacenamiento gestionan LUN o sistemas de archivos como unidades individuales. Podrían configurarse opcionalmente como «grupo de consistencia» para fines de protección de datos, pero este es un paso adicional en la configuración.
+ONTAP siempre ha sido capaz de capturar imágenes locales y replicadas de datos coherentes. Aunque los distintos volúmenes de un sistema ONTAP AFF/FAS no suelen describirse formalmente como un grupo de coherencia, eso es lo que son. Una instantánea de ese volumen es una imagen de grupo de coherencia, la restauración de esa instantánea es una restauración de grupo de coherencia, y tanto SnapMirror como SnapVault ofrecen replicación de grupo de coherencia.
 
-ONTAP siempre ha podido capturar imágenes de datos replicadas y locales coherentes. Aunque los distintos volúmenes de un sistema ONTAP no suelen describirse formalmente como un grupo de coherencia, eso es lo que son. Una copia Snapshot de ese volumen es una imagen de grupo de coherencia, la restauración de esa copia Snapshot es una restauración de grupo de coherencia, y tanto SnapMirror como SnapVault ofrecen replicación de grupo de coherencia.
+Los sistemas AFF también incluyen un tipo más amplio de grupo de consistencia. Se pueden definir múltiples volúmenes como un CG dentro de ONTAP. Las snapshots, los clones y la replicación se pueden configurar a nivel de CG. Esto simplifica las estrategias de protección de datos porque permite establecer políticas en conjuntos de datos, no solo en volúmenes o LUNs individuales. Los CGs también existen en sistemas ASA. Múltiples LUNs o espacios de nombres pueden unirse como un CG y ese CG puede luego protegerse con snapshots, replicarse, restaurarse o clonarse.
 
 
 
 == Snapshots de grupo de coherencia
 
-Las snapshots de grupo de consistencia (cg-snapshots) son una extensión de la tecnología Snapshot básica de ONTAP. Una operación Snapshot estándar crea una imagen coherente de todos los datos dentro de un único volumen, pero a veces es necesario crear un conjunto coherente de instantáneas en varios volúmenes e incluso entre varios sistemas de almacenamiento. El resultado es un conjunto de instantáneas que se pueden utilizar de la misma manera que una instantánea de un solo volumen individual. Se pueden utilizar para la recuperación de datos locales, replicar para la recuperación ante desastres o clonar como una única unidad coherente.
+Las instantáneas de grupo de consistencia (CG) son una extensión de la tecnología básica de ONTAP Snapshot. Una operación de instantánea estándar crea una imagen consistente de todos los datos dentro de un único volumen AFF/FAS o LUN/namespace ASA, pero a veces es necesario crear un conjunto consistente de instantáneas a través de múltiples recursos de almacenamiento e incluso a través de múltiples sistemas de almacenamiento. El resultado es un conjunto de instantáneas que se pueden utilizar del mismo modo que una instantánea de un solo volumen individual. Se pueden utilizar para la recuperación de datos local, replicarse con fines de recuperación ante desastres o clonarse como una única unidad coherente.
 
-El mayor uso conocido de cg-snapshots es para un entorno de base de datos de aproximadamente 1PB GB de tamaño que abarca 12 controladoras. Las cg-snapshots creadas en este sistema se han utilizado para backup, recuperación y clonado.
+Las instantáneas CG se escalan extremadamente bien. El mayor uso conocido de una instantánea CG es para un entorno de bases de datos de aproximadamente 1PB de tamaño que abarca 12 controladores. Las instantáneas CG creadas en este sistema se han utilizado para backup, recuperación y clonación.
 
-La mayoría de las veces, cuando un conjunto de datos abarca volúmenes y se debe conservar el orden de escritura, el software de gestión elegido utiliza automáticamente una instantánea de cg. No es necesario comprender los detalles técnicos de cg-snapshots en estos casos. No obstante, hay situaciones en las que los complejos requisitos de protección de datos requieran un control detallado del proceso de protección y replicación de datos. Los flujos de trabajo de automatización o el uso de scripts personalizados para llamar a las API de cg-snapshot son algunas de las opciones. Para comprender la mejor opción y el rol de cg-snapshot se requiere una explicación más detallada de la tecnología.
+La mayoría de las veces, cuando un conjunto de datos abarca volúmenes AFF o LUNs/espacios de nombres ASA, y se debe preservar el orden de escritura, simplemente se puede definir un grupo de coherencia ONTAP y el grupo de volúmenes, LUNs o espacios de nombres se puede gestionar de forma nativa para crear snapshots. Si se utiliza software de gestión, debe detectar la necesidad de snapshots de un grupo de coherencia y llamar a las API necesarias.
 
-La creación de un conjunto de cg-snapshots es un proceso de dos pasos:
+En estos casos, no es necesario comprender los detalles técnicos de las instantáneas CG. Sin embargo, hay situaciones en las que los complicados requisitos de protección de datos requieren un control detallado del proceso de protección y replicación de datos. Algunas opciones son los flujos de trabajo automatizados o el uso de secuencias de comandos personalizadas para llamar a las API de instantáneas CG. Para comprender cuál es la mejor opción y la función de las instantáneas CG, es necesaria una explicación más detallada de la tecnología.
 
-. Establezca el aislamiento de escritura en todos los volúmenes de destino.
-. Crear snapshots de dichos volúmenes mientras se encuentra en estado protegido.
+La creación de un conjunto de instantáneas de grupo de coherencia es un proceso de dos pasos:
+
+. Establece la protección contra escritura en todos los volúmenes AFF o LUN/espacios de nombres ASA de destino.
+. Crea instantáneas de esos volúmenes, LUNs o espacios de nombres mientras están en estado vallado.
 
 
-El cercado de escritura se establece en serie. Esto significa que, a medida que se configura el proceso de barrera en varios volúmenes, las operaciones de I/O de escritura se congelan en el primer volumen de la secuencia, a medida que sigue confirmándose con los volúmenes que aparecen más adelante. Esto puede parecer que, en un principio, no cumple el requisito de conservación de la orden de escritura, pero eso solo se aplica a I/O que se emite de forma asíncrona en el host y no depende de ninguna otra escritura.
+El cercado de escritura se establece en serie. Esto significa que, a medida que el proceso de cercado se configura en varios objetivos de almacenamiento, la E/S de escritura se congela en el primer objeto de la secuencia y sigue congelada en los objetivos que aparecen después en la lista. Esto podría parecer al principio que viola el requisito de que se preserve el orden de escritura, pero eso solo aplica a la E/S que se emite de forma asíncrona en el host y que no depende de ninguna otra escritura.
 
 Por ejemplo, una base de datos puede emitir muchas actualizaciones de archivos de datos asíncronos y permitir que el sistema operativo vuelva a ordenar la I/O y completarlas de acuerdo con su propia configuración del programador. El orden de este tipo de I/O no se puede garantizar porque la aplicación y el sistema operativo ya han liberado el requisito de conservar el orden de escritura.
 
-Como ejemplo de contador, la mayor parte de la actividad de registro de la base de datos es síncrona. La base de datos no continúa con más escrituras de registro hasta que se reconozca la E/S y se mantenga el orden de esas escrituras. Si un registro de I/O llega a un volumen cercado, no se reconoce y la aplicación se bloquea en otras escrituras. Del mismo modo, la I/O de metadatos del sistema de archivos suele ser síncrona. Por ejemplo, no se debe perder una operación de eliminación de archivos. Si un sistema operativo con un sistema de archivos xfs suprimió un archivo y la E/S que actualizó los metadatos del sistema de archivos xfs para eliminar la referencia a ese archivo aterrizó en un volumen cercado, la actividad del sistema de archivos se detendría. De este modo se garantiza la integridad del sistema de archivos durante las operaciones cg-snapshot.
+Como contraejemplo, la mayor parte de la actividad de registro de la base de datos es sincrónica. La base de datos no procede con más escrituras de registro hasta que la E/S es reconocida, y el orden de esas escrituras debe ser preservado. Si una E/S de registro llega a un LUN vallado, no es reconocida y la aplicación bloquea las escrituras posteriores. Del mismo modo, la E/S de metadatos del sistema de archivos suele ser sincrónica. Por ejemplo, una operación de borrado de un archivo no debe perderse. Si un sistema operativo con un sistema de archivos xfs borrara un archivo y la E/S que actualizara los metadatos del sistema de archivos xfs para eliminar la referencia a ese archivo aterrizara en un LUN cercado, entonces la actividad del sistema de archivos se detendría. Esto garantiza la integridad del sistema de archivos durante las operaciones CG.
 
-Después de configurar el control de escritura en los volúmenes de destino, están listos para la creación de las copias Snapshot. No es necesario crear las copias Snapshot precisamente al mismo tiempo, ya que el estado de los volúmenes se congela desde un punto de vista de escritura dependiente. Para protegerse frente a un defecto en la aplicación que crea las copias cg-snapshots, la barrera de escritura inicial incluye un tiempo de espera configurable en el que ONTAP libera automáticamente la barrera y reanuda el procesamiento de escritura transcurridos un número de segundos definido. Si todas las Snapshot se crean antes de que se agote el tiempo de espera, el conjunto de snapshots resultante es un grupo de coherencia válido.
+Una vez configurado el cercado de escritura en los destinos, están listos para la creación de instantáneas. No es necesario que las instantáneas se creen exactamente al mismo tiempo porque el estado de los destinos está congelado desde un punto de vista de escritura dependiente. Para evitar un fallo en la aplicación que crea las instantáneas CG, el cercado de escritura inicial incluye un tiempo de espera configurable en el que ONTAP libera automáticamente el cercado y reanuda el procesamiento de escritura después de un número definido de segundos. Si todas las instantáneas se crean antes de que transcurra el tiempo de espera, el conjunto resultante de instantáneas es un grupo de coherencia válido.
 
 
 
@@ -109,20 +112,20 @@ Algunas operaciones de escritura deben estar presentes en el disco antes de que 
 Existen dos enfoques principales para los backups basados en Snapshot:
 
 * Backups coherentes con los fallos
-* Backups activos protegidos de Snapshot
+* Backups en línea protegidos por snapshot
 
 
-Una copia de seguridad coherente con los fallos de una base de datos se refiere a la captura de toda la estructura de la base de datos, incluidos archivos de datos, redo logs y archivos de control, en un único punto en el tiempo. Si la base de datos se almacena en un único volumen, el proceso es sencillo; se puede crear una copia Snapshot en cualquier momento. Si una base de datos abarca volúmenes, debe crearse una snapshot de grupo de coherencia (CG). Existen varias opciones para crear snapshots de CG, como el software NetApp SnapCenter, funciones nativas del grupo de coherencia ONTAP y scripts que se mantienen por el usuario.
+Un backup coherente con los fallos de una base de datos se refiere a la captura de toda la estructura de la base de datos, incluidos los archivos de datos, los registros de recuperación y los archivos de control, en un único momento. Si la base de datos se almacena en un único volumen, LUN o espacio de nombres, el proceso es sencillo; se puede crear una snapshot en cualquier momento. Si una base de datos abarca volúmenes AFF o LUN/espacios de nombres ASA, se debe crear una snapshot de grupo de coherencia (CG). Existen varias opciones para crear snapshots de CG, incluido el NetApp SnapCenter software, las funciones nativas de grupo de coherencia de ONTAP y las secuencias de comandos mantenidas por el usuario.
 
-Los backups de Snapshot coherentes con los fallos se usan principalmente cuando es suficiente con la recuperación punto del backup. Los registros de archivos se pueden aplicar bajo ciertas circunstancias, pero cuando se requiere una recuperación puntual más granular, es preferible un backup online.
+Las copias de seguridad instantáneas coherentes con los fallos se utilizan principalmente cuando la recuperación en el punto de backup es suficiente. Los registros de archivo se pueden aplicar en algunas circunstancias, pero cuando se requiere una recuperación más granular en un momento específico, es preferible un backup en línea.
 
 El procedimiento básico para un backup en línea basado en Snapshot es el siguiente:
 
 . Coloque la base de datos en `backup` modo.
-. Cree una instantánea de todos los volúmenes que alojan archivos de datos.
+. Crea una instantánea de todos los recursos de almacenamiento (exportaciones NFS, LUN o espacios de nombres NVMe) que alojan archivos de datos.
 . Salga `backup` modo.
 . Ejecute el comando `alter system archive log current` para forzar el archivado de registros.
-. Crear instantáneas de todos los volúmenes que alojan los archive logs.
+. Crea instantáneas de todos los recursos de almacenamiento que alojan los registros de archivo.
 
 
 Este procedimiento produce un juego de instantáneas que contienen archivos de datos en modo de backup y los archive logs críticos generados durante el modo de backup. Estos son los dos requisitos para recuperar una base de datos. Los archivos, como los archivos de control, también deben protegerse por conveniencia, pero el único requisito absoluto es la protección de los archivos de datos y los registros de archivos.
@@ -133,21 +136,24 @@ Aunque los diferentes clientes pueden tener estrategias muy diferentes, casi tod
 
 == Recuperación basada en Snapshot
 
-Al diseñar diseños de volúmenes para bases de datos Oracle, la primera decisión es si utilizar tecnología NetApp SnapRestore basada en volúmenes (VBSR).
+Cuando se diseñan distribuciones de almacenamiento para bases de datos Oracle, la primera decisión es si se va a utilizar la tecnología basada en volúmenes NetApp SnapRestore (VBSR), que es la tecnología subyacente utilizada para restaurar volúmenes AFF y LUN/namespaces ASA.
 
-El SnapRestore basado en volúmenes permite revertir un volumen casi instantáneamente a un momento específico anterior. Debido a que se revierten todos los datos del volumen, es posible que VBSR no sea apropiado para todos los casos de uso. Por ejemplo, si se almacena una base de datos completa, incluidos archivos de datos, registros de recuperación y registros de archivos, en un solo volumen y este volumen se restaura con VBSR, los datos se pierden porque se descartan los datos de archive log y redo más recientes.
+VBSR permite que los datos sean revertidos casi instantáneamente a un punto anterior en el tiempo. Debido a que todos los datos son revertidos, VBSR puede no ser apropiado para todos los casos de uso. Por ejemplo, si una base de datos entera, incluyendo datafiles, redo logs y archive logs, está almacenada en un solo volumen AFF y este volumen es restaurado con VBSR, entonces los datos se pierden porque el archive log y los datos de redo más recientes son descartados. Lo mismo se aplica a los datos de ASA. Si toda la base de datos estaba almacenada en un único grupo de consistencia ASA, y ese CG fue restaurado a un estado anterior, algunos de los datos posteriores de archive log y redo se perderán.
 
-VBSR no se requiere para la restauración. Muchas bases de datos pueden restaurarse utilizando SnapRestore de archivo único (SFSR) basado en archivos o simplemente copiando archivos del snapshot al sistema de archivos activo.
+VBSR no es necesario para la restauración. Muchas bases de datos pueden restaurarse utilizando la restauración basada en archivos de archivo único SnapRestore (SFSR) o simplemente clonando archivos de la snapshot de nuevo en el sistema de archivos activo.
 
-Se prefiere VBSR cuando una base de datos es muy grande o cuando se debe recuperar lo antes posible, y el uso de VBSR requiere aislamiento de los archivos de datos. En un entorno NFS, los archivos de datos de una base de datos determinada deben estar almacenados en volúmenes dedicados que no estén contaminados por ningún otro tipo de archivo. En un entorno SAN, los archivos de datos deben almacenarse en LUN dedicadas en volúmenes dedicados. Si se utiliza un gestor de volúmenes (incluido Oracle Automatic Storage Management [ASM]), el grupo de discos también debe estar dedicado a los archivos de datos.
+VBSR es preferible cuando una base de datos es muy grande o cuando debe ser recuperada tan rápido como sea posible, y el uso de VBSR requiere aislamiento de los datafiles. En un entorno de NFS, los datafiles de una base de datos dada deben ser almacenados en volúmenes dedicados que no estén contaminados por ningún otro tipo de archivo. En un entorno SAN, los datafiles deben almacenarse en LUNs o namespaces dedicados. Si se utiliza un gestor de volúmenes (incluyendo Oracle Automatic Storage Management [ASM]), el diskgroup también debe estar dedicado a los datafiles.
 
-El aislamiento de archivos de datos de esta manera permite que se reviertan a un estado anterior sin dañar otros sistemas de archivos.
+Aislar los archivos de datos de esta manera permite revertirlos a un estado anterior sin dañar otros sistemas de archivos.
 
 
 
-== Reserva de Snapshot
+== Reserva de snapshot AFF
 
-Para cada volumen con datos de Oracle en un entorno SAN, el `percent-snapshot-space` Debe establecerse en cero porque reservar espacio para una snapshot en un entorno de LUN no es útil. Si la reserva fraccionaria se establece en 100, una copia snapshot de un volumen con unidades lógicas requiere suficiente espacio libre en el volumen, excluida la reserva de snapshot, para absorber un 100% de renovación de todos los datos. Si la reserva fraccionaria se define en un valor menor, se requiere una cantidad de espacio libre correspondiente menor, pero siempre excluye la reserva de instantáneas. Esto significa que se desperdicia el espacio de reserva de snapshot en un entorno de LUN.
+Para cada volumen con datos de Oracle en un entorno SAN AFF, la `percent-snapshot-space` debe establecerse en cero porque reservar espacio para una reserva de snapshot en un entorno LUN no es útil. Si la reserva fraccionaria se establece en 100, una snapshot de un volumen con LUN requiere suficiente espacio libre en el volumen, excluyendo la reserva de snapshot, para absorber el 100% de la rotación de todos los datos. Si la reserva fraccionaria se establece en un valor inferior, entonces se requiere una cantidad correspondientemente menor de espacio libre, pero siempre excluye la reserva de snapshot. Esto significa que el espacio de reserva de snapshot en un entorno LUN se desperdicia.
+
+
+NOTE: La reserva de snapshot no se aplica al almacenamiento ASA.
 
 En un entorno NFS, hay dos opciones:
 

@@ -39,7 +39,10 @@ Consulte link:https://docs.netapp.com/us-en/ontap/volumes/index.html["documentac
 
 La reserva fraccionaria es el comportamiento de una LUN en un volumen con respecto a la eficiencia del espacio. Cuando la opción `fractional-reserve` se establece en 100 %, todos los datos del volumen pueden experimentar una rotación del 100 % con cualquier patrón de datos sin agotar el espacio en el volumen.
 
-Por ejemplo, piense en una base de datos en un único LUN de 250GB GB en un volumen de 1TB GB. La creación de una instantánea provocaría de inmediato la reserva de 250GB GB de espacio adicional en el volumen para garantizar que el volumen no se quede sin espacio por ningún motivo. El uso de reservas fraccionarias suele ser un desperdicio debido a que es extremadamente poco probable que cada byte del volumen de base de datos deba sobrescribirse. No hay razón para reservar espacio para un evento que nunca ocurre. Sin embargo, si un cliente no puede supervisar el consumo de espacio en un sistema de almacenamiento y debe tener la seguridad de que nunca se agota el espacio, se necesitarían reservas fraccionarias del 100% para utilizar copias Snapshot.
+Por ejemplo, considera una base de datos en un único LUN de 250GB en un volumen de 1TB en un sistema AFF. Crear una snapshot tendría como resultado inmediato la reserva de 250GB adicionales de espacio en el volumen para garantizar que el volumen no se quede sin espacio por ningún motivo. Usar reservas fraccionarias suele ser un derroche porque es extremadamente improbable que sea necesario sobrescribir cada byte del volumen de la base de datos. No hay razón para reservar espacio para un evento que nunca ocurre. Aun así, si un cliente no puede supervisar el consumo de espacio en un sistema de almacenamiento y debe estar seguro de que nunca se agota el espacio, se necesitarían reservas fraccionarias del 100% para usar snapshots.
+
+
+TIP: La abstracción de volumen no está presente en SAN, solo en la ASA, por lo que esta plataforma no utiliza reservas fraccionarias.
 
 
 
@@ -47,7 +50,7 @@ Por ejemplo, piense en una base de datos en un único LUN de 250GB GB en un volu
 
 La compresión y la deduplicación son ambas formas de thin provisioning. Por ejemplo, una huella de datos de 50TB MB puede comprimirse hasta 30TB MB, lo que supone un ahorro de 20TB MB. Para que la compresión proporcione beneficios, algunos de esos 20TB MB deben utilizarse para otros datos o el sistema de almacenamiento debe adquirirse con menos de 50TB TB. El resultado es almacenar más datos de los que están disponibles técnicamente en el sistema de almacenamiento. Desde el punto de vista de los datos, hay 50TB GB de datos, a pesar de que ocupa solo 30TB GB en las unidades.
 
-Siempre existe la posibilidad de que cambie la capacidad de compresión de un conjunto de datos, lo que provocaría un aumento del consumo de espacio real. Este aumento del consumo significa que la compresión debe gestionarse como sucede con otras formas de thin provisioning en términos de supervisión y uso `volume-autogrow` y.. `snapshot-autodelete`.
+Siempre existe la posibilidad de que la compresibilidad de un conjunto de datos cambie, lo que provocaría un aumento del consumo de espacio real. Este aumento del consumo implica que la compresión debe gestionarse como otras formas de thin provisioning en términos de supervisión y, en un sistema AFF, utilizando `volume-autogrow` y `snapshot-autodelete`.
 
 La compresión y la deduplicación se tratan de forma más detallada en el enlace de sección:efficiency.html
 
@@ -69,7 +72,7 @@ Aunque esta situación pueda parecer confusa, es poco probable que se encuentre 
 
 [TIP]
 ====
-*NetApp recomienda* las siguientes configuraciones de reserva:
+*NetApp recomienda* las siguientes configuraciones de reserva con plataformas AFF y FAS:
 
 * Configurado `fractional-reserve` a 0 cuando se implementa la supervisión de la capacidad básica junto con `volume-autogrow` y.. `snapshot-autodelete`.
 * Configurado `fractional-reserve` a 100 si no hay capacidad de monitoreo o si es imposible agotar el espacio bajo cualquier circunstancia.

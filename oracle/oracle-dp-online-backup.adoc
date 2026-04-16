@@ -29,13 +29,13 @@ Algunos clientes a gran escala han adoptado un enfoque más simple mediante la c
 
 == Distribución de datos
 
-El diseño más sencillo es aislar los archivos de datos en uno o varios volúmenes dedicados. No deben estar contaminados por ningún otro tipo de archivo. De este modo, se garantiza que los volúmenes de archivos de datos puedan restaurarse rápidamente mediante una operación SnapRestore sin destruir un registro de recuperación, un archivo de control o un archivo importante.
+La disposición más sencilla consiste en aislar los archivos de datos en uno o varios volúmenes dedicados, LUN o espacios de nombres NVMe. Los recursos de almacenamiento no deben estar contaminados por ningún otro tipo de archivo. Esto es para asegurarte de que los archivos de datos se puedan restaurar rápidamente mediante una operación SnapRestore sin destruir un registro de recuperación, un archivo de control o un registro de archivo importantes.
 
-SAN tiene requisitos similares para aislamiento de archivos de datos en volúmenes dedicados. Con un sistema operativo como Microsoft Windows, un único volumen puede contener varios LUN de archivos de datos, cada uno con un sistema de archivos NTFS. Con otros sistemas operativos, generalmente hay un administrador de volúmenes lógicos. Por ejemplo, con Oracle ASM, la opción más sencilla sería confinar los LUN de un grupo de discos ASM en un único volumen del que se pueda incluir y restaurar como unidad en un backup. Si se necesitan volúmenes adicionales por motivos de rendimiento o gestión de capacidad, crear un grupo de discos adicional en el nuevo volumen simplifica la gestión.
+SAN tiene requisitos similares para el aislamiento de archivos de datos dentro de recursos dedicados. Con un sistema operativo como Microsoft Windows que usa almacenamiento AFF, un único volumen puede contener varios LUN de archivos de datos, cada uno con un sistema de archivos NTFS. Con otros sistemas operativos, generalmente hay un gestor de volúmenes lógicos. Por ejemplo, con Oracle ASM, la opción más simple sería confinar los LUN de un grupo de discos ASM a un único volumen que se puede respaldar y restaurar como una unidad. Si se requieren volúmenes adicionales por razones de rendimiento o gestión de capacidad, crear un grupo de discos adicional en el nuevo volumen resulta en una gestión más sencilla.
 
-Si se siguen estas directrices, se pueden programar Snapshot directamente en el sistema de almacenamiento sin requisitos para realizar una snapshot de grupo de coherencia. El motivo es que las copias de seguridad de Oracle no necesitan que se realice una copia de seguridad de los archivos de datos al mismo tiempo. El procedimiento de backup online se diseñó para permitir que los archivos de datos sigan actualizándose a medida que se transmiten lentamente a la cinta durante horas.
+ASA no dispone de la abstracción a nivel de volumen que en un sistema AFF puede alojar varios LUN. En su lugar, ASA utiliza grupos de coherencia. En muchos casos, un único LUN o espacio de nombres NVMe puede satisfacer los requisitos de gestión y rendimiento de una base de datos. Si se necesitan varios LUN o espacios de nombres, se pueden añadir recursos adicionales y unirlos como un grupo de coherencia que se convierte en el contenedor de archivos de datos.
 
-Se produce una complicación en situaciones como el uso de un grupo de discos de ASM que se distribuye entre volúmenes. En estos casos, se debe realizar una cg-snapshot para garantizar que los metadatos de ASM sean coherentes en todos los volúmenes constituyentes.
+Si se siguen estas directrices, las instantáneas se pueden programar directamente en el sistema de almacenamiento.
 
 *Precaución:* Verifique que el ASM `spfile` y.. `passwd` los archivos no están en el grupo de discos que aloja los archivos de datos. Esto interfiere con la capacidad de restaurar selectivamente archivos de datos y solo archivos de datos.
 
@@ -46,7 +46,7 @@ Se produce una complicación en situaciones como el uso de un grupo de discos de
 Este procedimiento se puede realizar manualmente o a través de una aplicación como SnapCenter. El procedimiento básico es el siguiente:
 
 . Cierre la base de datos.
-. Recupere los volúmenes del archivo de datos en la instantánea inmediatamente antes del punto de restauración deseado.
+. Recupera los volúmenes NFS del datafile a la snapshot inmediatamente anterior al momento específico de restauración que deseas.
 . Reproduzca los archive logs en el punto deseado.
 . Reproduzca los redo logs actuales si desea una recuperación completa.
 
@@ -63,10 +63,10 @@ Este procedimiento se puede realizar manualmente o a través de una aplicación 
 
 . Cierre la base de datos.
 . Desactive los grupos de discos que alojan los archivos de datos. El procedimiento varía en función del gestor de volúmenes lógico elegido. Con ASM, el proceso requiere desmontar el grupo de discos. Con Linux, los sistemas de archivos deben desmontarse y los volúmenes lógicos y los grupos de volúmenes deben desactivarse. El objetivo es detener todas las actualizaciones en el grupo de volúmenes objetivo que se va a restaurar.
-. Restaure los grupos de discos de archivos de datos en la instantánea inmediatamente antes del punto de restauración deseado.
+. Restaura los LUN que alojan los grupos de discos de archivos de datos a la snapshot inmediatamente anterior al momento de restauración deseado.
 . Vuelva a activar los grupos de discos recién restaurados.
 . Reproduzca los archive logs en el punto deseado.
 . Vuelva a reproducir todos los redo logs si desea realizar una recuperación completa.
 
 
-En este procedimiento se asume que los archive logs deseados siguen presentes en el sistema de archivos activo. Si no lo son, los registros de archivos se deben restaurar desconectando las LUN del registro de archivos y ejecutando una restauración. Este es también un ejemplo en el que la división de archive logs en volúmenes dedicados es útil. Si los registros de archivos comparten un grupo de volúmenes con registros de recuperación, se deben copiar en otro lugar los registros de recuperación antes de restaurar el conjunto general de LUN. Este paso evita la pérdida de las transacciones registradas finales.
+Este procedimiento asume que los registros de archivo deseados todavía están presentes en el sistema de archivos activo. Si no lo están, los registros de archivo deben restaurarse llevando completamente fuera de línea las LUN/espacios de nombres de los registros de archivo y realizando una restauración (o creando un clon de una snapshot anterior, lo que puede ser difícil debido a la creación de UUID o nombres LVM duplicados en el mismo host). Este es también un ejemplo en el que resulta útil separar los registros de archivo en recursos de almacenamiento dedicados. Si los registros de archivo comparten un grupo de volúmenes con los redo logs, entonces los redo logs deben copiarse en otro lugar antes de la restauración del conjunto global de LUN. Este paso evita la pérdida de esas transacciones finales registradas.

@@ -4,9 +4,9 @@
 
 En concreto, la creciente adopción del almacenamiento all-flash ha permitido consolidar las cargas de trabajo. Las cabinas de almacenamiento que se basan en medios giratorios tendían a admitir solo una cantidad limitada de cargas de trabajo con un gran volumen de I/O debido a las funcionalidades de IOPS limitadas de la tecnología de unidades rotacionales más antigua. Una o dos bases de datos altamente activas saturarían las unidades subyacentes mucho antes de que las controladoras de almacenamiento alcanzaran sus límites. Esto ha cambiado. La funcionalidad de rendimiento de un número relativamente pequeño de unidades SSD puede saturar incluso las controladoras de almacenamiento más potentes. Esto significa que pueden aprovecharse todas las funcionalidades de las controladoras sin miedo al colapso repentino del rendimiento cuando se disparan los picos de latencia de los medios giratorios.
 
-Como ejemplo de referencia, un sencillo sistema AFF A800 de alta disponibilidad de dos nodos es capaz de dar servicio a hasta un millón de IOPS aleatorias antes de que la latencia aumente por encima del milisegundo. Sería de esperar que muy pocas cargas de trabajo individuales alcancen estos niveles. El uso completo de esta cabina para el sistema A800 de AFF implicará alojar múltiples cargas de trabajo y hacerlo de forma segura y, al mismo tiempo, garantizar la previsibilidad, requiere controles de calidad de servicio.
+Como ejemplo de referencia, un sistema HA AFF A800 de dos nodos más antiguo es capaz de dar servicio a hasta un millón de IOPS aleatorias antes de que la latencia supere un milisegundo. Se espera que muy pocas cargas de trabajo individuales alcancen tales niveles. La utilización completa de esta matriz AFF A800 implicará alojar múltiples cargas de trabajo, y hacerlo de forma segura mientras se garantiza la previsibilidad requiere controles de QoS.
 
-Existen dos tipos de calidad de servicio en ONTAP: IOPS y ancho de banda. Los controles de calidad de servicio se pueden aplicar a SVM, volúmenes, LUN y archivos.
+Existen dos tipos de calidad de servicio (QoS) en ONTAP: IOPS y ancho de banda. Los controles de QoS se pueden aplicar a AFF SVMs, volúmenes AFF, archivos AFF y LUNs y espacios de nombres AFF/ASA.
 
 
 
