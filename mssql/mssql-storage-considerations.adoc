@@ -28,11 +28,11 @@ Cuando se crea una nueva base de datos, Microsoft recomienda especificar unidade
 
 
 
-== Agregados
+== Agregados AFF
 
-Los agregados son los contenedores de almacenamiento de nivel más bajo para las configuraciones de almacenamiento de NetApp. Existe cierta documentación heredada en Internet, que recomienda separar las operaciones de I/O en diferentes conjuntos de unidades subyacentes. No se recomienda con ONTAP. NetApp ha realizado distintas pruebas de caracterización de las cargas de trabajo de I/O utilizando agregados compartidos y dedicados con archivos de datos y archivos de registro de transacciones separados. Las pruebas muestran que un gran agregado con más grupos RAID y unidades optimiza y mejora el rendimiento del almacenamiento y tiene mayor facilidad de gestión para los administradores por dos motivos:
+Los agregados son los contenedores de almacenamiento de nivel más bajo en las configuraciones de almacenamiento AFF. Existe cierta documentación obsoleta en internet que recomienda separar la E/S en diferentes conjuntos de unidades subyacentes. Esto no se recomienda con ONTAP. NetApp ha realizado diversas pruebas de caracterización de cargas de trabajo de E/S utilizando agregados compartidos y dedicados con los archivos de datos y los archivos de registro de transacciones separados. Las pruebas muestran que un solo agregado grande con más grupos RAID y unidades optimiza y mejora el rendimiento del almacenamiento y es más fácil de gestionar para los administradores por dos razones:
 
-* Un gran agregado hace que las funcionalidades de I/O de todas las unidades estén disponibles para todos los archivos.
+* Un agregado grande/SA pone las capacidades de E/S de todas las unidades a disposición de todos los archivos.
 * Un agregado de gran tamaño permite hacer un uso más eficiente del espacio en disco.
 
 

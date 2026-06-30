@@ -85,7 +85,7 @@ La calidad de servicio mínima o máxima se puede establecer fácilmente en máq
 Al crear el perfil de funcionalidad de almacenamiento para el contenedor de VVol, especifique un valor de IOPS máximo y/o mínimo con la funcionalidad de rendimiento y, a continuación, haga referencia a este SCP con la política de almacenamiento de la máquina virtual. Use esta política cuando cree la máquina virtual o aplique la política a una máquina virtual existente.
 
 
-NOTE: VVols requiere el uso de herramientas de ONTAP para VMware vSphere, que funciona como proveedor VASA para ONTAP. Consulte link:/vmware/vmware-vvols-overview.html["VMware vSphere Virtual Volumes (vVols) con ONTAP"]para ver las prácticas recomendadas de vVols.
+NOTE: vVols requiere el uso de ONTAP tools for VMware vSphere, que funciona como el VASA Provider para ONTAP. Consulta link:vmware-vvols-overview.html["VMware vSphere Virtual Volumes (vVols) con ONTAP"] para ver las mejores prácticas de vVols.
 
 
 

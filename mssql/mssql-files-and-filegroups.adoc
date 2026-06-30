@@ -20,7 +20,7 @@ En teoría, SQL Server (64 bits) admite 32.767 bases de datos por instancia y 52
 
 
 
-=== Archivos y grupo de archivos de bases de datos
+== Archivos y grupo de archivos de bases de datos
 
 Cada base de datos consta de uno o más archivos de datos y uno o varios archivos de registro de transacciones. El log de transacciones almacena la información sobre las transacciones de la base de datos y todas las modificaciones de datos realizadas por cada sesión. Cada vez que se modifican los datos, SQL Server almacena suficiente información en el log de transacciones para deshacer (realizar rollback) o rehacer (reproducir) la acción. Un registro de transacciones de SQL Server es una parte esencial de la reputación de SQL Server en cuanto a integridad y solidez de los datos. El registro de transacciones es vital para las capacidades de atomicidad, consistencia, aislamiento y durabilidad (ACID) de SQL Server. SQL Server escribe en el registro de transacciones tan pronto como se producen cambios en la página de datos. Cada sentencia de lenguaje de manipulación de datos (DML) (por ejemplo, SELECT, INSERT, UPDATE o DELETE) es una transacción completa, y el registro de transacciones se asegura de que se realice toda la operación basada en juegos, asegurándose de la atomicidad de la transacción.
 
@@ -39,7 +39,7 @@ TIP: *NetApp recomienda* evitar el uso del grupo de archivos primario para cualq
 
 
 
-=== Inicialización del archivo de instancia de base de datos
+== Inicialización del archivo de instancia de base de datos
 
 Puede especificar el tamaño inicial del archivo y los parámetros de crecimiento automático en el momento de crear la base de datos o agregar nuevos archivos a una base de datos existente. SQL Server utiliza un algoritmo de relleno proporcional al elegir en qué archivo de datos debe escribir los datos. Escribe una cantidad de datos proporcionalmente al espacio libre disponible en los archivos. Cuanto mayor sea el espacio libre del archivo, más escrituras gestionará.
 
@@ -82,7 +82,7 @@ Otra opción importante de la base de datos que controla los tamaños de los arc
 
 
 
-=== Directorio de registro
+== Directorio de registro
 
 El directorio de registro se especifica en SQL Server para almacenar datos de backup de registros de transacciones en el nivel de host. Si utiliza SnapCenter para realizar backup de archivos de registro, cada host SQL Server que utiliza SnapCenter debe tener un directorio de registro de host configurado para realizar backups de registros. SnapCenter tiene un repositorio de base de datos, por lo que los metadatos relacionados con las operaciones de backup, restauración o clonado se almacenan en un repositorio de base de datos central.
 
