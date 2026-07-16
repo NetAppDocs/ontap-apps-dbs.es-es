@@ -17,6 +17,7 @@ Para el proceso de actualización, se utilizan los volúmenes de FlexClone.
 
 
 
+[[data-management]]
 == Datos de empresa
 
 Como parte de la solución, NetApp ofrece una solución de actualización de pruebas y backup totalmente automatizada usando herramientas nativas de ONTAP. Esta solución está diseñada para simplificar la gestión de datos de Epic específicamente para la gran comunidad de administradores de bases de datos de Epic:
@@ -38,6 +39,7 @@ Para obtener información adicional sobre los CG, consulte link:https://docs.net
 
 
 
+[[configuring-consistency-groups-for-epic]]
 == Configurar los grupos de consistencia para Epic
 
 Una vez aprovisionados los volúmenes y las LUN tal y como se detallan en las secciones anteriores de este documento, se pueden configurar en un conjunto de CG. Se recomienda configurarlas como se muestra en la siguiente imagen:
@@ -46,6 +48,7 @@ image:epic-cg-layout.png["Grupos de consistencia y Epic"]
 
 
 
+[[consistency-group-snapshots]]
 == Snapshots de grupo de consistencia
 
 Se debe definir una programación de snapshot de CG nocturna en cada uno de los CG secundarios asociados con los volúmenes que proporcionan almacenamiento para la base de datos de producción. Esto dará como resultado un nuevo conjunto de backups consistentes de estos CG cada noche. Estos pueden utilizarse para clonar la base de datos de producción para utilizarlos en entornos distintos a la producción, como desarrollo y pruebas. NetApp ha desarrollado flujos de trabajo Ansible automatizados basados en el CG propio para Epic con el fin de automatizar el backup de bases de datos de producción, así como los entornos de prueba y actualización.

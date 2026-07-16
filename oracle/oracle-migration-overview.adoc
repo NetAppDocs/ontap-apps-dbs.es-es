@@ -19,6 +19,7 @@ En el caso de un nuevo proyecto de base de datos, no se trata de un problema, ya
 
 
 
+[[scripts]]
 == Scripts
 
 En esta documentación se proporcionan secuencias de comandos de ejemplo. Estos scripts proporcionan métodos de ejemplo de automatización de diversos aspectos de la migración para reducir la posibilidad de errores de usuario. Las secuencias de comandos pueden reducir las demandas generales sobre el PERSONAL DE TI responsable de la migración y pueden acelerar el proceso general. Todos estos scripts se extraen de los proyectos de migración reales realizados por los servicios profesionales de NetApp y los partners de NetApp. A lo largo de esta documentación se muestran ejemplos de su uso.

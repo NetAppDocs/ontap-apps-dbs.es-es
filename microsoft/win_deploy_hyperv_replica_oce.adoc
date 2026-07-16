@@ -18,6 +18,7 @@ Este apéndice describe la implementación de la réplica de Hyper-V fuera de un
 
 
 
+[[prerequisites]]
 == Requisitos previos
 
 * Necesita servidores Hyper-V independientes ubicados en las mismas ubicaciones geográficas o independientes que sirvan de servidores primarios y de réplica.
@@ -27,6 +28,7 @@ Este apéndice describe la implementación de la réplica de Hyper-V fuera de un
 
 
 
+[[deployment]]
 == Puesta en marcha
 
 . Configure el servidor de réplicas.
@@ -58,6 +60,7 @@ Este apéndice describe la implementación de la réplica de Hyper-V fuera de un
 
 
 
+[[replication]]
 == Replicación
 
 . Ejecute una conmutación por error de prueba para asegurarse de que la VM de réplica funciona correctamente en el servidor de réplica. La prueba crea una VM temporal en el servidor de réplica.

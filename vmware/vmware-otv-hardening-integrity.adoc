@@ -24,6 +24,7 @@ Las sumas de comprobación se proporcionan en las páginas de descarga de los pa
 
 
 
+[[verifying-the-signature-of-the-ontap-tools-ova]]
 == Verificación de la firma del OVA de herramientas de ONTAP
 
 El paquete de instalación de vApp se entrega en forma de tarball. Este tarball contiene certificados intermedios y raíz para el dispositivo virtual junto con un archivo README y un paquete OVA. El archivo README guía a los usuarios sobre cómo verificar la integridad del paquete OVA vApp.
@@ -32,6 +33,7 @@ Los clientes también deben cargar el certificado raíz e intermedio proporciona
 
 
 
+[[uploading-the-trusted-root-certificate-to-vcenter]]
 === Cargar el certificado raíz de confianza en vCenter
 
 . Inicie sesión con VMware vSphere Client en vCenter Server.
@@ -49,6 +51,7 @@ image:vmware-otv-hardening-trusted-publisher.png["Certificado de confianza"]
 
 
 
+[[verifying-the-signature-of-the-ontap-tools-iso-and-sra-tar-gz]]
 == Verificación de la firma de las herramientas de ONTAP ISO y SRA tar.gz
 
 NetApp comparte su certificado de firma de código con los clientes en la página de descarga del producto, junto con los archivos zip del producto para OTV-iso y sra.tgz.

@@ -16,6 +16,7 @@ El cluster de RAC ampliado tradicional confiaba en la duplicación de ASM para p
 
 
 
+[[replication]]
 == Replicación
 
 Lo fundamental para comprender la funcionalidad de RAC en la sincronización activa de SnapMirror es ver el almacenamiento como un único conjunto de LUN alojadas en el almacenamiento reflejado. Por ejemplo:
@@ -26,12 +27,14 @@ No hay ninguna copia primaria ni copia duplicada. Lógicamente, solo existe una 
 
 
 
+[[storage-configuration]]
 == Configuración del almacenamiento
 
 En esta configuración de ejemplo, los discos ASM están configurados de la misma forma que en cualquier configuración de RAC de sitio único en el almacenamiento empresarial. Dado que el sistema de almacenamiento proporciona protección de datos, se utilizaría la redundancia externa de ASM.
 
 
 
+[[uniform-vs-nonuninform-access]]
 == Acceso uniforme frente a acceso no informado
 
 La consideración más importante con Oracle RAC en la sincronización activa de SnapMirror es si se debe utilizar un acceso uniforme o no uniforme.
@@ -42,6 +45,7 @@ Ninguna de las opciones se recomienda o desaconseja específicamente. Algunos cl
 
 
 
+[[nonuniform-access]]
 == Acceso no uniforme
 
 El acceso no uniforme es más sencillo de configurar desde la perspectiva de SAN.
@@ -52,6 +56,7 @@ El principal link:oracle-dr-smas-nonuniform.html["acceso no uniforme"]inconvenie
 
 
 
+[[uniform-access]]
 == Acceso uniforme
 
 Para el acceso uniforme es necesario ampliar la SAN a través de varios sitios. La ventaja principal es que la pérdida de un sistema de almacenamiento no provocará la pérdida de una instancia de la base de datos. En su lugar, provocaría un cambio de multivía en el que se usan las rutas actualmente.
@@ -63,6 +68,7 @@ NOTE: En los diagramas que aparecen a continuación, también existen rutas acti
 
 
 
+[[aff-with-proximity-settings]]
 === AFF con ajustes de proximidad
 
 Si hay una latencia significativa entre los sitios, los sistemas AFF se pueden configurar con los ajustes de proximidad del host. Esto permite que cada sistema de almacenamiento tenga en cuenta qué hosts son locales y remotos y asigne prioridades de ruta según corresponda.
@@ -73,6 +79,7 @@ En el funcionamiento normal, cada instancia de Oracle utilizaría preferentement
 
 
 
+[[asa-aff-without-proximity-settings]]
 === ASA / AFF sin ajustes de proximidad
 
 Si no hay latencia significativa entre los sitios, los sistemas AFF se pueden configurar sin ajustes de proximidad del host o se puede utilizar ASA.

@@ -4,6 +4,7 @@
 
 
 
+[[deduplication]]
 == Deduplicación
 
 La deduplicación es eliminar los tamaños de bloques duplicados de un conjunto de datos. Por ejemplo, si existiera el mismo bloque de 4KB KB en 10 archivos diferentes, la deduplicación redirigiría ese bloque de 4KB KB en los 10 archivos al mismo bloque físico de 4KB KB. El resultado sería una mejora de 10:1 veces en eficiencia en esos datos.

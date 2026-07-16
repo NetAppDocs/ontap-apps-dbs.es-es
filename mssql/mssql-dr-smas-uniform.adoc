@@ -20,6 +20,7 @@ Una característica importante de SM-AS es la capacidad de configurar los sistem
 
 
 
+[[proximity-settings]]
 == Ajustes de proximidad
 
 La proximidad se refiere a una configuración por clúster que indica que un ID de iniciador de iSCSI o WWN de host particular pertenece a un host local. Es un segundo paso opcional para configurar el acceso a LUN.
@@ -34,6 +35,7 @@ Sin configuración de proximidad, ese host usará ambos sistemas de almacenamien
 
 
 
+[[aff]]
 == AFF
 
 Con un sistema AFF, las rutas aparecerían como se muestra a continuación cuando se configura la proximidad del host.

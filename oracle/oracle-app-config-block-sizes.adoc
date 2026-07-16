@@ -14,6 +14,7 @@ ONTAP utiliza internamente un tamaño de bloque variable, lo que significa que l
 
 
 
+[[datafile-block-sizes]]
 == Tamaños de bloque de archivos de datos
 
 Algunos sistemas operativos ofrecen diferentes tamaños de bloque del sistema de archivos. En el caso de los sistemas de archivos que admiten archivos de datos de Oracle, el tamaño de bloque debe ser 8KB cuando se utiliza la compresión. Cuando no se necesita compresión, se puede utilizar un tamaño de bloque de 8KB KB o 4KB KB.
@@ -24,6 +25,7 @@ Los sistemas de archivos compatibles con redo logs deben utilizar un tamaño de 
 
 
 
+[[redo-block-sizes]]
 == Rehacer tamaños de bloques
 
 Con tasas de redo muy elevadas, es posible que los bloques de 4KB KB rindan mejor porque las tasas de rehacer elevadas permiten realizar I/O en operaciones cada vez más eficientes. Si las tasas de redo son mayores que 50Mbps, considere la posibilidad de probar un tamaño de bloque de 4KB KB.

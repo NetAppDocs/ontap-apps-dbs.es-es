@@ -18,6 +18,7 @@ A veces, pueden producirse problemas de seguridad debido a discrepancias en las 
 
 
 
+[[virtual-appliance]]
 == *Dispositivo virtual*
 
 Puede configurar los servidores NTP desde la consola de mantenimiento del dispositivo virtual.  Los usuarios pueden agregar los detalles del servidor NTP en _Configuración del sistema_ => _Agregar nuevo servidor NTP_ opción
@@ -26,6 +27,7 @@ De forma predeterminada, el servicio para NTP es ntpd. Este es un servicio hered
 
 
 
+[[debian]]
 == *Debian*
 
 En Debian, el usuario puede acceder al archivo /etc/ntp.conf para obtener los detalles del servidor ntp.

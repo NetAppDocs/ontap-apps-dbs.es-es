@@ -27,6 +27,7 @@ Consulte también la discusión sobre la alineación de los bloques de compresi�
 
 
 
+[[misalignment-warnings]]
 == Advertencias de desalineación
 
 El registro de rehacer/transacciones de bases de datos normalmente genera I/O no alineadas que pueden provocar advertencias engañosas acerca de las LUN mal alineadas en ONTAP.

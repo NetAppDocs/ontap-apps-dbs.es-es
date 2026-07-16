@@ -23,6 +23,7 @@ Aunque la tecnología básica es la misma en las plataformas AFF y ASA, se utili
 
 
 
+[[aff-overview]]
 == Visión general de AFF
 
 Hay dos formas de SnapRestore en un sistema AFF: basado en archivos y basado en volúmenes:
@@ -37,6 +38,7 @@ ONTAP sólo permite el acceso de solo lectura a los datos de la snapshot, pero l
 
 
 
+[[aff-volume-snaprestore]]
 === Volumen AFF SnapRestore
 
 La restauración basada en volumen con SnapRestore devuelve el contenido de un volumen completo a un estado anterior. Esta operación no requiere movimiento de datos, lo que significa que el proceso de restauración es esencialmente instantáneo, aunque la operación de API o CLI puede tardar unos segundos en procesarse. Restaurar 1GB de datos no es más complicado ni lleva más tiempo que restaurar 1PB de datos. Esta capacidad es la razón principal por la que muchos clientes empresariales migran a sistemas de almacenamiento ONTAP. Ofrece un RTO medido en segundos incluso para los conjuntos de datos más grandes.
@@ -54,6 +56,7 @@ Hay varias opciones disponibles para abordar esta limitación:
 
 
 
+[[aff-file-snaprestore]]
 === Archivo AFF SnapRestore
 
 File-based SnapRestore es un proceso de restauración más granular basado en snapshots que se utiliza con volúmenes AFF. En lugar de revertir el estado de un volumen completo, se revierte el estado de un archivo, LUN o namespace individual. No es necesario eliminar snapshots, ni esta operación crea ninguna dependencia de un snapshot anterior. El archivo o LUN pasa a estar disponible inmediatamente en el volumen activo.
@@ -62,6 +65,7 @@ No se requiere movimiento de datos durante una restauración de archivo o LUN co
 
 
 
+[[asa-lunnamespace-restoration]]
 == Restauración de ASA LUN/namespace
 
 La restauración de datos en ASA es similar a AFF SnapRestore. Los datos simplemente se restauran a un estado anterior. El proceso es casi instantáneo y no requiere movimiento de datos. También tiene las mismas limitaciones, incluido el requisito de que la restauración de una snapshot conlleva la eliminación de las snapshots eliminadas posteriormente. Si esto resulta problemático, hay dos opciones. Primero, se puede clonar un LUN/namespace a partir de una snapshot anterior sin modificar el volumen de origen. Este es un proceso instantáneo y eficiente en espacio. Esencialmente, hace una copia de lectura/escritura del puntero de solo lectura a los bloques en una snapshot. Una segunda opción es mediante la API de REST, que puede usar la misma lógica de archivo único SnapRestore usada en sistemas AFF. El resultado es una restauración instantánea de un LUN/namespace usando los datos de una snapshot y se conservan todas las snapshots.

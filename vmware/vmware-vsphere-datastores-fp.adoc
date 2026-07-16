@@ -24,6 +24,7 @@ image:vmware-vsphere-datastores-fp-1.png["alt=pila de almacenamiento hipervisor 
 
 
 
+[[compute-and-virtual-disk-layers]]
 == Capas de computación y disco virtual
 
 El sistema operativo invitado se ejecuta en formatos de disco virtual como VMDK, QCOW2 o VHDX, que crean las capas de computación y dispositivos de bloque accesibles para aplicaciones y usuarios.
@@ -35,6 +36,7 @@ TIP: Siguiendo el link:https://www.netapp.com/pdf.html?item=/media/17239-tr-4598
 
 
 
+[[hypervisor-role]]
 == Rol de hipervisor
 
 El hipervisor media entre sus máquinas virtuales en ejecución y los recursos físicos como CPU, memoria y almacenamiento. En el caso de uso de NAS, el hipervisor monta el recurso compartido de NAS y presenta los archivos de disco virtual a las máquinas virtuales como dispositivos de bloque.
@@ -47,6 +49,7 @@ Ambas rutas convergen en la capa WAFL de ONTAP, lo que permite servicios de dato
 
 
 
+[[fabricpool-tiering-integration]]
 == FabricPool integración por niveles
 
 FabricPool gestiona de forma inteligente la ubicación de los datos entre el almacenamiento local de alto rendimiento y los niveles de objetos en la nube de menor coste.
@@ -57,6 +60,7 @@ La integración de FabricPool de ONTAP permite una ubicación de los datos efici
 
 
 
+[[storage-efficiency-and-management]]
 == Eficiencia y gestión del almacenamiento
 
 Es importante entender cómo funciona FabricPool antes de activarlo. Una configuración adecuada te ayuda a mejorar el rendimiento, reducir el riesgo y optimizar el TCO al almacenar los datos correctos en el nivel adecuado.

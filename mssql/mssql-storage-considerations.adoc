@@ -20,6 +20,7 @@ La optimización de una solución SQL Server en ONTAP requiere comprender el pat
 
 
 
+[[data-storage-design]]
 == Diseño de almacenamiento de datos
 
 Para las bases de datos de SQL Server que no utilizan SnapCenter para realizar backups, Microsoft recomienda colocar los archivos de datos y de registro en unidades independientes. Para las aplicaciones que actualizan y solicitan datos simultáneamente, el archivo de registro tiene un gran consumo de escrituras y el archivo de datos (en función de la aplicación) tiene un gran volumen de lecturas y escrituras. Para la recuperación de datos, el archivo de registro no es necesario. Por lo tanto, las solicitudes de datos pueden satisfacerse desde el archivo de datos ubicado en su propia unidad.
@@ -28,6 +29,7 @@ Cuando se crea una nueva base de datos, Microsoft recomienda especificar unidade
 
 
 
+[[aff-aggregates]]
 == Agregados AFF
 
 Los agregados son los contenedores de almacenamiento de nivel más bajo en las configuraciones de almacenamiento AFF. Existe cierta documentación obsoleta en internet que recomienda separar la E/S en diferentes conjuntos de unidades subyacentes. Esto no se recomienda con ONTAP. NetApp ha realizado diversas pruebas de caracterización de cargas de trabajo de E/S utilizando agregados compartidos y dedicados con los archivos de datos y los archivos de registro de transacciones separados. Las pruebas muestran que un solo agregado grande con más grupos RAID y unidades optimiza y mejora el rendimiento del almacenamiento y es más fácil de gestionar para los administradores por dos razones:
@@ -40,12 +42,14 @@ Para alta disponibilidad (HA), colocar la réplica síncrona secundaria de SQL S
 
 
 
+[[volumes]]
 == Volúmenes
 
 los volúmenes se crean y residen dentro de los agregados. Este término a veces provoca confusión porque un volumen ONTAP no es una LUN. Un volumen ONTAP es un contenedor de gestión para datos. Un volumen puede contener archivos, LUN o incluso objetos S3. Un volumen no ocupa espacio, solo se utiliza para la gestión de los datos contenidos.
 
 
 
+[[volume-design-considerations]]
 === Consideraciones sobre el diseño del volumen
 
 Antes de crear un diseño de volumen de base de datos, es importante comprender cómo los patrones de I/O de SQL Server y las características varían en función de la carga de trabajo y de los requisitos de backup y recuperación. Consulte las siguientes recomendaciones de NetApp para volúmenes flexibles:
@@ -63,6 +67,7 @@ Antes de crear un diseño de volumen de base de datos, es importante comprender 
 
 
 
+[[luns]]
 == LUN
 
 * Asegúrese de que los archivos de la base de datos del usuario y el directorio de registro para almacenar backup de registros se encuentren en volúmenes independientes para evitar que la política de retención sobrescriba las snapshots cuando estas se usen con la tecnología SnapVault.

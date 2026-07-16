@@ -13,6 +13,7 @@ La mayoría de las cabinas all-flash pueden ofrecer el rendimiento necesario par
 
 
 
+[[quality-of-service-qos]]
 == Calidad de servicio (QoS)
 
 NetApp recomienda utilizar la calidad de servicio. La ventaja de la calidad de servicio es la capacidad de consolidar todas las cargas de trabajo de Epic. Todos los protocolos y pools de almacenamiento pueden residir en menos hardware. No es necesario separar pools de almacenamiento.

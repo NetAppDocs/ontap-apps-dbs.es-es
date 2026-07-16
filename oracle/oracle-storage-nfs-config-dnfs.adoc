@@ -20,6 +20,7 @@ Una base de datos con la función dNFS activada todavía tiene montados los sist
 
 
 
+[[direct-nfs]]
 == NFS directo
 
 El valor principal de Direct NFS de Oracle es omitir el cliente NFS host y realizar operaciones de archivos NFS directamente en un servidor NFS. Para activarlo sólo es necesario cambiar la biblioteca de Oracle Disk Manager (ODM). Las instrucciones para este proceso se proporcionan en la documentación de Oracle.
@@ -34,6 +35,7 @@ No utilice dNFS con ningún tipo de resolución de nombres por turnos, incluidos
 
 
 
+[[enabling-dnfs]]
 === Habilitando dNFS
 
 Oracle dNFS puede trabajar con NFSv3 sin necesidad de configuración más allá de habilitar la biblioteca dNFS (consulte la documentación de Oracle para ver el comando específico necesario), pero si dNFS no puede establecer la conectividad, puede volver silenciosamente al cliente NFS del núcleo. Si esto sucede, el rendimiento puede verse seriamente afectado.
@@ -139,6 +141,7 @@ Estas son las conexiones que utiliza dNFS. Hay dos rutas y canales visibles para
 
 
 
+[[direct-nfs-and-host-file-system-access]]
 == Acceso directo a sistemas de archivos del host y NFS
 
 En ocasiones, el uso de dNFS puede ocasionar problemas en las aplicaciones o actividades del usuario que se basan en los sistemas de archivos visibles montados en el host, ya que el cliente dNFS accede al sistema de archivos fuera de banda desde el sistema operativo host. El cliente dNFS puede crear, eliminar y modificar archivos sin el conocimiento del sistema operativo.

@@ -21,6 +21,7 @@ Esto incluye medidas de planificación típicas, como asegurar que exista sufici
 
 
 
+[[zoning]]
 == División en zonas
 
 Una zona de FC nunca debe contener más de un iniciador. Tal arreglo puede parecer funcionar inicialmente, pero la comunicación entre iniciadores finalmente interfiere con el rendimiento y la estabilidad.

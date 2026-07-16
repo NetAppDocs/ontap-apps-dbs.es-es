@@ -64,6 +64,7 @@ En la siguiente tabla se ofrece un resumen de los elementos de configuración de
 
 
 
+[[san-fc-nvmefc-iscsi-nvmetcp-rdm]]
 == SAN (FC, NVMe/FC, iSCSI, NVMe/TCP), RDM
 
 ONTAP ofrece almacenamiento basado en bloques para VMware vSphere utilizando el protocolo iSCSI tradicional y Fibre Channel (FCP) así como el protocolo de bloque de nueva generación altamente eficiente y eficiente, NVMe over Fabrics (NVMe-oF), con soporte para NVMe/FC y NVMe/TCP.
@@ -72,6 +73,7 @@ Para obtener las mejores prácticas detalladas para implementar protocolos de bl
 
 
 
+[[nfs]]
 == NFS
 
 VSphere permite a los clientes utilizar cabinas NFS de nivel empresarial para proporcionar acceso simultáneo a los almacenes de datos en todos los nodos de un clúster ESXi. Como se ha mencionado en la link:vmware-vsphere-datastores-top.html["almacenes de datos"] sección, existen algunas ventajas de facilidad de uso y visibilidad de la eficiencia del almacenamiento cuando se usa NFS con vSphere.
@@ -80,26 +82,28 @@ Para conocer las prácticas recomendadas, consulte link:vmware-vsphere-datastore
 
 
 
+[[direct-connect-networking]]
 == Conexión de red directa
 
 Los administradores de virtualización a veces prefieren simplificar sus infraestructuras eliminando los switches de red de la configuración. Esto permite crear una solución más autónoma con menos componentes y menos espacio requerido en el rack. Hay algunas restricciones importantes que dependen del protocolo en uso.
 
 
 
+[[fiber-channel]]
 === Fibre Channel
 
-A partir de ONTAP 9.19.1, la conexión FC directa es compatible tanto con las FC-SAN tradicionales (SCSI) como con NVMe/FC, usando adaptadores FC seleccionados de sistemas de almacenamiento. Los HBA establecerán una conexión FC punto a punto estándar.
-
-Antes de ONTAP 9.19.1, los sistemas de almacenamiento ONTAP requieren NPIV, lo que significa que el sistema de almacenamiento debe estar conectado a un conmutador FC que también admite NPIV.
+A partir de ONTAP 9.19.1, la conexión FC directa es compatible tanto con las FC-SAN tradicionales (SCSI) como con NVMe/FC, usando adaptadores FC seleccionados de sistemas de almacenamiento. Los HBA establecerán una conexión FC punto a punto estándar. Antes de ONTAP 9.19.1, los sistemas de almacenamiento ONTAP requieren NPIV, lo que significa que el sistema de almacenamiento debe estar conectado a un conmutador FC que también admite NPIV.
 
 
 
+[[iscsi-and-nvmetcp]]
 === ISCSI y NVMe/TCP
 
 Un host que utilice iSCSI o NVMe/TCP se puede conectar directamente a un sistema de almacenamiento y funcionar normalmente. El motivo son las rutas. Las conexiones directas a dos controladoras de almacenamiento diferentes dan como resultado dos rutas independientes para el flujo de datos. La pérdida de una ruta, un puerto o una controladora no impide que se utilice la otra ruta.
 
 
 
+[[nfs]]
 === NFS
 
 Se puede utilizar el almacenamiento NFS conectado directamente, pero con una limitación considerable: El fallo no funcionará si no se realiza una ejecución significativa de secuencias de comandos, que sería responsabilidad del cliente.

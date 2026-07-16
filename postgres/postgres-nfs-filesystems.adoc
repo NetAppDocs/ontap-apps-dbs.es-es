@@ -32,6 +32,7 @@ Si se esperan operaciones de I/O secuenciales pesadas, los tamaños de transfere
 
 
 
+[[nfs-transfer-sizes]]
 == Tamaños de transferencia de NFS
 
 De forma predeterminada, ONTAP limita el tamaño de I/O de NFS a 64K.
@@ -59,6 +60,7 @@ rw,hard,nointr,bg,vers=[3|4],proto=tcp,rsize=262144,wsize=262144
 ....
 
 
+[[nfsv3-tcp-slot-tables]]
 == NFSv3 Tablas de ranuras TCP
 
 Si NFSv3 se utiliza con Linux, es fundamental configurar correctamente las tablas de ranuras TCP.

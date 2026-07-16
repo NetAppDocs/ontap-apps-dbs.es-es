@@ -18,24 +18,28 @@ ONTAP ofrece un sistema de almacenamiento seguro para el sistema operativo Windo
 
 
 
+[[windows-defender-antivirus]]
 == Antivirus de Windows Defender
 
 Windows Defender es un software antimalware instalado y habilitado en Windows Server de forma predeterminada. Este software protege activamente Windows Server contra malware conocido y puede actualizar regularmente las definiciones antimalware a través de Windows Update. Los LUN de NetApp y los recursos compartidos de SMB se pueden analizar mediante Windows Defender.
 
 
 
+[[further-reading]]
 === Más información
 
 Para obtener más información, consulte https://technet.microsoft.com/windows-server-docs/security/windows-defender/windows-defender-overview-windows-server?f=255&MSPPError=-2147217396["Descripción general de Windows Defender"].
 
 
 
+[[bitlocker]]
 == BitLocker
 
 El cifrado de la unidad BitLocker es una característica de protección de datos continuada desde Windows Server 2012. Este cifrado protege los discos físicos, las LUN y los volúmenes compartidos en cluster.
 
 
 
+[[best-practice]]
 === Mejor práctica
 
 Antes de habilitar BitLocker, el CSV debe ponerse en modo de mantenimiento. Por lo tanto, NetApp recomienda que las decisiones relativas a la seguridad basada en BitLocker se tomen antes de crear VM en el CSV para evitar tiempos de inactividad.

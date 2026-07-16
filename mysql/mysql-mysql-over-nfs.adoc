@@ -18,6 +18,7 @@ La documentación de MySQL recomienda el uso de NFSv4 para puestas en marcha de 
 
 
 
+[[ontap-nfs-transfer-sizes]]
 == Tamaños de transferencia NFS de ONTAP
 
 De forma predeterminada, ONTAP limitará el tamaño de I/O de NFS a 64K. La E/S aleatoria con una base de datos MySQL utiliza un tamaño de bloque mucho más pequeño, que es muy inferior al máximo de 64K KB. Las E/S de bloques grandes suelen estar en paralelo, por lo que el máximo de 64K KB tampoco es una limitación.

@@ -18,6 +18,7 @@ Las siguientes secciones describen las mejores prácticas operativas para el alm
 
 
 
+[[datastores-and-protocols]]
 == Almacenes de datos y protocolos
 
 * Si es posible, utilice siempre herramientas ONTAP para aprovisionar almacenes de datos y volúmenes. De este modo se garantiza que los volúmenes, rutas de unión, LUN, iGroups, políticas de exportación, y otros ajustes se configuran de forma compatible.
@@ -39,6 +40,7 @@ snap autodelete modify -volume -commitment try
 
 
 
+[[about-array-pairs]]
 == Acerca de parejas de cabinas
 
 Se crea un gestor de cabinas para cada pareja de cabinas. Con las herramientas SRM y ONTAP, el emparejamiento de cabinas se realiza con el ámbito de una SVM, incluso si utiliza credenciales de clúster. Esto le permite segmentar los flujos de trabajo de recuperación ante desastres entre inquilinos en función de los cuales se hayan asignado a gestionar las SVM. Puede crear varios administradores de cabina para un clúster determinado y pueden ser asimétricos. Es posible fan out o fan in entre diferentes clústeres de ONTAP 9. Por ejemplo, puede tener SVM-A y SVM-B en el clúster-1 que replica en SVM-C en el clúster-2, SVM-D en el clúster-3 o viceversa.
@@ -49,6 +51,7 @@ image:vsrm-ontap9_image6.jpg["clúster"]
 
 
 
+[[about-replication-groups]]
 == Acerca de los grupos de replicación
 
 Los grupos de replicación contienen colecciones lógicas de máquinas virtuales que se recuperan juntas. Dado que la replicación de SnapMirror de ONTAP se produce en el nivel de volumen, todas las máquinas virtuales de un volumen se encuentran en el mismo grupo de replicación.
@@ -59,12 +62,14 @@ Un aspecto final que se debe tener en cuenta para los grupos de replicación es 
 
 
 
+[[about-protection-groups]]
 == Acerca de los grupos de protección
 
 Los grupos de protección definen las máquinas virtuales y los almacenes de datos en grupos que se recuperan conjuntamente del sitio protegido. El sitio protegido es donde existen las máquinas virtuales configuradas en un grupo de protección durante las operaciones normales de estado constante. Es importante tener en cuenta que, aunque SRM puede mostrar varios administradores de cabinas para un grupo de protección, un grupo de protección no puede abarcar varios administradores de cabinas. Por este motivo, no debe abarcar los archivos de equipos virtuales entre almacenes de datos en diferentes SVM.
 
 
 
+[[about-recovery-plans]]
 == Acerca de los planes de recuperación
 
 Los planes de recuperación definen qué grupos de protección se recuperan en el mismo proceso. Se pueden configurar varios grupos de protección en el mismo plan de recuperación. Además, para ofrecer más opciones para la ejecución de planes de recuperación, se puede incluir un solo grupo de protección en varios planes de recuperación.
@@ -77,6 +82,7 @@ NetApp recomienda encarecidamente trabajar con sus equipos de aplicaciones para 
 
 
 
+[[test-failover]]
 == Probar la recuperación tras fallos
 
 Como práctica recomendada, siempre realice una conmutación por error de prueba cada vez que se realice un cambio en la configuración del almacenamiento de VM protegido. Esto garantiza que, en caso de desastre, pueda confiar en que Site Recovery Manager pueda restaurar los servicios dentro del objetivo de RTO esperado.
@@ -89,6 +95,7 @@ Una vez que la prueba se ha validado y ya no es necesaria, realice una operació
 
 
 
+[[failover-considerations]]
 == Consideraciones sobre la conmutación por error
 
 Hay otros factores que se deben tener en cuenta a la hora de conmutar por error un sitio además del orden de las operaciones mencionado en esta guía.
@@ -103,12 +110,14 @@ Para configurar SRM de modo que aplique diferentes ajustes de red a varios equip
 
 
 
+[[reprotect]]
 == Vuelva a proteger
 
 Después de una recuperación, el sitio de recuperación se convierte en el nuevo sitio de producción. Dado que la operación de recuperación rompió la replicación de SnapMirror, el nuevo sitio de producción no está protegido contra ningún desastre futuro. Una mejor práctica es proteger el nuevo site de producción en otro site inmediatamente después de una recuperación. Si el sitio de producción original está operativo, el administrador de VMware puede utilizar el sitio de producción original como un nuevo sitio de recuperación para proteger el nuevo sitio de producción, invirtiendo efectivamente la dirección de la protección. La reprotección solo está disponible en fallos no catastróficos. Por lo tanto, en algún momento deben recuperarse los servidores vCenter Server, los servidores ESXi, los servidores SRM y las bases de datos correspondientes originales. Si no están disponibles, deben crearse un nuevo grupo de protección y un nuevo plan de recuperación.
 
 
 
+[[failback]]
 == Conmutación tras recuperación
 
 Una operación de conmutación tras recuperación es fundamentalmente una conmutación por error en una dirección diferente a la anterior. Como práctica recomendada, compruebe que el sitio original vuelve a los niveles aceptables de funcionalidad antes de intentar realizar la conmutación tras recuperación o, en otras palabras, la conmutación por error al sitio original. Si la instalación original sigue en peligro, deberá retrasar la conmutación tras recuperación hasta que se solucione el fallo lo suficiente.
@@ -117,6 +126,7 @@ Otra práctica recomendada para la conmutación tras recuperación es siempre re
 
 
 
+[[reprotecting-the-original-site]]
 == Volver a proteger el sitio original
 
 Después de la conmutación por recuperación, debe confirmar con todas las partes interesadas que sus servicios se han vuelto a la normalidad antes de ejecutar la reprotección de nuevo.

@@ -22,6 +22,7 @@ Una migración a nivel de base de datos generalmente hace referencia al uso del 
 
 
 
+[[planning-considerations]]
 == Consideraciones DE PLANIFICACIÓN
 
 La mejor opción para la migración depende de una combinación de factores, como la escala del entorno que se va a migrar, la necesidad de evitar el tiempo de inactividad y el esfuerzo general requerido para realizar la migración. Obviamente, las bases de datos grandes requieren más tiempo y esfuerzo para la migración, pero la complejidad de estas migraciones es mínima. Las bases de datos pequeñas se pueden migrar rápidamente, pero, si hay miles que migrar, la escala del esfuerzo puede crear complicaciones. Por último, cuanto mayor sea la base de datos, más probabilidades hay de que sea crítica para el negocio, lo cual da lugar a la necesidad de minimizar los tiempos de inactividad a la vez que se conserva una ruta de back-out.
@@ -30,6 +31,7 @@ Aquí se tratan algunas de las consideraciones para planificar una estrategia de
 
 
 
+[[data-size]]
 == Tamaño de datos
 
 Los tamaños de las bases de datos que se migrarán afectan obviamente a la planificación de la migración, aunque el tamaño no afecta necesariamente al tiempo de transición. Cuando es necesario migrar una gran cantidad de datos, la principal cuestión es el ancho de banda. Las operaciones de copia suelen realizarse con I/O secuenciales eficientes Según estimaciones conservadoras, asuma el aprovechamiento del 50% del ancho de banda de red disponible para operaciones de copia. Por ejemplo, un puerto FC de 8GB Gb puede transferir aproximadamente 800Mbps Gb en teoría. Suponiendo una utilización del 50%, se puede copiar una base de datos a una velocidad de aproximadamente 400Mbps KB. Por lo tanto, una base de datos de 10TB TB se puede copiar en unas siete horas a esta velocidad.
@@ -38,6 +40,7 @@ La migración a distancias más largas generalmente requiere un enfoque más cre
 
 
 
+[[database-count]]
 == Recuento de bases de datos
 
 En muchos casos, el problema de mover una gran cantidad de datos no es el tamaño de los datos, sino la complejidad de la configuración que soporta la base de datos. No basta con saber que deben migrarse 50TB TB de bases de datos. Podría ser una única base de datos de misión crítica de 50TB TB, una colección de 4, 000 bases de datos heredadas o una combinación de datos de producción y no de producción. En algunos casos, gran parte de los datos se componen de clones de una base de datos de origen. Estos clones no tienen que migrarse de ninguna manera, ya que pueden volver a crearse fácilmente, especialmente cuando la nueva arquitectura está diseñada para aprovechar los volúmenes FlexClone de NetApp.
@@ -50,6 +53,7 @@ Por último, si es necesario migrar 500 bases de datos en 200 servidores, pueden
 
 
 
+[[rearchitecture-requirements]]
 == Vuelva a crear los requisitos de la arquitectura
 
 Normalmente, el diseño de un archivo de base de datos debe modificarse para aprovechar las funciones de la nueva cabina de almacenamiento; sin embargo, esto no siempre es así. Por ejemplo, las funciones de las cabinas all-flash EF-Series se dirigen principalmente al rendimiento SAN y la fiabilidad de SAN. En la mayoría de los casos, las bases de datos pueden migrarse a una cabina EF-Series sin tener en cuenta ninguna necesidad de distribución de los datos. Los únicos requisitos son el alto nivel de IOPS, la baja latencia y la sólida fiabilidad. Aunque existen prácticas recomendadas en relación con factores como la configuración de RAID o los pools de discos dinámicos, los proyectos EF-Series rara vez requieren cambios significativos en la arquitectura general de almacenamiento para aprovechar estas funciones.
@@ -62,6 +66,7 @@ Tecnologías como los controles de calidad de servicio, la reubicación de datos
 
 
 
+[[cutover-time]]
 == Tiempo de transición
 
 Se debe determinar la interrupción máxima permitida del servicio durante la transición. Es un error común asumir que todo el proceso de migración provoca interrupciones. Muchas tareas pueden completarse antes de que comience cualquier interrupción del servicio y muchas opciones permiten completar la migración sin interrupciones ni interrupciones del servicio. Incluso cuando resulte imposible evitar las interrupciones, debe definir la interrupción del servicio máxima permitida, puesto que la duración del tiempo de transición varía de un procedimiento a otro.
@@ -70,12 +75,14 @@ Por ejemplo, copiar una base de datos de 10TB suele tardar unas siete horas en c
 
 
 
+[[back-out-path]]
 == Ruta de retroceso
 
 Ninguna migración está completamente exenta de riesgos. Incluso si la tecnología funciona perfectamente, siempre existe la posibilidad de error del usuario. El riesgo asociado a una ruta de migración elegida debe tenerse en cuenta junto con las consecuencias de una migración fallida. Por ejemplo, la capacidad transparente de migración de almacenamiento en línea de Oracle ASM es una de sus funciones clave, y este método es una de las más fiables conocidas. Sin embargo, los datos se copian de forma irreversible con este método. En el caso muy poco probable de que se produzca un problema con ASM, no hay una ruta de salida fácil. La única opción es restaurar el entorno original o utilizar ASM para revertir la migración de nuevo a las LUN originales. El riesgo puede minimizarse, pero no eliminarse, realizando un backup del tipo snapshot en el sistema de almacenamiento original, asumiendo que el sistema sea capaz de realizar dicha operación.
 
 
 
+[[rehearsal]]
 == Ensayo
 
 Algunos procedimientos de migración deben verificarse por completo antes de la ejecución. La necesidad de migración y ensayo del proceso de transición es una solicitud común con bases de datos críticas para la misión para la que la migración debe tener éxito y se debe minimizar el tiempo de inactividad. Además, las pruebas de aceptación del usuario se incluyen con frecuencia como parte del trabajo posterior a la migración y el sistema en general solo puede volver a la producción una vez que se hayan completado estas pruebas.

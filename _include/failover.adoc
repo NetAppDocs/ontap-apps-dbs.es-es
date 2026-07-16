@@ -27,6 +27,7 @@ La misma lógica se aplica a un switchover de MetroCluster. En condiciones norma
 ====
 
 
+[[metrocluster-and-multiple-aggregates]]
 == MetroCluster y varios agregados
 
 MetroCluster es una tecnología de replicación síncrona que cambia al modo asíncrono en caso de interrupción de la conectividad. Esta es la solicitud más común de los clientes, porque la replicación síncrona garantizada implica que la interrupción de la conectividad del sitio provoca una parada completa de las operaciones de I/O de la base de datos, lo que impide que la base de datos funcione.

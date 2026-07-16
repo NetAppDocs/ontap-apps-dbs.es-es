@@ -36,6 +36,7 @@ La mayoría de clientes de bases de datos seleccionan ahora las cabinas all-flas
 
 
 
+[[oracle-automatic-workload-repository-and-benchmarking]]
 == Oracle Automatic Workload Repository y benchmarking
 
 El estándar oro para las comparaciones de rendimiento de Oracle es un informe de Oracle Automatic Workload Repository (AWR).
@@ -51,6 +52,7 @@ NOTE: Cuando los informes de AWR no están disponibles, los informes de Oracle s
 
 
 
+[[oracle-awr-and-troubleshooting]]
 == Oracle AWR y solución de problemas
 
 Un informe AWR es también la herramienta más importante para analizar un problema de rendimiento.
@@ -69,6 +71,7 @@ Al proporcionar datos de AWR, tenga en cuenta los siguientes requisitos:
 
 
 
+[[calibrateio]]
 == calibrar_io
 
 La `calibrate_io` nunca se debe usar el comando para probar, comparar ni hacer pruebas de rendimiento de los sistemas de almacenamiento. Tal y como se indica en la documentación de Oracle, este procedimiento calibra las capacidades de E/S del almacenamiento.
@@ -77,24 +80,28 @@ La calibración no es lo mismo que la evaluación comparativa. El objetivo de es
 
 
 
+[[slob2]]
 == SLOB2
 
 SLOB2, el Silly Little Oracle Benchmark, se ha convertido en la herramienta preferida para evaluar el rendimiento de la base de datos. Fue desarrollado por Kevin Closson y está disponible en link:https://kevinclosson.net/slob/["https://kevinclosson.net/slob/"^]. Se necesitan minutos para instalar y configurar, y utiliza una base de datos Oracle real para generar patrones de E/S en un tablespace definido por el usuario. Es una de las pocas opciones de prueba disponibles que puede saturar una cabina all-flash con I/O. También es útil para generar niveles mucho más bajos de I/O para simular cargas de trabajo de almacenamiento que son bajas IOPS, pero sensibles a la latencia.
 
 
 
+[[swingbench]]
 == Swingbench
 
 Swingbench puede ser útil para probar el rendimiento de las bases de datos, pero es extremadamente difícil utilizar Swingbench de una manera que pone a prueba el almacenamiento. NetApp no ha observado ninguna prueba de Swingbench que haya producido suficientes I/O como para representar una carga significativa en ninguna cabina AFF. En casos limitados, la prueba de entrada de órdenes (OET) puede utilizarse para evaluar el almacenamiento desde un punto de vista de latencia. Esto podría ser útil en situaciones en las que una base de datos tiene una dependencia de latencia conocida para consultas particulares. Se debe tener precaución para asegurarse de que el host y la red estén correctamente configurados de modo que se puedan aprovechar las posibilidades de latencia de una cabina all-flash.
 
 
 
+[[hammerdb]]
 == HammerDB
 
 HammerDB es una herramienta de prueba de bases de datos que simula las pruebas TPC-C y TPC-H. Construir un conjunto de datos lo suficientemente grande puede llevar mucho tiempo para ejecutar correctamente una prueba, pero puede ser una herramienta eficaz para evaluar el rendimiento de las aplicaciones de almacén de datos y OLTP.
 
 
 
+[[orion]]
 == Orión
 
 La herramienta Oracle Orion se usaba comúnmente con Oracle 9, pero no se ha mantenido para garantizar la compatibilidad con los cambios en varios sistemas operativos de host. Rara vez se utiliza con Oracle 10 u Oracle 11 debido a incompatibilidades con el sistema operativo y la configuración del almacenamiento.

@@ -25,6 +25,7 @@ La ingeniería de software con Herramientas de ONTAP para VMware vSphere emplea 
 
 
 
+[[product-security-features]]
 == Funciones de seguridad de los productos
 
 Las herramientas de ONTAP para VMware vSphere incluyen las siguientes funciones de seguridad en cada versión.

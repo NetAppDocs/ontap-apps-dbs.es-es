@@ -24,6 +24,7 @@ Desde el año 2020, todas las cargas de trabajo de Epic ODB deben estar en almac
 
 
 
+[[nvme]]
 == NVMe
 
 Cuando el rendimiento es primordial, NetApp también admite NVMe/FC, el protocolo SAN FC de nueva generación.

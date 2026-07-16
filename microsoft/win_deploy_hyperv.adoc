@@ -18,6 +18,7 @@ En este apéndice se describe la puesta en marcha de un clúster Hyper-V.
 
 
 
+[[prerequisites]]
 == Requisitos previos
 
 * Existen al menos dos servidores de Hyper-V conectados entre sí.
@@ -30,6 +31,7 @@ En este apéndice se describe la puesta en marcha de un clúster Hyper-V.
 
 
 
+[[deployment]]
 == Puesta en marcha
 
 . Inicie sesión en uno de los servidores de Windows Hyper-V como miembro del grupo de administradores.

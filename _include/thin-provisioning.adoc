@@ -10,6 +10,7 @@ La clonación es también un ejemplo de aprovisionamiento ligero. Un importante 
 
 
 
+[[space-management]]
 == Gestión del espacio
 
 Se debe tener cierta precaución con el thin provisioning de un entorno de aplicaciones porque las tasas de cambios de los datos pueden aumentar de forma inesperada. Por ejemplo, el consumo de espacio debido a las instantáneas puede aumentar rápidamente si se reindexan las tablas de la base de datos o si se aplican parches a gran escala a los huéspedes de VMware. Una copia de seguridad fuera de lugar puede escribir una gran cantidad de datos en muy poco tiempo. Por último, puede ser difícil recuperar algunas aplicaciones si un sistema de archivos se queda sin espacio libre inesperadamente.
@@ -20,6 +21,7 @@ Consulte link:https://docs.netapp.com/us-en/ontap/volumes/index.html["documentac
 
 
 
+[[fractional-reservations]]
 == Reservas fraccionarias
 
 La reserva fraccionaria es el comportamiento de una LUN en un volumen con respecto a la eficiencia del espacio. Cuando la opción `fractional-reserve` se establece en 100 %, todos los datos del volumen pueden experimentar una rotación del 100 % con cualquier patrón de datos sin agotar el espacio en el volumen.
@@ -31,6 +33,7 @@ TIP: La abstracción de volumen no está presente en SAN, solo en la ASA, por lo
 
 
 
+[[compression-and-deduplication]]
 == Compresión y deduplicación
 
 La compresión y la deduplicación son ambas formas de thin provisioning. Por ejemplo, una huella de datos de 50TB MB puede comprimirse hasta 30TB MB, lo que supone un ahorro de 20TB MB. Para que la compresión proporcione beneficios, algunos de esos 20TB MB deben utilizarse para otros datos o el sistema de almacenamiento debe adquirirse con menos de 50TB TB. El resultado es almacenar más datos de los que están disponibles técnicamente en el sistema de almacenamiento. Desde el punto de vista de los datos, hay 50TB GB de datos, a pesar de que ocupa solo 30TB GB en las unidades.
@@ -41,6 +44,7 @@ La compresión y la deduplicación se tratan de forma más detallada en el enlac
 
 
 
+[[compression-and-fractional-reservations]]
 === Compresión y reservas fraccionarias
 
 La compresión es una forma de thin provisioning. Las reservas fraccionarias afectan al uso de la compresión, con una nota importante; se reserva espacio con antelación para la creación de la instantánea. Normalmente, la reserva fraccionaria sólo es importante si existe una instantánea. Si no hay ninguna instantánea, la reserva fraccionaria no es importante. Este no es el caso con la compresión. Si se crea una LUN en un volumen con compresión, ONTAP conserva el espacio para acomodar una copia de Snapshot. Este comportamiento puede ser confuso durante la configuración, pero es esperado.

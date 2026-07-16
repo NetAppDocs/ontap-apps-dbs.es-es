@@ -19,6 +19,7 @@ La base de la protección de datos de Oracle con un sistema MetroCluster es Sync
 
 
 
+[[data-protection-with-syncmirror]]
 == Protección de datos con SyncMirror
 
 En el nivel más sencillo, la replicación síncrona implica que se debe realizar cualquier cambio en ambas partes del almacenamiento reflejado antes de que se reconozca. Por ejemplo, si una base de datos está escribiendo un registro o se está aplicando la revisión a un invitado VMware, no se debe perder nunca una escritura. Como nivel de protocolo, el sistema de almacenamiento no debe reconocer la escritura hasta que se haya comprometido a medios no volátiles en ambos sitios. Solo entonces es seguro proceder sin el riesgo de pérdida de datos.
@@ -27,6 +28,7 @@ El uso de una tecnología de replicación síncrona es el primer paso para dise�
 
 
 
+[[syncmirror-data-availability]]
 == Disponibilidad de datos SyncMirror
 
 La replicación de MetroCluster se basa en la tecnología de NetApp SyncMirror, que se ha diseñado para alternar eficientemente entre el modo síncrono y este se sale de él. Esta funcionalidad satisface los requisitos de los clientes que demandan replicación síncrona pero que también necesitan una alta disponibilidad para sus servicios de datos. Por ejemplo, si la conectividad con un sitio remoto se interrumpe, generalmente es preferible que el sistema de almacenamiento siga funcionando en un estado sin replicar.

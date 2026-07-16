@@ -8,6 +8,7 @@ Los diagramas muestran lo que ocurre durante las operaciones normales, de conmut
 
 
 
+[[normal-operation]]
 == Funcionamiento normal
 
 En el funcionamiento normal se puede acceder a una LUN desde la réplica local o remota. La línea roja indica la ruta optimizada tal y como anuncia ALUA, y el resultado debe ser que I/O se envíe preferentemente por esta ruta.
@@ -18,6 +19,7 @@ image:../media/smas-failover-1.png["Operaciones normales de sincronización acti
 
 
 
+[[failure]]
 == Fallo
 
 Si la copia mirror activa deja de estar disponible, ya sea debido a una conmutación por error planificada o no planificada, obviamente ya no podrá utilizarse. Sin embargo, el sistema remoto posee una réplica síncrona y rutas SAN al sitio remoto ya existen. El sistema remoto puede dar servicio a I/O para esa LUN.
@@ -26,6 +28,7 @@ image:../media/smas-failover-2.png["Error de sincronización activa de SnapMirro
 
 
 
+[[failover]]
 == Conmutación al respaldo
 
 La conmutación por error hace que la copia remota se convierta en la copia activa. Las rutas se cambian de Activo a Activo/Optimizado y el I/O se sigue prestando servicio sin pérdida de datos.
@@ -34,6 +37,7 @@ image:../media/smas-failover-3.png["Conmutación por error de sincronización ac
 
 
 
+[[repair]]
 == Reparar
 
 Una vez que el sistema de origen vuelve al servicio, SnapMirror Active Sync puede volver a sincronizar la replicación pero en dirección contraria. La configuración ahora es esencialmente la misma que el punto de partida, excepto que se han invertido los sitios de reflejo activo.
@@ -42,6 +46,7 @@ image:../media/smas-failover-4.png["Reparación de sincronización activa de Sna
 
 
 
+[[failback]]
 == Conmutación tras recuperación
 
 Si lo desea, un administrador puede realizar una conmutación de retorno tras recuperación y mover la copia activa de las LUN a las controladoras originales.

@@ -19,6 +19,7 @@ Comprender el funcionamiento de las bases de datos Oracle en un entorno MetroClu
 
 
 
+[[site-failure-protection-nvram-and-metrocluster]]
 == Protección contra errores del sitio: NVRAM y MetroCluster
 
 MetroCluster amplía la protección de datos de NVRAM de las siguientes formas:
@@ -30,6 +31,7 @@ MetroCluster amplía la protección de datos de NVRAM de las siguientes formas:
 
 
 
+[[site-and-shelf-failure-protection-syncmirror-and-plexes]]
 == Protección frente a fallos de sitios y bandejas: SyncMirror y complejos
 
 SyncMirror es una tecnología de mirroring que mejora, pero no sustituye, RAID DP ni RAID-TEC. Refleja el contenido de dos grupos RAID independientes. La configuración lógica es la siguiente:
@@ -47,6 +49,7 @@ Normalmente, SyncMirror se utiliza para proporcionar mirroring remoto con sistem
 
 
 
+[[redundancy-failure-nvfail]]
 == Fallo de redundancia: NVFAIL
 
 Como hemos visto anteriormente, la escritura no se reconoce hasta que se haya iniciado sesión en la NVRAM local y NVRAM en al menos otra controladora. Este método garantiza que un fallo de hardware o una interrupción del suministro eléctrico no provoquen la pérdida de operaciones de I/O en tránsito Si la NVRAM local falla o la conectividad a otros nodos falla, los datos ya no se reflejarían.
@@ -65,6 +68,7 @@ Para evitar esta situación, ONTAP permite configurar volúmenes para una protec
 
 
 
+[[ha-pairs-and-metrocluster]]
 === Pares DE ALTA disponibilidad y MetroCluster
 
 MetroCluster está disponible en dos configuraciones: De dos nodos y de pareja de alta disponibilidad. La configuración de dos nodos se comporta igual que un par de alta disponibilidad con respecto a NVRAM. En caso de que falle repentinamente, el nodo asociado puede reproducir los datos de NVRAM para hacer que las unidades sean coherentes y asegurarse de que no se ha perdido ninguna escritura reconocida.
@@ -75,12 +79,14 @@ Un aspecto importante de MetroCluster es que los nodos remotos no tienen acceso 
 
 
 
+[[switchover-and-switchback]]
 == Conmutación de sitios y conmutación de estado
 
 Los términos conmutación y conmutación de estado hacen referencia al proceso de transición de volúmenes entre controladoras remotas en una configuración de MetroCluster. Este proceso solo se aplica a los nodos remotos. Cuando MetroCluster se utiliza en una configuración de cuatro volúmenes, la conmutación por error de nodo local es el mismo proceso de toma de control y devolución descrito anteriormente.
 
 
 
+[[planned-switchover-and-switchback]]
 === Conmutación de sitios y conmutación de estado planificadas
 
 Una conmutación de sitios o conmutación de estado planificada es similar a una toma de control o una conmutación al nodo primario entre nodos. El proceso tiene varios pasos y puede parecer que requiere varios minutos, pero lo que en realidad está sucediendo es una transición fluida multifase de los recursos de red y almacenamiento. El momento en que las transferencias de control se producen mucho más rápido que el tiempo necesario para que se ejecute el comando complete.
@@ -89,6 +95,7 @@ La principal diferencia entre toma de control/retorno al nodo primario y conmuta
 
 
 
+[[syncmirror-timeouts]]
 === Tiempo de espera de SyncMirror
 
 SyncMirror es una tecnología de mirroring de ONTAP que proporciona protección contra fallos de bandeja. Cuando las bandejas se separan a lo largo de una distancia, el resultado es la protección de datos remota.
@@ -103,6 +110,7 @@ Cabe destacar que, en muchos casos, este tipo de replicación universal modo dom
 
 
 
+[[automatic-unattended-switchover-with-fabric-attached-metrocluster]]
 === Cambio automático desatendido con Fabric Attached MetroCluster
 
 La conmutación de sitios automática desatendida (AUSO) es una función MetroCluster conectada a estructuras que ofrece una forma de alta disponibilidad entre sitios. Como hemos visto anteriormente, MetroCluster está disponible en dos tipos: Una sola controladora en cada sitio o un par de alta disponibilidad en cada sitio. La principal ventaja de la opción de alta disponibilidad es que el apagado planificado o no planificado de la controladora sigue permitiendo que todas las operaciones de I/O sean locales. La ventaja de la opción de un único nodo es la reducción de los costes, la complejidad y la infraestructura.
@@ -119,6 +127,7 @@ Un sistema MetroCluster solo puede realizar de forma segura una conmutación aut
 
 
 
+[[metrocluster-tiebreaker-with-fabric-attached-metrocluster]]
 === Tiebreaker de MetroCluster con MetroCluster estructural
 
 link:https://docs.netapp.com/us-en/ontap-metrocluster/install-ip/task_sw_config_configure_mediator.html["Tiebreaker de NetApp MetroCluster"^]El software puede ejecutarse en un tercer sitio para supervisar el estado del entorno de MetroCluster, enviar notificaciones y, opcionalmente, forzar una conmutación de sitios en caso de desastre. Puede encontrar una descripción completa del tiebreaker en la link:http://mysupport.netapp.com["Sitio de soporte de NetApp"^], pero el principal objetivo de MetroCluster tiebreaker es detectar la pérdida de sitios. También debe discriminar entre la pérdida del sitio y una pérdida de conectividad. Por ejemplo, la conmutación de sitios no debería ocurrir porque el tiebreaker no pudo llegar al sitio principal, por este motivo, tiebreaker también supervisa la capacidad del sitio remoto para comunicarse con el sitio principal.
@@ -145,6 +154,7 @@ Además, es posible que el MCTB no solucione un desastre que lleve a la siguient
 
 
 
+[[ontap-mediator-with-metrocluster-ip]]
 === Mediador ONTAP con MetroCluster IP
 
 El Mediador ONTAP se utiliza con MetroCluster IP y otras soluciones ONTAP. Funciona como un servicio tradicional de tiebreaker, al igual que el software MetroCluster tiebreaker de referencia anteriormente, pero también incluye una característica crítica, con la posibilidad de realizar una conmutación de sitios automatizada sin supervisión.
@@ -155,6 +165,7 @@ Por el contrario, la arquitectura IP de MetroCluster enruta todas las I/O de for
 
 
 
+[[virtual-third-site-with-clusterlion]]
 === Tercer sitio virtual con ClusterLion
 
 ClusterLion es un dispositivo de supervisión MetroCluster avanzado que funciona como un tercer sitio virtual. Este enfoque permite implementar MetroCluster de forma segura en una configuración de dos sitios con capacidad de conmutación de sitios totalmente automatizada. Además, ClusterLion puede realizar una supervisión de nivel de red adicional y ejecutar operaciones posteriores a la conmutación. La documentación completa está disponible en ProLion.

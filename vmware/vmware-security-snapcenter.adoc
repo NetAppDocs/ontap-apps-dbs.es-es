@@ -26,6 +26,7 @@ La ingeniería de software del complemento SnapCenter de NetApp para VMware vSph
 
 
 
+[[product-security-features]]
 == Funciones de seguridad de los productos
 
 El plugin de SnapCenter de NetApp para VMware vSphere incluye las siguientes funciones de seguridad en cada versión:

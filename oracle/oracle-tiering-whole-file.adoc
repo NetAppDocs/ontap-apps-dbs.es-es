@@ -16,6 +16,7 @@ Muchas aplicaciones están organizadas por fecha, y por lo general es menos prob
 
 
 
+[[policies]]
 == Normativas
 
 Para implementar un método de organización en niveles basado en archivos, debe tener archivos que se escriban y no se modifiquen posteriormente. La `tiering-minimum-cooling-days` la política debe establecerse lo suficientemente alta para que los archivos que pueda necesitar permanezcan en el nivel de rendimiento. Por ejemplo, un conjunto de datos para los que se requieren los 60 días de datos más recientes y un rendimiento óptimo garantiza configurar el `tiering-minimum-cooling-days` hasta 60. También se pueden obtener resultados similares en función de los patrones de acceso a archivos. Por ejemplo, si se requieren los últimos 90 días de datos y la aplicación accede a ese intervalo de 90 días, los datos permanecerán en el nivel de rendimiento. Mediante la configuración de `tiering-minimum-cooling-days` en el periodo 2, se obtiene una organización en niveles inmediata después de que los datos se vuelven menos activos.

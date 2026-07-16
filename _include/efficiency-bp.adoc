@@ -4,18 +4,21 @@
 
 
 
+[[efficiency-best-practices]]
 == Mejores prácticas de eficiencia
 
 *NetApp recomienda* lo siguiente:
 
 
 
+[[aff-and-asa-defaults]]
 === Valores predeterminados de AFF y ASA
 
 Los volúmenes creados en ONTAP que se ejecuta en sistemas AFF y los LUNs/espacios de nombres en sistemas ASA se aprovisionan en capa fina con todas las funciones de eficiencia en línea activadas. Aunque las bases de datos generalmente no se benefician de la deduplicación y pueden incluir datos no comprimibles, la configuración predeterminada es, no obstante, adecuada para casi todas las cargas de trabajo. ONTAP está diseñado para procesar de forma eficiente todo tipo de datos y patrones de E/S, independientemente de que supongan o no un ahorro. Los valores predeterminados solo deben cambiarse si se comprenden perfectamente los motivos y existe una ventaja para desviarse.
 
 
 
+[[general-recommendations]]
 === Recomendaciones generales
 
 * Si los volúmenes AFF, LUNs o espacios de nombres no están thin provisioned, debes desactivar todos los ajustes de eficiencia porque usar estas funciones no proporciona ningún ahorro y la combinación de thick provisioning con la eficiencia del espacio activada puede causar un comportamiento inesperado, incluidos errores de falta de espacio.

@@ -32,6 +32,7 @@ Consulte la documentación de PostgreSQL para obtener una lista completa de los 
 
 
 
+[[toast]]
 == BRINDIS
 
 TOAST es la sigla en inglés de la Técnica de Almacenamiento de Atributos Sobredimensionados. PostgreSQL utiliza un tamaño de página fijo (comúnmente 8KB) y no permite que las tuplas se abarquen varias páginas. Por lo tanto, no es posible almacenar valores de campo grandes directamente. Cuando intenta almacenar una fila que excede este tamaño, TOAST divide los datos de las columnas grandes en “pedazos” más pequeños y los almacena en una tabla de TOSTADAS.
@@ -40,6 +41,7 @@ Los grandes valores de atributos tostados se extraen (si se selecciona) solo en 
 
 
 
+[[vacuum]]
 == VACÍO
 
 En el funcionamiento normal de PostgreSQL, las tuplas que se eliminan o quedan obsoletas por una actualización no se eliminan físicamente de su tabla; permanecen presentes hasta que se ejecuta EL VACÍO. Por lo tanto, debe ejecutar EL VACÍO periódicamente, especialmente en tablas actualizadas con frecuencia. A continuación, se debe reclamar el espacio que ocupa para que las nuevas filas lo reutilicen, a fin de evitar la interrupción del espacio en disco. Sin embargo, no devuelve el espacio al sistema operativo.

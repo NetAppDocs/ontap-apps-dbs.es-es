@@ -37,6 +37,7 @@ Para obtener información sobre compatibilidad de los productos de NetApp, consu
 
 
 
+[[microsoft-sql-server-workloads]]
 == Cargas de trabajo de Microsoft SQL Server
 
 Antes de implementar SQL Server, debe entender los requisitos de la carga de trabajo de las aplicaciones que admiten las instancias de bases de datos de SQL Server. Cada aplicación tiene requisitos distintos en cuanto a capacidad, rendimiento y disponibilidad, por lo que cada base de datos debería estar diseñada para satisfacer de forma óptima dichos requisitos. Muchas organizaciones clasifican las bases de datos en varios niveles de gestión utilizando los requisitos de las aplicaciones para definir acuerdos de nivel de servicios. Las cargas de trabajo de SQL Server a menudo se clasifican como se describen a continuación:

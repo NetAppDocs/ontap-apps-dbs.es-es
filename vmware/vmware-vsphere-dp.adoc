@@ -20,6 +20,7 @@ Además, el complemento SnapCenter para VMware puede integrarse con https://docs
 
 
 
+[[netapp-ontap-volume-snapshots]]
 == Snapshots de volumen de NetApp ONTAP
 
 Use copias Snapshot para realizar copias rápidas de sus máquinas virtuales o almacenes de datos sin afectar al rendimiento y, a continuación, envíelas a un sistema secundario usando SnapMirror para la protección de datos fuera del sitio a largo plazo. Este método minimiza el espacio de almacenamiento y el ancho de banda de red porque solo almacena la información modificada.
@@ -36,6 +37,7 @@ Para obtener más información sobre las instantáneas, consulte la documentaci�
 
 
 
+[[snapcenter-plug-in-for-vmware-vsphere]]
 == Complemento de SnapCenter para VMware vSphere
 
 SnapCenter permite crear políticas de backup que se pueden aplicar a varias tareas. Estas políticas pueden definir programaciones, retención, replicación y otras funcionalidades. Continúan permitiendo una selección opcional de snapshots consistentes con las máquinas virtuales, lo que aprovecha la capacidad del hipervisor para poner en modo inactivo las operaciones de I/O antes de tomar una snapshot de VMware. Sin embargo, debido al efecto sobre el rendimiento de las snapshots de VMware, generalmente no se recomiendan a menos que necesite que el sistema de archivos invitados se coloque en modo inactivo. En su lugar, utilice los snapshots para protección general y use herramientas de aplicaciones como los complementos de aplicaciones de SnapCenter para proteger los datos transaccionales, como SQL Server u Oracle.
@@ -50,6 +52,7 @@ Para obtener información sobre el tamaño, consulte la https://kb.netapp.com/da
 
 
 
+[[ontap-tools-for-vmware-vsphere-with-vmware-live-site-recovery]]
 == Herramientas de ONTAP para VMware vSphere con VMware Live Site Recovery
 
 Las herramientas de ONTAP para VMware vSphere (OT4VS) son un complemento gratuito que proporciona una integración sin problemas entre VMware vSphere y NetApp ONTAP. Le permite gestionar el almacenamiento de ONTAP directamente desde vSphere Web Client, lo que facilita la realización de tareas como el aprovisionamiento del almacenamiento, la gestión de la replicación y la supervisión del rendimiento.
@@ -58,12 +61,14 @@ Para funcionalidades mejoradas de recuperación ante desastres, considere el uso
 
 
 
+[[netapp-disaster-recovery]]
 == NetApp Disaster Recovery
 
 Disaster Recovery (DR) es un servicio basado en la nube que proporciona una solución integral para proteger sus datos y aplicaciones en caso de desastre. Ofrece una variedad de funciones, que incluyen conmutación por error y recuperación automatizadas, múltiples puntos de recuperación en un momento determinado, recuperación ante desastres consistente con las aplicaciones y soporte para sistemas ONTAP locales y basados ​​en la nube. NetApp Disaster Recovery está diseñado para funcionar sin problemas con ONTAP y su entorno VMware vSphere, proporcionando una solución unificada para la recuperación ante desastres.
 
 
 
+[[vsphere-metro-storage-cluster-vmsc-with-netapp-metrocluster-and-snapmirror-active-sync]]
 == VSphere Metro Storage Cluster (VMSC) con sincronización activa NetApp MetroCluster y SnapMirror
 
 Por último, para obtener el nivel más elevado de protección de datos, considere la configuración de clúster de almacenamiento Metro (VMSC) vSphere de VMware con NetApp MetroCluster. VMSC es una solución compatible con NetApp certificada por VMware que utiliza replicación síncrona, lo que le ofrece las mismas ventajas de un clúster de alta disponibilidad pero distribuido en diferentes ubicaciones para protegerse frente a desastres en el sitio. NetApp SnapMirror Active Sync, con ASA y AFF y MetroCluster con AFF, ofrece configuraciones rentables para replicación síncrona con recuperación transparente desde cualquier fallo de componente de almacenamiento individual así como recuperación transparente en el caso de sincronización activa de SnapMirror o recuperación con un único comando en caso de desastre en el centro con MetroCluster. https://www.netapp.com/pdf.html?item=/media/19773-tr-4128.pdf["CONSULTE TR-4128"^]

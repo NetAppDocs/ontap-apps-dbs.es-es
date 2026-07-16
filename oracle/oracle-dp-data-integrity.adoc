@@ -23,6 +23,7 @@ Estas tres necesidades se tratan en las siguientes secciones.
 
 
 
+[[network-corruption-checksums]]
 == Corrupción de la red: Sumas de comprobación
 
 El nivel más básico de protección de datos es la suma de comprobación, que es un código especial de detección de errores almacenado junto con los datos. La corrupción de datos durante la transmisión de red se detecta con el uso de una suma de comprobación y, en algunos casos, varias sumas de comprobación.
@@ -31,12 +32,14 @@ Por ejemplo, una trama de FC incluye una forma de suma de comprobación denomina
 
 
 
+[[drive-corruption-checksums]]
 == Daños en unidades: Sumas de comprobación
 
 También se utilizan sumas de comprobación para verificar la integridad de los datos almacenados en las unidades. Los bloques de datos escritos en las unidades se almacenan con una función de suma de comprobación que genera un número impredecible ligado a los datos originales. Cuando se leen datos de la unidad, la suma de comprobación se vuelve a calcular y se compara con la suma de comprobación almacenada. Si no coincide, los datos se han dañado y deben ser recuperados por la capa RAID.
 
 
 
+[[data-corruption-lost-writes]]
 == Datos dañados: Escrituras perdidas
 
 Uno de los tipos de daños más difíciles de detectar es una escritura perdida o ubicada incorrectamente. Cuando se reconoce una escritura, se debe escribir en el soporte en la ubicación correcta. Los datos dañados in situ son relativamente fáciles de detectar usando una sencilla suma de comprobación almacenada con los datos. Sin embargo, si la escritura simplemente se pierde, es posible que aún exista la versión anterior de los datos y la suma de comprobación sea correcta. Si la escritura se realiza en una ubicación física incorrecta, la suma de comprobación asociada sería una vez más válida para los datos almacenados, aunque la escritura haya destruido otros datos.
@@ -55,6 +58,7 @@ Los daños en la escritura perdidos o mal ubicados son extremadamente raros, per
 
 
 
+[[drive-failures-raid-raid-dp-and-raid-tec]]
 == Fallos de unidad: RAID, RAID DP y RAID-TEC
 
 Si se detecta que un bloque de datos en una unidad está dañado, o que toda la unidad falla y no está totalmente disponible, los datos deben reconstituirse. Esto se realiza en ONTAP utilizando unidades de paridad. Los datos se dividen entre varias unidades de datos y, a continuación, se generan datos de paridad. Se almacena por separado de los datos originales.
@@ -75,6 +79,7 @@ En resumen, en comparación con RAID 10, RAID DP y RAID-TEC ofrecen mucha más c
 
 
 
+[[hardware-failure-protection-nvram]]
 == Protección contra fallos del hardware: NVRAM
 
 Cualquier cabina de almacenamiento que sirva a una carga de trabajo de base de datos debe procesar operaciones de escritura lo más rápido posible. Además, una operación de escritura debe protegerse contra pérdidas provocadas por eventos inesperados, como un fallo de alimentación. Esto significa que cualquier operación de escritura debe almacenarse de forma segura en al menos dos ubicaciones.
@@ -92,6 +97,7 @@ En caso de que se produzca un fallo en la controladora, la controladora asociada
 
 
 
+[[hardware-failure-protection-nvfail]]
 == Protección contra fallos de hardware: NVFAIL
 
 Como hemos visto anteriormente, la escritura no se reconoce hasta que se haya iniciado sesión en la NVRAM local y NVRAM en al menos otra controladora. Este método garantiza que un fallo de hardware o una interrupción del suministro eléctrico no provoquen la pérdida de operaciones de I/O en tránsito Si la NVRAM local falla o la conectividad con el partner de alta disponibilidad falla, estos datos en curso ya no se duplicarán.
@@ -108,6 +114,7 @@ Los siguientes pasos habituales son que un administrador apague completamente lo
 
 
 
+[[site-and-shelf-failure-protection-syncmirror-and-plexes]]
 == Protección frente a fallos de sitios y bandejas: SyncMirror y complejos
 
 SyncMirror es una tecnología de mirroring que mejora, pero no sustituye, RAID DP ni RAID-TEC. Refleja el contenido de dos grupos RAID independientes. La configuración lógica es la siguiente:
@@ -125,6 +132,7 @@ Normalmente, SyncMirror se utiliza para proporcionar mirroring remoto con sistem
 
 
 
+[[checksums]]
 == Sumas de comprobación
 
 El tema de las sumas de comprobación es de particular interés para los administradores de bases de datos que están acostumbrados a usar backups en streaming de Oracle RMAN, que migran a backups basados en instantáneas. Una función de RMAN es que realiza comprobaciones de integridad durante las operaciones de copia de seguridad. Aunque esta función posee cierto valor, su principal ventaja es en una base de datos que no se utiliza en una cabina de almacenamiento moderna. Cuando se utilizan unidades físicas en una base de datos de Oracle, resulta casi seguro que los daños eventualmente se producen cuando las unidades envejecen, un problema que resuelven las sumas de comprobación basadas en cabinas de almacenamiento reales.

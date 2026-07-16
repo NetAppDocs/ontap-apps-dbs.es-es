@@ -14,6 +14,7 @@ Temas de configuración para bases de datos de Oracle en IBM AIX con ONTAP.
 
 
 
+[[concurrent-io]]
 == I/O concurrente
 
 Lograr un rendimiento óptimo en IBM AIX requiere el uso de E/S concurrentes Sin operaciones de I/O simultáneas, es probable que las limitaciones de rendimiento se deban a que AIX realiza I/O atómicas serializadas, lo que conlleva una sobrecarga significativa.
@@ -35,6 +36,7 @@ Uso `cio` Como opción de montaje fuerza el uso de I/O concurrente, lo cual pued
 ====
 
 
+[[aix-nfs-mount-options]]
 == Opciones de montaje de AIX NFS
 
 En la siguiente tabla, se enumeran las opciones de montaje de AIX NFS para bases de datos de instancia única de Oracle.
@@ -93,6 +95,7 @@ Aunque utilice el `cio` monte la opción y la `init.ora` parámetro `filesystemi
 
 
 
+[[aix-jfsjfs2-mount-options]]
 == Opciones de montaje jfs/JFS2 de AIX
 
 En la siguiente tabla se enumeran las opciones de montaje jfs/JFS2 de AIX.

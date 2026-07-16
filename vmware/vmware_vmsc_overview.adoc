@@ -23,6 +23,7 @@ NOTE: Esta documentación sustituye a los informes técnicos publicados anterior
 
 
 
+[[continuous-availability-solutions-for-vsphere-environments]]
 == Soluciones de disponibilidad continua para entornos vSphere
 
 La arquitectura ONTAP es una plataforma de almacenamiento flexible y escalable que proporciona servicios SAN (FCP, iSCSI y NVMe-oF) y NAS (NFS v3 y v4.1) para almacenes de datos. Los sistemas de almacenamiento AFF, ASA y FAS de NetApp utilizan el sistema operativo ONTAP para ofrecer protocolos adicionales para el acceso al almacenamiento invitado, como S3 y SMB/CIFS.
@@ -39,6 +40,7 @@ También debe consultar https://www.vmware.com/docs/vmw-vmware-vsphere-metro-sto
 
 
 
+[[what-is-vsphere-metro-storage-cluster]]
 == ¿Qué es vSphere Metro Storage Cluster?
 
 vSphere Metro Storage Cluster (vMSC) es una configuración certificada que protege las máquinas virtuales (VM) y los contenedores contra fallas. Esto se logra mediante el uso de conceptos de almacenamiento extendido junto con clústeres de hosts ESXi, que se distribuyen en diferentes dominios de falla, como racks, edificios, campus o incluso ciudades. Las tecnologías de almacenamiento de sincronización activa NetApp MetroCluster y SnapMirror se utilizan para proporcionar una protección de objetivo de punto de recuperación cero (RPO=0) a los clústeres de host. La configuración de vMSC está diseñada para garantizar que los datos estén siempre disponibles incluso si falla un "sitio" físico o lógico completo. Un dispositivo de almacenamiento que forma parte de la configuración de vMSC debe certificarse después de someterse a un proceso de certificación de vMSC exitoso. Todos los dispositivos de almacenamiento compatibles se pueden encontrar en https://compatibilityguide.broadcom.com/["Guía de compatibilidad de almacenamiento de VMware"].

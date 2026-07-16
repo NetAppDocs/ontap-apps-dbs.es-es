@@ -19,6 +19,7 @@ Las políticas de organización en niveles controlan qué bloques de la base de 
 
 
 
+[[default]]
 == Predeterminado
 
 Inicialmente, todos los volúmenes FabricPool se establecen en `default`, que significa que el comportamiento está controlado por la `política de recuperación de nubes. `El comportamiento exacto depende de la política de organización en niveles utilizada.
@@ -31,6 +32,7 @@ Inicialmente, todos los volúmenes FabricPool se establecen en `default`, que si
 
 
 
+[[on-read]]
 == En lectura
 
 Ajuste `cloud-retrieval-policy` en la lectura sobrescribe el comportamiento predeterminado, de modo que la lectura de cualquier dato por niveles provoca que esos datos se devuelvan al nivel de rendimiento.
@@ -41,6 +43,7 @@ Si un cambio inesperado en las necesidades empresariales requirió que algunos d
 
 
 
+[[promote]]
 == Promocione
 
 El comportamiento de la política de promoción depende de la política de organización en niveles. Si la política de organización en niveles es `auto`, y, a continuación, ajuste el `cloud-retrieval-policy `to `promote` devuelve todos los bloques del nivel de capacidad en el siguiente análisis de organización en niveles.
@@ -51,6 +54,7 @@ Sin embargo, si un SnapRestore de volumen o una operación de clonado de archivo
 
 
 
+[[never]]
 == Nunca
 
 No recupere bloques del nivel de capacidad.

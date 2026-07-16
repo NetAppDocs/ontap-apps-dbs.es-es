@@ -20,6 +20,7 @@ Las siguientes herramientas están incluidas con la licencia ONTAP One sin coste
 
 
 
+[[ontap-tools-for-vmware-vsphere]]
 == Herramientas de ONTAP para VMware vSphere
 
 https://mysupport.netapp.com/site/products/all/details/otv10/docs-tab["Herramientas de ONTAP para VMware vSphere"] Es un conjunto de herramientas para usar el almacenamiento de ONTAP junto con vSphere. El complemento de vCenter, anteriormente conocido como Virtual Storage Console (VSC), simplifica las funciones de gestión y eficiencia del almacenamiento, mejora la disponibilidad y reduce los costes de almacenamiento y la sobrecarga operativa, tanto si usa SAN como NAS. Utiliza prácticas recomendadas para aprovisionar almacenes de datos y optimiza la configuración de host ESXi para entornos de almacenamiento en bloques y NFS. Para obtener todos estos beneficios, NetApp recomienda el uso de estas herramientas de ONTAP como mejor práctica al utilizar vSphere con sistemas que ejecuten ONTAP. Incluye un dispositivo de servidor, extensiones de interfaz de usuario para vCenter, VASA Provider y Storage Replication Adapter. Casi todo lo que incluye las herramientas de ONTAP se puede automatizar mediante API de REST sencillas, consumibles gracias a las herramientas de automatización más modernas.
@@ -35,18 +36,21 @@ image:vsphere_ontap_image1.png["Herramientas de ONTAP para vSphere"]
 
 
 
+[[snapcenter-plug-in-for-vmware-vsphere]]
 == Complemento de SnapCenter para VMware vSphere
 
 El https://mysupport.netapp.com/site/products/all/details/scv/docs-tab["Complemento de SnapCenter para VMware vSphere"] es un complemento para vCenter Server que le permite administrar copias de seguridad y restauraciones de máquinas virtuales (VM) y almacenes de datos. Proporciona una interfaz única para administrar copias de seguridad, restauraciones y clones de máquinas virtuales y almacenes de datos en múltiples sistemas ONTAP . SnapCenter admite la replicación y recuperación desde sitios secundarios mediante SnapMirror. Las últimas versiones también admiten SnapMirror en la nube (S3), instantáneas a prueba de manipulaciones, SnapLock y sincronización activa de SnapMirror . El complemento SnapCenter para VMware vSphere se puede integrar con los complementos de aplicaciones SnapCenter para proporcionar copias de seguridad consistentes con las aplicaciones.
 
 
 
+[[nfs-plug-in-for-vmware-vaai]]
 == Plugin NFS para VAAI de VMware
 
 El https://mysupport.netapp.com/site/products/all/details/nfsplugin-vmware-vaai/about-tab["Plugin NFS de NetApp para VAAI de VMware"] es un plugin para hosts ESXi que permite utilizar funciones VAAI con almacenes de datos NFS en ONTAP. Es compatible con copias de descarga para operaciones de clonado, reserva de espacio para archivos de disco virtual gruesos y descarga de copias Snapshot. La descarga de operaciones de copia en el almacenamiento no es necesariamente más rápida de completarse, pero reduce los requisitos de ancho de banda de red y libera a recursos del host, como ciclos de CPU, búferes y colas. Puede usar las herramientas de ONTAP para VMware vSphere para instalar el plugin en hosts ESXi o, si es compatible, vSphere Lifecycle Manager (VLCM).
 
 
 
+[[premium-software-options]]
 == Opciones de software premium
 
 Los siguientes productos de software premium están disponibles en NetApp. No están incluidos con la licencia de ONTAP One y deben comprarse por separado.

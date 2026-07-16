@@ -13,6 +13,7 @@ Para obtener información sobre el montaje de LUN, la creación de grupos de vol
 
 
 
+[[file-system-and-mount-options]]
 == Sistema de archivos y opciones de montaje
 
 Una vez que se hayan creado y asignado las LUN y haya completado la división en zonas, use el siguiente procedimiento para asociar el almacenamiento al servidor.
@@ -22,6 +23,7 @@ NOTE: En este ejemplo, utilizamos 8x 1024GB LUN para la base de datos, 2x 1024GB
 
 
 
+[[asynchronous-io]]
 == I/O asíncrono
 
 Una copia del documento técnico Consideraciones de SAN de Epic y del documento de referencia rápida de configuración del almacenamiento proporcionan detalles sobre cómo configurar los hosts y conectarse al almacenamiento. En esta sección se explica cómo configurar un host de Red Hat Enterprise Linux. Los detalles de AIX se pueden encontrar en los documentos de referencia.

@@ -22,6 +22,7 @@ NOTE: Esta documentación sustituye al informe técnico _TR-4592 publicado anter
 
 
 
+[[metrocluster-is-avialable-in-3-different-configurations]]
 == MetroCluster está disponible en 3 configuraciones diferentes
 
 * Pares DE ALTA DISPONIBILIDAD con conectividad IP
@@ -34,6 +35,7 @@ NOTE: El término 'conectividad' hace referencia a la conexión de clúster usad
 
 
 
+[[metrocluster-ip]]
 == IP de MetroCluster
 
 La configuración IP de MetroCluster para pares de alta disponibilidad utiliza dos o cuatro nodos por sitio. Esta opción de configuración aumenta la complejidad y los costes relacionados con la opción de dos nodos, pero ofrece una ventaja importante: La redundancia dentro del sitio. Un simple fallo de una controladora no requiere acceso a los datos a través de la WAN. El acceso a los datos sigue siendo local a través de la controladora local alternativa.
@@ -48,6 +50,7 @@ image:../media/mccip.png["Arquitectura IP de MetroCluster"]
 
 
 
+[[ha-pair-fc-san-attached-metrocluster]]
 == MetroCluster con conexión SAN FC de par de ALTA DISPONIBILIDAD
 
 La configuración MetroCluster FC de par de alta disponibilidad utiliza dos o cuatro nodos por sitio. Esta opción de configuración aumenta la complejidad y los costes relacionados con la opción de dos nodos, pero ofrece una ventaja importante: La redundancia dentro del sitio. Un simple fallo de una controladora no requiere acceso a los datos a través de la WAN. El acceso a los datos sigue siendo local a través de la controladora local alternativa.
@@ -63,6 +66,7 @@ Algunas infraestructuras multisitio no están diseñadas para operaciones activo
 
 
 
+[[two-node-fc-san-attached-metrocluster]]
 == MetroCluster FC de dos nodos conectado a SAN
 
 La configuración de MetroCluster de dos nodos solo utiliza un nodo por sitio. Este diseño es más sencillo que la opción de pareja de alta disponibilidad porque hay menos componentes que configurar y mantener. También ha reducido las demandas de infraestructura en términos de cableado y conmutación FC. Por último, reduce los costes.
@@ -73,6 +77,7 @@ El impacto obvio de este diseño es que el fallo de una controladora en un únic
 
 
 
+[[metrocluster-resiliency-features]]
 == Funcionalidades de resiliencia de MetroCluster
 
 No hay puntos únicos de error en una solución de MetroCluster:

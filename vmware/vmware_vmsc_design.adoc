@@ -18,6 +18,7 @@ Este documento describe las guías de diseño e implementación para VMSC con si
 
 
 
+[[netapp-storage-configuration]]
 == Configuración de almacenamiento de NetApp
 
 Las instrucciones de configuración para NetApp MetroCluster están disponibles en https://docs.netapp.com/us-en/ontap-metrocluster/["Documentación de MetroCluster"]. Las instrucciones para SnapMirror Active Sync (SMAS) también están disponibles en https://docs.netapp.com/us-en/ontap/smbc/index.html["Información general sobre la continuidad del negocio de SnapMirror"].
@@ -30,16 +31,19 @@ Hay alguna diferencia en la gestión de una configuración VMSC con sincronizaci
 
 
 
+[[using-the-ontap-tools-vcenter-plugin-for-snapmirror-active-sync]]
 == Uso del complemento de herramientas de ONTAP para vCenter para SnapMirror
 
 El complemento para vCenter para herramientas de ONTAP proporciona un método sencillo e intuitivo de configurar la sincronización activa de SnapMirror para VMSC. Es posible usar el complemento de herramientas de ONTAP para crear y gestionar relaciones de sincronización activa de SnapMirror entre dos clústeres de ONTAP. Este plugin proporciona una interfaz fácil de usar para establecer y gestionar estas relaciones de manera eficiente. Puede obtener más información sobre el complemento para vCenter de herramientas de ONTAP en https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/index.html["Herramientas de ONTAP para VMware vSphere"], o ir directamente a https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere-10/configure/protect-cluster.html["Proteja mediante la protección del clúster de hosts"].
 
 
 
+[[vmware-vsphere-configuration]]
 == Configuración de VMware vSphere
 
 
 
+[[create-a-vsphere-ha-cluster]]
 === Cree un clúster de vSphere HA
 
 La creación de un clúster de vSphere HA es un proceso de varios pasos que se documenta completamente en https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-vcenter-esxi-management/GUID-F7818000-26E3-4E2A-93D2-FCDCE7114508.html["Cómo se crean y configuran clústeres en vSphere Client en docs.vmware.com"]. En resumen, primero debe crear un clúster vacío y, después, utilizando vCenter, debe añadir hosts y especificar la alta disponibilidad de vSphere y otros ajustes del clúster.
@@ -125,6 +129,7 @@ image::../media/vmsc_3_5.png[vmsc 3 5,624,336]
 |===
 
 
+[[configure-datastores-for-heartbeating]]
 === Configurar almacenes de datos para Heartbeat
 
 La alta disponibilidad de vSphere utiliza almacenes de datos para supervisar hosts y máquinas virtuales cuando se produce un error en la red de gestión. Es posible configurar la forma en la que vCenter selecciona los almacenes de datos de latido. Para configurar los almacenes de datos para latir, lleve a cabo los siguientes pasos:
@@ -137,6 +142,7 @@ image::../media/vmsc_3_6.png[Una captura de pantalla de una descripción de comp
 
 
 
+[[configure-advanced-options]]
 === Configurar opciones avanzadas
 
 Los eventos de aislamiento se producen cuando los hosts dentro de un clúster de alta disponibilidad pierden la conectividad a la red u otros hosts del clúster. De forma predeterminada, vSphere HA utilizará la puerta de enlace predeterminada para su red de gestión como dirección de aislamiento predeterminada. Sin embargo, puede especificar direcciones de aislamiento adicionales para que el host haga ping para determinar si se debe activar una respuesta de aislamiento. Agregue dos IP de aislamiento que puedan hacer ping, una por sitio. No utilice la IP de la puerta de enlace. La configuración avanzada de HA de vSphere utilizada es das.isolationaddress. Puede utilizar las direcciones IP de ONTAP o Mediator para este fin.
@@ -162,6 +168,7 @@ En esta sección creamos grupos DRS para equipos virtuales y hosts para cada sit
 ====
 
 
+[[create-drs-host-groups]]
 === Crear grupos de hosts DRS
 
 Para crear grupos de hosts DRS específicos del sitio A y del sitio B, realice los siguientes pasos:
@@ -178,6 +185,7 @@ Para crear grupos de hosts DRS específicos del sitio A y del sitio B, realice l
 
 
 
+[[create-drs-vm-groups]]
 === Crear grupos de máquinas virtuales DRS
 
 Para crear grupos de máquinas virtuales DRS específicos del sitio A y del sitio B, realice los siguientes pasos:
@@ -196,6 +204,7 @@ Para crear grupos de máquinas virtuales DRS específicos del sitio A y del siti
 
 
 
+[[create-vm-host-rules]]
 === Crear reglas de host de VM
 
 Para crear reglas de afinidad de DRS específicas para el sitio A y el sitio B, realice los siguientes pasos:
@@ -218,6 +227,7 @@ image::../media/vmsc_3_8.png[Una captura de pantalla de una descripción de comp
 
 
 
+[[create-datastore-clusters-if-needed]]
 == Cree clústeres de almacenes de datos si es necesario
 
 Para configurar un clúster de almacén de datos para cada sitio, complete los siguientes pasos:
@@ -254,6 +264,7 @@ image::../media/vmsc_3_12.png[almacenes de datos,624,134]
 
 
 
+[[vcenter-server-availability]]
 === Disponibilidad del vCenter Server
 
 Los dispositivos vCenter Server Appliances (VCSA) deben estar protegidos con alta disponibilidad de vCenter. La alta disponibilidad de vCenter le permite implementar dos VCSA en un par de alta disponibilidad activo-pasivo. Uno en cada dominio de fallo. Puede obtener más información sobre la alta disponibilidad de vCenter en https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-availability/GUID-4A626993-A829-495C-9659-F64BA8B560BD.html["docs.vmware.com"].

@@ -10,6 +10,7 @@ Al igual que otros aspectos de la arquitectura de almacenamiento, las mejores op
 
 
 
+[[svms]]
 == SVM
 
 No existe ninguna práctica recomendada oficial para el aprovisionamiento de SVM para ONTAP. El método correcto depende de los requisitos de gestión y seguridad.

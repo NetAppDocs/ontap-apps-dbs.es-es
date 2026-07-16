@@ -19,6 +19,7 @@ El aprovisionamiento de almacenes de datos vVols implica varios pasos. Los siste
 
 
 
+[[preparing-to-create-vvols-datastores-with-ontap-tools]]
 == Preparar la creación de vVols datastores con herramientas ONTAP
 
 Puede omitir los dos primeros pasos del proceso de puesta en marcha si ya utiliza las herramientas de ONTAP para gestionar, automatizar e informar sobre el almacenamiento existente VMFS o el tradicional basado en NFS. También puede consultar este completo link:vmware-vvols-checklist.html["lista de comprobación"] para implementar y configurar las herramientas de ONTAP.
@@ -80,6 +81,7 @@ NOTE: El motivo por el cual todo el clúster debe estar incorporado en la interf
 
 
 
+[[creating-vvols-datastores-with-ontap-tools]]
 == Crear almacenes de datos vVols con herramientas de ONTAP
 
 Haga clic con el botón derecho en el host, clúster o centro de datos en el que desea crear el almacén de datos vVols y, a continuación, seleccione _ONTAP tools_ > _Provision Datastore_.
@@ -142,12 +144,14 @@ image:vvols-deploy-9.png["Role= «thumb» (asistente para aprovisionar almacenes
 
 
 
+[[migrating-vms-from-traditional-datastores-to-vvols]]
 == Migración de máquinas virtuales desde almacenes de datos tradicionales a vVols
 
 La migración de máquinas virtuales de almacenes de datos tradicionales a un almacén de datos vVols es tan sencilla como mover máquinas virtuales entre almacenes de datos tradicionales. Solo tiene que seleccionar las máquinas virtuales y, a continuación, seleccionar Migrate en la lista Actions y seleccionar un tipo de migración _change storage only_. Cuando se le solicite, seleccione una política de almacenamiento de máquinas virtuales que coincida con su almacén de datos de vVols. Las operaciones de copia de migración se pueden descargar con vSphere 6,0 y versiones posteriores para las migraciones de SAN VMFS a vVols, pero no de VMDK de NAS a vVols.
 
 
 
+[[managing-vms-with-policies]]
 == Gestionar máquinas virtuales con políticas
 
 Para automatizar el aprovisionamiento de almacenamiento con administración basada en políticas, debe crear políticas de almacenamiento de VM que se correspondan con las capacidades de almacenamiento deseadas.
@@ -157,6 +161,7 @@ NOTE: Las herramientas de ONTAP 10,0 y versiones posteriores ya no utilizan los 
 
 
 
+[[creating-vm-storage-policies]]
 === Creación de políticas de almacenamiento de equipos virtuales
 
 Las políticas de almacenamiento de VM se utilizan en vSphere para administrar funciones opcionales como el control de E/S de almacenamiento o el cifrado de vSphere. También se utilizan con vVols para aplicar capacidades de almacenamiento específicas a la VM. Utilice el tipo de almacenamiento "NetApp.clustered.Data. ONTAP.VP.vvol". Consulte el enlace:vmware-vvols-ontap.html#Best Practices[ejemplo de configuración de red usando vVols sobre NFS v3] para ver un ejemplo de esto con el proveedor VASA de herramientas ONTAP . Las reglas para el almacenamiento "NetApp.clustered.Data. ONTAP.VP.VASA10" deben usarse con almacenes de datos que no estén basados ​​en vVols.

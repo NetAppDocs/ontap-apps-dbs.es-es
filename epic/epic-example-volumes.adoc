@@ -16,6 +16,7 @@ NOTE: A partir de ONTAP 9.7, el cifrado de agregados y volúmenes se habilita de
 
 
 
+[[autodelete-snapshots]]
 == Eliminar automáticamente instantáneas
 
 Para eliminar automáticamente instantáneas: https://docs.netapp.com/us-en/ontap-cli-9141//volume-snapshot-autodelete-modify.html[]

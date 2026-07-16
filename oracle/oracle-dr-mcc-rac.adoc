@@ -21,12 +21,14 @@ NOTE: Si se utilizan LUN de inicio, incluidos los discos de inicio virtualizados
 
 
 
+[[two-site-configuration]]
 == Configuración de dos sitios
 
 Una configuración de RAC ampliada de dos sitios puede ofrecer servicios de base de datos activa-activa que pueden sobrevivir muchos escenarios de desastres de forma no disruptiva, pero no todos.
 
 
 
+[[rac-voting-files]]
 === Archivos de quorum de RAC
 
 La primera consideración al implementar RAC ampliado en MetroCluster debe ser la gestión del quórum. Oracle RAC tiene dos mecanismos para gestionar el quórum: Latido de disco y latido de red. El latido del disco supervisa el acceso al almacenamiento mediante los archivos de votación. Con una configuración de RAC de un único sitio, un único recurso de votación es suficiente siempre que el sistema de almacenamiento subyacente ofrezca funcionalidades de alta disponibilidad.
@@ -47,6 +49,7 @@ Los grupos de discos de ASM tienen tres opciones de redundancia `external`, `nor
 
 
 
+[[rac-network-heartbeat]]
 === Latido de red RAC
 
 El latido de red de Oracle RAC supervisa la accesibilidad de nodos en la interconexión de cluster. Para permanecer en el clúster, un nodo debe ser capaz de contactar más de la mitad de los otros nodos. En una arquitectura de dos sitios, este requisito crea las siguientes opciones para el recuento de nodos de RAC:
@@ -120,6 +123,7 @@ Dado que solo hay dos sitios, no es factible utilizar ningún tipo de software a
 
 
 
+[[three-site-configurations]]
 == Configuraciones en tres sitios
 
 Un clúster RAC ampliado es mucho más fácil de diseñar con tres sitios. Los dos sitios que alojan cada mitad del sistema de MetroCluster también admiten cargas de trabajo de base de datos, mientras que el tercer sitio sirve como desempate tanto para la base de datos como para el sistema de MetroCluster. La configuración de Oracle tiebreaker puede ser tan sencilla como colocar un miembro del grupo de discos de ASM utilizado para votar en un sitio 3rd y también puede incluir una instancia operativa en el sitio 3rd para asegurarse de que hay un número impar de nodos en el cluster RAC.

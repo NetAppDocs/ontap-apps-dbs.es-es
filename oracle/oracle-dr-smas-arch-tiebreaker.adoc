@@ -18,12 +18,14 @@ El link:oracle-dr-smas-mediator.html["Mediador ONTAP"] resuelve este requisito e
 
 
 
+[[oracle-tiebreakers]]
 == Oracle tiebreakers
 
 El mejor método para gestionar los riesgos de Oracle RAC de cerebro dividido es utilizar un número impar de nodos de RAC, preferiblemente mediante el uso de un tiebreaker de sitio 3rd. Si un sitio 3rd no está disponible, la instancia de tiebreaker podría colocarse en un sitio de los dos sitios, designándolo efectivamente como un sitio de supervivencia preferido.
 
 
 
+[[oracle-and-csscritical]]
 == Oracle y css_critical
 
 Con un número par de nodos, el comportamiento por defecto de Oracle RAC es que uno de los nodos del cluster se considerará más importante que el resto de nodos. El sitio con ese nodo de mayor prioridad sobrevivirá al aislamiento del sitio mientras que los nodos del otro sitio desalojarán. La priorización se basa en varios factores, pero también puede controlar este comportamiento mediante la `css_critical` configuración.

@@ -11,6 +11,7 @@ CAUTION: La `auto` la política debe utilizarse con cuidado con las bases de dat
 
 
 
+[[policies]]
 == Normativas
 
 La `tiering-minimum-cooling-days` la política debe establecerse lo suficientemente alta para conservar los archivos que pueden ser necesarios en el nivel de rendimiento. Por ejemplo, una base de datos en la que los 60 días de datos más recientes podrían ser necesarios con un rendimiento óptimo justificaría establecer el `tiering-minimum-cooling-days` periodo hasta 60 días. También se podrían lograr resultados similares en función de los patrones de acceso de los archivos. Por ejemplo, si se requieren los 90 días de datos más recientes y la aplicación accede a ese intervalo de 90 días de datos, los datos permanecerán en el nivel de rendimiento. Ajuste de `tiering-minimum-cooling-days` un periodo de hasta 2 días clasificaría los datos en niveles inmediatamente después de que los datos se vuelvan menos activos.

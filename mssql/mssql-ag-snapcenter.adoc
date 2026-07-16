@@ -19,6 +19,7 @@ SnapCenter descubre todas las bases de datos, las instancias y los grupos de dis
 
 
 
+[[protecting-databases-in-always-on-availability-group]]
 == Protección de bases de datos en un grupo de disponibilidad siempre disponible
 
 Las bases de datos del grupo de disponibilidad se pueden proteger de varias maneras.
@@ -35,6 +36,7 @@ TIP: *NetApp recomienda* utilizar el respaldo de nivel de disponibilidad para re
 
 
 
+[[configuring-log-backup-in-snapcenter]]
 == Configurar el backup de registros en SnapCenter
 
 Si el grupo de disponibilidad está configurado en la configuración independiente de SQL Server, debe montarse un disco dedicado en cada nodo de un clúster de conmutación al nodo de respaldo del servidor Windows. Se debe utilizar el disco dedicado para configurar el directorio log para guardar las copias de seguridad de log de transacciones.
@@ -43,6 +45,7 @@ Si el grupo de disponibilidad está configurado en el clúster de conmutación a
 
 
 
+[[restoring-database-in-availability-group-setup-with-snapcenter]]
 == Restaurando base de datos en la configuración del grupo de disponibilidad con SnapCenter
 
 * SnapCenter proporciona la opción de propagación para recuperar automáticamente la base de datos a partir de la última instantánea disponible en la réplica secundaria. La operación de propagación restaurará y unirá automáticamente el backup de la base de datos al grupo de disponibilidad.

@@ -17,6 +17,7 @@ NOTE: La información de la link:#misscount["recuento de errores"] La sección i
 
 
 
+[[disktimeout]]
 == tiempo de espera del disco
 
 El parámetro de RAC relacionado con el almacenamiento primario es `disktimeout`. Este parámetro controla el umbral en el que debe completarse la E/S del archivo de quorum. Si la `disktimeout` Se supera el parámetro y el nodo RAC se expulsa del clúster. El valor predeterminado de este parámetro es 200. Este valor debería ser suficiente para los procedimientos estándar de toma de control y devolución del almacenamiento.
@@ -36,6 +37,7 @@ Si no se puede realizar una toma de control o una devolución del almacenamiento
 ====
 
 
+[[misscount]]
 == recuento de errores
 
 La `misscount` Normalmente, el parámetro sólo afecta al latido de red entre los nodos de RAC. El valor predeterminado es 30 segundos. Si los binarios de grid se encuentran en una cabina de almacenamiento o si la unidad de arranque del sistema operativo no es local, este parámetro puede volverse importante. Esto incluye hosts con unidades de arranque ubicadas en una SAN FC, sistemas operativos arrancados NFS y unidades de arranque ubicadas en almacenes de datos de virtualización, como un archivo VMDK.

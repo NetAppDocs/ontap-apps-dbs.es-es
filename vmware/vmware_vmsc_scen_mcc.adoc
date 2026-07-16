@@ -18,6 +18,7 @@ En las siguientes secciones se resumen los resultados esperados de varios escena
 
 
 
+[[single-storage-path-failure]]
 == Fallo de ruta de almacenamiento única
 
 En esta situación, si se produce un error en componentes como el puerto HBA, el puerto de red, el puerto del switch de datos de interfaz de usuario o un cable FC o Ethernet, esa ruta particular al dispositivo de almacenamiento se marca como muerta por el host ESXi. Si se configuran varias rutas para el dispositivo de almacenamiento proporcionando resiliencia en el puerto de HBA/red/switch, ESXi idealmente ejecuta una conmutación de rutas. Durante este periodo, las máquinas virtuales permanecen en ejecución sin que se vean afectadas, porque se cuida de la disponibilidad del almacenamiento mediante varias rutas al dispositivo de almacenamiento.
@@ -27,6 +28,7 @@ NOTE: No hay ningún cambio en el comportamiento de MetroCluster en este escenar
 
 
 
+[[best-practice]]
 === _Best Practice_
 
 En entornos en los que se utilizan volúmenes NFS/iSCSI, NetApp recomienda tener al menos dos vínculos superiores de red configurados para el puerto NFS vmkernel en el vSwitch estándar y lo mismo en el grupo de puertos en el que se asigna la interfaz de NFS vmkernel para el vSwitch distribuido. La agrupación de NIC se puede configurar en activo-activo o activo-en espera.
@@ -35,6 +37,7 @@ Además, para las LUN iSCSI, la multivía debe configurarse vinculando las inter
 
 
 
+[[best-practice]]
 === _Best Practice_
 
 En entornos en los que se usan LUN de Fibre Channel, NetApp recomienda tener al menos dos HBA, lo que garantiza la resistencia a nivel de HBA/puerto. NetApp también recomienda la división en zonas de un solo iniciador a un único destino como práctica recomendada para configurar la división en zonas.
@@ -43,6 +46,7 @@ Debe utilizarse Virtual Storage Console (VSC) para establecer normativas de acce
 
 
 
+[[single-esxi-host-failure]]
 == Fallo de un host ESXi único
 
 image::../media/vmsc_5_1.png[Un fallo de host único.,624,598]
@@ -57,6 +61,7 @@ No hay ningún cambio en el comportamiento de MetroCluster en este escenario y t
 
 
 
+[[esxi-host-isolation]]
 == Aislamiento de hosts ESXi
 
 image::../media/vmsc_5_2.png[Aislamiento de hosts ESXi,624,301]
@@ -67,6 +72,7 @@ No hay ningún cambio en el comportamiento de MetroCluster en este escenario y t
 
 
 
+[[disk-shelf-failure]]
 == Fallo de la bandeja de discos
 
 En esta situación, se produce un fallo de más de dos discos o una bandeja entera. Los datos se sirven desde el plex superviviente sin interrupción de los servicios de datos. El fallo del disco puede afectar a un plex local o remoto. Los agregados se mostrarán como degradado porque solo está activo un plex. Una vez sustituidos los discos que han fallado, los agregados afectados se sincronizarán automáticamente para volver a compilar los datos. Tras realizar la resincronización, los agregados volverán automáticamente al modo reflejado normal. Si falla más de dos discos dentro de un mismo grupo RAID, es necesario reconstruir el plex.
@@ -80,6 +86,7 @@ image::../media/vmsc_5_3.png[Fallo de una bandeja de discos única.,624,576]
 
 
 
+[[single-storage-controller-failure]]
 == Fallo de una controladora de almacenamiento única
 
 En este escenario, una de las dos controladoras de almacenamiento falla en un sitio. Dado que hay un par de alta disponibilidad en cada sitio, el fallo de un nodo de forma transparente activa automáticamente la conmutación al otro nodo. Por ejemplo, si falla el nodo A1, su almacenamiento y sus cargas de trabajo se transfieren automáticamente al nodo A2. Las máquinas virtuales no se verán afectadas porque todos los plexes permanecen disponibles. Los nodos del segundo sitio (B1 y B2) no se ven afectados. Además, vSphere HA no realizará ninguna acción porque el nodo principal del clúster seguirá recibiendo los latidos de red.
@@ -90,10 +97,12 @@ Si la conmutación al respaldo forma parte de un desastre gradual (el nodo A1 co
 
 
 
+[[interswitch-link-failures]]
 == Fallos de enlace de interinterruptor
 
 
 
+[[interswitch-link-failure-at-management-network]]
 === Fallo de enlace de interswitch en la red de gestión
 
 image::../media/vmsc_5_5.png[Fallo de enlace entre switches en la red de gestión,624,184]
@@ -105,6 +114,7 @@ NOTE: Durante este período, las máquinas virtuales permanecen en ejecución y 
 
 
 
+[[interswitch-link-failure-at-storage-network]]
 === Fallo de enlace interswitch en la red de almacenamiento
 
 image::../media/vmsc_5_6.png[Fallo de enlace interswitch en la red de almacenamiento,624,481]
@@ -119,6 +129,7 @@ image::../media/vmsc_5_7.png[Una máquina virtual que infringe una regla de afin
 
 
 
+[[all-interswitch-failure-or-complete-data-center-partition]]
 === Todos los fallos de interswitch o la partición completa del centro de datos
 
 En este escenario, todos los enlaces ISL entre los sitios están inactivos y los dos sitios están aislados uno de otro. Como se explicó en escenarios anteriores, como el fallo ISL en la red de gestión y en la red de almacenamiento, las máquinas virtuales no se ven afectadas por un fallo de ISL completo.
@@ -133,6 +144,7 @@ image::../media/vmsc_5_9.png[Una partición del centro de datos donde VM1 violó
 
 
 
+[[interswitch-link-failure-on-both-fabrics-in-netapp-metrocluster]]
 === Fallo de interswitch Link en ambas estructuras en NetApp MetroCluster
 
 En un escenario en el que uno o varios ISL fallan, el tráfico continúa por los enlaces restantes. Si todos los ISL de ambas estructuras fallan, de modo que no hay ningún enlace entre los sitios para el almacenamiento y la replicación de NVRAM, cada controladora seguirá proporcionando sus datos locales. Cuando se restaura al menos un ISL, la resincronización de todos los complejos se realiza de forma automática.
@@ -143,6 +155,7 @@ image::../media/vmsc_5_10.png[Fallo de enlace interswitch en ambas estructuras e
 
 
 
+[[peered-cluster-link-failure]]
 === Fallo de enlace de clúster con conexión entre iguales
 
 En un supuesto de fallo de enlace de clústeres con conexión entre iguales, dado que los ISL de estructura aún están activos, los servicios de datos (lecturas y escrituras) continúan en ambos sitios en ambos complejos. No se puede propagar ningún cambio de configuración del clúster (por ejemplo, añadir una nueva SVM o aprovisionar un volumen o un LUN en una SVM existente) al otro sitio. Estos se mantienen en los volúmenes de metadatos de CRS locales y se propagan automáticamente al otro cluster tras la recuperación del enlace de cluster entre iguales. Si se necesita una conmutación por error forzada antes de poder restaurar el enlace de clúster entre iguales, se volverán a reproducir automáticamente los cambios pendientes de configuración de clúster desde la copia replicada remota de los volúmenes de metadatos del sitio superviviente como parte del proceso de conmutación por error.
@@ -151,6 +164,7 @@ image::../media/vmsc_5_11.png[Error de enlace de clústeres con conexión entre 
 
 
 
+[[complete-site-failure]]
 === Fallo completo del sitio
 
 En un supuesto de fallo del sitio A completo, los hosts ESXi del sitio B no obtendrán el latido de red de los hosts ESXi del sitio A porque están inactivos. El maestro de alta disponibilidad en el sitio B verificará que los latidos del almacén de datos no están presentes, declarará que los hosts del sitio A han fallado e intentará reiniciar el sitio A de los equipos virtuales en el sitio B. Durante este periodo, el administrador de almacenamiento realiza una conmutación de sitios para reanudar los servicios de los nodos fallidos en el sitio superviviente. Esto restaura todos los servicios de almacenamiento del sitio A en el sitio B. Después de que el sitio haya volúmenes o LUN disponibles en el sitio B, el agente maestro de alta disponibilidad intentará reiniciar el sitio A, máquinas virtuales del sitio B.

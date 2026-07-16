@@ -10,6 +10,7 @@ Existen dos tipos de calidad de servicio (QoS) en ONTAP: IOPS y ancho de banda. 
 
 
 
+[[iops-qos]]
 == Calidad de servicio IOPS
 
 Obviamente, un control de calidad de servicio de IOPS se basa en el número total de IOPS de un recurso determinado, pero hay una serie de aspectos de la calidad de servicio de IOPS que quizá no sean intuitivos. Al principio, algunos clientes se quedaron desconcertados por el aparente aumento de la latencia cuando se alcanza un umbral de IOPS. El aumento de la latencia es el resultado natural de la limitación de IOPS. Lógicamente, funciona de forma similar a un sistema de tokens. Por ejemplo, si un volumen determinado que contiene archivos de datos tiene un límite de 10K IOPS, cada I/O que llegue primero deberá recibir un token para continuar con el procesamiento. Mientras no se hayan consumido más de 10K tokens en un segundo determinado, no hay retrasos. Si las operaciones de I/O deben esperar para recibir el token, esta espera aparece como latencia adicional. Cuanto más fuerte sea una carga de trabajo que supere el límite de calidad de servicio, más tiempo debe esperar cada I/O en la cola para su procesamiento, lo cual parece que el usuario tiene una mayor latencia.
@@ -19,6 +20,7 @@ NOTE: Tenga cuidado al aplicar controles QoS a los datos de transacción/redo lo
 
 
 
+[[bandwidth-qos]]
 == Calidad del ancho de banda
 
 No todos los tamaños de I/O son iguales. Por ejemplo, una base de datos puede estar realizando un gran número de lecturas de bloque pequeño, lo que haría que se alcance el umbral de IOPS. pero las bases de datos también pueden estar realizando una operación de exploración de tabla completa que consistiría en un número muy pequeño de lecturas de bloque grandes, lo que consume una gran cantidad de ancho de banda pero relativamente pocas IOPS.
@@ -29,6 +31,7 @@ A veces, para gestionar el rendimiento de forma efectiva se requieren límites d
 
 
 
+[[minimumguaranteed-qos]]
 == Calidad de servicio mínima/garantizada
 
 Muchos clientes buscan una solución que incluya una calidad de servicio garantizada, una solución que se pueda conseguir más de lo que parece y que potencialmente supone un derroche. Por ejemplo, colocar 10 bases de datos con una garantía de 10K IOPS requiere configurar un sistema para un escenario en el que las 10 bases de datos se ejecuten simultáneamente a 10K 000 IOPS, para un total de 100K 000.
@@ -37,6 +40,7 @@ El mejor uso para los controles mínimos de calidad de servicio es proteger las 
 
 
 
+[[adaptive-qos]]
 == Calidad de servicio adaptativa
 
 La calidad de servicio adaptativa se refiere a la función ONTAP, donde el límite de calidad de servicio se basa en la capacidad del objeto de almacenamiento. Rara vez se utiliza con bases de datos porque normalmente no hay ningún vínculo entre el tamaño de una base de datos y sus requisitos de rendimiento. Las bases de datos de gran tamaño pueden ser casi inertes, mientras que las bases de datos más pequeñas pueden ser las más intensivas en IOPS.

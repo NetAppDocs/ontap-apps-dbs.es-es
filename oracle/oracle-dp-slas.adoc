@@ -23,12 +23,14 @@ Los cambios pequeños en las políticas de protección y recuperación de datos 
 
 
 
+[[recovery-time-objective]]
 == Objetivo de tiempo de recuperación
 
 El objetivo de tiempo de recuperación (RTO) define el tiempo máximo permitido para la recuperación de un servicio. Por ejemplo, una base de datos de recursos humanos podría tener un objetivo de tiempo de recuperación de 24 horas porque, si bien sería un inconveniente perder el acceso a estos datos durante la jornada laboral, la empresa aún puede seguir funcionando. Por el contrario, una base de datos que respalde el libro mayor general de un banco tendría un RTO medido en minutos o incluso segundos. Un RTO de cero no es posible, porque debe haber una manera de diferenciar entre una interrupción real del servicio y un evento rutinario, como un paquete de red perdido. Sin embargo, un objetivo de tiempo de recuperación de casi cero es un requisito típico.
 
 
 
+[[recovery-point-objective]]
 == Objetivo de punto de recuperación
 
 El objetivo de punto de recuperación (RPO) define la pérdida de datos máxima tolerable. En muchos casos, el objetivo de punto de recuperación solo viene determinado por la frecuencia de las copias Snapshot o las actualizaciones de snapmirror.
@@ -39,6 +41,7 @@ En escenarios inusuales, los datos de registro pueden perderse. Por ejemplo, un 
 
 
 
+[[disaster-recovery]]
 == Recuperación tras siniestros
 
 La recuperación tras desastres incluye la arquitectura de TI, las políticas y los procedimientos necesarios para recuperar un servicio en caso de desastre físico. Esto puede incluir inundaciones, incendios o personas que actúen con intención maliciosa o negligente.
@@ -53,6 +56,7 @@ Los requisitos del objetivo de tiempo de recuperación ante desastres y del obje
 
 
 
+[[logical-disasters]]
 === Desastres lógicos
 
 Entre los desastres lógicos se encuentra la corrupción de datos causada por los usuarios, errores de la aplicación o del SO y mal funcionamiento del software. Los desastres lógicos también pueden incluir ataques maliciosos de terceros con virus o gusanos, o mediante la explotación de las vulnerabilidades de las aplicaciones. En estos casos, la infraestructura física permanece intacta, pero los datos subyacentes ya no son válidos.
@@ -61,6 +65,7 @@ Un tipo cada vez más común de desastre lógico se conoce como ransomware, en e
 
 
 
+[[physical-disasters]]
 === Desastres físicos
 
 Los desastres físicos incluyen la falla de los componentes de una infraestructura que supera sus capacidades de redundancia y dan lugar a una pérdida de datos o una prolongada pérdida de servicio. Por ejemplo, la protección RAID proporciona redundancia de unidades de disco y el uso de HBA proporciona redundancia de puertos FC y cables FC. Los errores de hardware de dichos componentes son previsibles y no afectan a la disponibilidad.
@@ -69,6 +74,7 @@ En un entorno empresarial, generalmente es posible proteger la infraestructura d
 
 
 
+[[synchronous-and-asynchronous-data-protection]]
 === Protección de datos síncrona y asíncrona
 
 En un mundo ideal, todos los datos se replicarían de forma sincrónica en sitios dispersos geográficamente. Dicha replicación no siempre es factible o incluso posible por varias razones:
@@ -84,6 +90,7 @@ NetApp ofrece soluciones que incluyen replicación sincrónica para las exigenci
 
 
 
+[[retention-time]]
 == Tiempo de retención
 
 El aspecto final de una estrategia de protección de datos es el tiempo de retención, que puede variar drásticamente.

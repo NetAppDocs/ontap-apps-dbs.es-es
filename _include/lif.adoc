@@ -15,6 +15,7 @@ Estos temas se aplican a la solución completa, desde el host, los switches y el
 
 
 
+[[lif-types]]
 == Tipos de LIF
 
 Hay varios tipos de LIF. link:https://docs.netapp.com/us-en/ontap/networking/lif_compatibility_with_port_types.html["Documentación de ONTAP sobre tipos de LIF"] Puede proporcionar información más completa sobre este tema, pero desde una perspectiva funcional, los LIF se pueden dividir en los siguientes grupos:
@@ -29,6 +30,7 @@ NOTE: También puede utilizarse una LIF de datos que se utiliza para el tráfico
 
 
 
+[[san-lif-design]]
 == Diseño de LIF SAN
 
 El diseño de LIF en un entorno SAN es relativamente sencillo por una de las razones: La multivía. Todas las implementaciones de SAN modernas permiten a un cliente acceder a los datos a través de múltiples rutas de red independientes y seleccionar la mejor ruta o las mejores rutas para acceder. Como resultado, el rendimiento con respecto al diseño de las LIF es más sencillo de abordar porque los clientes SAN equilibran automáticamente la carga de I/O en las mejores rutas disponibles.
@@ -37,24 +39,28 @@ Si una ruta deja de estar disponible, el cliente selecciona automáticamente una
 
 
 
+[[performance]]
 === Rendimiento
 
 El aspecto más importante con respecto al rendimiento de LIF en un entorno SAN es el ancho de banda. Por ejemplo, un clúster ONTAP AFF de dos nodos con dos puertos FC de 16GB Gb por nodo permite hasta 32GB Gbps de ancho de banda hacia/desde cada nodo.
 
 
 
+[[resiliency]]
 === Resiliencia
 
 Los LIF DE SAN no conmutan al nodo de respaldo en un sistema de almacenamiento AFF. Si falla un LIF de SAN debido a la recuperación tras fallos de la controladora, el software multivía del cliente detecta la pérdida de una ruta y redirige las I/O a otro LIF. Con los sistemas de almacenamiento de ASA, los LIF conmutarán por error tras un breve retraso, pero esto no interrumpe las I/O porque ya hay rutas activas en la otra controladora. El proceso de conmutación por error tiene lugar para restaurar el acceso de host en todos los puertos definidos.
 
 
 
+[[manageability]]
 === Gran capacidad de administración
 
 La migración de LIF es una tarea mucho más común en un entorno NFS porque la migración de LIF suele asociarse con la reubicación de volúmenes en el clúster. No es necesario migrar un LIF en un entorno SAN cuando se reubican volúmenes en el par de alta disponibilidad. Esto se debe a que, una vez finalizado el movimiento de volúmenes, ONTAP envía una notificación a la SAN sobre un cambio en las rutas y los clientes SAN vuelven a optimizarse automáticamente. La migración de LIF con SAN está asociada principalmente a los grandes cambios de hardware físico. Por ejemplo, si es necesaria una actualización sin interrupciones de las controladoras, se migra un LIF SAN al nuevo hardware. Si se encuentra que un puerto FC está defectuoso, puede migrarse un LIF a un puerto no utilizado.
 
 
 
+[[design-recommendations]]
 === Recomendaciones de diseño
 
 NetApp hace las siguientes recomendaciones:
@@ -69,12 +75,14 @@ NetApp hace las siguientes recomendaciones:
 
 
 
+[[nfs-lif-design]]
 == Diseño de LIF NFS
 
 A diferencia de los protocolos SAN, NFS tiene una capacidad limitada de definir varias rutas para los datos. Las extensiones paralelas de NFS (pNFS) instaladas en NFSv4 solucionan esta limitación, pero, como las velocidades de ethernet han alcanzado los 100GB GbE y más allá, rara vez hay valor en añadir rutas adicionales.
 
 
 
+[[performance-and-resiliency]]
 === Rendimiento y resiliencia
 
 Aunque medir el rendimiento de LIF de SAN se trata, principalmente, de calcular el ancho de banda total de todas las rutas principales, determinar el rendimiento de LIF NFS requiere observar con más detenimiento la configuración de red exacta. Por ejemplo, se pueden configurar dos puertos 10Gb GbE como puertos físicos sin configurar o como grupo de interfaces del protocolo de control de agregación de enlaces (LACP). Si se configuran como un grupo de interfaces, hay varias políticas de equilibrio de carga disponibles que funcionan de forma diferente en función de si el tráfico se conmuta o se enruta. Por último, Oracle Direct NFS (dNFS) ofrece configuraciones de equilibrio de carga que no existen en ningún cliente NFS del sistema operativo en este momento.

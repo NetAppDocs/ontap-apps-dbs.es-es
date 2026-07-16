@@ -16,6 +16,7 @@ image:smas-oracle-si-nonuniform.png["Oracle SI con acceso no uniforme"]
 
 
 
+[[failover-with-a-preconfigured-os]]
 == Conmutación al nodo de respaldo con un SO preconfigurado
 
 La sincronización activa de SnapMirror ofrece una copia síncrona de los datos en el sitio de recuperación de desastres, pero para que los datos estén disponibles, es necesario un sistema operativo y las aplicaciones asociadas. La automatización básica puede mejorar drásticamente el tiempo de conmutación al nodo de respaldo del entorno global. Los productos de Clusterware, como Pacemaker, se utilizan a menudo para crear un clúster en todos los sitios y, en muchos casos, el proceso de conmutación por error se puede ejecutar con scripts sencillos.
@@ -34,6 +35,7 @@ El procedimiento de activación real es simple. Los comandos como la detección 
 
 
 
+[[failover-with-a-virtualized-os]]
 == Conmutación por error con un sistema operativo virtualizado
 
 La conmutación por error de los entornos de base de datos puede ampliarse para incluir el propio sistema operativo. En teoría, esta recuperación tras fallos se puede realizar con las LUN de arranque, pero la mayoría de las veces se realiza con un sistema operativo virtualizado. El procedimiento es similar a los siguientes pasos:
@@ -48,6 +50,7 @@ Por ejemplo, un clúster ESX podría abarcar sitios. En caso de desastre, los eq
 
 
 
+[[storage-failure-protection]]
 == Protección frente a errores de almacenamiento
 
 El diagrama anterior muestra el uso de link:oracle-dr-smas-nonuniform.html["acceso no uniforme"], donde la SAN no se extiende entre los sitios. Esto puede que sea más sencillo de configurar y, en algunos casos, puede que sea la única opción dadas las funcionalidades SAN actuales, pero también significa que un fallo del sistema de almacenamiento primario provocaría una interrupción en la base de datos hasta que se conmutara al nodo de respaldo de la aplicación.

@@ -22,6 +22,7 @@ Utilice FlexGroup Volumes con vSphere si necesita un único almacén de datos de
 
 
 
+[[copy-offload]]
 == Descarga de copias
 
 Además de las amplias pruebas del sistema con cargas de trabajo de vSphere, ONTAP 9,8 añadió un nuevo mecanismo de descarga de copia para los almacenes de datos de FlexGroup. Este nuevo sistema emplea un motor de copia mejorado para replicar archivos entre componentes en segundo plano a la vez que permite el acceso al origen y al destino. A continuación, esta caché local de componente se utiliza para crear rápidamente instancias de clones de equipos virtuales bajo demanda.
@@ -46,6 +47,7 @@ En entornos donde no es posible aprovechar al máximo la caché FlexGroup, pero 
 
 
 
+[[qos-settings]]
 == Configuración de calidad de servicio
 
 Se admite la configuración de la calidad de servicio en el nivel de FlexGroup mediante ONTAP System Manager o el shell del clúster; sin embargo, no se proporciona para la máquina virtual ni la integración con vCenter.
@@ -56,12 +58,14 @@ Tenga en cuenta que VMware vSphere trata todas las I/O de un almacén de datos N
 
 
 
+[[metrics]]
 == Métricas
 
 ONTAP 9,8 también agregó nuevas métricas de rendimiento basadas en archivos (IOPS, rendimiento y latencia) para archivos FlexGroup. Estas métricas pueden visualizarse en la consola de herramientas de ONTAP para la consola de VMware vSphere e informes de VM. Las herramientas de ONTAP para el complemento VMware vSphere también le permiten establecer reglas de calidad de servicio (QoS) con una combinación de IOPS máximo o mínimo. Estos conjuntos se pueden establecer en todas las máquinas virtuales de un almacén de datos o individualmente para máquinas virtuales específicas.
 
 
 
+[[best-practices]]
 == Mejores prácticas
 
 * Utilice las herramientas de ONTAP para crear almacenes de datos de FlexGroup a fin de garantizar que el FlexGroup se cree de forma óptima y que las políticas de exportación se configuren en consonancia con su entorno vSphere. Sin embargo, después de crear el volumen FlexGroup con herramientas de ONTAP, se dará cuenta de que todos los nodos del clúster de vSphere utilizan una sola dirección IP para montar el almacén de datos. Esto podría provocar un cuello de botella en el puerto de red. Para evitar este problema, desmonte el almacén de datos y vuelva a montarlo mediante el asistente para almacenes de datos estándar de vSphere mediante un nombre DNS round-robin que equilibre la carga entre las LIF en la máquina virtual de almacenamiento. Tras el montaje, las herramientas de ONTAP podrán volver a gestionar el almacén de datos. Si no hay herramientas de ONTAP disponibles, use los valores predeterminados de FlexGroup y cree la política de exportación siguiendo las directrices de link:vmware-vsphere-datastores-nfs.html["Almacenes de datos y protocolos: NFS"].

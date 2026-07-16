@@ -14,6 +14,7 @@ Como se indicó anteriormente, la presencia de un sistema MetroCluster no necesa
 
 
 
+[[failover-with-a-preconfigured-os]]
 == Conmutación al nodo de respaldo con un SO preconfigurado
 
 SyncMirror ofrece una copia síncrona de los datos del sitio de recuperación de desastres, pero para que los datos estén disponibles, requiere un sistema operativo y las aplicaciones asociadas. La automatización básica puede mejorar drásticamente el tiempo de conmutación al nodo de respaldo del entorno global. Los productos de Clusterware, como Veritas Cluster Server (VCS), se utilizan a menudo para crear un clúster en todos los sitios y, en muchos casos, el proceso de conmutación por error se puede llevar a cabo con scripts sencillos.
@@ -32,6 +33,7 @@ El procedimiento de activación real es simple. Los comandos como la detección 
 
 
 
+[[failover-with-a-virtualized-os]]
 == Conmutación por error con un sistema operativo virtualizado
 
 La conmutación por error de los entornos de base de datos puede ampliarse para incluir el propio sistema operativo. En teoría, esta recuperación tras fallos se puede realizar con las LUN de arranque, pero la mayoría de las veces se realiza con un sistema operativo virtualizado. El procedimiento es similar a los siguientes pasos:

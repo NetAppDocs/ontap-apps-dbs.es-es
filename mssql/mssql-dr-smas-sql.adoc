@@ -18,6 +18,7 @@ SQL Server se puede configurar para que funcione con la sincronización activa d
 
 
 
+[[standalone-instance-of-sql-server]]
 == Instancia independiente de SQL Server
 
 Las mejores prácticas para la distribución de archivos y la configuración del servidor son las mismas que se recomiendan en link:mssql-storage-considerations.html["SQL Server en ONTAP"] la documentación.
@@ -36,6 +37,7 @@ Un proceso de conmutación por error simple y automatizado puede configurarse m�
 
 
 
+[[sql-server-failover-cluster-instance]]
 == Instancia de cluster de failover de SQL Server
 
 Las instancias de conmutación por error de SQL Server también se pueden alojar en un clúster de conmutación por error de Windows que se ejecute en un servidor físico o virtual como sistema operativo invitado. Esta arquitectura multihost proporciona flexibilidad de almacenamiento y instancia de SQL Server. Dicha puesta en marcha es útil en entornos con una gran demanda que buscan sólidos procesos de conmutación al respaldo y mantener un rendimiento mejorado. En una configuración de clúster de conmutación al nodo de respaldo, cuando un host o almacenamiento principal se ve afectado, SQL Services realizará una conmutación por error al host secundario; al mismo tiempo, el almacenamiento secundario estará disponible para prestar servicio de I/O. No se requiere ninguna secuencia de comandos de automatización ni intervención del administrador.

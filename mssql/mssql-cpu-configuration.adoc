@@ -18,6 +18,7 @@ El rendimiento de SQL Server tiene varias dependencias en la configuración de C
 
 
 
+[[hyper-threading]]
 == Hyper-threading
 
 Hyper-threading se refiere a la implementación simultánea de multithreading (SMT), lo que mejora la paralelización de los cálculos realizados en procesadores x86. SMT está disponible en procesadores Intel y AMD.
@@ -28,6 +29,7 @@ La advertencia aquí es que cada versión de SQL Server tiene sus propias limita
 
 
 
+[[cores-and-licensing]]
 == Núcleos y licencias
 
 Hay dos opciones para la licencia de SQL Server. El primero se conoce como modelo de licencia de acceso de servidor + cliente (CAL); el segundo es el modelo de núcleo por procesador. Aunque puede acceder a todas las características del producto disponibles en SQL Server con la estrategia server + CAL, hay un límite de hardware de 20 núcleos de CPU por socket. Incluso si tiene SQL Server Enterprise Edition + CAL para un servidor con más de 20 núcleos de CPU por socket, la aplicación no puede utilizar todos esos núcleos a la vez en esa instancia.
@@ -40,6 +42,7 @@ Por lo tanto, para utilizar todas las CPU, debe utilizar la licencia de núcleo 
 
 
 
+[[cpu-affinity]]
 == Afinidad de CPU
 
 Es poco probable que necesite alterar los valores predeterminados de afinidad del procesador a menos que encuentre problemas de rendimiento, pero aún vale la pena entender qué son y cómo funcionan.
@@ -56,6 +59,7 @@ La opción de máscara de E/S de afinidad enlaza E/S de disco de SQL Server a un
 
 
 
+[[max-degree-of-parallelism-maxdop]]
 == Grado máximo de paralelismo (MAXDOP)
 
 De forma predeterminada, SQL Server utiliza todas las CPU disponibles durante la ejecución de la consulta si se elige la licencia central por procesador.
@@ -67,6 +71,7 @@ TIP: *NetApp recomienda* para DSS, como almacenes de datos, comience con `MAXDOP
 
 
 
+[[max-worker-threads]]
 == Máximo de Threads de Trabajador
 
 La opción Máximo de Threads de Trabajador ayuda a optimizar el rendimiento cuando un gran número de clientes están conectados a SQL Server.
@@ -81,6 +86,7 @@ image:../media/mssql-max-worker-threads.png["MÁXIMO DE Threads de Trabajador"]
 
 
 
+[[configuring-max-worker-threads-using-sql-server-management-studio]]
 === Configuración de un máximo de threads de trabajador mediante SQL Server Management Studio.
 
 En el siguiente ejemplo se muestra cómo configurar la opción Máximo de Threads de Trabajo mediante T-SQL.

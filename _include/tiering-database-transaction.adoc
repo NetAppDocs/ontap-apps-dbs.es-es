@@ -8,6 +8,7 @@ FabricPool resuelve estos problemas al ofrecer una única solución con organiza
 
 
 
+[[policies]]
 == Normativas
 
 Utilice un `tiering-minimum-cooling-days` la política de unos días provoca una retención de bloques en los archivos creados recientemente (que son los archivos con mayor probabilidad de que sean necesarios a corto plazo) en el nivel de rendimiento. Los bloques de datos de los archivos antiguos se mueven al nivel de capacidad.

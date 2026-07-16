@@ -4,6 +4,7 @@
 
 
 
+[[snapshot-only]]
 == Solo Snapshot
 
 La `snapshot-only` `tiering-policy` se aplica sólo a los bloques que no se comparten con el sistema de archivos activo. Básicamente, provoca la organización en niveles de los backups de las bases de datos. Los bloques se convierten en candidatos para organizar por niveles después de que se crea una copia Snapshot y se sobrescribe el bloque, lo que genera un bloque que solo existe dentro de la copia Snapshot. El retraso antes de a. `snapshot-only` el bloque se considera frío y está controlado por el `tiering-minimum-cooling-days` configuración para el volumen. El intervalo a partir de ONTAP 9,8 es de 2 a 183 días.
@@ -12,6 +13,7 @@ Muchos conjuntos de datos tienen tasas de cambio bajas, lo que resulta en un aho
 
 
 
+[[auto]]
 == Automático
 
 La `auto` la política de organización en niveles amplía la clasificación por niveles tanto a bloques específicos de snapshots como a bloques del sistema de archivos activo. El retardo antes de que un bloque se considere frío es controlado por el `tiering-minimum-cooling-days` configuración para el volumen. El intervalo a partir de ONTAP 9,8 es de 2 a 183 días.
@@ -20,6 +22,7 @@ Este método permite opciones de organización en niveles que no están disponib
 
 
 
+[[none]]
 == Ninguno
 
 La `none` la política de organización en niveles evita que cualquier bloque adicional se organice en niveles desde la capa de almacenamiento, pero todos los datos que permanezcan en el nivel de capacidad permanecen en el nivel de capacidad hasta que se leen. Si a continuación se lee el bloque, se retira y se coloca en el nivel de rendimiento.
@@ -28,6 +31,7 @@ El motivo principal para utilizar el `none` la política de organización en niv
 
 
 
+[[all]]
 == Todo
 
 La `all` la política de organización en niveles reemplaza el `backup` Normativa a partir de ONTAP 9,6. La `backup` Política aplicada solo a los volúmenes de protección de datos, lo que significa un destino de SnapMirror o NetApp SnapVault. La `all` la política funciona de la misma manera, pero no se limita a los volúmenes de protección de datos.

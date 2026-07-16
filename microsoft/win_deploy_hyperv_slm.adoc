@@ -18,6 +18,7 @@ Descubre cómo configurar la migración dinámica del almacenamiento de Hyper-V.
 
 
 
+[[prerequisites]]
 == Requisitos previos
 
 * Debe tener un servidor de Hyper-V independiente con almacenamiento independiente (DAS o LUN) o almacenamiento SMB (local o compartido entre otros servidores de Hyper-V.
@@ -26,6 +27,7 @@ Descubre cómo configurar la migración dinámica del almacenamiento de Hyper-V.
 
 
 
+[[deployment]]
 == Puesta en marcha
 
 . Abra Hyper-V Manager.

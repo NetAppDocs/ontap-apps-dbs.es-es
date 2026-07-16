@@ -4,6 +4,7 @@
 
 
 
+[[volumes]]
 == Volúmenes
 
 Un punto común de confusión con los clientes que empiezan a utilizar ONTAP es el uso de FlexVols, conocido normalmente como «volúmenes».
@@ -12,6 +13,7 @@ Un volumen no es una LUN. Estos términos se usan sinónimos con muchos otros pr
 
 
 
+[[volumes-and-luns]]
 == Volúmenes y LUN
 
 Normalmente, los LUN relacionados se ubican en un único volumen. Por ejemplo, una base de datos que requiere 10 LUN suele tener 10 LUN colocadas en el mismo volumen.
@@ -26,6 +28,7 @@ Normalmente, los LUN relacionados se ubican en un único volumen. Por ejemplo, u
 ====
 
 
+[[volumes-luns-and-snapshots]]
 == Volúmenes, LUN y snapshots
 
 Las políticas y las programaciones de Snapshot se colocan en el volumen, no en la LUN. Un conjunto de datos formado por 10 LUN solo requeriría una única política de Snapshot cuando esas LUN se ubiquen en el mismo volumen.
@@ -36,6 +39,7 @@ En algunos casos, podría haber que dividir un conjunto relacionado de LUN en do
 
 
 
+[[volumes-luns-and-snapmirror]]
 == Volúmenes, LUN y SnapMirror
 
 Las políticas y las operaciones de SnapMirror son, como las operaciones de Snapshot, realizadas en el volumen, no en la LUN.
@@ -44,6 +48,7 @@ Ubicar conjuntamente LUN relacionadas en un único volumen le permite crear una 
 
 
 
+[[volumes-luns-and-qos]]
 == Volúmenes, LUN y calidad de servicio
 
 Aunque la calidad de servicio se puede aplicar de forma selectiva a LUN individuales, normalmente es más fácil configurarla en el nivel de volumen. Por ejemplo, todas las LUN utilizadas por los invitados de un servidor ESX determinado podrían colocarse en un solo volumen y, a continuación, podría aplicarse una política de calidad de servicio adaptable de ONTAP. El resultado es un límite IOPS por TB con escala automática que se aplica a todas las LUN.
@@ -52,6 +57,7 @@ Del mismo modo, si una base de datos necesitara 100K 000 IOPS y ocupase 10 LUN, 
 
 
 
+[[multi-volume-layouts]]
 == Diseños de varios volúmenes
 
 Hay algunos casos en los que distribuir las LUN en varios volúmenes puede ser beneficioso. El motivo primario es la segmentación de la controladora. Por ejemplo, un sistema de almacenamiento de alta disponibilidad podría estar alojando una única base de datos donde se requiera todo el potencial de procesamiento y almacenamiento en caché de cada controladora. En este caso, un diseño típico sería colocar la mitad de las LUN de un único volumen de la controladora 1 y la otra mitad de los LUN de un único volumen en la controladora 2.

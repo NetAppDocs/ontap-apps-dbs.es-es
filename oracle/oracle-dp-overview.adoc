@@ -21,6 +21,7 @@ NOTE: Esta documentación sustituye al informe técnico _TR-4591 publicado anter
 
 
 
+[[planning]]
 == Planificación
 
 La arquitectura de protección de datos empresariales adecuada depende de los requisitos empresariales relacionados con la retención de datos, la capacidad de recuperación y la tolerancia a interrupciones durante diversos eventos.

@@ -29,6 +29,7 @@ Los siguientes ejemplos son específicos de Linux, pero el procedimiento se pued
 
 
 
+[[aligned]]
 == Alineado
 
 El siguiente ejemplo muestra una comprobación de alineación en una sola LUN con una partición única.
@@ -135,6 +136,7 @@ lun:ed95d953-1560-4f74-9006-85b352f58fcd:read_align_histo.7:0%
 
 
 
+[[misaligned]]
 == Mal alineado
 
 En el siguiente ejemplo, se muestran operaciones de I/O mal alineadas:
@@ -183,6 +185,7 @@ Además, el `read_partial_blocks` La estadística es diferente de cero, lo que s
 
 
 
+[[redo-logging]]
 == Registro de repetición
 
 Los procedimientos que se explican aquí son aplicables a los archivos de datos. Los redo logs y archive logs de Oracle tienen patrones de E/S diferentes. Por ejemplo, redo log es una sobrescritura circular de un único archivo. Si se utiliza el tamaño predeterminado de bloque de 512 bytes, las estadísticas de escritura se ven algo así:

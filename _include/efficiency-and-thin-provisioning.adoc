@@ -4,6 +4,7 @@
 
 
 
+[[efficiency-and-thin-provisioning]]
 == Eficiencia y thin provisioning
 
 Las funciones de eficiencia son formas de thin provisioning. Por ejemplo, una LUN de 100GB GB que ocupa un volumen de 100GB GB podría comprimirse hasta 50GB 000. Todavía no hay ahorros reales realizados porque el volumen sigue siendo de 100GB GB. Primero se debe reducir el volumen para que el espacio ahorrado se pueda usar en cualquier otro lugar del sistema. Si los cambios realizados en la LUN de 100GB TB más adelante hacen que los datos se puedan comprimir menos, el tamaño de la LUN aumentará y el volumen podría llenarse.

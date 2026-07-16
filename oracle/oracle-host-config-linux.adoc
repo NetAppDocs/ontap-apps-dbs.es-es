@@ -14,6 +14,7 @@ Temas de configuración específicos del sistema operativo Linux.
 
 
 
+[[linux-nfsv3-tcp-slot-tables]]
 == Tablas de ranuras TCP Linux NFSv3
 
 Las tablas de ranuras TCP son equivalentes a NFSv3 a la profundidad de la cola del adaptador de bus de host (HBA). En estas tablas se controla el número de operaciones de NFS que pueden extraordinarias a la vez. El valor predeterminado suele ser 16, que es demasiado bajo para un rendimiento óptimo. El problema opuesto ocurre en los kernels más nuevos de Linux, que pueden aumentar automáticamente el límite de la tabla de ranuras TCP a un nivel que sature el servidor NFS con solicitudes.
@@ -34,6 +35,7 @@ CAUTION: Si no se establecen estos parámetros, puede tener efectos significativ
 
 
 
+[[linux-nfs-mount-options]]
 == Opciones de montaje de Linux NFS
 
 En la siguiente tabla, se enumeran las opciones de montaje de NFS de Linux para una instancia única.
@@ -96,12 +98,14 @@ Por lo general, los archivos que no son de base de datos se deben montar con las
 
 
 
+[[access-and-getattr]]
 === ACCESO y GETATTR
 
 Algunos clientes han observado que un nivel extremadamente alto de otros IOPS, como EL ACCESO y GETATTR, puede dominar sus cargas de trabajo. En casos extremos, las operaciones como las de lectura y escritura pueden ser tan bajas como el 10 % del total. Este es un comportamiento normal con cualquier base de datos que incluya el uso `actimeo=0` y/o. `noac` En Linux, porque estas opciones provocan que el sistema operativo Linux vuelva a cargar constantemente los metadatos de los archivos del sistema de almacenamiento. Las operaciones como EL ACCESO y GETATTR son operaciones de bajo impacto que se proporcionan desde la caché de ONTAP en un entorno de base de datos. No se deben considerar IOPS auténticos, como lecturas y escrituras, que crean una demanda real de sistemas de almacenamiento. Sin embargo, estas otras IOPS crean una cierta carga, sobre todo en entornos RAC. Para solucionar esta situación, habilite DNFS, que omite la caché de buffers del sistema operativo y evita estas operaciones de metadatos innecesarias.
 
 
 
+[[linux-direct-nfs]]
 === NFS directo de Linux
 
 Se requiere una opción de montaje adicional, denominada `nosharecache`, cuando (a) DNFS está habilitado y (b) un recurso compartido NFS de origen se monta más de una vez en un único servidor (c) con un montaje NFS anidado. Esta configuración se ve principalmente en entornos que admiten aplicaciones SAP. Por ejemplo, un único recurso compartido NFS en un sistema NetApp podría tener un directorio ubicado en `/vol/oracle/base` y un segundo en `/vol/oracle/home`. Si `/vol/oracle/base` se monta en `/oracle` y `/vol/oracle/home` se monta en `/oracle/home`, el resultado son montajes NFS anidados que se originan en el mismo origen.
@@ -110,6 +114,7 @@ El sistema operativo puede detectar el hecho de que `/oracle` y `/oracle/home` r
 
 
 
+[[linux-direct-nfs-and-oracle-rac]]
 === Linux Direct NFS y Oracle RAC
 
 El uso de DNFS ofrece ventajas especiales de rendimiento para Oracle RAC en el sistema operativo Linux, ya que Linux no dispone de un método para forzar la entrada/salida directa, que se necesita con RAC para lograr coherencia entre los nodos. Como solución alternativa, Linux requiere el uso de `actimeo=0` Opción de montaje, que hace que los datos de archivo caduquen inmediatamente desde la caché del sistema operativo. Esta opción, a su vez, fuerza al cliente NFS de Linux a volver a leer constantemente los datos de atributos, lo que daña la latencia y aumenta la carga en la controladora de almacenamiento.
@@ -118,12 +123,14 @@ Al habilitar DNFS se omite el cliente NFS del host y se evita este daño. Varios
 
 
 
+[[linux-direct-nfs-and-oranfstab-file]]
 === Linux Direct NFS y archivo oranfstab
 
 Al utilizar DNFS en Linux con la opción multipathing, se deben utilizar varias subredes. En otros sistemas operativos, se pueden establecer varios canales DNFS mediante el `LOCAL` y.. `DONTROUTE` Opciones para configurar varios canales DNFS en una sola subred. Sin embargo, esto no funciona correctamente en Linux y puede resultar en problemas de rendimiento inesperados. Con Linux, cada NIC utilizada para el tráfico DNFS debe estar en una subred diferente.
 
 
 
+[[io-scheduler]]
 === Programador de I/O.
 
 El kernel de Linux permite un control de bajo nivel sobre la forma en que se programa la E/S para bloquear los dispositivos. Los valores por defecto en varias distribuciones de Linux varían considerablemente. Las pruebas demuestran que la fecha límite suele ofrecer los mejores resultados, pero en ocasiones NOOP ha sido ligeramente mejor. La diferencia de rendimiento es mínima, pero pruebe ambas opciones si es necesario extraer el máximo rendimiento posible de una configuración de base de datos. CFQ es el valor predeterminado en muchas configuraciones y ha demostrado tener problemas de rendimiento significativos con cargas de trabajo de bases de datos.
@@ -132,6 +139,7 @@ Consulte la documentación relevante del proveedor de Linux para obtener instruc
 
 
 
+[[multipathing]]
 === Accesos múltiples
 
 Algunos clientes se han encontrado con fallos durante la interrupción de la red porque el daemon multivía no se estaba ejecutando en su sistema. En versiones recientes de Linux, el proceso de instalación del sistema operativo y el daemon de rutas múltiples pueden dejar estos sistemas operativos vulnerables a este problema. Los paquetes están instalados correctamente, pero no están configurados para el inicio automático después de un reinicio.
@@ -151,6 +159,7 @@ multipathd      0:off   1:off   2:on    3:on    4:on    5:on    6:off
 ....
 
 
+[[asm-mirroring]]
 == Duplicación de ASM
 
 La duplicación de ASM puede requerir cambios en la configuración multivía de Linux para permitir que ASM reconozca un problema y cambie a un grupo de fallos alternativo. La mayoría de las configuraciones de ASM en ONTAP utilizan redundancia externa, lo que significa que la cabina externa ofrece protección de datos y ASM no refleja datos. Algunos sitios utilizan ASM con redundancia normal para proporcionar duplicación bidireccional, normalmente en diferentes sitios.
@@ -171,6 +180,7 @@ A inferior `no_path_retry` Value puede reducir el tiempo necesario para que ASM 
 
 
 
+[[linux-xfs-ext3-and-ext4-mount-options]]
 == Opciones de montaje de Linux xfs, ext3 y ext4
 
 

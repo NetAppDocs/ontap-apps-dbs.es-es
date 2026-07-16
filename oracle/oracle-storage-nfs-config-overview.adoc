@@ -21,6 +21,7 @@ El protocolo NFS incluye varias versiones con diferentes requisitos. Para obtene
 
 
 
+[[nfs-versions]]
 == Versiones de NFS
 
 El cliente NFS del sistema operativo debe ser compatible con NetApp.
@@ -37,6 +38,7 @@ NOTE: La link:https://imt.netapp.com/matrix/#search["Matriz de compatibilidad de
 
 
 
+[[linux-nfsv3-tcp-slot-tables]]
 == Tablas de ranuras TCP Linux NFSv3
 
 Las tablas de ranuras TCP son equivalentes a NFSv3 a la profundidad de la cola del adaptador de bus de host (HBA). En estas tablas se controla el número de operaciones de NFS que pueden extraordinarias a la vez. El valor predeterminado suele ser 16, que es demasiado bajo para un rendimiento óptimo. El problema opuesto ocurre en los kernels más nuevos de Linux, que pueden aumentar automáticamente el límite de la tabla de ranuras TCP a un nivel que sature el servidor NFS con solicitudes.
@@ -57,6 +59,7 @@ CAUTION: Si no se establecen estos parámetros, puede tener efectos significativ
 
 
 
+[[adr-and-nfs]]
 == ADR y NFS
 
 Algunos clientes han informado de problemas de rendimiento derivados de una cantidad excesiva de I/O en los datos de `ADR` ubicación. Por lo general, el problema no ocurre hasta que se acumulan muchos datos de rendimiento. Se desconoce el motivo del exceso de E/S, pero este problema parece ser el resultado de que los procesos de Oracle exploran repetidamente el directorio de destino en busca de cambios.
@@ -68,6 +71,7 @@ TIP: *NetApp recomienda* no colocar `ADR` datos en un sistema de archivos con `n
 
 
 
+[[nfs-rootonly-and-mount-rootonly]]
 == nfs-rootonly y mount-rootonly
 
 ONTAP incluye una opción de NFS denominada `nfs-rootonly` Esto controla si el servidor acepta conexiones de tráfico NFS desde puertos altos. Como medida de seguridad, solo el usuario root puede abrir conexiones TCP/IP utilizando un puerto de origen inferior a 1024 porque dichos puertos normalmente están reservados para el uso del sistema operativo, no para los procesos del usuario. Esta restricción ayuda a garantizar que el tráfico NFS provenga de un cliente NFS del sistema operativo real y no de un proceso malicioso que emula un cliente NFS. El cliente dNFS de Oracle es un controlador de espacio de usuario, pero el proceso se ejecuta como raíz, por lo que generalmente no es necesario cambiar el valor de `nfs-rootonly`. Las conexiones se realizan a partir de puertos bajos.
@@ -97,6 +101,7 @@ NOTE: En raras ocasiones, es posible que necesite cambiar nfs-rootonly y mount-r
 
 
 
+[[nfs-export-polices-superuser-and-setuid]]
 == Políticas de exportación NFS: Superusuario y setuid
 
 Si los binarios de Oracle se encuentran en un recurso compartido NFS, la política de exportación debe incluir permisos de superusuario y setuid.
@@ -113,6 +118,7 @@ vserver1  orabin     1         sys       true
 ....
 
 
+[[nfsv44-1-configuration]]
 == Configuración de NFSv4/4,1
 
 Para la mayoría de las aplicaciones, hay muy poca diferencia entre NFSv3 y NFSv4. Las operaciones de I/O de aplicaciones suelen ser muy sencillas y no se benefician de forma significativa de algunas de las funciones avanzadas disponibles en NFSv4. Las versiones superiores de NFS no deberían considerarse como una «actualización» desde el punto de vista del almacenamiento de base de datos, sino como versiones de NFS que incluyen funciones adicionales. Por ejemplo, si se requiere la seguridad de extremo a extremo del modo de privacidad de kerberos (krb5p), se necesita NFSv4.
@@ -124,6 +130,7 @@ Cambiar a NFSv4 es más complicado que simplemente cambiar las opciones de monta
 
 
 
+[[nfsv4-domain]]
 === NFSv4 dominio
 
 Una explicación completa de la configuración de NFSv4/4,1 está fuera del alcance de este documento, pero un problema que se encuentra comúnmente es una discrepancia en la asignación de dominio. Desde un punto de vista sysadmin, los sistemas de archivos NFS parecen comportarse normalmente, pero las aplicaciones informan de errores sobre permisos y/o setuid en determinados archivos. En algunos casos, los administradores han concluido incorrectamente que los permisos de los binarios de la aplicación se han dañado y han ejecutado comandos chown o chmod cuando el problema real era el nombre de dominio.

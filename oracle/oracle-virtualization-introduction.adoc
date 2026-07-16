@@ -14,6 +14,7 @@ La virtualización de bases de datos con VMware, Oracle OLVM o KVM es una opció
 
 
 
+[[supportability]]
 == Compatibilidad
 
 Existen muchos malentendidos acerca de las normativas de soporte de Oracle para la virtualización, especialmente para los productos VMware. No es raro escuchar que Oracle no admite la virtualización. Esta noción es incorrecta y conduce a la pérdida de oportunidades para beneficiarse de la virtualización. El ID de documento de Oracle 249212,1 analiza los requisitos reales y los clientes rara vez consideran que son una preocupación.
@@ -22,6 +23,7 @@ Si se produce un problema en un servidor virtualizado y dicho problema es descon
 
 
 
+[[storage-presentation]]
 == Presentación de almacenamiento
 
 Los clientes que están considerando la virtualización de sus bases de datos deben basar sus decisiones sobre almacenamiento en sus necesidades empresariales. Aunque esta es una afirmación generalmente verdadera para todas las decisiones DE TI, es especialmente importante para los proyectos de bases de datos, porque el tamaño y el alcance de los requisitos varían considerablemente.
@@ -36,12 +38,14 @@ Existen tres opciones básicas para la presentación del almacenamiento:
 
 
 
+[[performance]]
 === Rendimiento
 
 El método de presentar almacenamiento a un invitado virtualizado no suele afectar al rendimiento. Todos los SO host, los controladores de red virtualizados y las implementaciones de almacenes de datos de hipervisor están muy optimizados y, por lo general, pueden consumir todo el ancho de banda de red FC o IP disponible entre el hipervisor y el sistema de almacenamiento, siempre que se sigan las prácticas recomendadas básicas. En algunos casos, obtener un rendimiento óptimo puede ser ligeramente más sencillo usando un método de presentación de almacenamiento en comparación con otro, pero el resultado final debería ser comparable.
 
 
 
+[[manageability]]
 === Gran capacidad de administración
 
 El factor clave para decidir cómo presentar el almacenamiento a un invitado virtualizado es la capacidad de gestión. No hay un método correcto o incorrecto. El mejor enfoque depende de las necesidades operativas, las habilidades y las preferencias de TI.
@@ -64,18 +68,21 @@ El uso de sistemas de archivos propiedad de invitados a veces facilita el uso de
 
 
 
+[[paravirtualized-drivers]]
 == Controladores paravirtualizados
 
 Para un rendimiento óptimo, el uso de controladores de red paravirtualizados es fundamental. Cuando se utiliza un almacén de datos, se requiere un controlador SCSI paravirtualizado. Un controlador de dispositivo paravirtualizado permite a un invitado integrarse más profundamente en el hipervisor, en lugar de un controlador emulado en el que el hipervisor pasa más tiempo de CPU imitando el comportamiento del hardware físico.
 
 
 
+[[overcommitting-ram]]
 == RAM de sobrecompromiso
 
 Sobrecomprometer RAM significa configurar más RAM virtualizada en varios hosts de la que existe en el hardware físico. Si lo hace, se pueden producir problemas de rendimiento inesperados. Al virtualizar una base de datos, el hipervisor no debe intercambiar los bloques subyacentes del SGA de Oracle en el almacenamiento. Si lo hace, los resultados de rendimiento son muy inestables.
 
 
 
+[[datastore-striping]]
 == Segmentación de almacenes de datos
 
 Cuando se usan bases de datos con almacenes de datos, hay un factor crucial que debe tenerse en cuenta con respecto al rendimiento: La segmentación.

@@ -14,6 +14,7 @@ Temas de configuración específicos del sistema operativo Solaris.
 
 
 
+[[solaris-nfs-mount-options]]
 == Opciones de montaje NFS de Solaris
 
 En la siguiente tabla se enumeran las opciones de montaje NFS de Solaris para una única instancia.
@@ -74,18 +75,21 @@ La razón `actimeo=0` es necesario para el uso compartido `ORACLE_HOME` Desplieg
 
 
 
+[[solaris-ufs-mount-options]]
 == Opciones de montaje UFS de Solaris
 
 NetApp recomienda usar la opción de montaje de registro para conservar la integridad de los datos en caso de bloqueo del host Solaris o interrupción de la conectividad de FC. La opción de montaje logging también conserva la facilidad de uso de los backups de Snapshot.
 
 
 
+[[solaris-zfs]]
 == ZFS de Solaris
 
 Solaris ZFS debe instalarse y configurarse cuidadosamente para ofrecer un rendimiento óptimo.
 
 
 
+[[mvector]]
 === mvector
 
 Solaris 11 incluyó un cambio en la forma en que procesa grandes operaciones de E/S, lo que puede dar lugar a graves problemas de rendimiento en las matrices de almacenamiento SAN. El problema está documentado en el informe de errores de seguimiento de NetApp 630173, que indica que Solaris 11 ZFS Performance Regression.
@@ -106,12 +110,14 @@ Si surge algún problema inesperado de este cambio, se puede revertir fácilment
 ....
 
 
+[[kernel]]
 == Kernel
 
 El rendimiento fiable de ZFS requiere un kernel de Solaris parcheado contra problemas de alineación de LUN. La corrección se introdujo con el parche 147440-19 en Solaris 10 y con SRU 10,5 para Solaris 11. Utilice sólo Solaris 10 y versiones posteriores con ZFS.
 
 
 
+[[lun-configuration]]
 == Configuración de LUN
 
 Para configurar una LUN, complete los siguientes pasos:
@@ -130,6 +136,7 @@ Para configurar una LUN, complete los siguientes pasos:
 
 
 
+[[zpools]]
 === zpools
 
 Sólo se debe crear un zpool después de los pasos del link:oracle-host-config-solaris.html#lun-configuration["Configuración de LUN"] se realizan. Si el procedimiento no se realiza correctamente, puede provocar una degradación grave del rendimiento debido a la alineación de E/S. Para un rendimiento óptimo en ONTAP es necesario alinear el I/O con un límite de 4K GbE en una unidad. Los sistemas de archivos creados en un zpool utilizan un tamaño de bloque efectivo que se controla mediante un parámetro denominado `ashift`, que se puede ver ejecutando el comando `zdb -C`.
@@ -140,6 +147,7 @@ Después de crear un zpool, verifique el valor de `ashift` antes de continuar. S
 
 
 
+[[zpools-and-solaris-ldoms]]
 === Zpools y LDOMs de Solaris
 
 Los LDOMs de Solaris crean un requisito adicional para asegurarse de que la alineación de E/S es correcta. Aunque un LUN se puede detectar correctamente como dispositivo 4K, un dispositivo virtual vdsk en un LDOM no hereda la configuración del dominio de E/S. El vdsk basado en esa LUN vuelve a tener de forma predeterminada un bloque de 512 bytes.
@@ -215,12 +223,14 @@ block-size-list="1:8192","2:8192","3:8192","4:8192","5:8192","6:8192";
 
 
 
+[[zfs-intent-log-zil]]
 === Registro de Intención de ZFS (ZIL)
 
 Por lo general, no hay razón para localizar el registro de intención ZFS (ZIL) en un dispositivo diferente. El registro puede compartir espacio con el pool principal. El uso principal de un ZIL separado es cuando se utilizan unidades físicas que carecen de las funciones de almacenamiento en caché de escritura en cabinas de almacenamiento modernas.
 
 
 
+[[logbias]]
 === sesgo logarítmico
 
 Ajuste la `logbias` Parámetro en sistemas de archivos ZFS que alojan datos de Oracle.
@@ -234,18 +244,21 @@ Cuando se utiliza una cabina de almacenamiento moderna que incluye su propia fun
 
 
 
+[[direct-io]]
 === E/S directa
 
 Muchas aplicaciones, incluidos los productos de Oracle, pueden omitir la caché de buffers del host activando la E/S directa Esta estrategia no funciona como se esperaba con los sistemas de archivos ZFS. Aunque se omite la caché de buffers del host, ZFS continúa almacenando los datos en caché. Esta acción puede provocar resultados engañosos cuando se usan herramientas como fio o sio para realizar pruebas de rendimiento, ya que es difícil predecir si I/O está llegando al sistema de almacenamiento o si se está almacenando en caché localmente dentro del sistema operativo. Esta acción también hace que sea muy difícil utilizar estas pruebas sintéticas para comparar el rendimiento de ZFS con otros sistemas de archivos. Como cuestión práctica, hay poca o ninguna diferencia en el rendimiento del sistema de archivos con las cargas de trabajo de los usuarios reales.
 
 
 
+[[multiple-zpools]]
 === Varios zpools
 
 Las copias de seguridad basadas en instantáneas, las restauraciones, los clones y el archivado de datos basados en ZFS se deben realizar en el nivel de zpool y, por lo general, requieren varios zpools. Un zpool es análogo a un grupo de discos LVM y debe configurarse usando las mismas reglas. Por ejemplo, es probable que una base de datos se disponga mejor con los archivos de datos en los que reside `zpool1` y los registros de archivo, los archivos de control y los registros de recuperación en los que residen `zpool2`. Este enfoque permite realizar un backup dinámico estándar en el que la base de datos se coloca en modo de backup dinámico, seguido de una copia Snapshot de `zpool1`. A continuación, la base de datos se elimina del modo de backup dinámico, se fuerza el archivo de registro y una copia de Snapshot de `zpool2` se ha creado. Una operación de restauración requiere el desmontaje de los sistemas de archivos zfs y desconectar zpool íntegramente, a continuación de una operación de restauración de SnapRestore. El zpool se puede poner en línea de nuevo y la base de datos se recupera.
 
 
 
+[[filesystemiooptions]]
 === filesystemio_options
 
 Parámetro de Oracle `filesystemio_options` Funciona de forma diferente con ZFS. Si `setall` o. `directio` Se utiliza, las operaciones de escritura son síncronas y omiten la caché de buffers del sistema operativo, pero ZFS almacena en búfer las lecturas. Esta acción causa dificultades en el análisis de rendimiento porque a veces la caché ZFS intercepta y suministra servicio a las E/S, lo que hace que la latencia de almacenamiento y el total de E/S sean menores de lo que podría parecer.

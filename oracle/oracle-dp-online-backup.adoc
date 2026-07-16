@@ -27,6 +27,7 @@ Algunos clientes a gran escala han adoptado un enfoque más simple mediante la c
 
 
 
+[[data-layout]]
 == Distribución de datos
 
 La disposición más sencilla consiste en aislar los archivos de datos en uno o varios volúmenes dedicados, LUN o espacios de nombres NVMe. Los recursos de almacenamiento no deben estar contaminados por ningún otro tipo de archivo. Esto es para asegurarte de que los archivos de datos se puedan restaurar rápidamente mediante una operación SnapRestore sin destruir un registro de recuperación, un archivo de control o un registro de archivo importantes.
@@ -41,6 +42,7 @@ Si se siguen estas directrices, las instantáneas se pueden programar directamen
 
 
 
+[[local-recovery-procedurenfs]]
 == Procedimiento de recuperación local: NFS
 
 Este procedimiento se puede realizar manualmente o a través de una aplicación como SnapCenter. El procedimiento básico es el siguiente:
@@ -57,6 +59,7 @@ Además, para bases de datos más pequeñas, un usuario final puede recuperar ar
 
 
 
+[[local-recovery-proceduresan]]
 == Procedimiento de recuperación local: San
 
 Este procedimiento se puede realizar manualmente o a través de una aplicación como SnapCenter. El procedimiento básico es el siguiente:

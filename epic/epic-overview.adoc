@@ -24,6 +24,7 @@ Utilice este documento como guía para construir e implementar correctamente la 
 
 
 
+[[purpose]]
 == Específico
 
 Este documento describe las mejores prácticas para integrar el almacenamiento de NetApp en un entorno de software de Epic. Contiene las siguientes secciones:
@@ -35,6 +36,7 @@ Este documento describe las mejores prácticas para integrar el almacenamiento d
 
 
 
+[[scope]]
 == Ámbito
 
 Este documento no cubre los siguientes temas:
@@ -44,6 +46,7 @@ Este documento no cubre los siguientes temas:
 
 
 
+[[audience]]
 == Destinatarios
 
 NetApp asume que el lector tiene los siguientes conocimientos generales:

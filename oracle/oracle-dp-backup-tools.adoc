@@ -21,6 +21,7 @@ En algunos casos, la simple configuración de estas funciones básicas directame
 
 
 
+[[snapcenter]]
 == SnapCenter
 
 SnapCenter es el producto estrella de protección de datos de NetApp. A un nivel muy bajo, es similar a los productos de SnapManager en cuanto a cómo se ejecutan backups de bases de datos, pero se creó desde cero para proporcionar un panel único para la gestión de la protección de datos en sistemas de almacenamiento de NetApp.
@@ -29,6 +30,7 @@ SnapCenter incluye las funciones básicas, como los backups y restauraciones bas
 
 
 
+[[rest]]
 == DESCANSO
 
 ONTAP también contiene un amplio conjunto de API RESTful. Esto permite que 3rd proveedores de partes creen protección de datos y otras aplicaciones de gestión con la profunda integración con ONTAP. Además, los clientes que desean crear sus propios flujos de trabajo y utilidades de automatización pueden consumir fácilmente la API RESTful.

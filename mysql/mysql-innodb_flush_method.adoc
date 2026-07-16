@@ -18,6 +18,7 @@ El parámetro innodb_flush_method especifica cómo InnoDB abre y vacía los arch
 
 
 
+[[optimizations]]
 == Optimizaciones
 
 En la optimización de InnoDB, la configuración de este parámetro modifica el rendimiento de la base de datos cuando es aplicable.
@@ -32,6 +33,7 @@ Las siguientes opciones son para vaciar los archivos a través de InnoDB:
 
 
 
+[[observation]]
 == Observación
 
 En las pruebas de laboratorio de NetApp, el `fsync` La opción predeterminada se utilizó en NFS y SAN, y fue un gran improvisador de rendimiento `O_DIRECT`. Mientras se utiliza el método de vaciado como `O_DIRECT` Con ONTAP, hemos observado que el cliente escribe muchas escrituras de un solo byte en el borde del bloque de 4096 KB de forma en serie. Estas escrituras aumentan la latencia en la red y el rendimiento disminuye.

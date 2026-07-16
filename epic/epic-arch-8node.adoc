@@ -15,12 +15,14 @@ Los entornos de prueba se clonan de Report en lugar de Production en este diseñ
 
 
 
+[[eight-node-architecture]]
 == Arquitectura de ocho nodos
 
 image:epic-8node.png["Arquitectura épica de 4 nodos"]
 
 
 
+[[eight-node-workload-placement]]
 == Ubicación de cargas de trabajo en ocho nodos
 
 image:epic-8node-design.png["Ubicación Epic de 8 nodos"]

@@ -18,6 +18,7 @@ Los límites de rendimiento son útiles para controlar los niveles de servicio, 
 
 
 
+[[ontap-qos-policy-support]]
 == Compatibilidad con las políticas de calidad de servicio de ONTAP
 
 Los sistemas que ejecutan ONTAP pueden utilizar la función de calidad de servicio del almacenamiento para limitar el rendimiento en MB/s y/o I/O por segundo (IOPS) para diferentes objetos de almacenamiento, como archivos, LUN, volúmenes o SVM completas.
@@ -42,6 +43,7 @@ Consulte link:https://docs.netapp.com/us-en/ontap/performance-admin/index.html["
 
 
 
+[[non-vvols-nfs-datastores]]
 == Almacenes de datos NFS sin vVols
 
 Una política de calidad de servicio de ONTAP puede aplicarse a todo el almacén de datos o archivos VMDK individuales que contiene. Sin embargo, es importante entender que todas las máquinas virtuales de un almacén de datos NFS tradicional (sin vVols) comparten una cola de I/O común desde un host determinado. Si alguna máquina virtual está regulada por una política de calidad de servicio de ONTAP, esta opción, en la práctica, provoca que todas las operaciones de I/O de ese almacén de datos parezcan aceleradas para ese host.
@@ -72,12 +74,14 @@ Los almacenes de datos de FlexGroup ofrecen funcionalidades de calidad de servic
 
 
 
+[[vmfs-datastores]]
 == Almacenes de datos de VMFS
 
 Al usar los LUN de ONTAP, las políticas de calidad de servicio se pueden aplicar al volumen de FlexVol que contiene los LUN o los LUN individuales, pero no archivos VMDK individuales, ya que ONTAP no es consciente del sistema de archivos VMFS.
 
 
 
+[[vvols-datastores]]
 == Almacenes de datos de vVols
 
 La calidad de servicio mínima o máxima se puede establecer fácilmente en máquinas virtuales o VMDK individuales sin que ello afecte a ningún otro equipo virtual o VMDK gracias a la gestión basada en políticas de almacenamiento y vVols.
@@ -89,6 +93,7 @@ NOTE: vVols requiere el uso de ONTAP tools for VMware vSphere, que funciona como
 
 
 
+[[ontap-qos-and-vmware-sioc]]
 == ONTAP QoS y VMware SIOC
 
 La calidad de servicio de ONTAP y el control de I/O de almacenamiento de VMware vSphere (SIOC) son tecnologías complementarias que los administradores de vSphere y de almacenamiento pueden utilizar conjuntamente para gestionar el rendimiento de las máquinas virtuales de vSphere alojadas en sistemas que ejecutan ONTAP. Cada herramienta tiene sus propias fuerzas, como se muestra en la siguiente tabla. Debido a los distintos ámbitos de VMware vCenter y ONTAP, algunos objetos pueden verse y gestionarse mediante un sistema, no el otro.
@@ -128,6 +133,7 @@ La calidad de servicio de ONTAP y el control de I/O de almacenamiento de VMware 
 |===
 
 
+[[vmware-storage-distributed-resource-scheduler]]
 == Planificador de recursos distribuidos de almacenamiento de VMware
 
 El planificador de recursos distribuidos de almacenamiento (SDRS) de VMware es una función de vSphere que coloca los equipos virtuales en el almacenamiento en función de la latencia de I/o actual y el uso del espacio. A continuación, mueve la máquina virtual o los VMDK de forma no disruptiva entre los almacenes de datos de un clúster de almacenes de datos (también conocido como "pod"), seleccionando el mejor almacén de datos en el que colocar la máquina virtual o los VMDK en el clúster de almacenes de datos. Un clúster de almacenes de datos es una colección de almacenes de datos similares que se agregan en una única unidad de consumo desde la perspectiva del administrador de vSphere.
@@ -148,6 +154,7 @@ Otras prácticas recomendadas de ONTAP para SDRS incluyen lo siguiente:
 
 
 
+[[storage-policy-based-management-and-vvols]]
 == Gestión basada en políticas de almacenamiento y vVols
 
 Las API de VMware vSphere para el reconocimiento del almacenamiento (VASA) facilitan que un administrador de almacenamiento configure almacenes de datos con funcionalidades bien definidas y permiten que el administrador de equipos virtuales los utilice siempre que sea necesario para aprovisionar máquinas virtuales sin tener que interactuar entre sí. Merece la pena echar un vistazo a este enfoque para ver cómo puede optimizar sus operaciones de almacenamiento de virtualización y evitar un gran trabajo trivial.

@@ -26,6 +26,7 @@ NOTE: Consulte las siguientes secciones sobre thin provisioning para obtener una
 
 
 
+[[compression]]
 == Compresión
 
 Antes de la disponibilidad de sistemas de almacenamiento all-flash, la compresión basada en cabinas era de un valor limitado debido a que la mayoría de las cargas de trabajo con un gran volumen de I/O requerían un gran número de discos para proporcionar un rendimiento aceptable. Los sistemas de almacenamiento contenían invariablemente mucha más capacidad de la necesaria como efecto secundario al gran número de unidades. La situación ha cambiado con el aumento del almacenamiento de estado sólido. Ya no es necesario sobreaprovisionar enormemente las unidades solo para obtener un buen rendimiento. El espacio de las unidades de un sistema de almacenamiento puede coincidir con las necesidades de capacidad reales.
@@ -36,6 +37,7 @@ Existen varias formas de comprimir datos. Muchas bases de datos incluyen sus pro
 
 
 
+[[adaptive-compression]]
 === Compresión adaptativa
 
 La compresión adaptativa se ha probado minuciosamente en cargas de trabajo empresariales sin que ello afecte al rendimiento, incluso en un entorno all-flash en el que la latencia se mide en microsegundos. Algunos clientes incluso han informado de un aumento del rendimiento con el uso de la compresión, ya que los datos siguen comprimidos en la caché, lo que aumenta efectivamente la cantidad de caché disponible en una controladora.
@@ -50,6 +52,7 @@ CAUTION: Los bloques de compresión superiores a los 8KB MB no se deben usar jun
 
 
 
+[[compression-alignment]]
 === Alineación de la compresión
 
 La compresión adaptativa en un entorno de base de datos requiere tener en cuenta algún tipo de aspecto en la alineación de bloques de compresión. Hacerlo solo es una preocupación para los datos sujetos a sobrescrituras aleatorias de bloques muy específicos. Este enfoque es similar en concepto a la alineación general del sistema de archivos, donde el inicio de un sistema de archivos debe alinearse con un límite de dispositivo 4K y el tamaño de bloque de un sistema de archivos debe ser un múltiplo de 4K.
@@ -60,6 +63,7 @@ Los datos como los backups o los registros de transacciones son operaciones escr
 
 
 
+[[data-compaction]]
 == Compactación de datos
 
 La compactación de datos es una tecnología que mejora la eficiencia de la compresión. Como se ha indicado anteriormente, la compresión adaptativa por sí sola puede proporcionar un ahorro de 2:1 KB, ya que se limita a almacenar una I/O de 8KB KB en un bloque de 4KB WAFL. Los métodos de compresión con tamaños de bloque más grandes ofrecen una mejor eficiencia. Sin embargo, no son adecuados para datos sujetos a sobrescrituras de bloques pequeños. La descompresión de 32KB unidades de datos, la actualización de una parte de 8KB, la recompresión y la escritura en las unidades genera una sobrecarga.
@@ -70,12 +74,14 @@ El grado de ahorro obtenido varía. Por lo general, los datos que ya están comp
 
 
 
+[[temperature-sensitive-storage-efficiency]]
 === Eficiencia de almacenamiento sensible a la temperatura
 
 La eficiencia de almacenamiento sensible a la temperatura (TSSE) está disponible en ONTAP 9, e.8 y posteriores. Se basa en mapas de calor de acceso a bloques para identificar los bloques a los que se accede con poca frecuencia y comprimirlos con mayor eficiencia.
 
 
 
+[[deduplication]]
 == Deduplicación
 
 La deduplicación es eliminar los tamaños de bloques duplicados de un conjunto de datos. Por ejemplo, si existiera el mismo bloque de 4KB KB en 10 archivos diferentes, la deduplicación redirigiría ese bloque de 4KB KB en los 10 archivos al mismo bloque físico de 4KB KB. El resultado sería una mejora de 10:1 veces en eficiencia en esos datos.
@@ -90,6 +96,7 @@ Muchas cabinas de la competencia afirman la capacidad de deduplicar bases de dat
 
 
 
+[[efficiency-and-thin-provisioning]]
 == Eficiencia y thin provisioning
 
 Las funciones de eficiencia son formas de thin provisioning. Por ejemplo, una LUN de 100GB GB que ocupa un volumen de 100GB GB podría comprimirse hasta 50GB 000. Todavía no hay ahorros reales realizados porque el volumen sigue siendo de 100GB GB. Primero se debe reducir el volumen para que el espacio ahorrado se pueda usar en cualquier otro lugar del sistema. Si los cambios realizados en la LUN de 100GB TB más adelante hacen que los datos se puedan comprimir menos, el tamaño de la LUN aumentará y el volumen podría llenarse.
@@ -103,18 +110,21 @@ CAUTION: Si un volumen se aprovisiona en exceso, debe tenerse cuidado desactivar
 
 
 
+[[efficiency-best-practices]]
 == Mejores prácticas de eficiencia
 
 *NetApp recomienda* lo siguiente:
 
 
 
+[[aff-and-asa-defaults]]
 === Valores predeterminados de AFF y ASA
 
 Los volúmenes creados en ONTAP que se ejecuta en sistemas AFF y los LUNs/espacios de nombres en sistemas ASA se aprovisionan en capa fina con todas las funciones de eficiencia en línea activadas. Aunque las bases de datos generalmente no se benefician de la deduplicación y pueden incluir datos no comprimibles, la configuración predeterminada es, no obstante, adecuada para casi todas las cargas de trabajo. ONTAP está diseñado para procesar de forma eficiente todo tipo de datos y patrones de E/S, independientemente de que supongan o no un ahorro. Los valores predeterminados solo deben cambiarse si se comprenden perfectamente los motivos y existe una ventaja para desviarse.
 
 
 
+[[general-recommendations]]
 === Recomendaciones generales
 
 * Si los volúmenes AFF, LUNs o espacios de nombres no están thin provisioned, debes desactivar todos los ajustes de eficiencia porque usar estas funciones no proporciona ningún ahorro y la combinación de thick provisioning con la eficiencia del espacio activada puede causar un comportamiento inesperado, incluidos errores de falta de espacio.

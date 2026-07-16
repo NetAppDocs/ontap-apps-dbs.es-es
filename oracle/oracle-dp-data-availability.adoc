@@ -19,6 +19,7 @@ ONTAP se ha diseñado para ofrecer la máxima disponibilidad de las bases de dat
 
 
 
+[[ha-pairs]]
 == Parejas de HA
 
 La unidad básica de alta disponibilidad es el par de alta disponibilidad. Cada pareja contiene enlaces redundantes para admitir la replicación de datos hacia NVRAM. NVRAM no es una caché de escritura. La RAM dentro de la controladora funciona como caché de escritura. El objetivo de la NVRAM es registrar temporalmente los datos como protección frente a un fallo inesperado del sistema. En este sentido, es similar a un redo log de base de datos.
@@ -29,6 +30,7 @@ Si una controladora falla abruptamente, es posible que existan cambios pendiente
 
 
 
+[[takeover-and-giveback]]
 == Toma de control y retorno al nodo primario
 
 La toma de control y la devolución hace referencia al proceso de transferencia de la responsabilidad de los recursos de almacenamiento entre los nodos de un par de alta disponibilidad. La toma de control y el retorno al nodo primario tienen dos aspectos:
@@ -48,6 +50,7 @@ El segundo aspecto de la toma de control y la restauración es la transferencia 
 
 
 
+[[takeover-time]]
 == Tiempo de toma de control
 
 El host de I/O experimenta una breve pausa en I/O durante operaciones de toma de control y devolución; pero no debe producirse una interrupción en las aplicaciones en un entorno configurado correctamente. El proceso de transición real en el que se demora I/O suele medirse en segundos, pero el host puede requerir más tiempo para reconocer el cambio en las rutas de datos y volver a enviar las operaciones de I/O.

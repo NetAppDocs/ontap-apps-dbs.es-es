@@ -35,6 +35,7 @@ Como resultado, proteger un conjunto de datos alojado en ONTAP es sencillo y alt
 
 
 
+[[is-a-snapshot-a-backup]]
 == ¿Una snapshot es un backup?
 
 Una pregunta frecuente acerca del uso de las copias Snapshot como estrategia de protección de datos es el hecho de que los datos «reales» y los datos de copias Snapshot se encuentran en las mismas unidades. La pérdida de esas unidades provocaría la pérdida de los datos primarios y el backup.
@@ -45,6 +46,7 @@ Sin embargo, las copias Snapshot locales nunca deberían ser la única estrategi
 
 
 
+[[snapshot-based-backups]]
 == Backups basados en Snapshot
 
 Existen muchas opciones para usar las copias Snapshot de ONTAP para proteger los datos, y las copias Snapshot son la base de muchas otras funciones de ONTAP, como replicación, recuperación ante desastres y clonación. Una descripción completa de la tecnología de instantáneas está fuera del alcance de este documento, pero en las siguientes secciones se proporciona una descripción general.
@@ -63,6 +65,7 @@ A menudo, la palabra «consistente» en «coherente con las aplicaciones» resul
 
 
 
+[[consistency-groups]]
 == Grupos de consistencia
 
 El término «grupo de coherencia» hace referencia a la capacidad de una cabina de almacenamiento para gestionar varios recursos de almacenamiento como una sola imagen. Por ejemplo, una base de datos puede consistir en 10 LUN. La cabina debe ser capaz de realizar backup, restaurar y replicar esos 10 LUN de forma coherente. La restauración no es posible si las imágenes de las LUN no eran consistentes en el punto de backup. Para replicar estos 10 LUN es necesario que todas las réplicas estén perfectamente sincronizadas entre sí.
@@ -73,6 +76,7 @@ Los sistemas AFF también incluyen un tipo más amplio de grupo de consistencia.
 
 
 
+[[consistency-group-snapshots]]
 == Snapshots de grupo de coherencia
 
 Las instantáneas de grupo de consistencia (CG) son una extensión de la tecnología básica de ONTAP Snapshot. Una operación de instantánea estándar crea una imagen consistente de todos los datos dentro de un único volumen AFF/FAS o LUN/namespace ASA, pero a veces es necesario crear un conjunto consistente de instantáneas a través de múltiples recursos de almacenamiento e incluso a través de múltiples sistemas de almacenamiento. El resultado es un conjunto de instantáneas que se pueden utilizar del mismo modo que una instantánea de un solo volumen individual. Se pueden utilizar para la recuperación de datos local, replicarse con fines de recuperación ante desastres o clonarse como una única unidad coherente.
@@ -99,6 +103,7 @@ Una vez configurado el cercado de escritura en los destinos, están listos para 
 
 
 
+[[dependent-write-order]]
 === Orden de escritura dependiente
 
 Desde un punto de vista técnico, la clave para un grupo de consistencia es preservar el orden de escritura y, específicamente, el orden de escritura dependiente. Por ejemplo, una base de datos que escribe en 10 LUN escribe simultáneamente en todas ellas. Muchas escrituras se emiten de forma asíncrona, por lo que el orden en que se completan no es importante y el orden en que se realizan varía según el comportamiento del sistema operativo y de la red.
@@ -107,6 +112,7 @@ Algunas operaciones de escritura deben estar presentes en el disco antes de que 
 
 
 
+[[strategies]]
 == Estrategias
 
 Existen dos enfoques principales para los backups basados en Snapshot:
@@ -134,6 +140,7 @@ Aunque los diferentes clientes pueden tener estrategias muy diferentes, casi tod
 
 
 
+[[snapshot-based-recovery]]
 == Recuperación basada en Snapshot
 
 Cuando se diseñan distribuciones de almacenamiento para bases de datos Oracle, la primera decisión es si se va a utilizar la tecnología basada en volúmenes NetApp SnapRestore (VBSR), que es la tecnología subyacente utilizada para restaurar volúmenes AFF y LUN/namespaces ASA.
@@ -148,6 +155,7 @@ Aislar los archivos de datos de esta manera permite revertirlos a un estado ante
 
 
 
+[[aff-snapshot-reserve]]
 == Reserva de snapshot AFF
 
 Para cada volumen con datos de Oracle en un entorno SAN AFF, la `percent-snapshot-space` debe establecerse en cero porque reservar espacio para una reserva de snapshot en un entorno LUN no es útil. Si la reserva fraccionaria se establece en 100, una snapshot de un volumen con LUN requiere suficiente espacio libre en el volumen, excluyendo la reserva de snapshot, para absorber el 100% de la rotación de todos los datos. Si la reserva fraccionaria se establece en un valor inferior, entonces se requiere una cantidad correspondientemente menor de espacio libre, pero siempre excluye la reserva de snapshot. Esto significa que el espacio de reserva de snapshot en un entorno LUN se desperdicia.
@@ -171,6 +179,7 @@ No hay una preferencia clara entre la opción uno y la opción dos entre los usu
 
 
 
+[[ontap-and-third-party-snapshots]]
 == Snapshots de ONTAP y de terceros
 
 El ID de documento de Oracle 604683,1 explica los requisitos para la compatibilidad con Snapshot de terceros y las múltiples opciones disponibles para las operaciones de backup y restauración.

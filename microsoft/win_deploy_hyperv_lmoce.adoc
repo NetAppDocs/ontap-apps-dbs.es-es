@@ -18,6 +18,7 @@ Esta sección describe la puesta en marcha de la migración activa de Hyper-V fu
 
 
 
+[[prerequisites]]
 == Requisitos previos
 
 * Servidores de Hyper-V independientes con almacenamiento independiente o almacenamiento SMB compartido.
@@ -27,6 +28,7 @@ Esta sección describe la puesta en marcha de la migración activa de Hyper-V fu
 
 
 
+[[deployment]]
 == Puesta en marcha
 
 Para realizar la migración activa en un entorno no agrupado, configure los servidores Hyper-V de origen y destino para que puedan enviar y recibir operaciones de migración en directo. En ambos servidores de Hyper-V, complete los siguientes pasos:

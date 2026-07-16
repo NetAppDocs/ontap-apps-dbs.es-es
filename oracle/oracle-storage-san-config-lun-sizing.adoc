@@ -30,6 +30,7 @@ Se desaconseja la práctica de establecer un tamaño de LUN estándar universal 
 
 
 
+[[lun-count]]
 == Número de LUN
 
 A diferencia del tamaño de LUN, el número de LUN afecta al rendimiento. El rendimiento de la aplicación depende a menudo de la capacidad para realizar I/O paralelas mediante la capa SCSI. Como resultado, dos LUN ofrecen mejor rendimiento que una única LUN. El uso de LVM como Veritas VxVM, Linux LVM2 u Oracle ASM es el método más sencillo para aumentar el paralelismo.

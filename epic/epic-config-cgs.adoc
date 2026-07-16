@@ -21,6 +21,7 @@ image:epic-cg-layout.png["Distribución del grupo de consistencia épica"]
 
 
 
+[[consistency-group-snapshots]]
 == Snapshots de grupo de coherencia
 
 Se debe definir una programación de snapshot de CG nocturna en cada uno de los CG secundarios asociados con los volúmenes que proporcionan almacenamiento para la base de datos de producción. Esto dará como resultado un nuevo conjunto de backups consistentes de estos CG cada noche. Estos pueden utilizarse para clonar la base de datos de producción para utilizarlos en entornos distintos a la producción, como desarrollo y pruebas. NetApp ha desarrollado flujos de trabajo Ansible automatizados basados en el CG propio para Epic con el fin de automatizar el backup de bases de datos de producción, así como los entornos de prueba y actualización.

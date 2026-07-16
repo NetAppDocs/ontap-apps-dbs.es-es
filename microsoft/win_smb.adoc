@@ -28,10 +28,12 @@ Cuando se crea una SVM con el protocolo CIFS, un servidor CIFS se ejecuta sobre 
 
 
 
+[[provisioning-smb-shares-on-windows-server]]
 == Aprovisionamiento de recursos compartidos SMB en Windows Server
 
 
 
+[[prerequisites]]
 === Requisitos previos
 
 El uso del almacenamiento de NetApp en entornos NAS en Windows Server tiene los siguientes requisitos:
@@ -45,6 +47,7 @@ El uso del almacenamiento de NetApp en entornos NAS en Windows Server tiene los 
 
 
 
+[[active-directory-domain-controller]]
 === Controlador de dominio de Active Directory
 
 Una controladora de almacenamiento de NetApp puede unirse y funcionar en un Active Directory similar a un servidor Windows Server. Durante la creación de la SVM, es posible configurar el DNS proporcionando los detalles del nombre de dominio y del servidor de nombres. La SVM intenta buscar una controladora de dominio de Active Directory mediante la consulta del DNS de un servidor de protocolo ligero de acceso a directorios (LDAP)/Active Directory de forma similar a Windows Server.
@@ -57,6 +60,7 @@ cluster::> system services ntp server create -server $domainControllerIP
 ....
 
 
+[[deployment]]
 === Puesta en marcha
 
 . Cree una nueva SVM con el protocolo NAS CIFS habilitado. Una SVM nueva se puede crear con cualquiera de los siguientes métodos:
@@ -82,6 +86,7 @@ cluster::> system services ntp server create -server $domainControllerIP
 
 
 
+[[host-integration]]
 === Integración de host
 
 El protocolo NAS CIFS está integrado de manera nativa en ONTAP. Por lo tanto, Windows Server no requiere ningún software cliente adicional para acceder a los datos en ONTAP. Aparece una controladora de almacenamiento de NetApp en la red como servidor de archivos nativo y admite la autenticación de Microsoft Active Directory.
@@ -103,6 +108,7 @@ Para detectar el recurso compartido de CIFS creado anteriormente con Windows Ser
 
 
 
+[[best-practices]]
 === Mejores prácticas
 
 * Para confirmar que no hay tiempo de inactividad cuando un volumen se mueve de un nodo a otro o en caso de fallo de un nodo, NetApp recomienda habilitar la opción de disponibilidad continua en el recurso compartido de archivos.
@@ -114,6 +120,7 @@ Para detectar el recurso compartido de CIFS creado anteriormente con Windows Ser
 
 
 
+[[things-to-remember]]
 === Puntos que debe recordar
 
 * Cuando se aprovisionan volúmenes para entornos SMB, los volúmenes deben crearse con el estilo de seguridad NTFS.
@@ -128,6 +135,7 @@ Para detectar el recurso compartido de CIFS creado anteriormente con Windows Ser
 
 
 
+[[provisioning-smb-shares-on-nano-server]]
 == Aprovisionamiento de recursos compartidos SMB en Nano Server
 
 Nano Server no requiere software de cliente adicional para acceder a los datos del recurso compartido de CIFS en una controladora de almacenamiento de NetApp.

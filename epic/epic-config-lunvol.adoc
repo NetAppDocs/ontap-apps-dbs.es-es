@@ -27,6 +27,7 @@ Para maximizar el rendimiento de una carga de trabajo, como la base de datos de 
 
 
 
+[[scaling-options]]
 == Opciones de escala
 
 Si el servidor necesita más almacenamiento, la opción más sencilla es hacer crecer las LUN que contienen los volúmenes. La segunda opción es añadir LUN a los grupos de volúmenes en múltiplos de dos a la vez (uno por volumen por nodo).
@@ -35,6 +36,7 @@ Ejemplo:
 
 
 
+[[volume-and-8-lun-layout]]
 == Distribución de volúmenes y 8 LUN
 
 image:epic-8lun.png["Distribución épica de 8-LUN"]
@@ -44,6 +46,7 @@ NOTE: Si en un entorno grande requiere más de 4 nodos o 8 LUN, consulte a nuest
 
 
 
+[[best-practices]]
 == Mejores prácticas
 
 * Use 8 LUN en volúmenes de 8 para comenzar, añadiendo 2 LUN a la vez en todos los nodos del clúster.

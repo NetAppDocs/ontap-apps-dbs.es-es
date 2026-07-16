@@ -42,6 +42,7 @@ Juntos, Windows Server y ONTAP pueden funcionar en entornos de gran tamaño y ap
 
 
 
+[[intended-audience]]
 == Audiencia de destino
 
 Este documento está destinado a arquitectos de sistemas y almacenamiento que diseñan soluciones de almacenamiento de NetApp para Windows Server.

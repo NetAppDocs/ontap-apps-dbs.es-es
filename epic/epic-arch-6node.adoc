@@ -15,12 +15,14 @@ Esta arquitectura ofrece el mejor equilibrio de rendimiento y capacidad del clú
 
 
 
+[[six-node-architecture]]
 == Arquitectura de seis nodos
 
 image:epic-6node.png["Arquitectura épica de 6 nodos"]
 
 
 
+[[six-node-workload-placement]]
 == Ubicación de cargas de trabajo de seis nodos
 
 image:epic-6node-design.png["Ubicación Epic de 6 nodos"]

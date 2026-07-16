@@ -18,18 +18,21 @@ ONTAP proporciona eficiencia de almacenamiento líder del sector para entornos v
 
 
 
+[[netapp-deduplication]]
 == Deduplicación NetApp
 
 La deduplicación de NetApp funciona eliminando bloques duplicados en el volumen de almacenamiento, almacenando solo una copia física, independientemente del número de copias lógicas presentes. Por lo tanto, la deduplicación crea la ilusión de que existen numerosas copias de dicho bloque. La deduplicación elimina automáticamente bloques de datos duplicados en bloques de 4KB KB en todo el volumen. Este proceso recupera el almacenamiento para alcanzar ahorros de espacio y rendimiento potencial al reducir el número de escrituras físicas en el disco. La deduplicación puede proporcionar un ahorro de espacio superior al 70% en entornos Hyper-V.
 
 
 
+[[thin-provisioning]]
 == Aprovisionamiento ligero
 
 Thin provisioning es una manera eficiente de aprovisionar almacenamiento, ya que el almacenamiento no se asigna previamente. Es decir, cuando se crea un volumen o LUN mediante thin provisioning, el espacio del sistema de almacenamiento no se utiliza. El espacio sigue sin utilizar hasta que se escriben los datos en la LUN o el volumen y solo se utiliza el espacio necesario para almacenar dichos datos. NetApp recomienda habilitar thin provisioning en el volumen y deshabilitar la reserva de LUN.
 
 
 
+[[quality-of-service]]
 == Calidad de servicio
 
 La calidad de servicio de almacenamiento en NetApp ONTAP permite agrupar objetos de almacenamiento y establecer límites de rendimiento en el grupo. La calidad de servicio de almacenamiento puede utilizarse para limitar el rendimiento a las cargas de trabajo y supervisar el rendimiento de las cargas de trabajo. Con esta capacidad, un administrador de almacenamiento puede separar las cargas de trabajo por organización, aplicación, unidad empresarial o entornos de producción o desarrollo.
