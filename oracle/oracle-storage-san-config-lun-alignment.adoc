@@ -36,7 +36,7 @@ El registro realiza una escritura secuencial del archivo log con escrituras de t
 
 Verifica la alineación utilizando utilidades como `sio` o `dd` que pueden generar E/S a un tamaño de bloque definido. Las estadísticas de alineación de E/S en el sistema de almacenamiento se pueden ver con el comando `stats`. Consulta link:../oracle/oracle-notes-wafl-alignment-verification.html["Verificación de la alineación de WAFL"] para más información.
 
-La alineación en entornos Solaris es más complicada. Consulte http://support.netapp.com/documentation/productlibrary/index.html?productID=61343["Configuración de host SAN ONTAP"^] si quiere más información.
+La alineación en entornos Solaris es más complicada. Consulta https://kb.netapp.com/on-prem/ontap/da/SAN/SAN-KBs/How_to_identify_unaligned_IO_on_LUNs["Cómo identificar operaciones de E/S desalineadas en LUNs"] para más información.
 
 |===
 | Precaución 
