@@ -39,7 +39,7 @@ Esta es la configuración de host recomendada para todas las versiones de ONTAP 
 3+| *Ajustes NFS* 
 
 
-| NewSyncInterval | Si no utiliza vSphere CSI para Kubernetes, establezca Por https://knowledge.broadcom.com/external/article/386364/reducing-excessive-vsan-cnssync-warnings.html["VMware KB 386364"^] | No 
+| NewSyncInterval | Si no estás utilizando el CSI vSphere para Kubernetes, configura por https://knowledge.broadcom.com/external/article/415074/reducing-or-disabling-excessive-vsan-cns.html["VMware KB 415074"^] | No 
 
 
 | NET.TcpipHeapSize | VSphere 6.0 o posterior; establezca esta opción en 32.
