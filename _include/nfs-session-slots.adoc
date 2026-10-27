@@ -1,0 +1,16 @@
+= 
+:allow-uri-read: 
+
+
+Las ranuras de sesión de NFS son el equivalente en NFSv4.X de las tablas de ranuras de NFSv3. El valor predeterminado suele ser 64. Un valor de 180 es óptimo porque coincide con el límite de sesiones en ONTAP.
+
+Ejemplo de configuración del parámetro `max_session_slots`:
+
+....
+# cat /etc/modprobe.d/nfsclient.conf
+ options nfs max_session_slots=180
+....
+Este parámetro lo utiliza un módulo del núcleo que se carga al iniciar el sistema. A diferencia del parámetro de la tabla de ranuras de NFSv3, no es dinámico. Es necesario reiniciar el sistema para que el cambio surta efecto.
+
+
+CAUTION: No configurar estos parámetros puede tener efectos significativos en el rendimiento. El rendimiento puede verse significativamente limitado porque el sistema operativo linux no está generando suficiente E/S.
