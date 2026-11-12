@@ -17,6 +17,9 @@ summary: Descripción general de la solución de VMware vSphere
 vCenter Server Appliance (VCSA) es un potente sistema de administración centralizada y un panel único para vSphere que permite a los administradores operar de manera eficaz los clústeres ESXi. Facilita funciones clave como el aprovisionamiento de máquinas virtuales, la operación de vMotion, alta disponibilidad (HA), programador de recursos distribuidos (DRS), VMware vSphere Kubernetes Service (VKS) y más. Es un componente esencial en los entornos de nube de VMware y debe diseñarse teniendo en cuenta la disponibilidad del servicio.
 
 
+NOTE: La guía de Metro Storage Cluster (vMSC) de vSphere en esta documentación se aplica por igual a VMware Cloud Foundation (VCF) y VMware vSphere Foundation (VVF). VCF y VVF son diferentes modelos de licencia de Broadcom, pero la arquitectura de almacenamiento subyacente de vSphere y ONTAP para vMSC es la misma.
+
+
 
 [[vsphere-high-availability]]
 == Alta disponibilidad de vSphere

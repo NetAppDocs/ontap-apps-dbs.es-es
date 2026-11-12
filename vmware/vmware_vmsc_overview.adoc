@@ -22,6 +22,9 @@ Las soluciones VMSC son compatibles con NetApp® MetroCluster™ y SnapMirror Ac
 NOTE: Esta documentación sustituye a los informes técnicos publicados anteriormente _TR-4128: VSphere en NetApp MetroCluster_
 
 
+NOTE: La guía de Metro Storage Cluster (vMSC) de vSphere en esta documentación se aplica por igual a VMware Cloud Foundation (VCF) y VMware vSphere Foundation (VVF). VCF y VVF son diferentes modelos de licencia de Broadcom, pero la arquitectura de almacenamiento subyacente de vSphere y ONTAP para vMSC es la misma.
+
+
 
 [[continuous-availability-solutions-for-vsphere-environments]]
 == Soluciones de disponibilidad continua para entornos vSphere
