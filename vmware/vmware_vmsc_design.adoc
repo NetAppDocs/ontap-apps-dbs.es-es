@@ -240,10 +240,7 @@ Para configurar un clúster de almacén de datos para cada sitio, complete los s
 ====
 *Cuando se utiliza el almacenamiento ONTAP, se recomienda desactivar el DRS de Almacenamiento.
 
-* Por lo general, los DRS de almacenamiento no son necesarios ni se recomiendan para su uso con sistemas de almacenamiento de ONTAP.
-* ONTAP proporciona sus propias funciones de eficiencia del almacenamiento, como la deduplicación, la compresión y la compactación, que pueden verse afectadas por Storage DRS.
-* Si utiliza copias Snapshot de ONTAP, Storage vMotion dejaría detrás de la copia del equipo virtual en la copia Snapshot, lo que puede aumentar el uso del almacenamiento y puede afectar a las aplicaciones de backup como NetApp SnapCenter, que registran las máquinas virtuales y sus copias Snapshot de ONTAP.
-
++ * Por lo general, no es necesario ni recomendable utilizar Storage DRS con los sistemas de almacenamiento ONTAP. * ONTAP ofrece sus propias funciones de eficiencia de almacenamiento, como la deduplicación, la compresión y la compactación, que pueden verse afectadas por Storage DRS. * Si usas instantáneas de ONTAP, el almacenamiento vMotion dejaría atrás la copia de la VM en la instantánea, lo que podría aumentar la utilización del almacenamiento y afectar a aplicaciones de backup como NetApp SnapCenter, que realizan un seguimiento de las VM y sus instantáneas de ONTAP.
 
 ====
 image::../media/vmsc_3_9.png[DRS de almacenamiento,528,94]
